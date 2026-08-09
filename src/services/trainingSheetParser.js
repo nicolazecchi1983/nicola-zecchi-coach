@@ -64,10 +64,6 @@ function parseTime(text) {
 }
 
 function parseLocation(text) {
-  const known = ['Mezzolara', 'Budrio']
-  const lower = normalize(text)
-  const exact = known.find(location => lower.includes(normalize(location)))
-  if (exact) return exact
   const match = clean(text).match(/(?:allenamento|siamo|campo)\s+(?:a|al|alla)\s+([A-ZÀ-ÖØ-Ý][\wÀ-ÿ' -]{2,35}?)(?=\s+(?:alle|ore|con|il|la|,|\.|$))/i)
     || clean(text).match(/(?:siamo|campo|allenamento)\s+(?:a|al|alla)\s+([\wÀ-ÿ' -]{2,35}?)(?=\s+(?:alle|ore|con|il|la|,|\.|$))/i)
   return match ? titleCase(match[1]) : null
@@ -188,7 +184,7 @@ function phase(title, duration, description, containers, goalkeepers, extras = {
   }
 }
 
-export function parseTrainingSheetNarration(rawText, roster = []) {
+export function parseTrainingSheetNarration(rawText, roster = [], context = {}) {
   const text = clean(rawText)
   const lower = normalize(text)
 
@@ -249,7 +245,7 @@ export function parseTrainingSheetNarration(rawText, roster = []) {
     date: parseDate(text),
     time: parseTime(text),
     location: parseLocation(text),
-    coach: 'Nicola Zecchi',
+    coach: clean(context.coach || ''),
     match_day: null,
     focus_physical: focus,
     intensity,

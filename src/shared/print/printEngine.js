@@ -1,5 +1,7 @@
 const PRINT_PAYLOAD_PREFIX = 'staff-print-payload:'
 const PRINT_PAGE_PATH = '/print.html'
+const PRINT_MESSAGE_REQUEST = 'staff-print-request'
+const PRINT_MESSAGE_PAYLOAD = 'staff-print-payload'
 
 function createPrintToken() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
@@ -10,6 +12,13 @@ function collectDocumentStyles(doc = document) {
   return [...doc.querySelectorAll('link[rel="stylesheet"], style')]
     .map((node) => node.outerHTML)
     .join('')
+}
+
+function normalizeExtraStyles(styles = '') {
+  const raw = String(styles || '').trim()
+  if (!raw) return ''
+  const unwrapped = raw.replace(/^<style(?:\s[^>]*)?>/i, '').replace(/<\/style>$/i, '').trim()
+  return unwrapped ? `<style data-print-engine-extra>${unwrapped}</style>` : ''
 }
 
 function assertPrintableElement(element) {
@@ -32,7 +41,7 @@ function savePrintPayload(token, payload) {
 }
 
 function removePrintPayload(token) {
-  localStorage.removeItem(`${PRINT_PAYLOAD_PREFIX}${token}`)
+  try { localStorage.removeItem(`${PRINT_PAYLOAD_PREFIX}${token}`) } catch {}
 }
 
 export function openPrintDocument(element, {
@@ -40,34 +49,57 @@ export function openPrintDocument(element, {
   bodyClass = '',
   pagePath = PRINT_PAGE_PATH,
   autoClose = true,
+  extraStyles = '',
+  includeDocumentStyles = true,
 } = {}) {
   assertPrintableElement(element)
 
   const token = createPrintToken()
   const payload = {
-    version: 1,
+    version: 2,
     createdAt: Date.now(),
     title,
     bodyClass,
     autoClose,
     baseHref: `${location.origin}/`,
-    styles: collectDocumentStyles(),
+    styles: `${includeDocumentStyles ? collectDocumentStyles() : ''}${normalizeExtraStyles(extraStyles)}`,
     content: element.outerHTML,
   }
 
+  // Storage è il percorso primario e rimane compatibile con tutte le stampe esistenti.
+  // L'handshake postMessage sotto evita che una nuova finestra resti senza payload
+  // in browser che isolano/ritardano la sincronizzazione dello storage.
   savePrintPayload(token, payload)
 
   const printUrl = new URL(pagePath, location.origin)
   printUrl.searchParams.set('token', token)
-  const printWindow = window.open(printUrl.toString(), '_blank', 'width=1100,height=900')
 
+  let printWindow = null
+  const handlePrintMessage = (event) => {
+    if (event.origin !== location.origin || event.source !== printWindow) return
+    if (event.data?.type !== PRINT_MESSAGE_REQUEST || event.data?.token !== token) return
+    printWindow?.postMessage({
+      type: PRINT_MESSAGE_PAYLOAD,
+      token,
+      payload,
+    }, location.origin)
+  }
+  window.addEventListener('message', handlePrintMessage)
+
+  printWindow = window.open(printUrl.toString(), '_blank', 'width=1100,height=900')
   if (!printWindow) {
+    window.removeEventListener('message', handlePrintMessage)
     removePrintPayload(token)
     throw new Error('Il browser ha bloccato la finestra di stampa')
   }
 
-  // Pulizia di sicurezza se la pagina di stampa non riesce a consumare il payload.
-  window.setTimeout(() => removePrintPayload(token), 60_000)
+  // Pulizia differita: la pagina di stampa rimuove il payload appena lo consuma.
+  // Questo timeout copre tab lente o sospese senza lasciare storage permanente.
+  window.setTimeout(() => {
+    window.removeEventListener('message', handlePrintMessage)
+    removePrintPayload(token)
+  }, 120_000)
+
   return printWindow
 }
 
@@ -81,6 +113,8 @@ export function openPrintHtmlDocument({ title = 'Documento', html = '', classNam
     return openPrintDocument(host, {
       title,
       bodyClass: className,
+      extraStyles: styles,
+      includeDocumentStyles: false,
     })
   } finally {
     host.remove()

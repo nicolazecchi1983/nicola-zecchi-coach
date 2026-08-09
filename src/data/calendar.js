@@ -1,9 +1,9 @@
 export const calendarEvents = [
-  { day: 21, type: 'training', title: 'Allenamento', time: '17:30', place: 'Budrio' },
-  { day: 23, type: 'training', title: 'Allenamento', time: '17:30', place: 'Mezzolara' },
+  { day: 21, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo secondario' },
+  { day: 23, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo principale' },
   { day: 25, type: 'match', title: 'Partita', time: '15:30', place: 'Avversario' },
-  { day: 26, type: 'training', title: 'Allenamento', time: '17:30', place: 'Budrio' },
-  { day: 27, type: 'training', title: 'Allenamento', time: '17:30', place: 'Mezzolara' },
+  { day: 26, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo secondario' },
+  { day: 27, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo principale' },
   { day: 29, type: 'meeting', title: 'Riunione staff', time: '20:00', place: 'Online' },
 ]
 
@@ -13,7 +13,7 @@ export const dashboardStats = [
     label: 'Prossimo allenamento',
     value: '17:30',
     meta: 'Oggi · 26 Luglio 2026',
-    footer: 'Budrio',
+    footer: 'Campo secondario',
     icon: 'calendar',
   },
   {

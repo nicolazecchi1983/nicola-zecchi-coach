@@ -18,19 +18,26 @@ function numericSuffix(value = '') {
   return match ? Number(match[0]) : Number.NaN
 }
 
-function collectDynamicRows(root, selector, prefix, mapper) {
-  return [...root.querySelectorAll(selector)]
-    .map((row) => {
-      const input = row.querySelector(`[name^="${prefix}"]`)
-      const index = numericSuffix(input?.name)
-      return Number.isFinite(index) ? mapper(index) : null
-    })
+function collectDynamicRows(root, selector, prefix, mapper, data = {}) {
+  if (root?.querySelectorAll) {
+    return [...root.querySelectorAll(selector)]
+      .map((row) => {
+        const input = row.querySelector(`[name^="${prefix}"]`)
+        const index = numericSuffix(input?.name)
+        return Number.isFinite(index) ? mapper(index) : null
+      })
+      .filter(Boolean)
+  }
+  return Object.keys(data)
+    .filter((key) => key.startsWith(prefix))
+    .map(numericSuffix)
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b)
+    .map(mapper)
     .filter(Boolean)
 }
 
 export function buildMatchReportModel({ data = {}, root, team = {} } = {}) {
-  if (!root) throw new Error('Match report root non disponibile')
-
   const formationName = data.custom_formation || data.formation || '—'
   const starters = Array.from({ length: 11 }, (_, index) => ({
     number: data[`starter_number_${index}`] || '',
@@ -38,7 +45,11 @@ export function buildMatchReportModel({ data = {}, root, team = {} } = {}) {
     x: Number(data[`position_x_${index}`] || 50),
     y: Number(data[`position_y_${index}`] || 50),
   }))
-  const bench = Array.from({ length: 9 }, (_, index) => ({
+  const benchIndexes = [...new Set(Object.keys(data)
+    .filter((key) => /^bench_\d+$/.test(key))
+    .map(numericSuffix)
+    .filter(Number.isFinite))].sort((a, b) => a - b)
+  const bench = benchIndexes.map((index) => ({
     number: data[`bench_number_${index}`] || '',
     name: data[`bench_${index}`] || '',
   })).filter((item) => item.name)
@@ -48,19 +59,19 @@ export function buildMatchReportModel({ data = {}, root, team = {} } = {}) {
     out: data[`sub_out_${index}`],
     in: data[`sub_in_${index}`],
     reason: data[`sub_reason_${index}`],
-  })).filter((item) => item.minute || item.out || item.in)
+  }), data).filter((item) => item.minute || item.out || item.in)
 
   const goals = collectDynamicRows(root, '[data-match-row="goal"]', 'goal_minute_', (index) => ({
     minute: data[`goal_minute_${index}`],
     scorer: data[`scorer_${index}`],
     assist: data[`assist_${index}`],
-  })).filter((item) => item.minute || item.scorer)
+  }), data).filter((item) => item.minute || item.scorer)
 
   const cards = collectDynamicRows(root, '[data-match-row="card"]', 'card_minute_', (index) => ({
     minute: data[`card_minute_${index}`],
     player: data[`card_player_${index}`],
     type: data[`card_type_${index}`],
-  })).filter((item) => item.minute || item.player)
+  }), data).filter((item) => item.minute || item.player)
 
   const opponentSystems = Object.keys(data)
     .filter((key) => /^opponent_system_\d+$/.test(key))

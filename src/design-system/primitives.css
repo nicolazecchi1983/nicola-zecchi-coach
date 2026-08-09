@@ -1,0 +1,92 @@
+/* Primitive visive condivise. Le pagine possono comporle, non ridefinirle. */
+.staff-control {
+  min-height: var(--staff-control-height);
+  border-radius: var(--staff-radius-control);
+  font: inherit;
+}
+
+.staff-button {
+  min-height: var(--staff-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--staff-space-2);
+  padding: 0 var(--staff-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--staff-radius-control);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.staff-button:focus-visible,
+.staff-control:focus-visible {
+  outline: none;
+  box-shadow: var(--staff-shadow-focus);
+}
+
+.staff-button:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.staff-button--primary {
+  background: var(--staff-color-primary);
+  border-color: var(--staff-color-primary);
+  color: #03111b;
+}
+
+.staff-button--primary:hover:not(:disabled) {
+  background: var(--staff-color-primary-hover);
+  border-color: var(--staff-color-primary-hover);
+}
+
+.staff-button--secondary {
+  background: var(--staff-color-bg-control);
+  border-color: var(--staff-color-border-strong);
+  color: var(--staff-color-text);
+}
+
+.staff-button--secondary:hover:not(:disabled) {
+  border-color: var(--staff-color-primary);
+  background: var(--staff-color-bg-panel-raised);
+}
+
+.staff-button--danger {
+  background: rgba(255, 101, 119, 0.1);
+  border-color: rgba(255, 101, 119, 0.58);
+  color: #ffb7c0;
+}
+
+.staff-button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--staff-color-text-muted);
+}
+
+.staff-card {
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-card);
+  background: var(--staff-color-bg-panel);
+}
+
+.staff-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--staff-space-2);
+  min-width: 0;
+}
+
+.staff-toolbar > * {
+  min-height: var(--staff-control-height);
+}
+
+@media (max-width: 720px) {
+  .staff-button,
+  .staff-control,
+  .staff-toolbar > * {
+    min-height: var(--staff-control-height-compact);
+  }
+}

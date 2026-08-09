@@ -1,0 +1,47 @@
+:root {
+  /* Foundations: valori condivisi, senza dipendenze dai moduli. */
+  --staff-color-bg-app: #06111d;
+  --staff-color-bg-panel: #0a1725;
+  --staff-color-bg-panel-raised: #0d1d2d;
+  --staff-color-bg-control: #0b1a29;
+  --staff-color-bg-sidebar: #04111c;
+  --staff-color-bg-header: #061522;
+  --staff-color-bg-hover: rgba(255, 255, 255, 0.045);
+  --staff-color-border: rgba(124, 167, 205, 0.24);
+  --staff-color-border-strong: rgba(124, 167, 205, 0.42);
+  --staff-color-text: #f8fbff;
+  --staff-color-text-muted: #9cb0c3;
+  --staff-color-primary: #0aa7e8;
+  --staff-color-primary-hover: #22b8f3;
+  --staff-color-danger: #ff6577;
+  --staff-color-positive: #3bd9a0;
+  --staff-color-warning: #e8b449;
+  --staff-color-critical: #ff657b;
+  --staff-color-focus: rgba(34, 184, 243, 0.34);
+
+  --staff-space-1: 4px;
+  --staff-space-2: 8px;
+  --staff-space-3: 16px;
+  --staff-space-4: 24px;
+  --staff-space-5: 32px;
+  --staff-space-6: 48px;
+
+  --staff-radius-control: 12px;
+  --staff-radius-card: 18px;
+  --staff-radius-panel: 24px;
+  --staff-radius-pill: 999px;
+
+  --staff-control-height-compact: 40px;
+  --staff-control-height: 48px;
+
+  --staff-shadow-focus: 0 0 0 3px var(--staff-color-focus);
+  --staff-shadow-panel: 0 18px 42px rgba(0, 0, 0, 0.22);
+
+  --staff-font-page-title: clamp(1.75rem, 2.2vw, 2.35rem);
+  --staff-font-section-title: 1.25rem;
+  --staff-font-card-title: 1rem;
+  --staff-font-body: 0.95rem;
+  --staff-font-caption: 0.78rem;
+  --staff-font-label: 0.72rem;
+  --staff-content-max: 1680px;
+}

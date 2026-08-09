@@ -11,7 +11,7 @@ export function normalizeMatchRecord(input = {}) {
     date: String(input.date || '').slice(0, 10),
     time: String(input.time || '').slice(0, 5),
     venue: String(input.venue || '').trim(),
-    homeAway: input.homeAway === 'away' ? 'away' : 'home',
+    homeAway: input.homeAway === 'away' ? 'away' : input.homeAway === 'neutral' ? 'neutral' : 'home',
     opponent: String(input.opponent || 'Da definire').trim(),
     goalsFor: input.goalsFor === '' || input.goalsFor == null ? null : Number(input.goalsFor),
     goalsAgainst: input.goalsAgainst === '' || input.goalsAgainst == null ? null : Number(input.goalsAgainst),
@@ -34,9 +34,10 @@ export function calendarEventToMatch(event, season = '') {
     date: event.startAt,
     time: event.time,
     venue: event.place,
+    homeAway: event.homeAway || 'home',
     opponent: event.opponent || 'Da definire',
     status: new Date(event.startAt) < new Date() ? 'played' : 'scheduled',
-    documentStatus: event.matchReportStatus === 'completed' ? 'Report salvato' : 'Match Sheet disponibile',
+    documentStatus: event.matchReportStatus === 'completed' ? 'Report salvato' : 'Partita pronta',
   })
 }
 

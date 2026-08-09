@@ -1,5 +1,5 @@
 export const dashboardStats = [
-  { label: 'Prossimo allenamento', value: '17:30', meta: 'Oggi · Budrio', icon: 'calendar' },
+  { label: 'Prossimo allenamento', value: '17:30', meta: 'Oggi · Campo secondario', icon: 'calendar' },
   { label: 'Giocatori disponibili', value: '24/27', meta: '3 da verificare', icon: 'squad' },
   { label: 'Training Sheet', value: '6', meta: 'Preparazione luglio', icon: 'sheet' },
   { label: 'Analisi da completare', value: '2', meta: 'Ultime gare', icon: 'analysis' },
@@ -7,7 +7,7 @@ export const dashboardStats = [
 
 export const todayItems = [
   { time: '10:00', title: 'Briefing staff', meta: 'Sala riunioni', type: 'meeting' },
-  { time: '17:30', title: 'Allenamento', meta: 'Budrio · AL 004', type: 'training' },
+  { time: '17:30', title: 'Allenamento', meta: 'Campo secondario · AL 004', type: 'training' },
   { time: '19:45', title: 'Caricamento Training Sheet', meta: 'Scadenza interna', type: 'sheet' },
 ]
 
@@ -54,10 +54,10 @@ export const analysisItems = [
 ]
 
 export const calendarEvents = [
-  { day: 21, type: 'training', title: 'Allenamento', time: '17:30', place: 'Budrio', sheet: 'AL 001', present: 25, intensity: 3, volume: 4, load: 3 },
-  { day: 23, type: 'training', title: 'Allenamento', time: '17:30', place: 'Mezzolara', sheet: 'AL 002', present: 24, intensity: 4, volume: 4, load: 4 },
+  { day: 21, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo secondario', sheet: 'AL 001', present: 25, intensity: 3, volume: 4, load: 3 },
+  { day: 23, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo principale', sheet: 'AL 002', present: 24, intensity: 4, volume: 4, load: 4 },
   { day: 25, type: 'match', title: 'Partita', time: '15:30', place: 'Avversario', sheet: 'Match plan', present: 22, intensity: 5, volume: 3, load: 4 },
-  { day: 26, type: 'training', title: 'Allenamento', time: '17:30', place: 'Budrio', sheet: 'AL 003', present: 26, intensity: 5, volume: 4, load: 5 },
-  { day: 27, type: 'training', title: 'Allenamento', time: '17:30', place: 'Mezzolara', sheet: 'AL 005', present: 25, intensity: 4, volume: 4, load: 4 },
+  { day: 26, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo secondario', sheet: 'AL 003', present: 26, intensity: 5, volume: 4, load: 5 },
+  { day: 27, type: 'training', title: 'Allenamento', time: '17:30', place: 'Campo principale', sheet: 'AL 005', present: 25, intensity: 4, volume: 4, load: 4 },
   { day: 29, type: 'meeting', title: 'Riunione staff', time: '20:00', place: 'Online', sheet: 'Note staff', present: 6, intensity: 1, volume: 1, load: 1 },
 ]

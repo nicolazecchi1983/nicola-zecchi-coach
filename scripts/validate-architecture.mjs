@@ -5,8 +5,9 @@ const root = process.cwd()
 const srcRoot = join(root, 'src')
 const violations = []
 
+// File verificati come residui o duplicati non più utilizzati.
+// La presenza di uno di questi elementi blocca la build architetturale.
 const forbiddenPaths = [
-  'src/components/.js',
   'src/counter.js',
   'src/services/accessControl.js',
   'src/app/accessControl.js',
@@ -23,12 +24,16 @@ const allowedSupabaseImports = new Set([
   'src/infrastructure/repositories/fileStorageRepository.js',
   'src/infrastructure/repositories/matchAnalysisRepository.js',
   'src/infrastructure/repositories/profileRepository.js',
+  'src/infrastructure/repositories/playerProfileRepository.js',
+  'src/infrastructure/repositories/rosterRepository.js',
+  'src/infrastructure/repositories/teamFacilitiesRepository.js',
   'src/modules/calendar/calendarService.js',
   'src/modules/staff/staffService.js',
   // Debito tecnico noto: da estrarre progressivamente dalla UI.
-  'src/components/app.js',
+  'src/app/appController.js',
+  'src/app/appDataGateway.js',
   // Bootstrap applicativo: verifica configurazione e sessione.
-  'src/main.js',
+  'src/app/appKernel.js',
 ])
 
 async function exists(path) {
@@ -52,7 +57,7 @@ async function walk(directory) {
 }
 
 for (const path of forbiddenPaths) {
-  if (await exists(path)) violations.push(`File obsoleto presente: ${path}`)
+  if (await exists(path)) violations.push(`File obsoleto verificato presente: ${path}`)
 }
 
 const sourceFiles = (await walk(srcRoot)).filter((file) => extname(file) === '.js')
@@ -70,6 +75,10 @@ for (const file of sourceFiles) {
 
   if (normalized.startsWith('src/core/') && /from ['"]\.\.\/modules\//.test(source)) {
     violations.push(`Core non può dipendere dai moduli: ${normalized}`)
+  }
+
+  if (normalized.startsWith('src/design-system/') && /from ['"][^'"]*(modules|services|infrastructure)\//.test(source)) {
+    violations.push(`Design System non può dipendere da moduli o infrastruttura: ${normalized}`)
   }
 }
 

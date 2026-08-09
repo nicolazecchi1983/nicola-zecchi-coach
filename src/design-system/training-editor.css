@@ -1,0 +1,2091 @@
+/* STAFF Design System v1 · R20.2A
+   Shell + Training visual redesign. No workflow/domain changes. */
+
+/* ---------- SHELL: remove residual topbar band ---------- */
+.workspace {
+  position: relative;
+}
+
+.topbar {
+  position: absolute;
+  top: 10px;
+  right: 22px;
+  z-index: 40;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+#viewRoot {
+  padding-top: 28px;
+}
+
+.page-head {
+  padding-right: 240px;
+}
+
+#viewRoot > .match-workspace .match-workspace-header {
+  margin-top: 34px;
+}
+
+/* ---------- TRAINING PAGE HEADER ---------- */
+.ts-manual-editor {
+  --ts-content-gap: 20px;
+}
+
+.ts-editor-titlebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(500px, 680px);
+  align-items: end;
+  gap: 28px;
+  margin-bottom: 22px;
+  padding-right: 240px;
+}
+
+.ts-editor-titlebar > div:first-child {
+  align-self: center;
+}
+
+.ts-editor-titlebar h1 {
+  font-size: clamp(2rem, 2.5vw, 2.7rem);
+}
+
+.ts-editor-actions-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  width: 100%;
+  min-width: 0;
+  justify-items: stretch;
+}
+
+.ts-editor-actions-wrap .ts-editor-actions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) auto auto;
+  align-items: end;
+  gap: 10px;
+  width: 100%;
+}
+
+.ts-open-sheet {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ts-open-sheet > span {
+  color: #aebdca;
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.ts-open-sheet select {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+}
+
+.ts-open-button,
+.ts-reset-button {
+  min-width: 116px;
+  height: 42px;
+  padding-inline: 15px;
+}
+
+.ts-reset-button {
+  min-width: 128px;
+}
+
+.ts-draft-state--compact {
+  grid-column: 2;
+  justify-self: end;
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: .7rem;
+  opacity: .9;
+}
+
+/* ---------- TRAINING STEPPER ---------- */
+.ts-step-nav {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px;
+}
+
+.ts-step-nav button {
+  min-height: 50px;
+  padding: 0 12px;
+  justify-content: flex-start;
+  gap: 9px;
+  overflow: hidden;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 12px;
+  color: #93a9b8;
+  background: #081b29;
+}
+
+.ts-step-nav button b {
+  flex: 0 0 auto;
+  color: var(--staff-color-primary-hover);
+  font-size: .69rem;
+  font-weight: 900;
+}
+
+.ts-step-nav button span {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: .76rem;
+  font-weight: 700;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ts-step-nav button.is-active {
+  border-color: var(--staff-color-primary-hover);
+  color: #fff;
+  background: linear-gradient(100deg, #0b78b9, #0d8ed0);
+  box-shadow: 0 8px 18px rgba(8, 128, 197, .14);
+}
+
+.ts-step-nav button.is-active b {
+  color: #dff7ff;
+}
+
+/* ---------- WORKSPACE ---------- */
+.ts-workspace--steps {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.ts-workspace--steps .ts-manual-form {
+  display: block;
+  width: 100%;
+}
+
+.ts-step {
+  display: none;
+}
+
+.ts-step.is-active {
+  display: block;
+}
+
+.ts-workspace--steps .ts-form-card,
+.ts-workspace--steps .ts-live-column {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* The active section is one real card, not a card inside an empty banner. */
+.ts-form-card,
+.ts-live-column {
+  padding: 24px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 18px;
+  background: linear-gradient(155deg, rgba(12,31,47,.98), rgba(7,20,32,.98));
+  box-shadow: 0 14px 34px rgba(0,0,0,.1);
+}
+
+.ts-card-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 0 0 22px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--staff-color-border);
+}
+
+.ts-card-head > span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 10px;
+  color: #eaf9ff;
+  background: #0a84cc;
+  font-size: .75rem;
+  font-weight: 900;
+}
+
+.ts-card-head > div {
+  min-width: 0;
+}
+
+.ts-card-head h2 {
+  margin: 0;
+  color: #f6f9fb;
+  font-size: 1.18rem;
+  line-height: 1.15;
+}
+
+.ts-card-head p {
+  margin: 4px 0 0;
+  color: #8fa5b6;
+  font-size: .76rem;
+  line-height: 1.35;
+}
+
+/* ---------- SECTION 01 ---------- */
+.ts-session-grid {
+  grid-template-columns: minmax(180px, .85fr) minmax(160px, .75fr) minmax(280px, 1.25fr) minmax(150px, .6fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.ts-session-grid .ts-custom-location {
+  grid-column: 3 / 4;
+}
+
+.ts-session-grid .ts-field-help {
+  min-height: 0;
+  margin-top: 5px;
+  font-size: .68rem;
+}
+
+/* ---------- FIELD SYSTEM ---------- */
+.ts-field {
+  gap: 7px;
+}
+
+.ts-field > span,
+.ts-choice-label {
+  color: #c5d2db;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.ts-field input,
+.ts-field select,
+.ts-field textarea {
+  border-color: var(--staff-color-border);
+  border-radius: 11px;
+  background: #071a28;
+}
+
+.ts-field input,
+.ts-field select {
+  min-height: 44px;
+}
+
+.ts-field textarea {
+  line-height: 1.45;
+}
+
+.ts-field-help {
+  color: #758b9b;
+}
+
+/* ---------- SECTION 02 ---------- */
+.ts-roster-summary {
+  display: flex;
+  align-items: end;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.ts-present-count {
+  width: min(240px, 100%);
+}
+
+.ts-roster-grid--four {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.ts-multiselect,
+.ts-aggregated-select select {
+  width: 100%;
+}
+
+.ts-multiselect {
+  border-color: var(--staff-color-border);
+  border-radius: 12px;
+  background: #071a28;
+}
+
+.ts-multiselect summary {
+  min-height: 48px;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.ts-multiselect summary span {
+  color: #e5edf2;
+}
+
+.ts-multiselect summary b {
+  white-space: nowrap;
+}
+
+/* ---------- SECTION 03 ---------- */
+.ts-match-day-block {
+  margin: 0 0 20px;
+  padding: 16px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 14px;
+  background: rgba(255,255,255,.018);
+}
+
+.ts-md-selector {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.ts-md-selector button {
+  min-height: 42px;
+  padding: 0 8px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 10px;
+  color: #aebdca;
+  background: #071a28;
+  font-size: .72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ts-md-selector button.is-active {
+  border-color: var(--staff-color-primary-hover);
+  color: #03111b;
+  background: #63cdf2;
+}
+
+.ts-load-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.2fr) minmax(240px, .9fr) minmax(240px, .9fr);
+  gap: 18px;
+  align-items: end;
+}
+
+.ts-choice-block {
+  margin-top: 0;
+}
+
+.ts-rating {
+  display: grid;
+  grid-template-columns: repeat(5, 40px);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ts-rating button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 10px;
+  color: #bdcad3;
+  background: #071a28;
+  font-weight: 800;
+}
+
+.ts-rating button.is-active {
+  border-color: #6bd8ff;
+  color: #03111b;
+  background: #6bd8ff;
+}
+
+/* ---------- SECTION 04 ---------- */
+.ts-phases-editor {
+  display: grid;
+  gap: 14px;
+}
+
+.ts-phase-editor {
+  padding: 18px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 15px;
+  background: #071a28;
+}
+
+.ts-phase-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.ts-phase-editor-head > strong {
+  color: #f4f8fb;
+  font-size: .82rem;
+  letter-spacing: .04em;
+}
+
+.ts-phase-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ts-split-phase-button {
+  min-width: 118px;
+  min-height: 36px;
+  padding-inline: 12px;
+  font-size: .72rem;
+  white-space: nowrap;
+}
+
+.ts-remove-phase-button {
+  width: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  font-size: 1rem;
+}
+
+.ts-phase-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.4fr) minmax(300px, .85fr);
+  gap: 14px;
+  align-items: end;
+}
+
+.ts-phase-meta-fields {
+  display: grid;
+  grid-template-columns: minmax(130px, .55fr) minmax(180px, 1fr);
+  gap: 12px;
+}
+
+.ts-phase-editor > .ts-field-full {
+  margin-top: 14px;
+}
+
+.ts-phase-editor textarea {
+  min-height: 100px;
+}
+
+.ts-phase-advanced {
+  margin-top: 12px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 11px;
+  background: rgba(255,255,255,.018);
+}
+
+.ts-phase-advanced summary {
+  padding: 11px 13px;
+  color: #9fc7dc;
+  font-size: .74rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ts-add-phase {
+  width: auto;
+  margin-top: 14px;
+}
+
+/* ---------- SECTION 05 ---------- */
+.ts-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ts-pillar span {
+  min-height: 48px;
+  justify-content: center;
+  text-align: center;
+}
+
+.ts-analysis-fields {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 14px 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.ts-ai-button {
+  width: 100%;
+  min-height: 44px;
+}
+
+.ts-ai-note {
+  align-self: center;
+  margin: 0;
+}
+
+.ts-analysis-fields .ts-field-full {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+/* ---------- SECTION 06 ---------- */
+.ts-live-column {
+  position: static;
+}
+
+.ts-summary-head {
+  margin-bottom: 16px;
+}
+
+.ts-preview-toolbar {
+  margin-bottom: 12px;
+  border-color: var(--staff-color-border);
+  background: #071a28;
+}
+
+/* ---------- FOOTER ---------- */
+.ts-step-footer {
+  position: static;
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) 1fr minmax(150px, 220px);
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: none;
+  margin: 16px 0 0;
+  padding: 12px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 14px;
+  background: #071a28;
+  backdrop-filter: none;
+}
+
+.ts-step-footer > span {
+  min-width: 0;
+  color: #8fa5b6;
+  font-size: .75rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.ts-step-footer button:last-child {
+  justify-self: stretch;
+}
+
+.ts-step-footer button:first-child {
+  justify-self: stretch;
+}
+
+/* ---------- BREAKPOINTS ---------- */
+@media (max-width: 1320px) {
+  .topbar {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    min-height: 48px;
+    padding: 6px 20px 0;
+  }
+
+  #viewRoot {
+    padding-top: 14px;
+  }
+
+  .page-head,
+  .ts-editor-titlebar {
+    padding-right: 0;
+  }
+
+  #viewRoot > .match-workspace .match-workspace-header {
+    margin-top: 0;
+  }
+
+  .ts-editor-titlebar {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .ts-editor-actions-wrap {
+    max-width: 760px;
+  }
+
+  .ts-session-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-session-grid .ts-custom-location {
+    grid-column: auto;
+  }
+
+  .ts-roster-grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-load-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-load-focus {
+    grid-column: 1 / -1;
+  }
+
+  .ts-md-selector {
+    grid-template-columns: repeat(5, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .ts-step-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ts-phase-layout,
+  .ts-phase-meta-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-pillars {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    min-height: 54px;
+    padding: 7px 13px 0;
+  }
+
+  #viewRoot {
+    padding-top: 14px;
+  }
+
+  .ts-editor-titlebar {
+    gap: 16px;
+  }
+
+  .ts-editor-actions-wrap .ts-editor-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-open-sheet {
+    grid-column: 1 / -1;
+  }
+
+  .ts-step-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-step-nav button span {
+    font-size: .72rem;
+  }
+
+  .ts-form-card,
+  .ts-live-column {
+    padding: 16px;
+  }
+
+  .ts-session-grid,
+  .ts-roster-grid--four,
+  .ts-load-grid,
+  .ts-analysis-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-load-focus,
+  .ts-analysis-fields .ts-field-full {
+    grid-column: auto;
+  }
+
+  .ts-md-selector {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+  }
+
+  .ts-pillars {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-step-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-step-footer > span {
+    display: none;
+  }
+}
+
+/* ---------- R20.2A-R1 · corrective visual pass ----------
+   Goal: remove the oversized section-banner treatment and restore a clear,
+   left-aligned editorial hierarchy. Training only; no workflow changes. */
+
+.ts-manual-editor .ts-editor-titlebar {
+  grid-template-columns: minmax(420px, 1fr) minmax(620px, 760px);
+  align-items: end;
+  gap: 36px;
+  padding-right: 0;
+}
+
+.ts-manual-editor .ts-editor-titlebar > div:first-child {
+  min-width: 420px;
+}
+
+.ts-manual-editor .ts-editor-titlebar h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 2.35vw, 2.65rem);
+  line-height: 1.02;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-editor-titlebar p {
+  max-width: 520px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap {
+  max-width: none;
+}
+
+.ts-manual-editor .ts-step-nav {
+  gap: 7px;
+  margin-bottom: 26px;
+}
+
+.ts-manual-editor .ts-step-nav button {
+  min-height: 46px;
+  border-radius: 11px;
+  padding-inline: 14px;
+}
+
+/* Active step content is a workspace, not another giant card. */
+.ts-manual-editor .ts-form-card,
+.ts-manual-editor .ts-live-column {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Compact section identity: always left aligned, no full-width banner. */
+.ts-manual-editor .ts-card-head {
+  width: min(100%, 760px);
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 0 0 16px;
+  border: 0;
+  border-bottom: 1px solid rgba(82, 128, 158, .28);
+  background: transparent;
+}
+
+.ts-manual-editor .ts-card-head > span {
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px;
+  border-radius: 11px;
+  background: #0a84cc;
+}
+
+.ts-manual-editor .ts-card-head h2 {
+  font-size: 1.25rem;
+  line-height: 1.08;
+}
+
+.ts-manual-editor .ts-card-head p {
+  margin-top: 5px;
+  font-size: .76rem;
+}
+
+/* Content panels: hierarchy belongs to the data, not to the heading. */
+.ts-manual-editor .ts-session-grid,
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-session-grid {
+  padding: 20px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 16px;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary {
+  margin: 0;
+  padding: 18px 20px 0;
+  border: 1px solid var(--staff-color-border);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
+  padding: 16px 20px 20px;
+  border: 1px solid var(--staff-color-border);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block {
+  margin-bottom: 14px;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
+  padding: 20px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 16px;
+  background: #081c2b;
+}
+
+/* Keep the successful phase cards; only the section identity changes. */
+.ts-manual-editor .ts-step[data-ts-step="4"] .ts-phases-editor {
+  margin-top: 0;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars {
+  padding: 18px 20px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 16px 16px 0 0;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  margin-top: 0;
+  padding: 0 20px 20px;
+  border: 1px solid var(--staff-color-border);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
+  background: #081c2b;
+}
+
+.ts-manual-editor .ts-summary-head {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 1500px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    grid-template-columns: minmax(360px, .8fr) minmax(560px, 1.2fr);
+    gap: 24px;
+  }
+  .ts-manual-editor .ts-editor-titlebar > div:first-child { min-width: 360px; }
+}
+
+@media (max-width: 1180px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .ts-manual-editor .ts-editor-titlebar > div:first-child { min-width: 0; }
+  .ts-manual-editor .ts-editor-titlebar h1 { white-space: normal; }
+  .ts-manual-editor .ts-editor-actions-wrap { max-width: 820px; }
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-card-head {
+    width: 100%;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 11px;
+  }
+  .ts-manual-editor .ts-card-head > span { width: 36px; height: 36px; }
+  .ts-manual-editor .ts-session-grid,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars { padding: 15px; }
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields { padding: 0 15px 15px; }
+}
+
+/* ================================================================
+   R20.2A-R2 — TRAINING COLOR HIERARCHY & ACTION SEMANTICS
+   Cyan = orientation, blue = active state/CTA, red = destructive only.
+   ================================================================ */
+
+/* Stepper: active is selected, not a second primary CTA. */
+.ts-manual-editor .ts-step-nav button.is-active {
+  border-color: rgba(41, 183, 235, .72);
+  color: #f4f9fc;
+  background: #10324a;
+  box-shadow: inset 3px 0 0 #22b8f3, 0 6px 16px rgba(0, 0, 0, .10);
+}
+
+.ts-manual-editor .ts-step-nav button.is-active b {
+  color: #5bd3ff;
+}
+
+/* Section identity: orientation accent, intentionally quieter than active nav. */
+.ts-manual-editor .ts-card-head > span {
+  color: #bfeeff;
+  background: #0d5277;
+  border: 1px solid rgba(52, 190, 239, .36);
+  box-shadow: none;
+}
+
+/* Structural action: never use danger semantics for splitting/merging. */
+.ts-manual-editor .ts-split-phase-button {
+  color: #c7d7e1;
+  background: #0a1d2b;
+  border-color: #315166;
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-split-phase-button:hover:not(:disabled) {
+  color: #f2f8fb;
+  background: #102a3b;
+  border-color: #4a7188;
+}
+
+/* Delete remains the only destructive action in the phase header. */
+.ts-manual-editor .ts-remove-phase-button {
+  color: #ff9cab;
+  background: rgba(255, 101, 119, .07);
+  border-color: rgba(255, 101, 119, .42);
+}
+
+/* Secondary navigation should not compete with the selected step. */
+.ts-manual-editor .ts-step-footer button {
+  background: #0a1e2c;
+  border-color: #285069;
+  color: #d5e2e9;
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-step-footer button:hover:not(:disabled) {
+  background: #102b3d;
+  border-color: #3d6d88;
+}
+
+/* R20.2A-R3 — alignment + collision fix. Training only. */
+@media (min-width: 1181px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    align-items: start;
+  }
+
+  /* The global profile owns the top-right shell lane. Training actions start
+     below that lane instead of being allowed to slide underneath it. */
+  .ts-manual-editor .ts-editor-actions-wrap {
+    margin-top: 58px;
+  }
+}
+
+/* Aggregati belongs to the same control row as the three availability cards.
+   Keep its label, but float it above the control instead of consuming row height. */
+.ts-manual-editor .ts-aggregated-select {
+  position: relative;
+  align-self: start;
+  margin-top: 0;
+}
+
+.ts-manual-editor .ts-aggregated-select > span {
+  position: absolute;
+  left: 2px;
+  top: -25px;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-aggregated-select select {
+  min-height: 48px;
+}
+
+@media (max-width: 1180px) {
+  .ts-manual-editor .ts-editor-actions-wrap {
+    margin-top: 0;
+  }
+}
+
+/* ================================================================
+   R20.2A-R4 — TRAINING FINAL VISUAL CLOSEOUT
+   Scope locked: roster row, phase structural action, header utility menu.
+   ================================================================ */
+
+/* Header: destructive reset is an exceptional utility, never a primary peer. */
+.ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+  grid-template-columns: minmax(250px, 1fr) auto 48px;
+}
+
+.ts-manual-editor .ts-more-menu {
+  position: relative;
+  align-self: end;
+}
+
+.ts-manual-editor .ts-more-button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  min-width: 48px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+  letter-spacing: .12em;
+  color: #b7c8d3;
+}
+
+.ts-manual-editor .ts-more-button::-webkit-details-marker { display: none; }
+
+.ts-manual-editor .ts-more-menu-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  width: 170px;
+  padding: 6px;
+  border: 1px solid #29485c;
+  border-radius: 10px;
+  background: #081a27;
+  box-shadow: 0 16px 36px rgba(0,0,0,.32);
+}
+
+.ts-manual-editor .ts-menu-danger {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #ff9cab;
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 750;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ts-manual-editor .ts-menu-danger:hover { background: rgba(255,101,119,.08); }
+
+/* Roster: all four controls now occupy the same visual row and height. */
+.ts-manual-editor .ts-roster-grid--four {
+  align-items: stretch;
+}
+
+.ts-manual-editor .ts-aggregated-select {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  margin: 0;
+  padding: 0 12px 0 16px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 12px;
+  background: #071a28;
+}
+
+.ts-manual-editor .ts-aggregated-select > span {
+  position: static;
+  color: #dce7ed;
+  font-size: .86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-aggregated-select select {
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  padding-block: 0;
+  border: 0;
+  background: transparent;
+  color: #f2f7fa;
+  font-size: .82rem;
+  font-weight: 750;
+  text-align-last: right;
+  box-shadow: none;
+}
+
+/* Split and merge are one structural action: exact same typography and geometry. */
+.ts-manual-editor .ts-split-phase-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 126px;
+  min-width: 126px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 12px;
+  color: #c7d7e1;
+  background: #0a1d2b;
+  border: 1px solid #315166;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: .76rem;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+/* Remove the previous desktop collision workaround: compact utility menu fits the shell lane. */
+@media (min-width: 1181px) {
+  .ts-manual-editor .ts-editor-actions-wrap { margin-top: 0; }
+}
+
+
+/* ================================================================
+   R20.2A-R5 — STRUCTURAL APP SHELL + TRAINING ALIGNMENT CLOSEOUT
+   Permanent rule: global shell and page content never overlap.
+   ================================================================ */
+
+/* The shell owns a real row. No floating/absolute account lane. */
+.workspace {
+  position: relative;
+  min-width: 0;
+}
+
+.topbar {
+  position: relative;
+  inset: auto;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(126, 168, 194, .12);
+  background: #061522;
+  box-sizing: border-box;
+}
+
+.topbar-context {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: #8197a7;
+  font-size: .69rem;
+  font-weight: 750;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.topbar-context-product {
+  color: #d8e5ec;
+  font-weight: 850;
+  letter-spacing: .10em;
+}
+
+.topbar-context-separator {
+  color: #405b6d;
+}
+
+.topbar-context-season {
+  color: #8da2b2;
+}
+
+.topbar .profile-menu-wrapper {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.topbar .profile-menu-button {
+  min-height: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 3px 7px 3px 4px;
+}
+
+/* Page always starts below shell header. No collision compensation. */
+#viewRoot {
+  padding-top: 22px;
+}
+
+.page-head,
+.ts-manual-editor .ts-editor-titlebar {
+  padding-right: 0;
+}
+
+#viewRoot > .match-workspace .match-workspace-header {
+  margin-top: 0;
+}
+
+/* Training toolbar: all interactive controls share one physical height. */
+.ts-manual-editor .ts-editor-titlebar {
+  align-items: end;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap {
+  margin-top: 0;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+  grid-template-columns: minmax(280px, 1fr) 132px 48px;
+  align-items: end;
+  gap: 10px;
+}
+
+.ts-manual-editor .ts-open-sheet select,
+.ts-manual-editor .ts-open-button,
+.ts-manual-editor .ts-more-button {
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-open-button {
+  min-width: 132px;
+  padding: 0 16px;
+}
+
+.ts-manual-editor .ts-more-button {
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+}
+
+/* Roster row: Aggregati is visually the fourth selection card. */
+.ts-manual-editor .ts-roster-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.ts-manual-editor .ts-multiselect,
+.ts-manual-editor .ts-selection-card {
+  min-height: 64px;
+  height: 64px;
+  box-sizing: border-box;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 12px;
+  background: #071a28;
+}
+
+.ts-manual-editor .ts-multiselect > summary {
+  min-height: 62px;
+  height: 62px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 0 14px 0 16px;
+}
+
+.ts-manual-editor .ts-selection-card__label {
+  color: #e1eaf0;
+  font-size: .86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select select {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 28px 0 8px;
+  border: 0;
+  border-radius: 8px;
+  outline: 0;
+  background-color: transparent;
+  color: #9ed7ed;
+  font-size: .76rem;
+  font-weight: 800;
+  text-align-last: right;
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select:focus-within {
+  border-color: rgba(41, 183, 235, .65);
+  box-shadow: 0 0 0 3px rgba(36, 183, 243, .10);
+}
+
+/* Load metrics are related but clearly two separate concepts. */
+.ts-manual-editor .ts-load-grid {
+  grid-template-columns: minmax(280px, 1.15fr) minmax(260px, .9fr) minmax(260px, .9fr);
+  align-items: stretch;
+}
+
+.ts-manual-editor .ts-load-metric {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-height: 108px;
+  padding: 15px 16px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 13px;
+  background: #071a28;
+}
+
+.ts-manual-editor .ts-load-metric::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  border-radius: 999px;
+  opacity: .8;
+}
+
+.ts-manual-editor .ts-load-intensity::before {
+  background: #32c2f4;
+}
+
+.ts-manual-editor .ts-load-volume::before {
+  background: #527e9a;
+}
+
+.ts-manual-editor .ts-load-metric .ts-choice-label {
+  margin: 0;
+  color: #d5e1e8;
+  font-size: .70rem;
+  font-weight: 850;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.ts-manual-editor .ts-load-metric .ts-rating {
+  grid-template-columns: repeat(5, minmax(36px, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+
+.ts-manual-editor .ts-load-metric .ts-rating button {
+  width: auto;
+  min-width: 0;
+  height: 42px;
+}
+
+/* Desktop: title and actions live below the shell, never under profile. */
+@media (min-width: 1181px) {
+  .ts-manual-editor .ts-editor-actions-wrap {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 1320px) {
+  .topbar {
+    position: relative;
+    width: 100%;
+    min-height: 52px;
+    height: 52px;
+    padding: 0 20px;
+  }
+
+  #viewRoot {
+    padding-top: 18px;
+  }
+
+  .ts-manual-editor .ts-roster-grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-manual-editor .ts-load-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-manual-editor .ts-load-focus {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    min-height: 54px;
+    height: 54px;
+    padding: 0 13px;
+  }
+
+  .topbar-context-season,
+  .topbar-context-separator {
+    display: none;
+  }
+
+  #viewRoot {
+    padding-top: 14px;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    grid-template-columns: 1fr 48px;
+  }
+
+  .ts-manual-editor .ts-open-sheet {
+    grid-column: 1 / -1;
+  }
+
+  .ts-manual-editor .ts-open-button {
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-roster-grid--four,
+  .ts-manual-editor .ts-load-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-load-focus {
+    grid-column: auto;
+  }
+}
+
+
+/* ================================================================
+   R20.2A-R6 — FUNCTION FIRST + TRAINING DENSITY CLOSEOUT
+   Regression priority: visual polish must never constrain interactive content.
+   ================================================================ */
+
+/* Toolbar: compact utility block; Apri TS no longer consumes excessive width. */
+.ts-manual-editor .ts-editor-titlebar {
+  grid-template-columns: minmax(420px, 1fr) minmax(500px, 600px);
+  gap: 28px;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+  grid-template-columns: minmax(300px, 1fr) 96px 44px;
+  gap: 8px;
+}
+
+.ts-manual-editor .ts-open-sheet {
+  gap: 3px;
+}
+
+.ts-manual-editor .ts-open-sheet > span {
+  font-size: .62rem;
+  line-height: 1;
+}
+
+.ts-manual-editor .ts-open-sheet select,
+.ts-manual-editor .ts-open-button,
+.ts-manual-editor .ts-more-button {
+  height: 44px;
+  min-height: 44px;
+}
+
+.ts-manual-editor .ts-open-button {
+  min-width: 96px;
+  width: 96px;
+  padding: 0 10px;
+}
+
+.ts-manual-editor .ts-more-button {
+  width: 44px;
+  min-width: 44px;
+}
+
+/* FUNCTIONAL REGRESSION FIX:
+   closed selection cards share a 64px minimum, but DETAILS must be free
+   to grow when opened. Never assign a fixed height to interactive disclosure. */
+.ts-manual-editor .ts-multiselect {
+  height: auto;
+  min-height: 64px;
+  overflow: visible;
+}
+
+.ts-manual-editor .ts-multiselect > summary {
+  height: 62px;
+  min-height: 62px;
+}
+
+.ts-manual-editor .ts-multiselect[open] {
+  height: auto;
+  overflow: visible;
+  position: relative;
+  z-index: 12;
+}
+
+.ts-manual-editor .ts-multiselect[open] > .ts-player-search,
+.ts-manual-editor .ts-multiselect[open] > .ts-player-options {
+  position: relative;
+  z-index: 1;
+}
+
+/* Aggregati remains a fixed-height fourth card because it has no disclosure panel. */
+.ts-manual-editor .ts-selection-card {
+  height: 64px;
+  min-height: 64px;
+}
+
+/* Preview toolbar belongs to the preview itself: same available width as the sheet frame. */
+.ts-manual-editor .ts-preview-toolbar {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  min-height: 54px;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-preview-toolbar > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ts-manual-editor .ts-preview-toolbar > div > span {
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-preview-toolbar > div > strong {
+  color: #d8e6ed;
+  font-size: .82rem;
+}
+
+/* Keep load concepts visually separated without adding new functionality. */
+.ts-manual-editor .ts-load-metric {
+  min-height: 112px;
+}
+
+@media (max-width: 1320px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    grid-template-columns: 1fr 44px;
+  }
+
+  .ts-manual-editor .ts-open-button {
+    width: auto;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-preview-toolbar > div {
+    display: grid;
+    gap: 2px;
+  }
+}
+
+
+/* ================================================================
+   R20.2A-R7 — AGGREGATI COUNT + PREFIX SEARCH + PREVIEW BOUNDS
+   Scope locked to the three user-validated Training tickets.
+   ================================================================ */
+
+/* Aggregati = provenance + real quantity, without changing the four-card row. */
+.ts-manual-editor .ts-selection-card.ts-aggregated-select {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.ts-manual-editor .ts-aggregated-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select select {
+  min-width: 0;
+  padding-right: 24px;
+  text-align-last: left;
+}
+
+.ts-manual-editor .ts-aggregated-count {
+  display: grid;
+  grid-template-columns: auto 38px;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-aggregated-count > span {
+  color: #8198a8;
+  font-size: .58rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.ts-manual-editor .ts-aggregated-count input {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 4px;
+  border: 1px solid #29495d;
+  border-radius: 8px;
+  background: #061724;
+  color: #eef7fb;
+  font-size: .76rem;
+  font-weight: 850;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Preview toolbar and paper frame share one exact stage boundary. */
+.ts-manual-editor .ts-preview-stage {
+  width: min(100%, 770px);
+  margin: 0 auto;
+}
+
+.ts-manual-editor .ts-preview-stage .ts-preview-toolbar,
+.ts-manual-editor .ts-preview-stage .ts-paper-frame {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-preview-stage .ts-preview-toolbar {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-preview-stage {
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-aggregated-controls {
+    grid-template-columns: minmax(0, 1fr) 64px;
+  }
+}
+
+
+/* ================================================================
+   R20.2A-R8 — TRAINING ALIGNMENT + PERSISTENT AGGREGATI MENU
+   Scope locked: Aggregati, preview alignment, shell baseline, titlebar baseline.
+   ================================================================ */
+
+/* Global shell: team/season and account share the same visual baseline. */
+.topbar {
+  align-items: center;
+}
+
+.topbar-context,
+.topbar .profile-menu-wrapper,
+.topbar .profile-menu-button {
+  align-self: center;
+}
+
+.topbar-context {
+  min-height: 40px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.topbar-context-product,
+.topbar-context-season,
+.topbar-context-separator {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  line-height: 1;
+}
+
+.topbar-context-product {
+  color: #e6eef3;
+  font-size: .76rem;
+  font-weight: 820;
+  letter-spacing: 0;
+}
+
+.topbar-context-season {
+  font-size: .72rem;
+}
+
+.topbar .profile-menu-button {
+  align-items: center;
+}
+
+/* Page header: utility label can never sit above the page title. */
+.ts-manual-editor .ts-editor-titlebar {
+  align-items: start;
+}
+
+.ts-manual-editor .ts-editor-titlebar > div:first-child {
+  align-self: start;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap {
+  align-self: start;
+  padding-top: 5px;
+}
+
+.ts-manual-editor .ts-open-sheet > span {
+  display: flex;
+  align-items: center;
+  min-height: 12px;
+  margin: 0 0 3px;
+  line-height: 1;
+}
+
+/* Aggregati: persistent disclosure. Selection stays visible and quantity expands below. */
+.ts-manual-editor .ts-selection-card.ts-aggregated-select {
+  height: auto;
+  min-height: 64px;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: start;
+  padding: 10px 12px 10px 16px;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select > .ts-selection-card__label {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+}
+
+.ts-manual-editor .ts-aggregated-menu {
+  width: 100%;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-aggregated-menu > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #29495d;
+  border-radius: 10px;
+  color: #eef7fb;
+  background: #061724;
+  box-sizing: border-box;
+  cursor: pointer;
+  list-style: none;
+  font-size: .78rem;
+  font-weight: 820;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ts-manual-editor .ts-aggregated-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ts-manual-editor .ts-aggregated-menu > summary::after {
+  content: "⌄";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  color: #a9bbc7;
+  font-size: .9rem;
+  transform: translateY(-55%);
+}
+
+.ts-manual-editor .ts-aggregated-menu[open] > summary {
+  border-color: rgba(41, 183, 235, .72);
+  box-shadow: 0 0 0 3px rgba(36, 183, 243, .08);
+}
+
+.ts-manual-editor .ts-aggregated-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid #24465b;
+  border-radius: 10px;
+  background: #061724;
+}
+
+.ts-manual-editor .ts-aggregated-options {
+  display: grid;
+  gap: 6px;
+}
+
+.ts-manual-editor .ts-aggregated-options button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #c8d7e0;
+  background: #0a2030;
+  font: inherit;
+  font-size: .74rem;
+  font-weight: 760;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ts-manual-editor .ts-aggregated-options button:hover {
+  border-color: #315a71;
+  color: #f6fbfd;
+}
+
+.ts-manual-editor .ts-aggregated-options button.is-selected {
+  border-color: #28b6eb;
+  color: #f8fdff;
+  background: #0d405c;
+}
+
+.ts-manual-editor .ts-aggregated-count {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 10px;
+  padding-top: 9px;
+  border-top: 1px solid #1e3c4f;
+}
+
+.ts-manual-editor .ts-aggregated-count > span {
+  color: #aabac5;
+  font-size: .69rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  text-transform: none;
+}
+
+.ts-manual-editor .ts-aggregated-count input {
+  width: 64px;
+  min-width: 64px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 7px;
+  border: 1px solid #31536a;
+  border-radius: 8px;
+  color: #fff;
+  background: #071b29;
+  font-size: .82rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+/* Preview: controls align to the actual white sheet, not to the dark frame. */
+.ts-manual-editor .ts-preview-stage .ts-preview-toolbar {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+@media (max-width: 760px) {
+  .topbar-context {
+    min-height: 40px;
+    height: 40px;
+    line-height: 40px;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap {
+    padding-top: 0;
+  }
+
+  .ts-manual-editor .ts-selection-card.ts-aggregated-select {
+    grid-template-columns: 82px minmax(0, 1fr);
+  }
+
+  .ts-manual-editor .ts-preview-stage .ts-preview-toolbar {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+
+/* ================================================================
+   R20.2A-R9 — COMPACT HEADER + REAL FILTER + DUAL AGGREGATI COUNTS
+   Scope locked to the four user-validated issues.
+   ================================================================ */
+
+/* Search filtering must win over legacy display:flex declarations. */
+.ts-manual-editor .ts-player-option.is-filtered-out,
+.ts-manual-editor .ts-roster-department.is-filtered-out {
+  display: none;
+}
+
+/* Only one disclosure at a time: keeps the roster section readable. */
+.ts-manual-editor .ts-roster-grid--four {
+  align-items: start;
+}
+
+/* Aggregati: compact disclosure with two explicit independent quantities. */
+.ts-manual-editor .ts-selection-card.ts-aggregated-select {
+  grid-template-columns: 84px minmax(0, 1fr);
+  padding: 10px 10px 10px 14px;
+}
+
+.ts-manual-editor .ts-selection-card.ts-aggregated-select > .ts-selection-card__label {
+  min-height: 40px;
+  font-size: .78rem;
+}
+
+.ts-manual-editor .ts-aggregated-menu > summary {
+  height: 40px;
+  min-height: 40px;
+  padding: 0 30px 0 10px;
+  font-size: .72rem;
+}
+
+.ts-manual-editor .ts-aggregated-panel {
+  gap: 8px;
+  margin-top: 7px;
+  padding: 8px;
+}
+
+.ts-manual-editor .ts-aggregated-source-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 6px 7px 6px 10px;
+  border: 1px solid #223f52;
+  border-radius: 8px;
+  background: #091f2e;
+}
+
+.ts-manual-editor .ts-aggregated-source-row > span {
+  min-width: 0;
+  color: #d7e3e9;
+  font-size: .70rem;
+  font-weight: 780;
+  line-height: 1.15;
+  white-space: normal;
+}
+
+.ts-manual-editor .ts-aggregated-source-row input {
+  width: 52px;
+  min-width: 52px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 4px;
+  border: 1px solid #31536a;
+  border-radius: 7px;
+  color: #fff;
+  background: #061724;
+  font-size: .78rem;
+  font-weight: 850;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Header shell: sidebar identity row and workspace topbar share the same 64px baseline. */
+.sidebar {
+  padding-top: 0;
+}
+
+.sidebar-brand {
+  height: 64px;
+  min-height: 64px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.topbar {
+  height: 64px;
+  min-height: 64px;
+  padding-top: 0;
+  padding-bottom: 0;
+  align-items: center;
+}
+
+.topbar-context,
+.topbar .profile-menu-wrapper,
+.topbar .profile-menu-button {
+  align-self: center;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.topbar-context {
+  height: 40px;
+  min-height: 40px;
+  line-height: 1;
+}
+
+/* Training utility block: compact, no oversized empty select. */
+.ts-manual-editor .ts-editor-titlebar {
+  grid-template-columns: minmax(420px, 1fr) 450px;
+  gap: 24px;
+  align-items: start;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap {
+  width: 450px;
+  max-width: 450px;
+  justify-self: end;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+  grid-template-columns: minmax(0, 1fr) 88px 44px;
+  gap: 8px;
+}
+
+.ts-manual-editor .ts-open-sheet > span {
+  min-height: 10px;
+  margin-bottom: 2px;
+  font-size: .58rem;
+}
+
+.ts-manual-editor .ts-open-sheet select,
+.ts-manual-editor .ts-open-button,
+.ts-manual-editor .ts-more-button {
+  height: 42px;
+  min-height: 42px;
+}
+
+.ts-manual-editor .ts-open-button {
+  width: 88px;
+  min-width: 88px;
+  padding: 0 8px;
+}
+
+.ts-manual-editor .ts-more-button {
+  width: 44px;
+  min-width: 44px;
+}
+
+/* Draft status stays under the compact utility area and cannot widen it. */
+.ts-manual-editor .ts-draft-state--compact {
+  max-width: 100%;
+  justify-self: end;
+}
+
+/* Preview legacy labels can wrap independently inside their own cell. */
+.ts-manual-editor .ts-paper-roster .agg p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 5px;
+}
+
+@media (max-width: 1260px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap {
+    width: min(100%, 450px);
+    max-width: 450px;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar-brand {
+    height: auto;
+    min-height: 0;
+  }
+
+  .topbar {
+    height: 54px;
+    min-height: 54px;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ts-manual-editor .ts-selection-card.ts-aggregated-select {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+}

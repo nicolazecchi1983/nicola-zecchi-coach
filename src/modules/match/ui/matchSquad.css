@@ -1,0 +1,429 @@
+/* A.14.3-R2 — Match Sheet / Squadra: Master UI approvata */
+.match-squad-step .formation-toolbar--single-row {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) minmax(360px, 2fr) auto auto;
+  align-items: end;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid #1c435b;
+  border-radius: 18px;
+  background: #071b29;
+}
+
+.match-squad-step .formation-toolbar--single-row > * {
+  min-width: 0;
+  margin: 0;
+}
+
+.match-squad-step .formation-system-control,
+.match-squad-step .formation-custom-control {
+  display: grid;
+  gap: 7px;
+}
+
+.match-squad-step .formation-system-control > span,
+.match-squad-step .formation-custom-control > span,
+.match-squad-step .toolbar-control-label {
+  color: #b8d8ea;
+  font-size: .76rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.match-squad-step .token-display-options {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 0 16px;
+  border: 1px solid #24506a;
+  border-radius: 13px;
+  white-space: nowrap;
+}
+
+.match-squad-step .token-display-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.match-squad-step .leadership-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+}
+
+.match-squad-step .leadership-badge {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #2c6786;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: #0a2c43;
+  color: #e8f7ff;
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 950;
+  cursor: grab;
+  user-select: none;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.match-squad-step .leadership-badge--captain {
+  background: #4b3b0d;
+  border-color: #9b7b20;
+  color: #ffe99a;
+}
+
+.match-squad-step .leadership-badge--vice {
+  background: #12364a;
+  border-color: #2b7699;
+  color: #aeeaff;
+}
+
+.match-squad-step .leadership-badge:hover,
+.match-squad-step .leadership-badge:focus-visible,
+.match-squad-step .leadership-badge.is-armed {
+  border-color: #36caff;
+  box-shadow: 0 0 0 3px rgba(54, 202, 255, .16);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.match-squad-step .leadership-badge.is-dragging {
+  opacity: .55;
+  cursor: grabbing;
+}
+
+.match-squad-step .formation-reset-button {
+  height: 48px;
+  white-space: nowrap;
+}
+
+/* Master layout: campo dominante a sinistra; titolari + panchina nella colonna destra. */
+.match-squad-step .match-lineup-layout--master {
+  display: grid;
+  grid-template-columns: minmax(560px, 1.08fr) minmax(500px, .92fr);
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  max-width: 1360px;
+  margin: 16px auto 0;
+}
+
+.match-squad-step .pitch-panel {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  padding: 12px;
+  border: 1px solid #1c435b;
+  border-radius: 16px;
+  background: #071b29;
+}
+
+.match-squad-step .pitch-panel .football-pitch {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 68 / 105;
+  margin: 0;
+  align-self: stretch;
+}
+
+.match-squad-step .squad-side-column {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.match-squad-step .lineup-list--selection {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head {
+  min-height: 42px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid #1c435b;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head h3 {
+  margin: 0;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head small {
+  max-width: 220px;
+  color: #8fb3cc;
+  font-size: .68rem;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.match-squad-step .lineup-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: #35caff;
+  font-size: .65rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.match-squad-step .lineup-selection-list {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(11, minmax(42px, 1fr));
+  gap: 5px;
+}
+
+.match-squad-step .lineup-list--selection .lineup-row {
+  display: grid;
+  grid-template-columns: 30px 54px minmax(0, 1fr) !important;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  margin: 0;
+}
+
+.match-squad-step .lineup-list--selection .lineup-row input,
+.match-squad-step .lineup-list--selection .lineup-row select {
+  width: 100%;
+  height: 100%;
+  min-height: 42px;
+  padding: 7px 9px;
+}
+
+.match-squad-step .lineup-index {
+  color: #38bfff;
+  font-size: .72rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.match-squad-step .bench-block--automatic {
+  min-width: 0;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #1c435b;
+  border-radius: 16px;
+  background: #071b29;
+}
+
+.match-squad-step .bench-block-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.match-squad-step .bench-block-head h3 {
+  margin: 2px 0 0;
+}
+
+.match-squad-step .bench-help {
+  margin: 7px 0 12px;
+  color: #8fb3cc;
+  font-size: .8rem;
+}
+
+.match-squad-step .bench-count {
+  border: 1px solid #2f6d8e;
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: #b8d8ea;
+  font-size: .8rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.match-squad-step .bench-count.is-over-limit {
+  border-color: #e65c68;
+  background: #511923;
+  color: #ffd6da;
+}
+
+.match-squad-step .bench-count.is-complete {
+  border-color: #36c58b;
+  background: #123d32;
+  color: #bff9df;
+}
+
+.match-squad-step .bench-grid--automatic {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.match-squad-step .bench-row--automatic {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid #1c435b;
+  border-radius: 10px;
+  background: #061824;
+}
+
+.match-squad-step .bench-row--automatic > input {
+  display: none;
+}
+
+.match-squad-step .bench-index {
+  color: #8fb3cc;
+  font-size: .7rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.match-squad-step .bench-player-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.match-squad-step .bench-player-copy strong,
+.match-squad-step .bench-player-copy span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-squad-step .bench-player-copy span {
+  color: #8fb3cc;
+  font-size: .68rem;
+}
+
+.match-squad-step .bench-remove-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #6d3340;
+  border-radius: 8px;
+  background: #35141d;
+  color: #ff9ca7;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.match-squad-step .bench-remove-button:hover,
+.match-squad-step .bench-remove-button:focus-visible {
+  background: #5a1b28;
+  color: #fff;
+  outline: none;
+}
+
+.match-squad-step .bench-limit-message {
+  margin: 12px 0 0;
+  color: #ff9ca7;
+  font-weight: 800;
+}
+
+.match-squad-step .player-token.is-vice-captain .token-photo {
+  box-shadow: 0 0 0 3px #73d7ff, 0 5px 18px #0009;
+}
+
+.match-squad-step .player-token.is-vice-captain::before {
+  content: 'VC';
+  position: absolute;
+  left: -8px;
+  top: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 19px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: #79ddff;
+  color: #061a2b;
+  font-size: .58rem;
+  font-weight: 950;
+  z-index: 4;
+}
+
+.match-squad-step .player-token.is-leadership-target {
+  filter: drop-shadow(0 0 10px rgba(55, 202, 255, .95));
+  transform: translate(-50%, -50%) scale(1.08) !important;
+}
+
+@media (max-width: 1260px) {
+  .match-squad-step .formation-toolbar--single-row {
+    grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(320px, 1.7fr) auto;
+  }
+
+  .match-squad-step .formation-reset-button {
+    grid-column: 1 / -1;
+    justify-self: end;
+  }
+
+  .match-squad-step .match-lineup-layout--master {
+    grid-template-columns: minmax(500px, 1.05fr) minmax(440px, .95fr);
+  }
+}
+
+@media (max-width: 980px) {
+  .match-squad-step .formation-toolbar--single-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .match-squad-step .formation-reset-button {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .match-squad-step .match-lineup-layout--master {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+  }
+
+  .match-squad-step .pitch-panel .football-pitch {
+    width: min(100%, 620px);
+    justify-self: center;
+    margin: 0 auto;
+  }
+
+  .match-squad-step .squad-side-column {
+    grid-template-rows: auto auto;
+  }
+
+  .match-squad-step .lineup-selection-list {
+    grid-template-rows: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .match-squad-step .formation-toolbar--single-row {
+    grid-template-columns: 1fr;
+  }
+
+  .match-squad-step .token-display-options {
+    min-height: 48px;
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-list-head small {
+    max-width: none;
+    text-align: left;
+  }
+
+  .match-squad-step .bench-grid--automatic {
+    grid-template-columns: 1fr;
+  }
+}

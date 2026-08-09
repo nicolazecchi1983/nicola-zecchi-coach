@@ -4,6 +4,7 @@ import {
   buildTrainingSheetFileName,
   buildTrainingSheetStoragePath,
   normalizeTrainingSheetData,
+  publishTrainingSheetData,
   validateTrainingSheetForPublish,
 } from './trainingSheetModel.js'
 import { generateTrainingSheetPdf } from './trainingSheetPdf.js'
@@ -16,15 +17,17 @@ export async function publishTrainingSheet({
   team,
   squadTotal,
   existingEvent,
+  duplicateEvents = [],
   confirmPreview,
   createEvent,
   updateEvent,
+  deleteEvent,
 }) {
   requireTrainingSheetPublishPermission()
-  const data = normalizeTrainingSheetData(rawData)
-  validateTrainingSheetForPublish(data)
+  const draftData = normalizeTrainingSheetData(rawData)
+  validateTrainingSheetForPublish(draftData)
 
-  const fileName = buildTrainingSheetFileName(data)
+  const fileName = buildTrainingSheetFileName(draftData)
   let generated
   try {
     generated = await generateTrainingSheetPdf(previewElement)
@@ -42,17 +45,23 @@ export async function publishTrainingSheet({
 
   const filePath = buildTrainingSheetStoragePath({
     teamId: team?.id,
+    teamName: team?.shortName || team?.name,
     season: team?.season,
-    date: data.date,
+    date: draftData.date,
     fileName,
   })
   await uploadTrainingSheetPdf(filePath, blob)
 
+  const data = publishTrainingSheetData(draftData)
   const payload = buildTrainingSheetEventPayload({ data, filePath, squadTotal })
   let savedEvent
   try {
+    const pendingDeletionEventIds = duplicateEvents
+      .map((event) => event?.id)
+      .filter(Boolean)
+
     savedEvent = existingEvent
-      ? await updateEvent(existingEvent.id, payload)
+      ? await updateEvent(existingEvent.id, payload, { pendingDeletionEventIds })
       : await createEvent(payload)
   } catch (error) {
     await removeTrainingSheetPdf(filePath)
@@ -69,12 +78,55 @@ export async function publishTrainingSheet({
     await removeTrainingSheetPdf(previousPath)
   }
 
-  pdf.save(fileName)
+  const warnings = []
+
+  if (duplicateEvents.length) {
+    if (typeof deleteEvent !== 'function') {
+      warnings.push({
+        code: 'TRAINING_DUPLICATE_CLEANUP_UNAVAILABLE',
+        message: 'La Training Sheet è pubblicata, ma STAFF non ha potuto consolidare un vecchio evento duplicato.',
+      })
+    } else {
+      for (const duplicateEvent of duplicateEvents) {
+        if (!duplicateEvent?.id || String(duplicateEvent.id) === String(existingEvent?.id || savedEvent?.id || '')) continue
+
+        try {
+          await deleteEvent(duplicateEvent.id)
+          const duplicatePath = duplicateEvent.trainingSheetPath || duplicateEvent.training_sheet_path || null
+          if (duplicatePath && duplicatePath !== filePath) {
+            await removeTrainingSheetPdf(duplicatePath)
+          }
+        } catch (error) {
+          console.error('Consolidamento evento Training duplicato non riuscito:', error)
+          warnings.push({
+            code: 'TRAINING_DUPLICATE_CLEANUP_FAILED',
+            eventId: duplicateEvent.id,
+            message: `Training Sheet pubblicata; impossibile consolidare l'evento duplicato ${duplicateEvent.id}.`,
+          })
+        }
+      }
+    }
+  }
+
+  // Il download locale è un output secondario: un eventuale blocco del browser
+  // non deve trasformare in fallita una pubblicazione già completata su storage+calendario.
+  try {
+    pdf.save(fileName)
+  } catch (error) {
+    console.error('Download locale Training Sheet non riuscito:', error)
+    warnings.push({
+      code: 'TRAINING_LOCAL_DOWNLOAD_FAILED',
+      message: 'Training Sheet pubblicata; download locale non riuscito.',
+    })
+  }
+
   return {
     cancelled: false,
     data,
     fileName,
     filePath,
     event: savedEvent || existingEvent || null,
+    warnings,
   }
 }
+

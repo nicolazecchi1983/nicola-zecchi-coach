@@ -1,8 +1,8 @@
 import { collectMatchFormData, getMatchDraftPayload } from './matchModel.js'
 import { createMatchDraftRepository } from './matchDraftRepository.js'
 
-export function createMatchDraftService({ storage = window.localStorage } = {}) {
-  const repository = createMatchDraftRepository(storage)
+export function createMatchDraftService({ storage = window.localStorage, storageKey } = {}) {
+  const repository = createMatchDraftRepository(storage, storageKey)
   return {
     collect(form) {
       return collectMatchFormData(form)

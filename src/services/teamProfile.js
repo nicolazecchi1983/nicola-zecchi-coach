@@ -3,14 +3,15 @@ import { supabase } from '../supabase.js'
 export const DEFAULT_TEAM_PROFILE = Object.freeze({
   id: null,
   ownerId: null,
-  name: 'Mezzolara Calcio',
-  shortName: 'Mezzolara',
+  name: 'La tua squadra',
+  shortName: 'Squadra',
   season: '2026/27',
-  category: 'Serie D',
+  category: '',
   logo: '',
   primaryColor: '#07194f',
   secondaryColor: '#1f93e5',
   kitPattern: 'solid',
+  rosterInitialized: true,
 })
 
 const LOCAL_KEY_PREFIX = 'nz-team-profile-v3'
@@ -34,6 +35,7 @@ function normalize(row = {}) {
     primaryColor: row.primaryColor ?? row.primary_color ?? DEFAULT_TEAM_PROFILE.primaryColor,
     secondaryColor: row.secondaryColor ?? row.secondary_color ?? DEFAULT_TEAM_PROFILE.secondaryColor,
     kitPattern: row.kitPattern ?? row.kit_pattern ?? DEFAULT_TEAM_PROFILE.kitPattern,
+    rosterInitialized: row.rosterInitialized ?? row.roster_initialized ?? DEFAULT_TEAM_PROFILE.rosterInitialized,
   }
 }
 
@@ -118,19 +120,27 @@ async function uploadLogo(teamId, file) {
   if (file.size > 2 * 1024 * 1024) throw new Error('Il logo supera il limite di 2 MB.')
   if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) throw new Error('Formato logo non supportato.')
   const extension = file.name.split('.').pop()?.toLowerCase() || 'png'
-  const path = `${teamId}/logo.${extension}`
-  const { error } = await supabase.storage.from('team-assets').upload(path, file, { upsert: true, cacheControl: '3600' })
+  // Non sovrascrivere l'asset attualmente referenziato dal profilo:
+  // se il successivo UPDATE del team fallisce, il vecchio logo deve restare valido.
+  const path = `${teamId}/logos/${Date.now()}-${crypto.randomUUID()}.${extension}`
+  const { error } = await supabase.storage.from('team-assets').upload(path, file, { upsert: false, cacheControl: '3600' })
   if (error) throw error
   const { data } = supabase.storage.from('team-assets').getPublicUrl(path)
-  return `${data.publicUrl}?v=${Date.now()}`
+  return data.publicUrl
 }
 
 export async function saveTeamProfile(profile, { user, logoFile, removeLogo = false } = {}) {
   activeUserId = user?.id || activeUserId
-  const next = normalize({ ...getTeamProfile(), ...profile })
-  writeLocal(next, activeUserId)
-  cachedProfile = next
-  if (!supabase || !user?.id) return getTeamProfile()
+  const previous = getTeamProfile()
+  const next = normalize({ ...previous, ...profile })
+
+  // Modalità locale esplicita: senza backend/sessione non esiste una conferma remota
+  // da attendere, quindi il profilo resta salvabile nella cache locale.
+  if (!supabase || !user?.id) {
+    cachedProfile = next
+    writeLocal(cachedProfile, activeUserId)
+    return getTeamProfile()
+  }
 
   const teamId = await ensureTeam(user, next)
   let logoUrl = removeLogo ? null : next.logo || null
@@ -147,8 +157,17 @@ export async function saveTeamProfile(profile, { user, logoFile, removeLogo = fa
     kit_pattern: next.kitPattern,
     updated_at: new Date().toISOString(),
   }
-  const { data, error } = await supabase.from('teams').update(payload).eq('id', teamId).select('*').single()
+
+  const { data, error } = await supabase
+    .from('teams')
+    .update(payload)
+    .eq('id', teamId)
+    .select('*')
+    .single()
+
   if (error) throw error
+
+  // Solo la risposta confermata da Supabase diventa lo stato canonico locale.
   cachedProfile = normalize(data)
   writeLocal(cachedProfile, activeUserId)
   return getTeamProfile()

@@ -1,3 +1,9 @@
+import {
+  getMatchWorkflowPhase,
+  getMatchWorkflowPhaseLabel,
+  getMatchWorkflowSections,
+} from '../matchWorkflowModel.js'
+
 function safeDateLabel(value) {
   if (!value) return 'Data da definire'
   try {
@@ -22,7 +28,7 @@ export function createMatchWorkspaceView({
 
     if (!active?.id) {
       return `<section class="content-section match-workspace match-workspace--empty">
-        <div class="empty-state"><h1>Nessuna partita selezionata</h1><p>Apri una gara dalla Match Library per entrare nel workspace.</p><button type="button" class="button button--primary" data-workspace-action="match-library">Apri Match Library</button></div>
+        <div class="empty-state"><h1>Nessuna partita selezionata</h1><p>Apri o crea una gara dalla Match Library.</p><button type="button" class="button button--primary" data-workspace-action="match-library">Apri Match Library</button></div>
       </section>`
     }
 
@@ -40,14 +46,8 @@ export function createMatchWorkspaceView({
       : homeAway === 'away'
         ? `${match.goalsAgainst} – ${match.goalsFor}`
         : `${match.goalsFor} – ${match.goalsAgainst}`
-
-    const sections = [
-      ['callups', 'Convocazioni', 'Seleziona i giocatori disponibili per questa gara.', 'Prepara convocazioni'],
-      ['match-sheet', 'Match Sheet', 'Formazione, panchina, eventi e dati strutturati della gara.', 'Apri Match Sheet'],
-      ['analysis', 'Analisi gara', 'Valutazioni qualitative e lettura tecnica della prestazione.', 'Apri Analisi'],
-      ['attachments', 'Allegati', 'Distinte, immagini, documenti e materiali collegati.', 'In preparazione'],
-      ['statistics', 'Statistiche', 'Dati aggregati generati da Match Sheet e Analisi.', 'In preparazione'],
-    ]
+    const phase = getMatchWorkflowPhase(match)
+    const sections = getMatchWorkflowSections()
 
     return `<section class="content-section match-workspace" data-match-workspace data-match-id="${escapeHtml(String(match.id))}">
       <header class="match-workspace-header">
@@ -58,25 +58,20 @@ export function createMatchWorkspaceView({
             <h1>${escapeHtml(homeTeam)} <b>${escapeHtml(score)}</b> ${escapeHtml(awayTeam)}</h1>
             <p>${escapeHtml(safeDateLabel(match.date || active.date))}${match.time ? ` · ${escapeHtml(match.time)}` : ''} · ${escapeHtml(match.venue || 'Impianto da definire')}</p>
           </div>
-          <span class="match-workspace-id">MATCH ID · ${escapeHtml(String(match.id))}</span>
+          <div class="match-workspace-meta"><button type="button" class="button button--secondary" data-workspace-action="statistics">Apri statistiche</button><span class="match-workspace-phase" data-match-phase="${escapeHtml(phase)}">${escapeHtml(getMatchWorkflowPhaseLabel(phase))}</span><span class="match-workspace-id">MATCH ID · ${escapeHtml(String(match.id))}</span></div>
         </div>
       </header>
 
-      <nav class="match-workspace-tabs" aria-label="Workspace partita">
-        ${sections.map(([key, label]) => `<button type="button" data-workspace-action="${key}">${escapeHtml(label)}</button>`).join('')}
+      <nav class="match-workspace-tabs" aria-label="Workflow partita">
+        ${sections.map((section, index) => `<button type="button" data-workspace-action="${escapeHtml(section.key)}"><b>${String(index + 1).padStart(2, '0')}</b><span>${escapeHtml(section.label)}</span></button>`).join('')}
       </nav>
 
       <div class="match-workspace-grid">
-        ${sections.map(([key, label, description, action]) => `<article class="match-workspace-card ${key === 'attachments' || key === 'statistics' ? 'is-disabled' : ''}">
-          <div><span>${escapeHtml(label)}</span><h2>${escapeHtml(label)}</h2><p>${escapeHtml(description)}</p></div>
-          <button type="button" class="button ${key === 'attachments' || key === 'statistics' ? '' : 'button--primary'}" data-workspace-action="${key}" ${key === 'attachments' || key === 'statistics' ? 'disabled' : ''}>${escapeHtml(action)}</button>
+        ${sections.map((section, index) => `<article class="match-workspace-card">
+          <div><span>${String(index + 1).padStart(2, '0')}</span><h2>${escapeHtml(section.label)}</h2><p>${escapeHtml(section.description)}</p></div>
+          <button type="button" class="button button--primary" data-workspace-action="${escapeHtml(section.key)}">${escapeHtml(section.actionLabel)}</button>
         </article>`).join('')}
       </div>
-
-      <aside class="match-workspace-report-note">
-        <strong>Match Report</strong>
-        <span>Verrà generato dai dati del Match Sheet e dell’Analisi gara, senza nuova compilazione.</span>
-      </aside>
     </section>`
   }
 }

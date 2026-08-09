@@ -1,6 +1,9 @@
+import { inspectMatchDocument } from './matchModel.js'
+
 export function validateMatchCore(data = {}) {
-  const errors = []
-  if (!String(data.date || '').trim()) errors.push('La data della gara è obbligatoria.')
-  if (!String(data.opponent || '').trim() || data.opponent === 'Da definire') errors.push('Definisci la squadra avversaria.')
-  return { valid: errors.length === 0, errors }
+  const result = inspectMatchDocument(data)
+  return {
+    valid: result.valid,
+    errors: result.errors.map((issue) => issue.message),
+  }
 }
