@@ -1432,6 +1432,29 @@ export async function attachAppEvents(user) {
   const profileDropdown =
     document.querySelector('#profileDropdown')
 
+  const mobileMoreToggle = document.querySelector('[data-mobile-more-toggle]')
+  const mobileMoreSheet = document.querySelector('[data-mobile-more-sheet]')
+  const mobileMoreClose = document.querySelector('[data-mobile-more-close]')
+
+  const closeMobileMore = () => {
+    if (!mobileMoreSheet || !mobileMoreToggle) return
+    mobileMoreSheet.classList.remove('is-open')
+    mobileMoreSheet.setAttribute('aria-hidden', 'true')
+    mobileMoreToggle.setAttribute('aria-expanded', 'false')
+  }
+
+  const openMobileMore = () => {
+    if (!mobileMoreSheet || !mobileMoreToggle) return
+    mobileMoreSheet.classList.add('is-open')
+    mobileMoreSheet.setAttribute('aria-hidden', 'false')
+    mobileMoreToggle.setAttribute('aria-expanded', 'true')
+  }
+
+  const toggleMobileMore = () => {
+    if (!mobileMoreSheet?.classList.contains('is-open')) openMobileMore()
+    else closeMobileMore()
+  }
+
   function setActiveNavigation(sectionKey) {
     document
       .querySelectorAll('.nav-item')
@@ -1445,6 +1468,10 @@ export async function attachAppEvents(user) {
           toggle?.setAttribute('aria-expanded', 'true')
         }
       })
+
+    const mobileMoreHasActiveSection = [...document.querySelectorAll('.mobile-more-item')]
+      .some((item) => item.dataset.section === sectionKey)
+    mobileMoreToggle?.classList.toggle('is-active', mobileMoreHasActiveSection)
   }
 
   const moduleViews = {
@@ -5099,6 +5126,7 @@ export async function attachAppEvents(user) {
           setActiveNavigation(openedSection)
           localStorage.setItem('nz-active-section', openedSection)
           closeProfileMenu()
+          closeMobileMore()
         } catch (error) {
           console.error(`Errore apertura sezione ${sectionKey}:`, error)
           if (previousSection) setActiveNavigation(previousSection)
@@ -5134,6 +5162,22 @@ export async function attachAppEvents(user) {
     toggleProfileMenu()
   }
 
+  mobileMoreToggle?.addEventListener('click', (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    closeProfileMenu()
+    toggleMobileMore()
+  })
+
+  mobileMoreClose?.addEventListener('click', (event) => {
+    event.preventDefault()
+    closeMobileMore()
+  })
+
+  mobileMoreSheet?.addEventListener('click', (event) => {
+    event.stopPropagation()
+  })
+
   profileMenuButton?.addEventListener(
     'pointerdown',
     handleProfileMenuPointerDown,
@@ -5142,6 +5186,12 @@ export async function attachAppEvents(user) {
 
   profileDropdown?.addEventListener('click', (event) => {
     event.stopPropagation()
+  })
+
+  document.addEventListener('click', (event) => {
+    if (!mobileMoreSheet?.classList.contains('is-open')) return
+    if (event.target.closest?.('.mobile-navigation')) return
+    closeMobileMore()
   })
 
 

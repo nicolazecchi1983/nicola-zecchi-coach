@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.18.37",
+  "version": "0.18.39",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check:syntax": "node scripts/check-syntax.mjs",
     "check:architecture": "node scripts/validate-architecture.mjs",
-    "check": "npm run check:syntax && npm run check:architecture && npm run check:app-migration && npm run check:app-kernel && npm run check:module-contracts && npm run check:state-isolation && npm run check:shared-services && npm run check:workspace-engine && npm run check:workspace-session-restore && npm run check:ui-foundation && npm run check:ui-components && npm run check:ui-polish && npm run check:design-system-core && npm run check:r20-2a && npm run check:r20-2a-r5 && npm run check:r20-2a-r6 && npm run check:r20-2a-r7 && npm run check:r20-2a-r8 && npm run check:r20-2a-r9 && npm run check:r20-2a-r10 && npm run check:r20-2a-r11 && npm run check:print && npm run check:callups-print && npm run check:match-calendar && npm run check:match-workspace && npm run check:training-document && npm run check:training-workflow && npm run check:training-calendar && npm run check:training-event-uniqueness && npm run check:training-link-integrity && npm run check:calendar-navigation && npm run check:training-steps && npm run check:match-document && npm run check:match-workflow && npm run check:match-library-months && npm run check:match-opponent-study && npm run check:match-data && npm run check:match-squad && npm run check:training-library && npm run check:training-analytics && npm run check:training-calendar-evaluation && npm run check:training-product && npm run check:match-native && npm run check:match-team-print && npm run check:match-report-workspace && npm run check:match-post-match && npm run check:team-roster && npm run check:roster-domain && npm run check:player-identity && npm run check:team-neutralization && npm run check:product-identity && npm run check:team-facilities && npm run check:team-profile-persistence && npm run check:player-profile-identity && npm run build && npm run check:calendar-bulk",
+    "check": "npm run check:syntax && npm run check:architecture && npm run check:app-migration && npm run check:app-kernel && npm run check:module-contracts && npm run check:state-isolation && npm run check:shared-services && npm run check:workspace-engine && npm run check:workspace-session-restore && npm run check:ui-foundation && npm run check:ui-components && npm run check:ui-polish && npm run check:design-system-core && npm run check:mobile-foundation && npm run check:mobile-shell && npm run check:r20-2a && npm run check:r20-2a-r5 && npm run check:r20-2a-r6 && npm run check:r20-2a-r7 && npm run check:r20-2a-r8 && npm run check:r20-2a-r9 && npm run check:r20-2a-r10 && npm run check:r20-2a-r11 && npm run check:print && npm run check:callups-print && npm run check:match-calendar && npm run check:match-workspace && npm run check:training-document && npm run check:training-workflow && npm run check:training-calendar && npm run check:training-event-uniqueness && npm run check:training-link-integrity && npm run check:calendar-navigation && npm run check:training-steps && npm run check:match-document && npm run check:match-workflow && npm run check:match-library-months && npm run check:match-opponent-study && npm run check:match-data && npm run check:match-squad && npm run check:training-library && npm run check:training-analytics && npm run check:training-calendar-evaluation && npm run check:training-product && npm run check:match-native && npm run check:match-team-print && npm run check:match-report-workspace && npm run check:match-post-match && npm run check:team-roster && npm run check:roster-domain && npm run check:player-identity && npm run check:team-neutralization && npm run check:product-identity && npm run check:team-facilities && npm run check:team-profile-persistence && npm run check:player-profile-identity && npm run build && npm run check:calendar-bulk",
     "check:print": "node scripts/check-print-regression.mjs",
     "check:match-calendar": "node scripts/check-match-calendar.mjs",
     "check:match-workspace": "node scripts/check-match-workspace.mjs",
@@ -65,7 +65,9 @@
     "check:r20-2a-r8": "node scripts/check-r20-2a-r8-training-alignment.mjs",
     "check:r20-2a-r9": "node scripts/check-r20-2a-r9-training-compact.mjs",
     "check:r20-2a-r10": "node scripts/check-r20-2a-r10-search-shell.mjs",
-    "check:r20-2a-r11": "node scripts/check-r20-2a-r11-search-close.mjs"
+    "check:r20-2a-r11": "node scripts/check-r20-2a-r11-search-close.mjs",
+    "check:mobile-foundation": "node scripts/check-mobile-responsive-foundation.mjs",
+    "check:mobile-shell": "node scripts/check-mobile-shell-navigation.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",

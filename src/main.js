@@ -6,6 +6,7 @@ import './modules/match/ui/matchSquad.css'
 import './modules/match/ui/matchOpponentStudy.css'
 import './design-system/polish.css'
 import './design-system/training-editor.css'
+import './design-system/responsive.css'
 
 import { bootstrapApp } from './app/appKernel.js'
 

@@ -143,3 +143,12 @@ B2.3 R12 — Authoritative Team Profile Persistence
 - Stepper density reduced and spacing normalized.
 - No workflow/domain/data changes.
 - Static R20.2A and Training Steps checks pass. Build could not be re-run in the sandbox because the configured npm registry does not currently provide the locked Vite 8.1.5 package.
+
+## M1.1 — Mobile Responsive Contract
+- Baseline: STAFF 0.18.37 production-stable.
+- Introduced `design-system/responsive.css` as the canonical home for shared mobile variables and opt-in responsive primitives.
+- Canonical new responsive tiers: compact mobile ≤390px, mobile ≤760px, tablet/compact ≤980px, desktop >980px.
+- Centralized page gutter, 48px touch target, safe-area insets, mobile navigation dimensions and dynamic viewport-height fallback.
+- Added a formal Mobile Responsive Contract covering shell, navigation, page actions, forms, dense data, Training, Match, Calendar, PWA gate and regression safety.
+- Existing legacy breakpoints remain untouched in M1.1; consolidation is progressive and must not become a mass CSS rewrite.
+- No domain, workflow, Supabase, permissions or persistence changes.

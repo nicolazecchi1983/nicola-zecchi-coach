@@ -1,5 +1,5 @@
 import { icon } from '../design-system/iconRegistry.js'
-import { renderSidebarMenu } from './appNavigation.js'
+import { renderMobileNavigation, renderSidebarMenu } from './appNavigation.js'
 
 const ROLE_LABELS = {
   owner: 'Proprietario', coach: 'Allenatore', assistant: 'Vice allenatore',
@@ -58,6 +58,7 @@ export function renderAppShell({ user, team, currentUserRole, currentUserProfile
       </header>
       <main id="viewRoot">${renderDashboard()}</main>
     </div>
+    ${renderMobileNavigation()}
     <div id="drawerRoot"></div><div id="modalRoot"></div><div id="documentViewerRoot"></div>
   </div>`
 }
