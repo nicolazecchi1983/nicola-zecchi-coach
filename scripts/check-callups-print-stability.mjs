@@ -3,10 +3,11 @@ import fs from 'node:fs'
 const controller = fs.readFileSync('src/app/appController.js', 'utf8')
 const engine = fs.readFileSync('src/shared/print/printEngine.js', 'utf8')
 const page = fs.readFileSync('public/print.html', 'utf8')
+const callupsEvents = fs.readFileSync('src/modules/match/events/callupsEvents.js','utf8')
 
 const checks = [
-  ['Convocazioni genera HTML reale', controller.includes('class="callups-print"')],
-  ['Convocazioni contiene almeno la lista selezionati', controller.includes('selected.length')],
+  ['Convocazioni genera HTML reale', callupsEvents.includes('const html = `<main class="callups-print">')],
+  ['Convocazioni contiene almeno la lista selezionati', callupsEvents.includes('const selected = checks.filter') && callupsEvents.includes('group.items.map')],
   ['Convocazioni usa Print Engine condiviso', controller.includes('printHtmlDocument')],
   ['Print Engine mantiene payload storage', engine.includes('savePrintPayload(token, payload)')],
   ['Print Engine supporta handshake opener', engine.includes("staff-print-request") && engine.includes("staff-print-payload")],

@@ -79,7 +79,7 @@ function renderFeedbackEditor(event) {
       <button type="button" class="library-traffic-choice is-red ${selected === 'red' ? 'is-selected' : ''}" data-feedback-value="red" title="Critico"><span></span>Critico</button>
       <button type="button" class="library-traffic-choice is-clear ${!selected ? 'is-selected' : ''}" data-feedback-value="">Nessuno</button>
     </div>
-    <label class="library-feedback-notes"><span>Note tecniche</span><textarea rows="4" maxlength="1500" data-library-feedback-notes placeholder="Aggiungi una nota solo se ti serve...">${escapeHtml(feedback.notes || '')}</textarea></label>
+    <label class="library-feedback-notes"><span>Note tecniche</span><textarea name="library_feedback_notes" rows="4" maxlength="1500" data-library-feedback-notes placeholder="Aggiungi una nota solo se ti serve...">${escapeHtml(feedback.notes || '')}</textarea></label>
     <div class="library-feedback-actions">
       <span class="library-feedback-message" data-library-feedback-message></span>
       <button type="button" class="button" data-library-feedback-cancel="${escapeHtml(event.id)}">Annulla</button>
@@ -151,13 +151,18 @@ export function renderTrainingLibraryView({ events, canCreate, canEditFeedback, 
   const capitalize = (value) => value ? value.charAt(0).toUpperCase() + value.slice(1) : ''
   const mdValues = [...new Set(trainingEvents.map((event) => event.matchDay).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'it'))
 
-  return `<section class="view page-view training-library-view">
-    <div class="page-head training-library-head"><div><h1>Training Library</h1><p>Memoria tecnica delle sedute pubblicate.</p></div>
+  return `<section class="view page-view product-page-shell training-library-view">
+    <div class="page-head product-page-header training-library-head"><div><h1>Training Library</h1><p>Memoria tecnica delle sedute pubblicate.</p></div>
       ${canCreate ? `<button class="primary-action" type="button" data-new-event>${icon('plus')}Nuova Training Sheet</button>` : ''}</div>
-    <div class="library-toolbar">
-      <div class="library-search-wrap"><span class="library-search-icon">${icon('search')}</span><input class="library-search" type="search" placeholder="Cerca obiettivi, focus, principi, note..." aria-label="Cerca Training Sheet" data-library-search></div>
-      <select class="library-filter" data-library-md-filter aria-label="Filtra per Match Day"><option value="">Tutti gli MD</option>${mdValues.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
-      <select class="library-filter" data-library-feedback-filter aria-label="Filtra per valutazione"><option value="">Tutte le valutazioni</option><option value="green">Positivo</option><option value="yellow">Da rivedere</option><option value="red">Critico</option><option value="none">Non valutato</option></select>
+    <div class="library-toolbar library-toolbar--compact">
+      <div class="library-search-wrap"><span class="library-search-icon">${icon('search')}</span><input name="library_search" class="library-search" type="search" placeholder="Cerca obiettivi, focus, principi, note..." aria-label="Cerca Training Sheet" data-library-search></div>
+      <details class="library-filter-menu">
+        <summary>Filtri</summary>
+        <div class="library-filter-panel">
+          <label><span>Match Day</span><select name="library_md_filter" class="library-filter" data-library-md-filter aria-label="Filtra per Match Day"><option value="">Tutti</option>${mdValues.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select></label>
+          <label><span>Valutazione</span><select name="library_feedback_filter" class="library-filter" data-library-feedback-filter aria-label="Filtra per valutazione"><option value="">Tutte</option><option value="green">Positivo</option><option value="yellow">Da rivedere</option><option value="red">Critico</option><option value="none">Non valutato</option></select></label>
+        </div>
+      </details>
     </div>
     <div class="library-summary"><strong>${trainingEvents.length}</strong><span>Training Sheet pubblicate</span></div>
     <div class="training-library" data-library-root>

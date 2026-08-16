@@ -1,0 +1,322 @@
+/* STAFF 0.22.0 — Product UI Foundation
+   Shared visual contract for Training and Match.
+   Domain modules choose content; this layer owns page geometry, headers, steppers, surfaces and empty states. */
+
+:root{
+  --product-page-max:var(--staff-product-content-max);
+  --product-title-size:var(--staff-font-page-title);
+  --product-title-mobile:1.72rem;
+  --product-title-line:1.06;
+
+  --product-surface:var(--staff-color-bg-panel);
+  --product-surface-raised:var(--staff-color-bg-panel-raised);
+  --product-border:var(--staff-color-border-subtle);
+  --product-text:var(--staff-color-text);
+  --product-muted:var(--staff-color-text-muted);
+  --product-accent:var(--staff-color-primary-hover);
+
+  --product-radius:var(--staff-radius-card);
+  --product-control-radius:var(--staff-radius-control);
+  --product-surface-padding:var(--staff-space-4);
+  --product-surface-padding-mobile:var(--staff-space-3);
+  --product-section-gap:var(--staff-space-3);
+  --product-header-nav-gap:var(--staff-space-4);
+  --product-nav-content-gap:var(--staff-space-4);
+}
+
+.product-page-shell{
+  width:100%;
+  max-width:var(--product-page-max);
+  margin:0 auto;
+  padding:0;
+  box-sizing:border-box;
+}
+
+.product-page-header,
+.product-page-shell > .page-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin:0 0 var(--product-header-nav-gap);
+}
+
+.product-page-header h1,
+.product-page-shell > .page-head h1{
+  margin:0;
+  font-size:var(--product-title-size);
+  line-height:var(--product-title-line);
+  letter-spacing:-.045em;
+}
+
+.product-page-header p,
+.product-page-shell > .page-head p{
+  margin:7px 0 0;
+  color:var(--product-muted);
+  font-size:.76rem;
+  line-height:1.4;
+}
+
+.product-page-header p span,
+.product-page-shell > .page-head p span{
+  color:var(--product-accent);
+  font-weight:800;
+  letter-spacing:.11em;
+}
+
+.product-page-header p b,
+.product-page-shell > .page-head p b{
+  margin:0 10px;
+  color:var(--staff-color-text-faint);
+}
+
+/* Shared contextual navigation language — DS1.5
+   One compact, quiet navigation system for Training and Match. */
+.product-section-nav{
+  display:grid!important;
+  grid-template-columns:repeat(var(--product-nav-columns, 6),minmax(0,1fr))!important;
+  gap:var(--staff-space-2)!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0 0 var(--product-nav-content-gap)!important;
+  padding:0!important;
+  overflow:visible!important;
+  scrollbar-width:none!important;
+}
+
+.product-section-nav::-webkit-scrollbar{
+  display:none!important;
+}
+
+.product-section-nav button{
+  width:100%!important;
+  min-width:0!important;
+  height:64px!important;
+  min-height:64px!important;
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr)!important;
+  align-items:center!important;
+  justify-content:start!important;
+  gap:var(--staff-space-2)!important;
+  padding:var(--staff-space-2) var(--staff-space-3)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  border:1px solid var(--product-border)!important;
+  border-radius:var(--staff-radius-medium)!important;
+  background:transparent!important;
+  color:var(--staff-color-text-secondary)!important;
+  box-shadow:none!important;
+  font:inherit;
+  line-height:1.08!important;
+  text-align:left!important;
+  cursor:pointer;
+  transition:
+    color var(--staff-motion-fast) var(--staff-ease-standard),
+    background var(--staff-motion-fast) var(--staff-ease-standard),
+    border-color var(--staff-motion-fast) var(--staff-ease-standard);
+}
+
+.product-section-nav button b{
+  min-width:22px!important;
+  color:var(--staff-color-text-faint)!important;
+  font-size:var(--staff-font-caption)!important;
+  font-weight:var(--staff-font-weight-bold)!important;
+  line-height:1!important;
+}
+
+.product-section-nav button span{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:normal!important;
+  hyphens:none!important;
+  text-overflow:clip!important;
+  font-size:clamp(.74rem,.72vw,.88rem)!important;
+  font-weight:var(--staff-font-weight-semibold)!important;
+  line-height:1.12!important;
+}
+
+.product-section-nav button:hover{
+  border-color:var(--staff-color-border)!important;
+  background:var(--staff-color-bg-hover)!important;
+  color:var(--staff-color-text)!important;
+}
+
+.product-section-nav button.is-active{
+  border-color:var(--staff-color-border-strong)!important;
+  background:var(--staff-color-bg-panel-raised)!important;
+  color:var(--staff-color-text)!important;
+  box-shadow:inset 0 -2px 0 var(--product-accent)!important;
+}
+
+.product-section-nav button.is-active b{
+  color:var(--product-accent)!important;
+}
+
+/* Canonical page surfaces */
+.product-surface{
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:var(--product-surface-padding);
+  box-sizing:border-box;
+  border:1px solid var(--product-border);
+  border-radius:var(--product-radius);
+  background:var(--product-surface);
+  color:var(--product-text);
+  box-shadow:none;
+}
+
+.product-empty-state{
+  min-height:0;
+  display:grid;
+  align-content:start;
+  justify-items:start;
+  gap:10px;
+  padding:var(--product-surface-padding);
+}
+
+.product-empty-state h2,
+.product-empty-state p{
+  margin-top:0;
+}
+
+.product-empty-state p{
+  max-width:900px;
+  color:var(--product-muted);
+}
+
+.product-content-stack{
+  width:100%;
+  min-width:0;
+  display:grid;
+  gap:var(--product-section-gap);
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .product-section-nav{
+    grid-template-columns:repeat(var(--product-nav-tablet-columns, 4),minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:760px){
+  .product-page-header,
+  .product-page-shell > .page-head{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .product-page-header h1,
+  .product-page-shell > .page-head h1{
+    font-size:var(--product-title-mobile);
+  }
+
+  .product-section-nav{
+    grid-template-columns:repeat(var(--product-nav-mobile-columns,2),minmax(0,1fr))!important;
+    gap:8px!important;
+    margin-bottom:18px!important;
+  }
+
+  .product-section-nav button{
+    height:60px!important;
+    min-height:60px!important;
+    padding:var(--staff-space-2) 10px!important;
+  }
+
+  .product-section-nav button span{
+    font-size:.78rem!important;
+  }
+
+  .product-surface,
+  .product-empty-state{
+    padding:var(--product-surface-padding-mobile);
+  }
+}
+
+
+/* Domain configuration: Training uses the same stepper language with six steps. */
+.training-product-shell{
+  --product-nav-columns:6;
+  --product-nav-tablet-columns:3;
+  --product-nav-mobile-columns:2;
+}
+
+.training-product-shell .ts-workspace--steps{
+  width:100%;
+  max-width:none!important;
+  margin:0!important;
+}
+
+.training-product-shell .ts-manual-form{
+  width:100%;
+  min-width:0;
+}
+
+.training-product-shell .ts-form-card{
+  margin:0;
+}
+
+/* Training header actions remain functional but follow the same geometry. */
+.training-product-shell .ts-editor-titlebar{
+  align-items:flex-end;
+}
+
+.training-library-view .library-toolbar{
+  width:100%;
+}
+
+/* Report empty state: informative, not an oversized empty billboard. */
+.match-workspace-shell .match-report-workspace-empty{
+  min-height:0!important;
+  padding:24px!important;
+  gap:8px!important;
+}
+
+.match-workspace-shell .match-report-workspace-empty h2{
+  margin:0!important;
+  font-size:1.2rem;
+}
+
+.match-workspace-shell .match-report-workspace-empty p{
+  margin:0!important;
+  line-height:1.45;
+}
+
+.match-workspace-shell .match-report-workspace-empty .primary-action{
+  margin-top:8px!important;
+}
+
+/* Post Gara: same surface density as the rest of Match Workspace. */
+.match-workspace-shell .post-match-status-row{
+  gap:12px;
+}
+
+.match-workspace-shell .post-match-status-row .product-surface{
+  padding:16px 18px!important;
+}
+
+
+@media(max-width:760px){
+  .training-product-shell{
+    --product-nav-tablet-columns:2;
+    --product-nav-mobile-columns:2;
+  }
+
+  .training-product-shell .ts-editor-titlebar{
+    align-items:flex-start;
+  }
+
+  .match-workspace-shell .match-report-workspace-empty{
+    padding:16px!important;
+  }
+
+}
+
+/* 0.22.2 — No Duplicate Context */
+.training-product-shell .ts-workspace--steps{margin-top:0!important}
+.training-product-shell .ts-step > .ts-card-head{display:none!important}

@@ -7,8 +7,6 @@
   --staff-page-gutter-compact: 24px;
   --staff-page-gutter-mobile: 16px;
   --staff-page-gutter-mobile-compact: 12px;
-  --staff-touch-target: 48px;
-  --staff-touch-target-min: 44px;
   --staff-mobile-nav-height: 66px;
   --staff-mobile-nav-edge: 10px;
   --staff-responsive-gap: 16px;
@@ -195,23 +193,7 @@
     overflow-y: auto;
   }
 
-  /* Page content reserves space for the bottom navigation + gesture area. */
-  #viewRoot {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding:
-      16px
-      max(var(--staff-page-gutter), var(--staff-safe-right))
-      calc(
-        var(--staff-mobile-nav-bar-height)
-        + var(--staff-safe-bottom)
-        + var(--staff-mobile-nav-edge)
-        + 22px
-      )
-      max(var(--staff-page-gutter), var(--staff-safe-left));
-    box-sizing: border-box;
-  }
+  /* Page geometry is owned by pageShell.css. Mobile navigation only owns its own shell. */
 
   /* Dedicated mobile navigation: no sideways scrolling. */
   .mobile-navigation {
@@ -421,5 +403,1359 @@
 
   .mobile-more-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ================================================================
+   M1.2-R1 — REAL DEVICE MOBILE CORRECTIVE
+   Evidence: Android production test 2026-08-10.
+   Rule: fix shared mobile causes before page-specific decoration.
+   ================================================================ */
+
+@media (max-width: 760px) {
+  /* ---------- GLOBAL IDENTITY / DENSITY ---------- */
+  .topbar-context {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .topbar-context-team {
+    max-width: 120px;
+    overflow: hidden;
+    color: #d9e7ef;
+    font-size: .69rem;
+    font-weight: 820;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-context-separator {
+    flex: 0 0 auto;
+    color: #41657b;
+    font-size: .68rem;
+  }
+
+  .topbar-context-season {
+    max-width: 122px;
+    font-size: .64rem;
+    font-weight: 720;
+  }
+
+  /* Mobile page hierarchy: no desktop-sized hero typography. */
+  .page-head,
+  .match-context-page-head,
+  .match-workspace-title-row {
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .page-head h1,
+  .match-context-page-head h1,
+  .match-workspace-title-row h1,
+  .content-section > header.page-head h1 {
+    margin-top: 0;
+    font-size: var(--staff-mobile-page-title-size, clamp(1.82rem, 8.8vw, 2.35rem)) !important;
+    line-height: .98 !important;
+    letter-spacing: -.035em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .page-head p,
+  .match-context-page-head p,
+  .match-workspace-title-row p,
+  .section-title p {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-top: 7px;
+    color: #91a8b8;
+    font-size: .80rem !important;
+    line-height: 1.34 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .page-head p span,
+  .match-context-page-head p span,
+  .match-workspace-title-row .eyebrow {
+    font-size: .68rem !important;
+    letter-spacing: .11em;
+  }
+
+  /* ---------- ALTRO: labels are mandatory ---------- */
+  .mobile-more-grid .mobile-more-item {
+    min-height: 58px;
+  }
+
+  .mobile-more-grid .mobile-more-item .mobile-nav-label {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible;
+    color: #d7e5ed;
+    font-size: .72rem !important;
+    font-weight: 780;
+    line-height: 1.16;
+    text-overflow: clip;
+    white-space: normal !important;
+  }
+
+  /* ---------- TRAINING: Match Day wraps, never horizontal scroll ---------- */
+  .ts-match-day-block {
+    padding: 14px !important;
+  }
+
+  .ts-md-selector {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    overflow: visible !important;
+    width: 100%;
+  }
+
+  .ts-md-selector button {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding-inline: 5px;
+    font-size: .66rem;
+  }
+
+  /* ---------- MATCH WORKSPACE: all steps readable, no clipped horizontal strip ---------- */
+  .match-workspace-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    overflow: visible !important;
+    padding-bottom: 0;
+    scrollbar-width: none;
+  }
+
+  .match-workspace-tabs button {
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    font-size: .72rem;
+    line-height: 1.12;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .match-workspace-tabs button b {
+    flex: 0 0 auto;
+  }
+
+  .match-context-back,
+  .match-head-tools .match-context-back {
+    min-height: 46px;
+    font-size: .78rem;
+  }
+
+  /* ---------- MATCH SURFACES: use the viewport ---------- */
+  .match-native-legacy-host,
+  .match-native-legacy-host .match-editor,
+  .match-native-legacy-host .match-step,
+  .match-squad-step,
+  .match-analysis-view,
+  .match-opponent-study-view,
+  .callups-panel,
+  .match-statistics,
+  .match-report-workspace-preview {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-inline: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .match-native-legacy-host .match-step.staff-card,
+  .callups-panel {
+    padding: 15px !important;
+    border-radius: 16px;
+  }
+
+  /* ---------- CALLUPS: selected counter stays in flow ---------- */
+  .callups-head {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start !important;
+    gap: 10px !important;
+  }
+
+  .callups-head > div {
+    min-width: 0;
+  }
+
+  .callups-head h2 {
+    font-size: 1.45rem;
+    line-height: 1.02;
+  }
+
+  .callups-head p {
+    font-size: .80rem;
+    line-height: 1.35;
+  }
+
+  .callups-counter {
+    position: static !important;
+    align-self: start;
+    max-width: 112px;
+    padding: 9px 10px !important;
+    border-radius: 13px !important;
+    white-space: normal !important;
+  }
+
+  .callups-counter strong {
+    font-size: 1.55rem !important;
+  }
+
+  .callups-counter span {
+    font-size: .58rem !important;
+    line-height: 1.05;
+  }
+
+  /* ---------- SQUAD / OPPONENT PITCH: field first, tokens scale with it ---------- */
+  .match-squad-step .match-lineup-layout--master {
+    width: 100% !important;
+    max-width: none !important;
+    gap: 12px;
+  }
+
+  .match-squad-step .pitch-panel {
+    width: 100%;
+    padding: 6px !important;
+    border-radius: 14px;
+  }
+
+  .match-squad-step .pitch-panel [data-football-pitch] {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  .match-squad-step .token-photo,
+  .match-native-legacy-host .token-photo {
+    width: clamp(30px, 9.4vw, 38px) !important;
+    height: clamp(30px, 9.4vw, 38px) !important;
+    border-width: 2px !important;
+    font-size: clamp(.62rem, 3vw, .82rem) !important;
+  }
+
+  .match-squad-step .player-token small,
+  .match-native-legacy-host .player-token small {
+    top: auto;
+    max-width: 72px !important;
+    padding: 2px 4px !important;
+    font-size: clamp(.49rem, 2.3vw, .62rem) !important;
+    line-height: 1.05;
+  }
+
+  .match-squad-step .lineup-list--selection,
+  .match-squad-step .bench-block--automatic {
+    padding: 11px !important;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-row {
+    grid-template-columns: 26px 48px minmax(0,1fr) !important;
+    gap: 5px;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-row input,
+  .match-squad-step .lineup-list--selection .lineup-row select {
+    min-height: 42px;
+    padding: 6px 8px;
+    font-size: .80rem;
+  }
+
+  /* ---------- BOARD: fit the whole tactical board and reduce collisions ---------- */
+  .board-toolbar {
+    gap: 10px;
+  }
+
+  .board-color-controls {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px !important;
+  }
+
+  .board-color-controls input {
+    width: 100% !important;
+    height: 46px !important;
+  }
+
+  .board-pitch {
+    width: 100% !important;
+    max-width: none !important;
+    border-width: 3px;
+    border-radius: 14px;
+  }
+
+  .board-token {
+    width: clamp(30px, 9vw, 38px) !important;
+    height: clamp(30px, 9vw, 38px) !important;
+    border-width: 2px !important;
+    font-size: .72rem;
+  }
+
+  .board-token small {
+    top: calc(100% + 2px) !important;
+    max-width: 60px;
+    overflow: hidden;
+    padding: 2px 4px !important;
+    font-size: .48rem !important;
+    line-height: 1.05;
+    text-overflow: ellipsis;
+  }
+
+  /* ---------- STATISTICS: minutes become a readable compact list ---------- */
+  .match-stat-panel {
+    padding: 15px !important;
+    border-radius: 16px;
+  }
+
+  .match-stat-panel header {
+    margin-bottom: 12px;
+  }
+
+  .match-stat-panel h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .match-stat-panel header p {
+    font-size: .76rem;
+    line-height: 1.3;
+  }
+
+  .match-minutes-chart {
+    gap: 4px !important;
+  }
+
+  .match-minutes-row {
+    grid-template-columns: minmax(0, 1fr) 44px !important;
+    gap: 8px !important;
+    min-height: 36px;
+    padding: 5px 0;
+    border-bottom: 1px solid #e5ebf2;
+  }
+
+  .match-minutes-row > span {
+    overflow: visible !important;
+    color: #18345f;
+    font-size: .78rem;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+
+  .match-minutes-row > div {
+    display: none !important;
+  }
+
+  .match-minutes-row > strong {
+    font-size: .80rem;
+  }
+
+  /* ---------- STAFF MANAGEMENT: compact identity and actions ---------- */
+  .staff-member-card {
+    grid-template-columns: 34px minmax(0,1fr) !important;
+    gap: 10px !important;
+    padding: 13px !important;
+  }
+
+  .staff-member-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: .75rem;
+  }
+
+  .staff-member-fields {
+    gap: 10px;
+  }
+
+  .staff-member-action-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .staff-member-action-row .primary-action,
+  .staff-member-action-row .danger-button {
+    flex: 1 1 0;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 44px;
+    padding-inline: 10px;
+    font-size: .76rem;
+  }
+
+  .staff-access-badge {
+    justify-self: start;
+    font-size: .68rem;
+  }
+
+  /* ---------- MATCH REPORT PREVIEW ---------- */
+  .match-report-dialog-body,
+  .match-report-workspace-preview {
+    padding-inline: 0 !important;
+  }
+
+  .match-report-dialog-body .match-report-paper,
+  .match-report-workspace-preview .match-report-paper {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding: 20px 16px !important;
+    box-shadow: none !important;
+  }
+
+  .match-report-paper .report-bench-strip {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .match-report-paper .report-bench-strip ol {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    columns: auto !important;
+    gap: 5px;
+    margin: 0 !important;
+    padding-left: 22px !important;
+  }
+
+  .match-report-paper .report-bench-strip li {
+    min-width: 0;
+    margin: 0 !important;
+    font-size: .76rem;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 390px) {
+  .page-head h1,
+  .match-context-page-head h1,
+  .match-workspace-title-row h1,
+  .content-section > header.page-head h1 {
+    font-size: clamp(1.65rem, 8.4vw, 2.08rem) !important;
+  }
+
+  .match-workspace-tabs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ts-md-selector {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+
+/* ================================================================
+   M1.3A — MOBILE NAVIGATION DRAWER
+   Permanent mobile contract:
+   desktop = persistent sidebar
+   mobile = full-label left drawer
+   no global bottom navigation
+   Team/logo colors never drive application chrome.
+   ================================================================ */
+
+.mobile-drawer-shell,
+.mobile-menu-trigger {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --staff-mobile-topbar-height: 56px;
+    --staff-mobile-drawer-width: min(86vw, 360px);
+  }
+
+  html.mobile-drawer-open,
+  html.mobile-drawer-open body {
+    overflow: hidden;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: var(--staff-touch-target) minmax(0, 1fr) var(--staff-touch-target);
+    align-items: center;
+    gap: 8px;
+    height: calc(var(--staff-mobile-topbar-height) + var(--staff-safe-top));
+    min-height: calc(var(--staff-mobile-topbar-height) + var(--staff-safe-top));
+    padding:
+      var(--staff-safe-top)
+      max(var(--staff-page-gutter), var(--staff-safe-right))
+      0
+      max(var(--staff-page-gutter), var(--staff-safe-left));
+    background: var(--staff-color-bg-header);
+  }
+
+  .mobile-menu-trigger {
+    display: grid;
+    width: var(--staff-touch-target);
+    height: var(--staff-touch-target);
+    min-width: var(--staff-touch-target);
+    min-height: var(--staff-touch-target);
+    place-items: center;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: #d5e0e8;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .mobile-menu-trigger:hover,
+  .mobile-menu-trigger[aria-expanded="true"] {
+    border-color: var(--staff-color-border);
+    background: rgba(255,255,255,.045);
+  }
+
+  .mobile-menu-trigger svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .topbar-context {
+    justify-self: start;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .profile-menu-wrapper {
+    justify-self: end;
+  }
+
+  /* M1.2 bottom navigation is permanently retired. */
+  .mobile-navigation {
+    display: none;
+  }
+
+  .profile-dropdown {
+    max-height: calc(var(--staff-viewport-height) - var(--staff-mobile-topbar-height) - 28px);
+  }
+
+  .mobile-drawer-shell {
+    position: fixed;
+    z-index: 120;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .mobile-drawer-shell.is-open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(0,0,0,.56);
+    opacity: 0;
+    transition: opacity 180ms ease;
+    cursor: default;
+  }
+
+  .mobile-drawer-shell.is-open .mobile-drawer-backdrop {
+    opacity: 1;
+  }
+
+  .mobile-drawer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: var(--staff-mobile-drawer-width);
+    max-width: calc(100vw - 44px);
+    padding:
+      calc(14px + var(--staff-safe-top))
+      14px
+      calc(12px + var(--staff-safe-bottom));
+    border-right: 1px solid rgba(151,174,194,.16);
+    background: #05080c;
+    box-shadow: 24px 0 60px rgba(0,0,0,.42);
+    transform: translateX(-102%);
+    transition: transform 200ms cubic-bezier(.2,.8,.2,1);
+    box-sizing: border-box;
+  }
+
+  .mobile-drawer-shell.is-open .mobile-drawer {
+    transform: translateX(0);
+  }
+
+  .mobile-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 2px 14px;
+    border-bottom: 1px solid rgba(151,174,194,.14);
+  }
+
+  .mobile-drawer-brand {
+    display: grid;
+    grid-template-columns: 40px minmax(0,1fr);
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+  }
+
+  .mobile-drawer-brand__logo,
+  .mobile-drawer-brand__fallback {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+
+  .mobile-drawer-brand__fallback {
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #16232e;
+    font-weight: 850;
+  }
+
+  .mobile-drawer-brand__copy {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .mobile-drawer-brand__copy strong {
+    color: #f4f7f9;
+    font-size: .94rem;
+    letter-spacing: -.01em;
+  }
+
+  .mobile-drawer-brand__copy span {
+    overflow: hidden;
+    color: #7f919f;
+    font-size: .62rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-drawer-close {
+    display: grid;
+    width: var(--staff-touch-target);
+    height: var(--staff-touch-target);
+    min-width: var(--staff-touch-target);
+    min-height: var(--staff-touch-target);
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(151,174,194,.18);
+    border-radius: 14px;
+    color: #d5e0e8;
+    background: rgba(255,255,255,.035);
+    cursor: pointer;
+  }
+
+  .mobile-drawer-close svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .mobile-drawer-nav {
+    display: block;
+    min-height: 0;
+    padding: 10px 0 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .mobile-drawer-nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .mobile-drawer-group {
+    padding: 8px 0;
+  }
+
+  .mobile-drawer-group + .mobile-drawer-group {
+    border-top: 1px solid rgba(151,174,194,.10);
+  }
+
+  .mobile-drawer-group__label {
+    padding: 4px 10px 6px;
+    color: #667986;
+    font-size: .57rem;
+    font-weight: 820;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-drawer-group__items {
+    display: grid;
+    gap: 2px;
+  }
+
+  .mobile-drawer-item.nav-item {
+    display: grid;
+    grid-template-columns: 24px minmax(0,1fr);
+    align-items: center;
+    justify-items: start;
+    gap: 12px;
+    width: 100%;
+    min-height: 46px;
+    padding: 0 11px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: var(--staff-color-text-secondary);
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+  }
+
+  .mobile-drawer-item.nav-item:hover {
+    color: var(--staff-color-text);
+    background: var(--staff-color-bg-hover);
+  }
+
+  .mobile-drawer-item.nav-item.is-active {
+    border-color: var(--staff-color-border);
+    color: var(--staff-color-text);
+    background: var(--staff-color-bg-panel-raised);
+    box-shadow: inset 2px 0 0 var(--staff-color-primary);
+  }
+
+  .mobile-drawer-item__icon {
+    display: grid;
+    width: 21px;
+    height: 21px;
+    place-items: center;
+    color: var(--staff-color-text-muted);
+  }
+
+  .mobile-drawer-item.is-active .mobile-drawer-item__icon {
+    color: var(--staff-color-primary-hover);
+  }
+
+  .mobile-drawer-item__icon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .mobile-drawer-item__label {
+    overflow: hidden;
+    font-size: .80rem;
+    font-weight: 720;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-drawer-profile {
+    display: grid;
+    grid-template-columns: 40px minmax(0,1fr) 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 4px 0;
+    border-top: 1px solid rgba(151,174,194,.14);
+  }
+
+  .mobile-drawer-profile__avatar {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: linear-gradient(145deg, #148ee2, #1768c7);
+    font-size: .78rem;
+    font-weight: 850;
+  }
+
+  .mobile-drawer-profile__copy {
+    display: grid;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .mobile-drawer-profile__copy strong,
+  .mobile-drawer-profile__copy small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-drawer-profile__copy strong {
+    color: #edf3f6;
+    font-size: .78rem;
+  }
+
+  .mobile-drawer-profile__copy small {
+    color: #718593;
+    font-size: .60rem;
+  }
+
+  .mobile-drawer-profile__settings.nav-item {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(151,174,194,.18);
+    border-radius: 13px;
+    color: #b9c8d2;
+    background: rgba(255,255,255,.03);
+  }
+
+  .mobile-drawer-profile__settings svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --staff-mobile-drawer-width: min(89vw, 340px);
+  }
+}
+
+
+/* ================================================================
+   M1.3B — DRAWER RELIABILITY + TRAINING MOBILE COMPACTION
+   Keeps M1.3A architecture intact. No page-domain redesign here.
+   ================================================================ */
+
+@media (max-width: 760px) {
+  /* Legacy mobile rules used .nav-item span:last-child { display:none }.
+     The drawer owns its labels explicitly and must always show them. */
+  .mobile-drawer .mobile-drawer-item.nav-item .mobile-drawer-item__label {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    color: inherit;
+    font-size: .80rem;
+    font-weight: 720;
+    line-height: 1.2;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .mobile-drawer-item.nav-item {
+    min-height: 44px;
+  }
+
+  /* Parallel work is an editor surface, not a white document.
+     The white treatment remains reserved for generated/print content. */
+  .ts-manual-editor .ts-parallel-work {
+    margin-top: 12px;
+    padding: 12px;
+    border-color: var(--staff-color-border);
+    border-radius: 14px;
+    background: var(--staff-color-bg-panel-raised);
+    color: var(--staff-color-text);
+  }
+
+  .ts-manual-editor .ts-parallel-work-head {
+    align-items: flex-start;
+    margin-bottom: 10px;
+    color: var(--staff-color-text);
+  }
+
+  .ts-manual-editor .ts-parallel-work-head strong {
+    font-size: .82rem;
+  }
+
+  .ts-manual-editor .ts-parallel-work-head span {
+    max-width: 55%;
+    color: var(--staff-color-text-muted);
+    font-size: .64rem;
+    line-height: 1.25;
+    text-align: right;
+  }
+
+  .ts-manual-editor .ts-parallel-work-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .ts-manual-editor .ts-parallel-work-grid section {
+    padding: 10px;
+    border-color: var(--staff-color-border);
+    border-radius: 12px;
+    background: var(--staff-color-bg-control);
+  }
+
+  .ts-manual-editor .ts-parallel-work-grid section > b {
+    margin-bottom: 7px;
+    color: var(--staff-color-primary-hover);
+    font-size: .69rem;
+  }
+
+  .ts-manual-editor .ts-parallel-work-grid .ts-field {
+    gap: 5px;
+  }
+
+  .ts-manual-editor .ts-parallel-work-grid textarea {
+    min-height: 92px;
+  }
+}
+
+@media (max-width: 390px) {
+  .ts-manual-editor .ts-parallel-work-head {
+    display: grid;
+    gap: 3px;
+  }
+
+  .ts-manual-editor .ts-parallel-work-head span {
+    max-width: none;
+    text-align: left;
+  }
+}
+
+
+/* ================================================================
+   M1.3C — TRAINING MOBILE COMMAND ROW + PHASE WIDTH
+   Surgical follow-up from real-device visual review.
+   ================================================================ */
+
+@media (max-width: 760px) {
+  /* Phase cards use the available viewport width instead of a narrow nested column. */
+  .ts-manual-editor .ts-workspace,
+  .ts-manual-editor .ts-manual-form,
+  .ts-manual-editor .ts-step,
+  .ts-manual-editor .ts-form-card,
+  .ts-manual-editor [data-phase] {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .ts-manual-editor .ts-phase-editor {
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+  }
+
+  .ts-manual-editor .ts-phase-editor-head {
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ts-manual-editor .ts-phase-editor-head > div {
+    margin-left: auto;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-split-phase-button {
+    min-width: 0;
+    padding: 9px 12px;
+    white-space: nowrap;
+  }
+
+  .ts-manual-editor .ts-phase-title-field,
+  .ts-manual-editor .ts-phase-title-field input,
+  .ts-manual-editor .ts-field-full,
+  .ts-manual-editor .ts-field-full textarea {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .ts-manual-editor .ts-phase-meta-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    max-width: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .ts-manual-editor .ts-phase-meta-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ================================================================
+   M1.3F — MATCH TEAM MOBILE WIDTH & SHARED TEAM VISUALS
+   Scope: Nostra squadra + Avversario only.
+   ================================================================ */
+
+@media (max-width: 760px) {
+  :root {
+    --match-mobile-content-bleed: 10px;
+    --match-mobile-token-size: clamp(30px, 8.6vw, 36px);
+  }
+
+  /* Preserve page/header alignment but reclaim nested legacy padding for the
+     actual team work surface. */
+  .match-native-section .match-native-legacy-host {
+    width: calc(100% + (var(--match-mobile-content-bleed) * 2));
+    max-width: none;
+    margin-inline: calc(var(--match-mobile-content-bleed) * -1);
+    box-sizing: border-box;
+  }
+
+  .match-native-legacy-host .match-step.staff-card {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 12px !important;
+    box-sizing: border-box;
+  }
+
+  /* Both team pitches own the full content width and share the same visual
+     scale. */
+  .match-squad-step .match-lineup-layout--master {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+
+  .match-squad-step .pitch-panel {
+    padding: 5px !important;
+    border-radius: 13px !important;
+  }
+
+  .match-squad-step .pitch-panel [data-football-pitch] {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .match-squad-step .token-photo {
+    width: var(--match-mobile-token-size) !important;
+    height: var(--match-mobile-token-size) !important;
+    min-width: var(--match-mobile-token-size);
+    min-height: var(--match-mobile-token-size);
+    border-width: 2px !important;
+    font-size: clamp(.62rem, 2.8vw, .78rem) !important;
+  }
+
+  .match-squad-step .player-token small {
+    max-width: 64px !important;
+    padding: 2px 4px !important;
+    font-size: clamp(.47rem, 2.15vw, .59rem) !important;
+    line-height: 1.05;
+  }
+
+  /* Nostra squadra leadership geometry is canonically owned by matchSquad.css (0.29.8). */
+
+
+}
+
+@media (max-width: 390px) {
+  :root {
+    --match-mobile-content-bleed: 8px;
+  }
+
+}
+
+
+/* M1.3G — equal team surfaces + one-row color contract */
+@media(max-width:760px){
+  .match-native-legacy-host--our-team,
+  .match-native-legacy-host--opponent{
+    width:calc(100% + (var(--match-mobile-content-bleed) * 2));
+    margin-inline:calc(var(--match-mobile-content-bleed) * -1)
+  }
+  .staff-color-picker{width:100%;box-sizing:border-box}
+  .staff-color-swatches{overflow:visible}
+}
+
+/* ================================================================
+   DS2.3 — TRAINING POLISH MOBILE ADAPTATION
+   Mobile is a field-side workflow: full-width controls, progressive disclosure,
+   stable 48px targets and no horizontal compression.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    gap: var(--staff-space-2);
+    margin-bottom: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-session-grid,
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
+  .ts-manual-editor .ts-phases-editor,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+    width: 100%;
+    max-width: none;
+  }
+
+  .ts-manual-editor .ts-session-grid,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-session-grid,
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
+  .ts-manual-editor .ts-phase-editor,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+    padding-inline: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-present-count {
+    grid-template-columns: minmax(0, 1fr) 76px;
+    max-width: none;
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-roster-grid--four {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-multiselect summary,
+  .ts-manual-editor .ts-selection-card.ts-aggregated-select {
+    min-height: var(--staff-touch-target);
+  }
+
+  .ts-manual-editor .ts-md-selector {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .ts-manual-editor .ts-md-selector button,
+  .ts-manual-editor .ts-rating button,
+  .ts-manual-editor .ts-add-phase,
+  .ts-manual-editor .ts-split-phase-button,
+  .ts-manual-editor .ts-remove-phase-button,
+  .ts-manual-editor .ts-pillar span {
+    min-height: var(--staff-touch-target);
+  }
+
+  .ts-manual-editor .ts-rating {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  .ts-manual-editor .ts-phase-editor {
+    padding-block: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-phase-editor-head {
+    align-items: center;
+    gap: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-phase-editor-actions {
+    margin-left: auto;
+  }
+
+  .ts-manual-editor .ts-phase-meta-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-pillars {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-ai-button {
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-ai-note {
+    margin-top: calc(var(--staff-space-2) * -1);
+  }
+
+  .ts-manual-editor .ts-preview-stage,
+  .ts-manual-editor .ts-summary-head,
+  .ts-manual-editor .ts-publish-note {
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-preview-toolbar {
+    align-items: center;
+    padding: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-preview-toolbar button {
+    min-width: var(--staff-touch-target);
+    min-height: var(--staff-touch-target);
+  }
+
+  .ts-manual-editor .ts-paper-frame {
+    padding: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-step-footer {
+    bottom: var(--staff-space-1);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--staff-space-3);
+    padding: var(--staff-space-2);
+    border-radius: var(--staff-radius-medium);
+  }
+
+  .ts-manual-editor .ts-step-footer > span {
+    display: none;
+  }
+
+  .ts-manual-editor .ts-step-footer button {
+    min-height: var(--staff-touch-target);
+  }
+}
+
+/* ================================================================
+   DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER
+   Structural contract: elastic select + indivisible action cluster.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    gap: var(--staff-space-2);
+    margin-bottom: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
+    white-space: nowrap;
+    font-size: .79rem;
+    gap: 6px;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    justify-self: stretch;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 44px 24px;
+    align-items: center;
+    column-gap: 6px;
+    row-gap: 4px;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-open-sheet {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .ts-manual-editor .ts-open-sheet select {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 27px 0 10px;
+    font-size: .80rem;
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ts-manual-editor .ts-command-actions {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    width: max-content;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-open-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .ts-manual-editor .ts-open-button-label { display: none; }
+  .ts-manual-editor .ts-open-button-icon {
+    display: inline-flex;
+    width: 19px;
+    height: 19px;
+    align-items: center;
+    justify-content: center;
+  }
+  .ts-manual-editor .ts-open-button-icon svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ts-manual-editor .ts-more-menu,
+  .ts-manual-editor .ts-more-button {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ts-manual-editor .ts-draft-state--compact {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+    align-self: start;
+    width: auto;
+    max-width: 100%;
+    min-height: 20px;
+    margin: 0;
+    padding: 2px 7px;
+    font-size: .64rem;
+    line-height: 1.2;
+    transform: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
+    font-size: .73rem;
+    letter-spacing: normal;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    column-gap: 5px;
+  }
+
+  .ts-manual-editor .ts-open-sheet select {
+    padding-inline: 9px 25px;
+    font-size: .77rem;
   }
 }

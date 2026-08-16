@@ -1,4 +1,4 @@
-import { matchContextBackButtonHtml, matchContextNavigationHtml } from '../../../design-system/uiComponents.js'
+import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
 
 const SECTION_META = Object.freeze({
   'our-team': {
@@ -25,17 +25,22 @@ export function renderNativeMatchSectionView({
   const ownTeamName = team?.shortName || team?.name || 'Nostra squadra'
   const pageTitle = section === 'our-team' ? ownTeamName : opponent
 
-  return `<section class="view page-view match-native-section" data-native-match-section="${escapeHtml(section)}" data-native-match-step="${meta.step}">
-    <div class="page-head match-context-page-head">
-      <div>
-        <h1>${escapeHtml(pageTitle)}</h1>
-        <p><span>MATCH WORKSPACE</span><b>•</b>${escapeHtml(meta.description)}</p>
-      </div>
-      ${matchContextBackButtonHtml()}
-    </div>
-    ${matchContextNavigationHtml(section)}
+  const contentHtml = `<section class="workspace-surface product-surface match-native-surface">
     <div class="match-native-legacy-host match-native-legacy-host--${escapeHtml(section)}">
       ${legacyEditorHtml}
     </div>
   </section>`
+
+  return matchWorkspaceShellHtml({
+    activeSection: section,
+    teamName: ownTeamName,
+    titleHtml: escapeHtml(pageTitle),
+    descriptionHtml: escapeHtml(meta.description),
+    className: 'match-native-section',
+    attributes: {
+      'data-native-match-section': escapeHtml(section),
+      'data-native-match-step': meta.step,
+    },
+    contentHtml,
+  })
 }

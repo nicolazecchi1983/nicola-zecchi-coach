@@ -26,20 +26,32 @@ function titleCase(value = '') {
   return clean(value).replace(/\b\w/g, letter => letter.toUpperCase())
 }
 
+function formatLocalDate(date) {
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
 function parseDate(text) {
   const value = normalize(text)
   const now = new Date()
-  if (/\boggi\b/.test(value)) return now.toISOString().slice(0, 10)
+  if (/\boggi\b/.test(value)) return formatLocalDate(now)
   if (/\bdomani\b/.test(value)) {
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    return tomorrow.toISOString().slice(0, 10)
+    return formatLocalDate(tomorrow)
   }
   const match = value.match(/(?:oggi\s+)?(\d{1,2})\s+(gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)(?:\s+(\d{4}))?/)
   if (!match) return null
   const year = Number(match[3] || now.getFullYear())
-  const date = new Date(year, MONTHS[match[2]], Number(match[1]))
-  return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10)
+  const month = MONTHS[match[2]]
+  const day = Number(match[1])
+  const date = new Date(year, month, day)
+  const isExactCalendarDate = date.getFullYear() === year
+    && date.getMonth() === month
+    && date.getDate() === day
+  return isExactCalendarDate ? formatLocalDate(date) : null
 }
 
 function parseTime(text) {

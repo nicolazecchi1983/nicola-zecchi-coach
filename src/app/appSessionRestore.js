@@ -67,6 +67,15 @@ export function resolveWorkspaceRestore({
     }
   }
 
+  if (requested === 'match-workspace' && hasValidMatchContext(activeMatch, calendarEvents) && available.has('opponent-study') && canAccess('opponent-study')) {
+    return {
+      key: 'opponent-study',
+      label: WORKSPACE_LABELS['opponent-study'],
+      navigationKey: 'match-library',
+      reason: 'legacy-match-workspace-redirect',
+    }
+  }
+
   if (MATCH_CONTEXT_SET.has(requested) && !hasValidMatchContext(activeMatch, calendarEvents)) {
     const fallback = available.has('match-library') && canAccess('match-library') ? 'match-library' : safeFallback
     return {

@@ -1,0 +1,374 @@
+/* STAFF Design System v1 — DS1.3 Buttons, Forms & Controls
+   Canonical interaction language. This layer is loaded after legacy/domain CSS
+   and page shell, so common controls converge without domain-specific patches. */
+
+:root {
+  --staff-control-inline: var(--staff-space-3);
+  --staff-control-inline-compact: 12px;
+  --staff-control-border: var(--staff-color-border);
+  --staff-control-border-hover: var(--staff-color-border-strong);
+  --staff-control-bg: var(--staff-color-bg-control);
+  --staff-control-bg-hover: var(--staff-color-bg-panel-raised);
+}
+
+/* ----------------------------- Buttons ----------------------------- */
+.staff-button,
+.primary-action,
+.primary-button,
+.portal-action-button,
+.wide-button,
+.button,
+.secondary-button,
+.ghost-button,
+.danger-button,
+.new-event-modal__secondary,
+#saveNewEventButton {
+  min-height: var(--staff-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--staff-space-2);
+  padding: 0 var(--staff-control-inline);
+  border: 1px solid transparent;
+  border-radius: var(--staff-radius-control);
+  font-family: var(--staff-font-family);
+  font-size: var(--staff-font-body);
+  font-weight: var(--staff-font-weight-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    background-color var(--staff-motion-normal) var(--staff-ease-standard),
+    border-color var(--staff-motion-normal) var(--staff-ease-standard),
+    color var(--staff-motion-normal) var(--staff-ease-standard),
+    box-shadow var(--staff-motion-normal) var(--staff-ease-standard),
+    opacity var(--staff-motion-normal) var(--staff-ease-standard);
+}
+
+.staff-button svg,
+.primary-action svg,
+.primary-button svg,
+.portal-action-button svg,
+.wide-button svg,
+.button svg,
+.secondary-button svg,
+.ghost-button svg,
+.danger-button svg,
+.new-event-modal__secondary svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+/* Primary — one visually dominant action. */
+.staff-button--primary,
+.primary-action,
+.primary-button,
+.portal-action-button--primary,
+.wide-button,
+.button--primary,
+#saveNewEventButton {
+  background: var(--staff-color-primary);
+  border-color: var(--staff-color-primary);
+  color: var(--staff-color-primary-contrast);
+  box-shadow: none;
+}
+
+.staff-button--primary:hover:not(:disabled),
+.primary-action:hover:not(:disabled),
+.primary-button:hover:not(:disabled),
+.portal-action-button--primary:hover:not(:disabled),
+.wide-button:hover:not(:disabled),
+.button--primary:hover:not(:disabled),
+#saveNewEventButton:hover:not(:disabled) {
+  background: var(--staff-color-primary-hover);
+  border-color: var(--staff-color-primary-hover);
+  color: var(--staff-color-primary-contrast);
+  box-shadow: none;
+  filter: none;
+  transform: none;
+}
+
+/* Secondary — visible, not dominant. */
+.staff-button--secondary,
+.secondary-button,
+.portal-action-button--secondary,
+.button--secondary,
+.new-event-modal__secondary,
+.team-settings-actions [type="button"] {
+  background: var(--staff-control-bg);
+  border-color: var(--staff-control-border);
+  color: var(--staff-color-text);
+  box-shadow: none;
+}
+
+.staff-button--secondary:hover:not(:disabled),
+.secondary-button:hover:not(:disabled),
+.portal-action-button--secondary:hover:not(:disabled),
+.button--secondary:hover:not(:disabled),
+.new-event-modal__secondary:hover:not(:disabled),
+.team-settings-actions [type="button"]:hover:not(:disabled) {
+  background: var(--staff-control-bg-hover);
+  border-color: var(--staff-control-border-strong);
+  color: var(--staff-color-text);
+  transform: none;
+}
+
+/* Ghost — contextual/low priority. */
+.staff-button--ghost,
+.ghost-button,
+.button--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--staff-color-text-secondary);
+  box-shadow: none;
+}
+
+.staff-button--ghost:hover:not(:disabled),
+.ghost-button:hover:not(:disabled),
+.button--ghost:hover:not(:disabled) {
+  background: var(--staff-color-bg-hover);
+  border-color: transparent;
+  color: var(--staff-color-text);
+  transform: none;
+}
+
+/* Danger always communicates meaning, never decoration. */
+.staff-button--danger,
+.button--danger,
+.danger-button {
+  background: var(--staff-color-danger-soft);
+  border-color: var(--staff-color-danger-border);
+  color: var(--staff-color-danger-text);
+  box-shadow: none;
+}
+
+.staff-button--danger:hover:not(:disabled),
+.button--danger:hover:not(:disabled),
+.danger-button:hover:not(:disabled) {
+  background: var(--staff-color-danger-soft);
+  border-color: var(--staff-color-danger);
+  color: var(--staff-color-danger-text);
+}
+
+.staff-button:disabled,
+.primary-action:disabled,
+.primary-button:disabled,
+.portal-action-button:disabled,
+.wide-button:disabled,
+.button:disabled,
+.secondary-button:disabled,
+.ghost-button:disabled,
+.danger-button:disabled,
+#saveNewEventButton:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+.danger-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--staff-color-danger) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.danger-button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ----------------------------- Form controls ----------------------------- */
+/* Generic field stack and feedback belong to the shared control system. */
+.form-field {
+  display: grid;
+  gap: 7px;
+}
+
+.form-message {
+  min-height: 18px;
+  margin: 0;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+}
+
+.form-message.is-error { color: var(--staff-color-danger-text); }
+.form-message.is-success { color: var(--staff-color-positive); }
+
+.form-field,
+.ts-field,
+.new-event-form label,
+.match-input-with-icon,
+.analysis-schema-subsection,
+.team-settings-grid label,
+.callups-toolbar label,
+.board-toolbar label {
+  min-width: 0;
+}
+
+.form-field > label,
+.form-field > span,
+.ts-field > label,
+.ts-field > span,
+.new-event-form label > span,
+.match-input-with-icon > label,
+.team-settings-grid label > span,
+.callups-toolbar label > span,
+.board-toolbar label > span {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-semibold);
+  line-height: 1.25;
+  letter-spacing: .045em;
+}
+
+/* Text-like inputs. Exclude semantic/special native controls. */
+.page-view input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.page-view select,
+.page-view textarea,
+.product-page-shell input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.product-page-shell select,
+.product-page-shell textarea,
+.match-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.match-workspace select,
+.match-workspace textarea {
+  min-height: var(--staff-control-height);
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--staff-control-border);
+  border-radius: var(--staff-radius-control);
+  background: var(--staff-control-bg);
+  color: var(--staff-color-text);
+  font-family: var(--staff-font-family);
+  font-size: var(--staff-font-body);
+  line-height: 1.35;
+  box-shadow: none;
+  outline: none;
+  transition:
+    background-color var(--staff-motion-normal) var(--staff-ease-standard),
+    border-color var(--staff-motion-normal) var(--staff-ease-standard),
+    box-shadow var(--staff-motion-normal) var(--staff-ease-standard);
+}
+
+.page-view input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.page-view select,
+.product-page-shell input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.product-page-shell select,
+.match-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+.match-workspace select {
+  padding-inline: var(--staff-control-inline-compact);
+}
+
+.page-view textarea,
+.product-page-shell textarea,
+.match-workspace textarea {
+  padding: 12px var(--staff-control-inline-compact);
+  resize: vertical;
+  line-height: var(--staff-line-height-body);
+}
+
+.page-view input::placeholder,
+.page-view textarea::placeholder,
+.product-page-shell input::placeholder,
+.product-page-shell textarea::placeholder,
+.match-workspace input::placeholder,
+.match-workspace textarea::placeholder {
+  color: var(--staff-color-text-faint);
+  opacity: 1;
+}
+
+.page-view input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):focus,
+.page-view select:focus,
+.page-view textarea:focus,
+.product-page-shell input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):focus,
+.product-page-shell select:focus,
+.product-page-shell textarea:focus,
+.match-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):focus,
+.match-workspace select:focus,
+.match-workspace textarea:focus {
+  border-color: var(--staff-color-primary);
+  box-shadow: var(--staff-shadow-focus);
+  outline: none;
+}
+
+.page-view input:disabled,
+.page-view select:disabled,
+.page-view textarea:disabled,
+.product-page-shell input:disabled,
+.product-page-shell select:disabled,
+.product-page-shell textarea:disabled,
+.match-workspace input:disabled,
+.match-workspace select:disabled,
+.match-workspace textarea:disabled,
+.page-view input[readonly],
+.product-page-shell input[readonly],
+.match-workspace input[readonly] {
+  opacity: .62;
+  cursor: not-allowed;
+}
+
+/* Checkbox/radio: preserve native semantics, standardize brand. */
+.page-view input[type="checkbox"],
+.page-view input[type="radio"],
+.product-page-shell input[type="checkbox"],
+.product-page-shell input[type="radio"],
+.match-workspace input[type="checkbox"],
+.match-workspace input[type="radio"] {
+  accent-color: var(--staff-color-primary);
+}
+
+/* Search controls should read as one control rather than a nested card. */
+.match-library-search,
+.ts-player-search,
+.analysis-toolbar {
+  border-radius: var(--staff-radius-control);
+}
+
+/* Unified keyboard focus, including legacy classes not yet migrated. */
+.staff-button:focus-visible,
+.primary-action:focus-visible,
+.primary-button:focus-visible,
+.portal-action-button:focus-visible,
+.wide-button:focus-visible,
+.button:focus-visible,
+.secondary-button:focus-visible,
+.ghost-button:focus-visible,
+#saveNewEventButton:focus-visible,
+.page-view input:focus-visible,
+.page-view select:focus-visible,
+.page-view textarea:focus-visible,
+.product-page-shell input:focus-visible,
+.product-page-shell select:focus-visible,
+.product-page-shell textarea:focus-visible,
+.match-workspace input:focus-visible,
+.match-workspace select:focus-visible,
+.match-workspace textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--staff-shadow-focus);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --staff-control-inline: 14px;
+  }
+
+  .staff-button,
+  .primary-action,
+  .primary-button,
+  .portal-action-button,
+  .wide-button,
+  .button,
+  .secondary-button,
+  .ghost-button,
+  #saveNewEventButton,
+  .page-view input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+  .page-view select,
+  .product-page-shell input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+  .product-page-shell select,
+  .match-workspace input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]):not([type="file"]):not([type="hidden"]),
+  .match-workspace select {
+    min-height: var(--staff-touch-target);
+  }
+}

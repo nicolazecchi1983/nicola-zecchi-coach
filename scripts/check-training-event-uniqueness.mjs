@@ -2,6 +2,7 @@ import fs from 'node:fs'
 
 const service = fs.readFileSync('src/modules/calendar/calendarService.js', 'utf8')
 const controller = fs.readFileSync('src/app/appController.js', 'utf8')
+const calendarRuntime = fs.readFileSync('src/modules/calendar/events/calendarRuntimeActions.js', 'utf8')
 const trainingService = fs.readFileSync('src/modules/training/trainingSheetService.js', 'utf8')
 
 const checks = [
@@ -13,8 +14,8 @@ const checks = [
   ['training publish passes pending duplicate ids', trainingService.includes('pendingDeletionEventIds') && /updateEvent\(existingEvent\.id, payload, \{ pendingDeletionEventIds \}\)/.test(trainingService)],
   ['guard only applies to training', service.includes("=== 'training'")],
   ['duplicate message is actionable', service.includes('Apri l’evento esistente per modificarlo.')],
-  ['new-event form surfaces service error', controller.includes('`Errore salvataggio: ${insertError.message}`')],
-  ['edit-event form surfaces service error', controller.includes('`Errore modifica: ${updateError.message}`')],
+  ['new-event form surfaces service error', calendarRuntime.includes("getDataAccessUserMessage(insertError, undefined, { stage: 'calendar-event-create' })")],
+  ['edit-event form surfaces service error', calendarRuntime.includes("getDataAccessUserMessage(updateError, undefined, { stage: 'calendar-event-update' })")],
 ]
 
 const failures = checks.filter(([, ok]) => !ok)

@@ -1,0 +1,101 @@
+/* STAFF DS2.3 — Training Command Bar structural owner
+   Canonical DOM: elastic select + indivisible action cluster.
+   Mobile geometry is finalized by responsive.css. Scope: presentation only. */
+
+.ts-manual-editor .ts-editor-actions-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: stretch;
+  align-items: start;
+  gap: 0;
+  width: min(100%, 500px);
+  max-width: 500px;
+  min-width: 0;
+  justify-self: end;
+  padding-top: 0;
+}
+
+.ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: 44px 24px;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-open-sheet {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.ts-manual-editor .ts-open-sheet select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  padding-inline: 12px 32px;
+  font-size: .9rem;
+  line-height: 1;
+}
+
+.ts-manual-editor .ts-command-actions {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 8px;
+  width: max-content;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-open-button {
+  width: 84px;
+  min-width: 84px;
+  height: 44px;
+  min-height: 44px;
+  padding-inline: 8px;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-open-button-icon { display: none; }
+.ts-manual-editor .ts-open-button-label { display: inline; }
+
+.ts-manual-editor .ts-more-menu {
+  position: relative;
+  width: 44px;
+  min-width: 44px;
+  margin: 0;
+}
+
+.ts-manual-editor .ts-more-button {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+}
+
+.ts-manual-editor .ts-draft-state--compact {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-self: end;
+  align-self: start;
+  min-height: 20px;
+  margin: 0;
+  padding: 2px 7px;
+  font-size: .68rem;
+  line-height: 1.2;
+}
+
+@media (max-width: 1260px) {
+  .ts-manual-editor .ts-editor-actions-wrap { justify-self: start; }
+}

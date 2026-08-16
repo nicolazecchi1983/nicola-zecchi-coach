@@ -41,7 +41,7 @@ for (const primitive of requiredPrimitives) {
 }
 
 
-const appView = await readFile('src/app/appController.js', 'utf8')
+const appView = await readFile('src/modules/match/ui/legacyMatchCompatibilityView.js', 'utf8')
 const workspaceEngine = await readFile('src/app/appWorkspaceEngine.js', 'utf8')
 const matchSheetStyles = await readFile('src/modules/match/ui/matchSheet.css', 'utf8')
 const uiComponents = await readFile('src/design-system/uiComponents.js', 'utf8')

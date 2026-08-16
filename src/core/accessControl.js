@@ -153,6 +153,9 @@ const ROLE_CAPABILITIES = Object.freeze({
   [ACCESS_ROLES.READ_ONLY]: new Set(READ_ONLY_CAPABILITIES),
 })
 
+export const FROZEN_PRODUCT_SECTIONS = Object.freeze(['board', 'methodology'])
+const FROZEN_PRODUCT_SECTION_SET = new Set(FROZEN_PRODUCT_SECTIONS)
+
 const SECTION_CAPABILITY = Object.freeze({
   dashboard: null,
   calendar: ACCESS_CAPABILITIES.CALENDAR_VIEW,
@@ -197,6 +200,7 @@ export function getAccessPolicy(role) {
 }
 
 export function canAccessSectionForRole(role, sectionKey) {
+  if (FROZEN_PRODUCT_SECTION_SET.has(sectionKey)) return false
   if (!(sectionKey in SECTION_CAPABILITY)) return false
   return canForRole(role, SECTION_CAPABILITY[sectionKey])
 }

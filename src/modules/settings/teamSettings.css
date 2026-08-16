@@ -1,0 +1,139 @@
+/* STAFF 0.29.25 — Team Settings Grid v2 canonical owner.
+   Structure: brand preview -> semantic Identity / Appearance sections -> Facilities. */
+
+.team-brand-logo{display:grid;place-items:center;object-fit:contain;overflow:hidden}
+.team-brand-logo--fallback{font-weight:900;color:#fff}
+
+.team-settings-card{
+  overflow:hidden;
+  padding:26px;
+  border:1px solid #1e455e;
+  border-radius:24px;
+  background:#0b2233;
+}
+
+.team-brand-preview{
+  --team-primary:#07194f;
+  --team-secondary:#1f93e5;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin-bottom:20px;
+  padding:20px;
+  border:1px solid color-mix(in srgb,var(--team-secondary) 55%,#fff 10%);
+  border-radius:20px;
+  background:linear-gradient(115deg,var(--team-primary),color-mix(in srgb,var(--team-secondary) 35%,#071728));
+  transition:background .2s ease;
+}
+.team-brand-preview-logo{width:76px;height:76px;object-fit:contain;border-radius:15px;background:#fff;padding:8px}
+.team-brand-preview-logo--fallback{display:grid;place-items:center;font-size:27px;font-weight:900;color:var(--team-primary)}
+.team-brand-preview strong{display:block;font-size:25px;color:#fff}
+.team-brand-preview span{color:#b8d4e6}
+
+.team-settings-grid{display:grid;gap:16px}
+.team-settings-section{
+  min-width:0;
+  padding:18px;
+  border:1px solid rgba(62,144,187,.30);
+  border-radius:18px;
+  background:rgba(7,26,40,.72);
+}
+.team-settings-section-head{display:grid;gap:3px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(62,144,187,.20)}
+.team-settings-section-head>span{color:#35caff;font-size:.72rem;font-weight:900;letter-spacing:.12em}
+.team-settings-section-head h2{margin:0;color:#f5f8fb;font-size:1.13rem;line-height:1.15}
+.team-settings-section-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.team-settings-section-grid label{display:grid;gap:8px;min-width:0}
+.team-settings-section-grid label>span{font-weight:800;color:#c9dceb}
+.team-settings-section-grid input,.team-settings-section-grid select,.team-settings-section-grid textarea{width:100%;min-height:56px;border:1px solid #24506a;border-radius:15px;background:#061827;color:#fff;padding:14px 16px}
+.team-settings-span-2{grid-column:1/-1}
+.team-settings-wide{grid-column:1/-1}
+.team-settings-actions{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-top:20px}
+
+/* Appearance is an intentional 2x2 grid, never a free-flowing list of fields. */
+.team-appearance-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.team-color-field{margin:0;min-width:0;border:1px solid var(--ui-border);border-radius:15px;padding:13px 14px 14px;background:#071a28}
+.team-color-field legend{padding:0 7px;color:#dbeaf5;font-weight:800}
+.team-color-palette{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.team-color-swatch{width:34px;height:34px;border:2px solid rgba(255,255,255,.3);border-radius:10px;background:var(--swatch);box-shadow:inset 0 0 0 1px rgba(0,0,0,.2);padding:0}
+.team-color-swatch:hover{transform:scale(1.06);border-color:#fff}
+.team-color-custom{display:flex;align-items:center;gap:9px;margin-left:auto}
+.team-color-custom span{font-size:13px;color:#9fc1d7}
+.team-color-custom input[type="color"]{width:42px;height:34px;min-height:34px;padding:3px;border-radius:9px}
+
+.team-appearance-final-row{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  align-items:stretch;
+}
+.team-appearance-block{
+  min-width:0;
+  min-height:132px;
+  display:grid;
+  grid-template-rows:auto 56px auto;
+  gap:8px;
+  padding:14px;
+  border:1px solid var(--ui-border);
+  border-radius:15px;
+  background:#071a28;
+}
+.team-appearance-block-label{font-weight:800;color:#c9dceb}
+.team-appearance-block-help{align-self:start;color:#8fb1c8;line-height:1.35}
+.team-kit-control{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:12px;align-items:stretch;min-width:0}
+.team-kit-control select{min-width:0;min-height:56px}
+.team-token-preview-card{
+  height:56px;
+  min-height:56px;
+  display:grid;
+  place-items:center;
+  padding:4px;
+  border:1px solid var(--ui-border);
+  border-radius:15px;
+  background:#061827;
+}
+.team-token-preview{
+  --token-primary:#07194f;
+  --token-secondary:#1f93e5;
+  background:
+    radial-gradient(circle at 30% 22%,rgba(255,255,255,.16),transparent 28%),
+    var(--token-primary);
+}
+.team-token-preview--vertical{background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.14),transparent 28%),repeating-linear-gradient(90deg,var(--token-primary) 0 8px,var(--token-secondary) 8px 13px)}
+.team-token-preview--horizontal{background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.14),transparent 28%),repeating-linear-gradient(0deg,var(--token-primary) 0 8px,var(--token-secondary) 8px 13px)}
+.team-token-preview b{font-size:.9rem;line-height:1}
+.team-logo-upload{align-self:stretch}
+.team-logo-upload input[type="file"]{width:100%;min-height:56px;height:56px;padding:10px 12px;border:1px solid var(--ui-border);border-radius:15px;background:#061827;color:#e7f1f8}
+
+/* Team Facilities canonical owner. */
+.team-facilities-field{border:1px solid #24506a;border-radius:18px;padding:18px;background:#071a28;min-width:0}
+.team-facilities-field legend{padding:0 8px;font-weight:900;color:#c9dceb}
+.team-facilities-help{margin:0 0 14px;color:#8fb1c8;line-height:1.45}
+.team-facilities-list{display:grid;gap:10px}
+.team-facility-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.team-facility-row input{min-height:50px}
+.team-facility-remove{min-height:50px}
+.team-facility-add{margin-top:12px}
+.team-facilities-empty{padding:14px;border:1px dashed #24506a;border-radius:14px;color:#8fb1c8}
+
+@media(max-width:900px){
+  .team-settings-section-grid,.team-appearance-grid{grid-template-columns:1fr}
+  .team-settings-span-2,.team-settings-wide{grid-column:auto}
+  .team-appearance-final-row{grid-column:auto;grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .team-settings-card{padding:14px}
+  .team-settings-section{padding:14px}
+  .team-color-custom{width:100%;justify-content:space-between;margin-left:0;margin-top:4px}
+  .team-settings-actions{position:sticky;bottom:0;background:#081d2c;padding:12px 0 calc(12px + env(safe-area-inset-bottom));z-index:4}
+  .team-settings-actions>*{flex:1 1 140px}
+}
+@media(max-width:640px){
+  .team-facility-row{grid-template-columns:1fr}
+  .team-facility-remove{width:100%}
+}
+
+@media(max-width:520px){
+  .team-kit-control{grid-template-columns:minmax(0,1fr) 58px;gap:10px}
+  .team-appearance-block{padding:12px}
+}

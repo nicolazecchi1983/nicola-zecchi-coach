@@ -1,24 +1,36 @@
 :root {
-  /* Foundations: valori condivisi, senza dipendenze dai moduli. */
-  --staff-color-bg-app: #06111d;
-  --staff-color-bg-panel: #0a1725;
-  --staff-color-bg-panel-raised: #0d1d2d;
-  --staff-color-bg-control: #0b1a29;
-  --staff-color-bg-sidebar: #04111c;
-  --staff-color-bg-header: #061522;
+  /* STAFF Design System v1 — Foundation Contract (DS1.1)
+     This file is the single owner of visual foundation values.
+     Domain CSS may consume these tokens, never create a parallel palette/scale. */
+
+  /* Neutral + semantic palette */
+  --staff-color-bg-app: #070b10;
+  --staff-color-bg-panel: #0d141c;
+  --staff-color-bg-panel-raised: #111b25;
+  --staff-color-bg-control: #0e1822;
+  --staff-color-bg-sidebar: #05080c;
+  --staff-color-bg-header: #080d13;
   --staff-color-bg-hover: rgba(255, 255, 255, 0.045);
-  --staff-color-border: rgba(124, 167, 205, 0.24);
-  --staff-color-border-strong: rgba(124, 167, 205, 0.42);
-  --staff-color-text: #f8fbff;
-  --staff-color-text-muted: #9cb0c3;
-  --staff-color-primary: #0aa7e8;
-  --staff-color-primary-hover: #22b8f3;
-  --staff-color-danger: #ff6577;
-  --staff-color-positive: #3bd9a0;
-  --staff-color-warning: #e8b449;
-  --staff-color-critical: #ff657b;
+  --staff-color-border-subtle: rgba(151, 174, 194, 0.12);
+  --staff-color-border: rgba(151, 174, 194, 0.20);
+  --staff-color-border-strong: rgba(151, 174, 194, 0.34);
+  --staff-color-text: #f4f7f9;
+  --staff-color-text-secondary: #9fb3c0;
+  --staff-color-text-muted: #93a4b2;
+  --staff-color-text-faint: #526a7e;
+  --staff-color-primary: #19aef0;
+  --staff-color-primary-hover: #38bdf8;
+  --staff-color-primary-contrast: #03111b;
+  --staff-color-danger: #ff6b7a;
+  --staff-color-danger-soft: rgba(255, 101, 119, 0.10);
+  --staff-color-danger-border: rgba(255, 101, 119, 0.58);
+  --staff-color-danger-text: #ffb7c0;
+  --staff-color-positive: #32d6a0;
+  --staff-color-warning: #ff9f43;
+  --staff-color-critical: var(--staff-color-danger);
   --staff-color-focus: rgba(34, 184, 243, 0.34);
 
+  /* Spacing — canonical 4/8/16/24/32/48 scale */
   --staff-space-1: 4px;
   --staff-space-2: 8px;
   --staff-space-3: 16px;
@@ -26,22 +38,61 @@
   --staff-space-5: 32px;
   --staff-space-6: 48px;
 
-  --staff-radius-control: 12px;
-  --staff-radius-card: 18px;
+  /* Radius — three structural levels + pill */
+  --staff-radius-small: 8px;
+  --staff-radius-medium: 12px;
+  --staff-radius-large: 18px;
+  --staff-radius-control: var(--staff-radius-medium);
+  --staff-radius-card: var(--staff-radius-large);
   --staff-radius-panel: 24px;
   --staff-radius-pill: 999px;
 
-  --staff-control-height-compact: 40px;
+  /* Controls / touch */
+  --staff-control-height-compact: 44px;
   --staff-control-height: 48px;
+  --staff-touch-target-min: 44px;
+  --staff-touch-target: 48px;
 
+  /* Typography roles */
+  --staff-font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --staff-font-page-title: clamp(1.75rem, 2.2vw, 2.35rem);
+  --staff-font-section-title: 1.25rem;
+  --staff-font-subsection-title: 1.08rem;
+  --staff-font-card-title: 1rem;
+  --staff-font-body: 0.95rem;
+  --staff-font-secondary: 0.84rem;
+  --staff-font-caption: 0.78rem;
+  --staff-font-label: 0.72rem;
+  --staff-font-kpi: clamp(1.55rem, 2vw, 2rem);
+  --staff-font-weight-regular: 400;
+  --staff-font-weight-medium: 600;
+  --staff-font-weight-semibold: 700;
+  --staff-font-weight-bold: 800;
+  --staff-line-height-tight: 1.12;
+  --staff-line-height-heading: 1.2;
+  --staff-line-height-secondary: 1.42;
+  --staff-line-height-body: 1.5;
+
+  /* Motion: functional feedback only */
+  --staff-motion-fast: 120ms;
+  --staff-motion-normal: 160ms;
+  --staff-motion-slow: 220ms;
+  --staff-ease-standard: ease;
+
+  /* Elevation / focus */
   --staff-shadow-focus: 0 0 0 3px var(--staff-color-focus);
   --staff-shadow-panel: 0 18px 42px rgba(0, 0, 0, 0.22);
 
-  --staff-font-page-title: clamp(1.75rem, 2.2vw, 2.35rem);
-  --staff-font-section-title: 1.25rem;
-  --staff-font-card-title: 1rem;
-  --staff-font-body: 0.95rem;
-  --staff-font-caption: 0.78rem;
-  --staff-font-label: 0.72rem;
+  /* Page width roles */
+  --staff-content-readable: 880px;
+  --staff-content-standard: 1180px;
+  --staff-product-content-max: 1540px;
   --staff-content-max: 1680px;
+
+  /* Responsive policy. CSS custom properties document the contract;
+     media queries still use literal values because custom properties are not valid there. */
+  --staff-breakpoint-compact-mobile: 390px;
+  --staff-breakpoint-mobile: 760px;
+  --staff-breakpoint-tablet: 980px;
+  --staff-breakpoint-wide: 1180px;
 }

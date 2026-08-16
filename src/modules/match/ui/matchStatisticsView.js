@@ -1,28 +1,26 @@
+import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import { matchContextBackButtonHtml, matchContextNavigationHtml } from '../../../design-system/uiComponents.js'
 import { buildMatchDataSnapshot } from '../matchStatisticsModel.js'
 
-function escapeValue(value = '') {
-  return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]))
-}
 
 function readJson(storage, key) {
   try { return JSON.parse(storage.getItem(key) || 'null') } catch { return null }
 }
 
 function metricCard(label, value, detail = '') {
-  return `<article class="match-stat-card"><span>${escapeValue(label)}</span><strong>${escapeValue(value)}</strong>${detail ? `<small>${escapeValue(detail)}</small>` : ''}</article>`
+  return `<article class="match-stat-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong>${detail ? `<small>${escapeHtml(detail)}</small>` : ''}</article>`
 }
 
 function rankedRows(entries = {}, emptyText) {
   const rows = Object.entries(entries).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'it'))
-  if (!rows.length) return `<p class="match-stat-empty">${escapeValue(emptyText)}</p>`
+  if (!rows.length) return `<p class="match-stat-empty">${escapeHtml(emptyText)}</p>`
   const max = Math.max(...rows.map(([, value]) => value), 1)
-  return rows.map(([name, value]) => `<div class="match-stat-rank"><span>${escapeValue(name)}</span><div><i style="--stat-value:${(value / max) * 100}%"></i></div><strong>${value}</strong></div>`).join('')
+  return rows.map(([name, value]) => `<div class="match-stat-rank"><span>${escapeHtml(name)}</span><div><i style="--stat-value:${(value / max) * 100}%"></i></div><strong>${value}</strong></div>`).join('')
 }
 
 function minutesRows(items = []) {
   if (!items.length) return '<p class="match-stat-empty">Completa formazione e sostituzioni nel Match Sheet.</p>'
-  return items.map((item) => `<div class="match-minutes-row"><span>${escapeValue(item.player)}</span><div><i style="--stat-value:${Math.min(100, (item.minutes / 90) * 100)}%"></i></div><strong>${item.minutes}'</strong></div>`).join('')
+  return items.map((item) => `<div class="match-minutes-row"><span>${escapeHtml(item.player)}</span><div><i style="--stat-value:${Math.min(100, (item.minutes / 90) * 100)}%"></i></div><strong>${item.minutes}'</strong></div>`).join('')
 }
 
 export function createMatchStatisticsView({ storage, createMatchLibraryService, getCalendarEvents, getTeamProfile }) {
@@ -40,7 +38,7 @@ export function createMatchStatisticsView({ storage, createMatchLibraryService, 
 
     return `<section class="content-section match-statistics" data-match-statistics>
       <header class="page-head match-context-page-head">
-        <div><h1>Statistiche · ${escapeValue(snapshot.opponent)}</h1><p><span>MATCH WORKSPACE</span><b>•</b> Numeri generati dal Match Sheet</p></div>
+        <div><h1>Statistiche · ${escapeHtml(snapshot.opponent)}</h1><p><span>MATCH WORKSPACE</span><b>•</b> Numeri generati dal Match Sheet</p></div>
         ${matchContextBackButtonHtml()}
       </header>
 

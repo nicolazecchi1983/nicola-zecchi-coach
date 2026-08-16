@@ -32,11 +32,11 @@ export function renderProfileView({ currentUserProfile, currentUser, currentUser
           </div>
           <label class="form-field">
             <span>Email</span>
-            <input value="${email}" type="email" disabled>
+            <input name="profile_email_display" value="${email}" type="email" disabled>
           </label>
           <label class="form-field">
             <span>Ruolo</span>
-            <input value="${currentRoleLabel}" disabled>
+            <input name="profile_role_display" value="${currentRoleLabel}" disabled>
           </label>
           <p class="form-message" data-profile-message></p>
           <button class="primary-action" type="submit">Salva profilo</button>

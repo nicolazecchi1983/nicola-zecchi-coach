@@ -1,4 +1,6 @@
 import { supabase } from '../../supabase.js'
+import { withDataAccessRetry } from '../../infrastructure/dataAccess/withDataAccessRetry.js'
+import { DATA_OPERATION_KIND } from '../../infrastructure/dataAccess/dataOperationPolicy.js'
 
 const cleanPayload = (payload = {}) => Object.fromEntries(
   Object.entries(payload).filter(([, value]) => value !== undefined),
@@ -64,10 +66,13 @@ async function assertTrainingEventSlotAvailable(
 }
 
 export async function listCalendarEvents() {
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .order('start_at')
+  const { data, error } = await withDataAccessRetry(
+    () => supabase
+      .from('events')
+      .select('*')
+      .order('start_at'),
+    { kind: DATA_OPERATION_KIND.READ, stage: 'calendar-events-list' },
+  )
 
   if (error) throw error
   return data ?? []
@@ -143,11 +148,14 @@ export async function deleteCalendarEvents(eventIds = []) {
 export async function getCalendarEvent(eventId) {
   if (!eventId) return null
 
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('id', eventId)
-    .maybeSingle()
+  const { data, error } = await withDataAccessRetry(
+    () => supabase
+      .from('events')
+      .select('*')
+      .eq('id', eventId)
+      .maybeSingle(),
+    { kind: DATA_OPERATION_KIND.READ, stage: 'calendar-event-get' },
+  )
 
   if (error) throw error
   return data ?? null

@@ -152,3 +152,153 @@ B2.3 R12 — Authoritative Team Profile Persistence
 - Added a formal Mobile Responsive Contract covering shell, navigation, page actions, forms, dense data, Training, Match, Calendar, PWA gate and regression safety.
 - Existing legacy breakpoints remain untouched in M1.1; consolidation is progressive and must not become a mass CSS rewrite.
 - No domain, workflow, Supabase, permissions or persistence changes.
+
+
+## 0.18.40 — M1.2-R1 Real Device Mobile Corrective
+
+Baseline derived from Android production testing. The release stays inside the Mobile Compatibility track and does not introduce new product features.
+
+- mobile typography and descriptive-copy density reduced;
+- `Altro` requires visible section labels;
+- Training Match Day wraps into a grid instead of horizontal scrolling;
+- Match Workspace navigation becomes readable without sideways scrolling;
+- callups selected counter remains inside its layout;
+- own/opponent pitch surfaces use the available mobile width and tokens scale down;
+- tactical Board tokens scale down and Android color changes persist on both `input` and `change`;
+- minutes played are rendered as a readable mobile list rather than compressed bars;
+- staff avatars/actions are compacted; destructive actions no longer dominate the card;
+- Match Report mobile preview and bench list are made single-column/readable;
+- print page adds a mobile settle delay before invoking the OS print service. This is hardening and still requires real-device verification.
+
+No database or Supabase schema changes.
+
+## 0.19.0 — M2.0 Configurable Match Analysis
+- Product rule: STAFF supplies structure without imposing one coach's methodology.
+- Shared analysis schema introduced for `Studio avversario`, `Avversario` and `Analisi gara`.
+- Only three macro-phases are canonical: Possesso, Non possesso, Transizioni.
+- Subphases are optional and user-created; suggested labels are shortcuts, never mandatory stored fields.
+- Legacy fixed analysis fields remain read-compatible for older Match data; new editing writes the shared JSON schema.
+- Match Report consumes the same schema instead of owning a fourth hardcoded taxonomy.
+- Studio avversario keeps persistence inside the canonical Calendar event notes; no new Supabase table introduced.
+- Captain/Vice selectors are now the canonical form fields themselves, removing hidden duplicate UI state.
+- Match Workspace and Match Library move toward neutral STAFF surfaces; visible Match ID removed; desktop Match navigation uses a fixed seven-column grid without horizontal scrolling.
+- Training Library filters are collapsed behind a single `Filtri` control while existing filter hooks remain unchanged.
+- Architecture contract documented in `docs/STAFF_MATCH_ANALYSIS_SCHEMA.md`.
+
+## 0.25.0 — Recovery Baseline Candidate
+- Derived exclusively from the certified 0.24.5 Recovery baseline after full local `npm run go` validation.
+- Fixed regression contracts for the Match bench model so tests reflect the canonical 9 fixed bench slots (12–20) and structural 20-player cap.
+- No product feature, domain, persistence, route, permission or Supabase schema change introduced by the recovery itself.
+- Purpose: establish a protected, reproducible starting point for the next 0.25 development work without modifying the certified 0.24.5 baseline.
+
+## Engineering Hardening 0.28.7 — Calendar Error UX Expansion
+- Estesa al Calendario la foundation 0.28.6 per i messaggi utente dopo errori data-access.
+- Coperti: creazione evento, modifica evento, eliminazione evento, import calendario stagione e cancellazione massiva.
+- I messaggi raw Supabase/network non vengono più mostrati direttamente in questi flussi.
+- Nessun retry aggiunto; CREATE, DELETE e BATCH restano fuori dalle policy automatiche salvo futura review di idempotenza.
+- Nessuna modifica a schema, persistenza, workflow, permessi o collegamenti Match/Training.
+
+## Engineering Hardening 0.28.8 — Calendar Read Resilience Completion
+- Le letture canoniche Calendario `listCalendarEvents` e `getCalendarEvent` usano ora la policy condivisa `READ` con retry automatico limitato ai soli errori transitori.
+- Il caricamento Calendario non espone più `Errore Supabase` o dettagli raw all’utente: usa il formatter centralizzato della 0.28.6.
+- Nessun retry aggiunto a CREATE/UPDATE/DELETE/import/bulk; nessuna modifica a schema, persistenza o workflow.
+
+
+## Engineering Hardening 0.28.9 — Raw Error Message Exposure Guard
+- Audit mirato dei sink UI che mostravano direttamente `error.message` / `error?.message`.
+- Residui migrati al formatter centralizzato in Staff, Player Profile, Training, Match e Calendario.
+- Aggiunto guard permanente `check-raw-error-message-exposure` alla pipeline `npm run check`.
+- Logging interno/console non rimosso; nessun retry, schema, persistenza, workflow o permesso modificato.
+
+## Engineering Hardening 0.28.10 — Error UX Stage Fallback Centralization
+- Centralizzati i fallback utente Error UX nella mappa canonica `stage -> fallback` di `dataAccessUserFeedback.js`.
+- I flussi già migrati in Calendario, Staff, Rosa, Training e Match non duplicano più stringhe di fallback locali.
+- Il fallback esplicito resta supportato per compatibilità legacy; `AppError.userMessage` e i messaggi classificati continuano ad avere precedenza.
+- Aggiunto `check:error-ux-stage-fallbacks` alla pipeline per impedire nuova duplicazione dei fallback nei call-site staged.
+- Nessuna modifica a retry, schema, persistenza, workflow, route o permessi.
+
+## Engineering Hardening 0.28.11 — Error Diagnostics Foundation
+- Aggiunta diagnostica tecnica centralizzata per gli errori trasformati in messaggi utente sicuri.
+- Ogni passaggio attraverso `getDataAccessUserMessage` registra `stage`, classificazione, retryability, status/source code e messaggio tecnico limitato.
+- Sink predefinito `console.error`, con logger iniettabile per una futura integrazione osservabilità senza modificare i moduli feature.
+- La diagnostica non può interrompere il flusso utente e non modifica i messaggi Error UX introdotti nelle 0.28.6–0.28.10.
+- Aggiunto `check:error-diagnostics-foundation` alla pipeline.
+- Nessuna telemetria esterna, retry aggiuntivo, modifica a schema, persistenza, workflow, route, permessi o UI.
+- Questa release chiude il tratto Engineering Hardening pianificato prima del ritorno alla UI/UX strutturale.
+
+## UI/UX 0.29.1 — Match Workspace Shell Visual Hierarchy
+- Ripresa ufficiale del polish MATCH dopo la baseline geometrica 0.29.0.
+- Le sette sezioni Match continuano a usare un solo `matchWorkspaceShellHtml`; nessun workflow o route duplicato.
+- Header Match trasformato in una superficie contestuale compatta con eyebrow, titolo, descrizione e ritorno partita chiaramente separati.
+- Navigazione Match resa più densa e leggibile: step desktop più bassi, stato attivo con rail accent dedicato, tablet e mobile adattivi senza scroll orizzontale.
+- Il Product UI condiviso conserva la geometria comune; il nuovo emphasis resta domain-scoped in `matchWorkspace.css`.
+- Nessuna modifica a Nostra squadra, Avversario, Convocazioni, Analisi, Report o Post gara nel loro contenuto interno.
+- Aggiunto `check:match-workspace-shell-polish` alla pipeline.
+
+
+## UI/UX 0.29.2 — Match Direct Entry
+
+- Match Library apre direttamente `Studio avversario` (step 01) dopo la selezione della gara.
+- Lo stesso direct-entry vale per creazione/apertura partita dal form Match Library.
+- La schermata `match-workspace` resta registrata solo per compatibilità interna; il restore di una vecchia sessione su quella route viene normalizzato allo step 01.
+- Il controllo di ritorno delle sezioni porta alla Match Library e non alla landing intermedia.
+- Nessuna modifica a dati, workflow dei sette step o persistenza Match.
+- Guard dedicato: `check:match-direct-entry`.
+
+## UI/UX 0.29.3 — Match Analysis Macroarea Cards
+
+- Le quattro macroaree dell'Analysis Engine diventano card operative grandi in griglia 2x2 su desktop.
+- La semantica `<details>` e tutta la logica esistente di snapshot/autosave restano invariate.
+- Una macroarea aperta occupa l'intera larghezza dell'editor per mantenere leggibili nota generale e sottofasi.
+- Stato hover/open reso più evidente senza introdurre una nuova palette o nuovi owner CSS.
+- Su mobile le macroaree tornano a una singola colonna con hit-area ampia.
+- Aggiunto `check:analysis-macroarea-card-grid` alla pipeline.
+
+## UI/UX 0.29.4 — Match Squad Operational Composition
+- `Nostra squadra` ripulita dal vecchio header interno duplicato: identità pagina e step restano responsabilità esclusiva del Match Workspace Shell.
+- Toolbar formazione ricomposta in gruppi operativi: sistema, contenuto pedine, leadership e reset, senza cambiare field names o runtime.
+- Campo reso protagonista ma con larghezza massima controllata per mantenere allineamento con undici iniziale e panchina.
+- Undici iniziale compattato con ritmo costante; panchina resa superficie secondaria.
+- Tablet e mobile mantengono composizione adattiva senza introdurre un secondo responsive owner.
+- Nessuna modifica a drag, selezioni, capitano/vice, panchina, persistenza o workflow.
+- Guard dedicato: `check:match-squad-operational-polish`.
+
+## UI/UX 0.29.5 — Match Squad Structural Recomposition
+- `Nostra squadra` ricomposta alla fonte dopo la review visuale della 0.29.4: niente catena di micro-fix sul layout precedente.
+- La panchina esce dalla colonna destra nel DOM e diventa una sezione autonoma a tutta larghezza sotto il blocco operativo principale.
+- Il corpo desktop segue il contratto `Campo | Undici iniziale` con priorità visiva circa 60/40 e altezza coerente tra le due aree.
+- La fascia controlli formazione viene compressa mantenendo invariati nomi dei campi, hook runtime, leadership e reset.
+- La panchina usa una griglia orizzontale 3 colonne desktop, 2 tablet, 1 mobile, eliminando il grande vuoto sotto il campo.
+- Ridotte le surface annidate tramite bordi/background più leggeri, senza introdurre una nuova palette.
+- Nessuna modifica a drag, selezione titolari, panchina, distinta, capitano/vice, persistenza o workflow Match.
+- Guard dedicato: `check:match-squad-structural-recomposition`.
+
+## UI/UX 0.29.6 — Match Squad Leadership Readability
+- `Capitano` e `Vicecapitano` sono ora etichette esplicite e non comprimibili nella toolbar di Nostra squadra.
+- Il gruppo leadership riceve una larghezza minima dedicata: i nomi selezionati non vengono sacrificati alla simmetria della command strip.
+- A larghezze intermedie Capitano/Vicecapitano occupano una riga completa prima di comprimere i select; su mobile i due controlli si impilano.
+- Nessuna modifica a hook runtime, selezione titolari, distinta, persistenza o dominio Match.
+
+## UI/UX 0.29.7 — Match Squad Command Architecture
+- La fascia superiore di `Nostra squadra` viene rifatta come componente strutturale, non come ulteriore micro-fix CSS.
+- Il command strip separa esplicitamente configurazione formazione, contenuto pedine e leadership in gruppi DOM distinti.
+- `Capitano` e `Vicecapitano` possiedono una riga dedicata con larghezze minime leggibili per label e nome selezionato.
+- `Azzera posizioni` cambia owner: esce dal command strip e diventa azione contestuale del `pitch-panel`, nel relativo header.
+- Il contratto `Campo | Undici iniziale` + panchina autonoma full-width della 0.29.5 resta invariato.
+- Il blocco CSS finale 0.29.5/0.29.6 viene consolidato in un solo owner canonico 0.29.7, evitando una catena di override successivi.
+- Nessuna modifica a field names, hook runtime, drag, selezione titolari, distinta, persistenza o dominio Match.
+- Guard dedicato: `check:match-squad-command-architecture`.
+
+## UI/UX 0.29.8–0.29.9 — Match Squad Canonical Isolation
+- `Nostra squadra` ritira le classi toolbar legacy dal proprio markup e rende configurazione e leadership due righe strutturalmente separate.
+- `matchSquad.css` diventa owner canonico del componente; gli owner globali/responsive concorrenti vengono ritirati dal perimetro nativo.
+- `Azzera posizioni` resta azione contestuale del campo e il contratto `Campo | Undici iniziale` + panchina full-width viene preservato.
+- La check suite passa a runner Node sequenziale per evitare il limite di lunghezza di `cmd.exe` su Windows; i contratti legacy leggono la nuova fonte `staffCheckSuite`.
+
+## UI/UX 0.29.10 — Match Squad Visual System Rebuild
+- Ricostruzione visiva stabile di `Nostra squadra` sopra l'architettura canonica: nessuna nuova generazione di override CSS.
+- `matchSquad.css` possiede integralmente il campo nativo: prato, linee, aree, porte, pedine, label, drag/focus e stati leadership; `matchSheet.css` resta solo compatibility owner legacy.
+- Leadership resa una surface premium integrata con label e nomi leggibili, mantenendo invariati i field name e gli hook runtime.
+- `Undici iniziale` elimina i progressivi decorativi 01–11 dal markup; restano numero maglia e giocatore.
+- Panchina semplificata a `A DISPOSIZIONE` + Distinta + nove slot, senza eyebrow/helper ridondanti.
+- Guard dedicato: `check:match-squad-visual-system-rebuild`, incluso nella check suite canonica.

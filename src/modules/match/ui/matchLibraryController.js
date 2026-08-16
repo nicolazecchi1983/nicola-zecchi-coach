@@ -48,8 +48,8 @@ if (matchLibrary) {
     if (openButton) {
       storage.setItem('staff-active-match', JSON.stringify({ id: openButton.dataset.openMatchWorkspace, opponent: openButton.dataset.matchOpponent, date: openButton.dataset.matchDate }))
       setActiveNavigation('match-library')
-      storage.setItem('nz-active-section', 'match-workspace')
-      await setView('match-workspace', 'Match Workspace')
+      storage.setItem('nz-active-section', 'opponent-study')
+      await setView('opponent-study', 'Studio avversario')
       return
     }
     const deleteButton = event.target.closest('[data-delete-library-match]')

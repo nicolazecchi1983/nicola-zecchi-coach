@@ -1,173 +1,173 @@
-/* A.14.3-R2 — Match Sheet / Squadra: Master UI approvata */
-.match-squad-step .formation-toolbar--single-row {
+/* STAFF 0.29.11 — Nostra squadra · player-number + Soccer Board foundation
+   Canonical owner for command area, premium native pitch, starters and bench.
+   Legacy Match Sheet presentation must not own this native component. */
+
+.match-squad-step {
+  --staff-token-primary: var(--own-token-primary, #07194f);
+  --staff-token-secondary: var(--own-token-secondary, #f8fafc);
+  width: 100%;
+  min-width: 0;
+  padding: 18px;
+  border-radius: 20px;
   display: grid;
-  grid-template-columns: minmax(190px, 1fr) minmax(190px, 1fr) minmax(360px, 2fr) auto auto;
-  align-items: end;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid #1c435b;
-  border-radius: 18px;
-  background: #071b29;
+  gap: var(--match-section-gap);
 }
 
-.match-squad-step .formation-toolbar--single-row > * {
+/* ---------- Local surfaces ---------- */
+.match-squad-step .squad-command-strip,
+.match-squad-step .pitch-panel,
+.match-squad-step .lineup-list--selection,
+.match-squad-step .bench-block--full-width {
+  border: 1px solid rgba(62, 144, 187, .30);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(8, 28, 40, .92), rgba(5, 21, 31, .94));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .10);
+}
+
+/* ---------- Command area ---------- */
+.match-squad-step .squad-command-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-flow: row;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.match-squad-step .squad-command-primary {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) minmax(310px, 1.08fr);
+  gap: 12px;
+  align-items: end;
+  width: 100%;
   min-width: 0;
-  margin: 0;
 }
 
 .match-squad-step .formation-system-control,
-.match-squad-step .formation-custom-control {
+.match-squad-step .formation-custom-control,
+.match-squad-step .token-display-field {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .match-squad-step .formation-system-control > span,
 .match-squad-step .formation-custom-control > span,
-.match-squad-step .toolbar-control-label {
-  color: #b8d8ea;
-  font-size: .76rem;
-  font-weight: 900;
+.match-squad-step .token-display-field > .toolbar-control-label {
+  color: #b7d5e7;
+  font-size: .72rem;
+  font-weight: 850;
   line-height: 1;
 }
 
-.match-squad-step .token-display-options {
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 0 16px;
-  border: 1px solid #24506a;
-  border-radius: 13px;
-  white-space: nowrap;
-}
-
-.match-squad-step .token-display-options label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-}
-
-.match-squad-step .leadership-badges {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-}
-
-.match-squad-step .leadership-badge {
-  width: 42px;
-  height: 42px;
-  border: 1px solid #2c6786;
-  border-radius: 11px;
+/* Dedicated second row: never allowed to share primary-row geometry. */
+.match-squad-step .squad-command-leadership {
+  grid-column: 1;
+  grid-row: 2;
   display: grid;
-  place-items: center;
-  background: #0a2c43;
-  color: #e8f7ff;
-  font: inherit;
-  font-size: .78rem;
-  font-weight: 950;
-  cursor: grab;
-  user-select: none;
-  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
-.match-squad-step .leadership-badge--captain {
-  background: #4b3b0d;
-  border-color: #9b7b20;
-  color: #ffe99a;
+/* Leadership is a normal premium field family, not a badge/pill subsystem. */
+.match-squad-step .leadership-control {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
 }
 
-.match-squad-step .leadership-badge--vice {
-  background: #12364a;
-  border-color: #2b7699;
-  color: #aeeaff;
-}
-
-.match-squad-step .leadership-badge:hover,
-.match-squad-step .leadership-badge:focus-visible,
-.match-squad-step .leadership-badge.is-armed {
-  border-color: #36caff;
-  box-shadow: 0 0 0 3px rgba(54, 202, 255, .16);
-  transform: translateY(-1px);
-  outline: none;
-}
-
-.match-squad-step .leadership-badge.is-dragging {
-  opacity: .55;
-  cursor: grabbing;
-}
-
-.match-squad-step .formation-reset-button {
-  height: 48px;
+.match-squad-step .leadership-control > span {
+  color: #b7d5e7;
+  font-size: .72rem;
+  font-weight: 850;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
-/* Master layout: campo dominante a sinistra; titolari + panchina nella colonna destra. */
+.match-squad-step .leadership-control > span::before {
+  content: none;
+}
+
+.match-squad-step .formation-system-control select,
+.match-squad-step .formation-custom-control input,
+.match-squad-step .leadership-control select {
+  min-height: 54px;
+  height: 54px;
+  box-sizing: border-box;
+  border: 1px solid rgba(62, 144, 187, .34);
+  border-radius: 13px;
+  background: rgba(8, 29, 42, .70);
+}
+
+.match-squad-step .formation-system-control select,
+.match-squad-step .formation-custom-control input,
+.match-squad-step .leadership-control select {
+  width: 100%;
+  min-width: 0;
+  padding: 0 42px 0 16px;
+  color: #f6f9fb;
+  font-size: .96rem;
+  font-weight: 700;
+}
+
+.match-squad-step .leadership-control select:focus {
+  outline: 2px solid #35caff;
+  outline-offset: 1px;
+}
+
+/* ---------- Core operational row ---------- */
 .match-squad-step .match-lineup-layout--master {
   display: grid;
-  grid-template-columns: minmax(560px, 1.08fr) minmax(500px, .92fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
   gap: 16px;
   width: 100%;
-  max-width: 1360px;
-  margin: 16px auto 0;
+  max-width: 1420px;
+  margin: 0 auto;
 }
 
 .match-squad-step .pitch-panel {
   min-width: 0;
   display: flex;
-  align-items: stretch;
-  padding: 12px;
-  border: 1px solid #1c435b;
-  border-radius: 16px;
-  background: #071b29;
-}
-
-.match-squad-step .pitch-panel .football-pitch {
-  width: 100%;
-  height: auto;
-  max-height: none;
-  aspect-ratio: 68 / 105;
-  margin: 0;
-  align-self: stretch;
-}
-
-.match-squad-step .squad-side-column {
-  min-width: 0;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 12px;
-}
-
-.match-squad-step .lineup-list--selection {
-  min-height: 0;
-  display: flex;
   flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
   padding: 14px;
 }
 
-.match-squad-step .lineup-list--selection .lineup-list-head {
-  min-height: 42px;
+.match-squad-step .pitch-panel-head {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 8px;
-  padding: 0 0 8px;
-  border-bottom: 1px solid #1c435b;
+  gap: 14px;
+  min-height: 44px;
+  padding: 0 2px 10px;
+  border-bottom: 1px solid rgba(62, 144, 187, .22);
 }
 
-.match-squad-step .lineup-list--selection .lineup-list-head h3 {
+.match-squad-step .pitch-panel-title {
+  display: grid;
+  gap: 2px;
+}
+
+.match-squad-step .pitch-panel-title h3,
+.match-squad-step .lineup-list--selection h3 {
   margin: 0;
+  color: #f5f8fb;
 }
 
-.match-squad-step .lineup-list--selection .lineup-list-head small {
-  max-width: 220px;
-  color: #8fb3cc;
-  font-size: .68rem;
-  line-height: 1.2;
-  text-align: right;
+.match-squad-step .pitch-panel-title h3 {
+  font-size: 1rem;
+  line-height: 1.15;
 }
 
 .match-squad-step .lineup-kicker {
@@ -177,6 +177,134 @@
   font-size: .65rem;
   font-weight: 900;
   letter-spacing: .14em;
+}
+
+.match-squad-step .formation-reset-button--field {
+  min-width: 0;
+  min-height: 36px;
+  height: 36px;
+  padding: 0 13px;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-size: .82rem;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+/* Pitch surface/markings are owned by matchPitch.css. This module owns only pitch geometry. */
+.match-squad-step [data-football-pitch] {
+  width: min(92%, 530px);
+  height: auto;
+  max-height: 820px;
+  margin: 0 auto;
+  align-self: center;
+}
+
+.match-squad-step .player-token {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: grab;
+  transform: translate(-50%, -50%);
+  touch-action: none;
+  will-change: left, top, transform;
+  transition: filter .16s ease, transform .16s ease;
+}
+
+.match-squad-step .token-photo {
+  font-size: .88rem;
+}
+
+.match-squad-step .player-token small {
+  max-width: 92px;
+  overflow: hidden;
+  padding: 3px 7px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 7px;
+  background: rgba(3, 14, 20, .88);
+  box-shadow: 0 5px 12px rgba(0,0,0,.22);
+  color: #f4f8fa;
+  font-size: .63rem;
+  font-weight: 750;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  backdrop-filter: blur(5px);
+}
+
+.match-squad-step .player-token:hover,
+.match-squad-step .player-token:focus-visible {
+  filter: brightness(1.10);
+  outline: none;
+}
+
+.match-squad-step .player-token:focus-visible .token-photo {
+  box-shadow: 0 0 0 4px rgba(53,202,255,.28), 0 8px 20px rgba(0,0,0,.40);
+}
+
+.match-squad-step .player-token.is-dragging {
+  z-index: 10;
+  cursor: grabbing;
+  filter: drop-shadow(0 10px 14px rgba(0,0,0,.44));
+  transform: translate(-50%, -50%) scale(1.08);
+  transition: none;
+}
+
+.match-squad-step .player-token.is-dragging .token-photo {
+  border-color: #fff;
+  box-shadow: 0 0 0 4px rgba(53,202,255,.28), 0 10px 22px rgba(0,0,0,.44);
+}
+
+.match-squad-step .player-token .token-photo[hidden],
+.match-squad-step .player-token small[hidden] {
+  display: none;
+}
+
+.match-squad-step .player-token.show-photo .token-photo {
+  font-size: .72rem;
+  letter-spacing: .02em;
+}
+
+/* 0.29.17 — token visibility invariant: the field marker never disappears. */
+.match-squad-step .player-token.is-token-content-empty .token-photo {
+  opacity: .92;
+}
+
+.match-squad-step .player-token.is-token-content-empty .token-photo::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.08);
+}
+
+/* Match token appearance is canonically owned by shared/ui/teamToken.css (0.29.28). */
+
+/* ---------- Starters ---------- */
+.match-squad-step .lineup-list--selection {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head {
+  min-height: 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 0 0 9px;
+  border-bottom: 1px solid rgba(62, 144, 187, .22);
 }
 
 .match-squad-step .lineup-selection-list {
@@ -189,52 +317,54 @@
 
 .match-squad-step .lineup-list--selection .lineup-row {
   display: grid;
-  grid-template-columns: 30px 54px minmax(0, 1fr) !important;
+  grid-template-columns: minmax(88px, .30fr) minmax(260px, 1.70fr);
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 0;
   margin: 0;
 }
 
-.match-squad-step .lineup-list--selection .lineup-row input,
 .match-squad-step .lineup-list--selection .lineup-row select {
   width: 100%;
-  height: 100%;
   min-height: 42px;
-  padding: 7px 9px;
+  height: 100%;
+  padding: 7px 10px;
 }
 
-.match-squad-step .lineup-index {
-  color: #38bfff;
-  font-size: .72rem;
-  font-weight: 900;
+.match-squad-step .starter-number-select {
   text-align: center;
+  text-align-last: center;
+  font-weight: 900;
 }
 
-.match-squad-step .bench-block--automatic {
+.match-squad-step .starter-player-select {
   min-width: 0;
-  margin: 0;
-  padding: 14px;
-  border: 1px solid #1c435b;
-  border-radius: 16px;
-  background: #071b29;
+  font-weight: 750;
+}
+
+/* ---------- Bench: intentionally minimal ---------- */
+.match-squad-step .bench-block--full-width {
+  width: 100%;
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
 .match-squad-step .bench-block-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .match-squad-step .bench-block-head h3 {
-  margin: 2px 0 0;
-}
-
-.match-squad-step .bench-help {
-  margin: 7px 0 12px;
-  color: #8fb3cc;
-  font-size: .8rem;
+  margin: 0;
+  color: #35caff;
+  font-size: .78rem;
+  font-weight: 950;
+  letter-spacing: .13em;
+  text-transform: uppercase;
 }
 
 .match-squad-step .bench-count {
@@ -242,7 +372,7 @@
   border-radius: 999px;
   padding: 7px 12px;
   color: #b8d8ea;
-  font-size: .8rem;
+  font-size: .78rem;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -259,79 +389,75 @@
   color: #bff9df;
 }
 
-.match-squad-step .bench-grid--automatic {
+.match-squad-step .bench-grid--slots {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 9px 12px;
 }
 
-.match-squad-step .bench-row--automatic {
-  min-width: 0;
+.match-squad-step .bench-slot {
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) 30px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 8px;
   align-items: center;
-  gap: 7px;
-  padding: 7px;
-  border: 1px solid #1c435b;
-  border-radius: 10px;
-  background: #061824;
-}
-
-.match-squad-step .bench-row--automatic > input {
-  display: none;
-}
-
-.match-squad-step .bench-index {
-  color: #8fb3cc;
-  font-size: .7rem;
-  font-weight: 900;
-  text-align: center;
-}
-
-.match-squad-step .bench-player-copy {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
 }
 
-.match-squad-step .bench-player-copy strong,
-.match-squad-step .bench-player-copy span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.match-squad-step .bench-slot-number {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  border: 1px solid #24516c;
+  border-radius: 10px;
+  background: #0d2637;
+  color: #35c2ff;
+  font-size: .76rem;
+  font-weight: 900;
 }
 
-.match-squad-step .bench-player-copy span {
-  color: #8fb3cc;
-  font-size: .68rem;
+.match-squad-step .bench-slot select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 36px 8px 12px;
+  border: 1px solid #24516c;
+  border-radius: 10px;
+  background: #0b1c28;
+  color: #f5f8fb;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 750;
 }
 
-.match-squad-step .bench-remove-button {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #6d3340;
-  border-radius: 8px;
-  background: #35141d;
-  color: #ff9ca7;
-  font-size: 1rem;
-  cursor: pointer;
+.match-squad-step .bench-slot select:focus {
+  outline: 2px solid #28b9f4;
+  outline-offset: 1px;
 }
 
-.match-squad-step .bench-remove-button:hover,
-.match-squad-step .bench-remove-button:focus-visible {
-  background: #5a1b28;
-  color: #fff;
-  outline: none;
+/* ---------- Leadership token states ---------- */
+.match-squad-step .player-token.is-captain .token-photo {
+  box-shadow: 0 0 0 3px #38bdf8, 0 8px 20px rgba(0,0,0,.38);
 }
 
-.match-squad-step .bench-limit-message {
-  margin: 12px 0 0;
-  color: #ff9ca7;
-  font-weight: 800;
+.match-squad-step .player-token.is-captain::after {
+  content: 'C';
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  z-index: 5;
+  border-radius: 50%;
+  background: #38bdf8;
+  color: #04111c;
+  font-size: .64rem;
+  font-weight: 950;
 }
 
 .match-squad-step .player-token.is-vice-captain .token-photo {
-  box-shadow: 0 0 0 3px #73d7ff, 0 5px 18px #0009;
+  box-shadow: 0 0 0 3px #73d7ff, 0 8px 20px rgba(0,0,0,.38);
 }
 
 .match-squad-step .player-token.is-vice-captain::before {
@@ -344,42 +470,41 @@
   min-width: 23px;
   height: 19px;
   padding: 0 3px;
+  z-index: 5;
   border-radius: 999px;
   background: #79ddff;
   color: #061a2b;
-  font-size: .58rem;
+  font-size: .56rem;
   font-weight: 950;
-  z-index: 4;
 }
 
 .match-squad-step .player-token.is-leadership-target {
   filter: drop-shadow(0 0 10px rgba(55, 202, 255, .95));
-  transform: translate(-50%, -50%) scale(1.08) !important;
+  transform: translate(-50%, -50%) scale(1.08);
 }
 
-@media (max-width: 1260px) {
-  .match-squad-step .formation-toolbar--single-row {
-    grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(320px, 1.7fr) auto;
+/* ---------- Responsive contract ---------- */
+@media (max-width: 1180px) {
+  .match-squad-step .squad-command-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .match-squad-step .formation-reset-button {
+  .match-squad-step .token-display-field {
     grid-column: 1 / -1;
-    justify-self: end;
+  }
+
+  .match-squad-step .squad-command-leadership {
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
 
   .match-squad-step .match-lineup-layout--master {
-    grid-template-columns: minmax(500px, 1.05fr) minmax(440px, .95fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 980px) {
-  .match-squad-step .formation-toolbar--single-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .match-squad-step .formation-reset-button {
-    grid-column: auto;
-    width: 100%;
+  .match-squad-step {
+    padding: 12px;
   }
 
   .match-squad-step .match-lineup-layout--master {
@@ -387,43 +512,214 @@
     max-width: 720px;
   }
 
-  .match-squad-step .pitch-panel .football-pitch {
-    width: min(100%, 620px);
-    justify-self: center;
-    margin: 0 auto;
+  .match-squad-step .lineup-list--selection {
+    min-height: 0;
   }
 
-  .match-squad-step .squad-side-column {
-    grid-template-rows: auto auto;
+  .match-squad-step .bench-block--full-width {
+    max-width: 720px;
   }
 
-  .match-squad-step .lineup-selection-list {
-    grid-template-rows: none;
+  .match-squad-step .bench-grid--slots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 680px) {
-  .match-squad-step .formation-toolbar--single-row {
+@media (max-width: 760px) {
+  .match-squad-step .squad-command-primary,
+  .match-squad-step .squad-command-leadership {
     grid-template-columns: 1fr;
   }
 
-  .match-squad-step .token-display-options {
-    min-height: 48px;
-    flex-wrap: wrap;
-    white-space: normal;
+  .match-squad-step .token-display-field { grid-column: auto; }
+
+
+  .match-squad-step .bench-grid--slots {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .match-squad-step {
+    padding: 8px;
   }
 
-  .match-squad-step .lineup-list--selection .lineup-list-head {
+  .match-squad-step .squad-command-strip,
+  .match-squad-step .pitch-panel,
+  .match-squad-step .lineup-list--selection,
+  .match-squad-step .bench-block--full-width {
+    border-radius: 14px;
+  }
+
+  .match-squad-step .squad-command-strip {
+    padding: 12px;
+  }
+
+  .match-squad-step .pitch-panel-head {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .match-squad-step .lineup-list--selection .lineup-list-head small {
-    max-width: none;
-    text-align: left;
+  .match-squad-step .formation-reset-button--field {
+    align-self: flex-start;
   }
 
-  .match-squad-step .bench-grid--automatic {
+  .match-squad-step .token-photo {
+  }
+
+  .match-squad-step .player-token small {
+    max-width: 76px;
+    font-size: .64rem;
+  }
+}
+
+/* 0.29.15 — Match Squad Core Geometry & Soccer Board Premium
+   Consolidated visual contract: leadership and core share the same 50/50 page grid.
+   No stacked release overrides beyond this canonical refinement block. */
+.match-squad-step .squad-command-primary > *,
+.match-squad-step .squad-command-leadership > * {
+  align-self: stretch;
+}
+
+.match-squad-step .squad-command-primary {
+  grid-template-columns: minmax(240px, 1fr) minmax(240px, 1fr) minmax(320px, 1.08fr);
+}
+
+.match-squad-step .formation-system-control select,
+.match-squad-step .formation-custom-control input,
+.match-squad-step .leadership-control select {
+  border-color: rgba(70, 157, 201, .38);
+  background: linear-gradient(180deg, rgba(10, 31, 44, .96), rgba(7, 24, 35, .96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.match-squad-step .formation-system-control select:focus,
+.match-squad-step .formation-custom-control input:focus,
+.match-squad-step .leadership-control select:focus {
+  outline: 2px solid rgba(53, 202, 255, .72);
+  outline-offset: 1px;
+  border-color: #35caff;
+}
+
+/* Leadership establishes the page's two equal visual columns. */
+.match-squad-step .squad-command-leadership,
+.match-squad-step .match-lineup-layout--master {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Pitch sizing remains local; visual surface is shared. */
+.match-squad-step [data-football-pitch] { width: min(92%, 530px); max-height: 820px; }
+
+.match-squad-step .token-photo {
+  font-size: .80rem;
+}
+
+.match-squad-step .player-token small {
+  max-width: 92px;
+  padding: 3px 7px;
+  border-radius: 7px;
+  background: rgba(2,13,18,.91);
+  font-size: .63rem;
+  font-weight: 800;
+}
+
+/* Starter selector: compact number, player identity owns the row. */
+.match-squad-step .lineup-list--selection {
+  min-width: 0;
+}
+
+.match-squad-step .lineup-list--selection .lineup-row {
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 10px;
+  min-height: 46px;
+}
+
+.match-squad-step .starter-number-input {
+  width: 64px;
+  min-width: 64px;
+  height: 46px;
+  min-height: 46px;
+  padding: 0 8px;
+  border: 1px solid rgba(62,144,187,.34);
+  border-radius: 11px;
+  background: rgba(7,24,35,.92);
+  color: #8edcff;
+  font: inherit;
+  font-weight: 900;
+  text-align: center;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.match-squad-step .starter-number-input::-webkit-outer-spin-button,
+.match-squad-step .starter-number-input::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.match-squad-step .starter-player-select {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  min-height: 46px;
+  padding: 0 42px 0 14px;
+  overflow: hidden;
+  border-radius: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .9rem;
+  font-weight: 750;
+}
+
+.match-squad-step .starter-number-input:focus,
+.match-squad-step .starter-player-select:focus {
+  outline: 2px solid rgba(53,202,255,.85);
+  outline-offset: 1px;
+  border-color: #35caff;
+}
+
+@media (max-width: 1180px) {
+  .match-squad-step .squad-command-primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .match-squad-step .token-display-field { grid-column: 1 / -1; }
+  .match-squad-step .squad-command-leadership,
+  .match-squad-step .match-lineup-layout--master {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .match-squad-step [data-football-pitch] { width: min(92%, 500px); }
+  .match-squad-step .player-token small { max-width: 84px; font-size: .60rem; }
+}
+
+@media (max-width: 1040px) {
+  .match-squad-step .match-lineup-layout--master {
+    grid-template-columns: 1fr;
+    max-width: 720px;
+  }
+  .match-squad-step [data-football-pitch] { width: min(92%, 540px); }
+}
+
+@media (max-width: 760px) {
+  .match-squad-step .squad-command-primary,
+  .match-squad-step .squad-command-leadership {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 520px) {
+  .match-squad-step .lineup-list--selection .lineup-row {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+  .match-squad-step .starter-number-input {
+    width: 60px;
+    min-width: 60px;
+  }
+  .match-squad-step .player-token small { max-width: 76px; font-size: .58rem; }
+}
+
+/* 0.29.21 — MATCH section spacing contract.
+   External rhythm is shared with Avversario; local components own only their internal gaps. */
+@media (max-width: 680px) {
+  .match-squad-step { gap: var(--match-section-gap-mobile); }
 }

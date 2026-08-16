@@ -6,7 +6,7 @@ const required = [
   ['src/modules/match/ui/matchStatisticsView.js', 'Conteggio visivo dei provvedimenti registrati'],
   ['src/core/accessControl.js', "'match-statistics': ACCESS_CAPABILITIES.MATCH_STATISTICS_VIEW"],
   ['src/modules/match/ui/matchWorkspaceView.js', 'Apri statistiche'],
-  ['src/app/appController.js', "action === 'statistics'"],
+  ['src/modules/match/events/matchWorkspaceEvents.js', "action === 'statistics'"],
 ]
 
 const errors = []

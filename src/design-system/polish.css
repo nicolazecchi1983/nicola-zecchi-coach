@@ -7,128 +7,9 @@ html, body {
   color: var(--staff-color-text);
 }
 
-/* ---------- SHELL ---------- */
-.app-shell {
-  grid-template-columns: 232px minmax(0, 1fr);
-  background: var(--staff-color-bg-app);
-}
-
-.sidebar {
-  padding: 18px 13px 16px;
-  border-right: 1px solid var(--staff-color-border);
-  background: linear-gradient(180deg, #03101a 0%, var(--staff-color-bg-sidebar) 100%);
-}
-
-.sidebar-brand {
-  gap: 11px;
-  min-width: 0;
-  padding: 0 5px 18px;
-  border-bottom-color: var(--staff-color-border);
-}
-
-.sidebar-brand .brand-square {
-  width: 38px;
-  height: 38px;
-  flex-basis: 38px;
-  border-radius: 10px;
-  box-shadow: 0 7px 18px rgba(0,0,0,.18);
-}
-
-.sidebar-brand > div:last-child {
-  min-width: 0;
-}
-
-.sidebar-brand strong {
-  max-width: 155px;
-  overflow: hidden;
-  font-size: .84rem;
-  font-weight: 800;
-  letter-spacing: -.015em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sidebar-brand span {
-  display: none;
-}
-
-.sidebar-nav {
-  gap: 5px;
-  margin-top: 16px;
-}
-
-.nav-group + .nav-group {
-  margin-top: 13px;
-  padding-top: 13px;
-  border-top-color: var(--staff-color-border);
-}
-
-.nav-group-toggle {
-  min-height: 28px;
-  padding: 0 10px;
-  color: var(--staff-color-primary-hover);
-  font-size: .64rem;
-  letter-spacing: .14em;
-}
-
-.nav-item {
-  min-height: 43px;
-  gap: 11px;
-  padding: 0 11px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  color: #bccbd6;
-  transition: color 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.nav-item:hover {
-  color: #f5f9fc;
-  background: var(--staff-color-bg-hover);
-  border-color: rgba(255,255,255,.035);
-}
-
-.nav-item.is-active {
-  color: #fff;
-  border-color: rgba(34,184,243,.22);
-  background: linear-gradient(100deg, rgba(10,167,232,.84), rgba(8,108,184,.78));
-  box-shadow: 0 7px 20px rgba(0,102,185,.16);
-}
-
-.nav-icon {
-  width: 18px;
-  height: 18px;
-  flex-basis: 18px;
-}
-
-/* The profile remains accessible, but the old full-width black band disappears. */
-.topbar {
-  height: 56px;
-  padding: 8px 28px 0;
-  border-bottom: 0;
-  background: var(--staff-color-bg-header);
-  backdrop-filter: none;
-}
-
-.profile-menu-button {
-  min-height: 42px;
-  padding: 4px 7px 4px 5px;
-  border: 1px solid transparent;
-  border-radius: var(--staff-radius-control);
-}
-
-.profile-menu-button:hover {
-  border-color: var(--staff-color-border);
-  background: var(--staff-color-bg-hover);
-}
+/* ---------- SHELL / PRIMARY NAVIGATION — ownership migrated to appShell.css in 0.27.29 ---------- */
 
 /* ---------- PAGE RHYTHM ---------- */
-#viewRoot {
-  width: 100%;
-  max-width: var(--staff-content-max);
-  margin: 0 auto;
-  padding: 18px 32px 42px;
-}
-
 .page-view {
   min-width: 0;
 }
@@ -316,7 +197,6 @@ html, body {
 .calendar-panel,
 .team-settings-card,
 .match-library-month,
-.post-match-card,
 .post-match-status-row article,
 .analysis-observations-archive,
 .placeholder-panel {
@@ -334,14 +214,12 @@ html, body {
 
 /* ---------- MATCH / TRAINING NAV ---------- */
 .match-step-nav,
-.staff-stepper,
-.ts-step-nav {
+.staff-stepper {
   gap: var(--staff-space-2);
 }
 
 .match-step-nav button,
-.staff-stepper button,
-.ts-step-nav button {
+.staff-stepper button {
   min-height: 46px;
   min-width: 0;
   border: 1px solid var(--staff-color-border-strong);
@@ -352,15 +230,13 @@ html, body {
 }
 
 .match-step-nav button:hover,
-.staff-stepper button:hover,
-.ts-step-nav button:hover {
+.staff-stepper button:hover {
   color: #edf7fb;
   background: #0b2536;
 }
 
 .match-step-nav button.is-active,
-.staff-stepper button.is-active,
-.ts-step-nav button.is-active {
+.staff-stepper button.is-active {
   border-color: var(--staff-color-primary-hover);
   color: #fff;
   background: #0b78b9;
@@ -380,29 +256,12 @@ textarea:focus-visible {
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 980px) {
-  #viewRoot {
-    padding-right: 20px;
-    padding-left: 20px;
-  }
-
   .page-head {
     align-items: stretch;
   }
 }
 
 @media (max-width: 760px) {
-  .topbar {
-    height: 58px;
-    padding: 8px 13px 0;
-  }
-
-  .mobile-topbar-brand span {
-    display: none;
-  }
-
-  #viewRoot {
-    padding: 16px 13px 96px;
-  }
 
   .page-head {
     gap: 12px;
@@ -431,83 +290,3 @@ textarea:focus-visible {
   }
 }
 
-/* R20.2A-R2 — shell hierarchy: navigation must not compete with workspace CTA. */
-.nav-item.is-active {
-  color: #f5fbff;
-  border-color: rgba(34, 184, 243, .28);
-  background: #0d4d73;
-  box-shadow: inset 3px 0 0 #22b8f3, 0 6px 16px rgba(0, 0, 0, .10);
-}
-
-
-/* R20.2A-R5 · Permanent App Shell
-   Global identity occupies its own row; page content can never overlap it. */
-.topbar {
-  position: relative;
-  inset: auto;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 52px;
-  min-height: 52px;
-  padding: 0 28px;
-  border-bottom: 1px solid rgba(126,168,194,.12);
-  background: var(--staff-color-bg-header);
-  backdrop-filter: none;
-  box-sizing: border-box;
-}
-
-.topbar-context {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  color: #8197a7;
-  font-size: .69rem;
-  font-weight: 750;
-  white-space: nowrap;
-}
-
-.topbar-context-product {
-  color: #d8e5ec;
-  font-weight: 850;
-  letter-spacing: .10em;
-}
-
-.topbar-context-separator { color: #405b6d; }
-.topbar-context-season { color: #8da2b2; }
-
-.topbar .profile-menu-wrapper {
-  position: relative;
-  flex: 0 0 auto;
-}
-
-.topbar .profile-menu-button {
-  height: 40px;
-  min-height: 40px;
-  margin: 0;
-  padding: 3px 7px 3px 4px;
-}
-
-#viewRoot {
-  padding-top: 22px;
-}
-
-@media (max-width: 760px) {
-  .topbar {
-    height: 54px;
-    min-height: 54px;
-    padding: 0 13px;
-  }
-
-  .topbar-context-season,
-  .topbar-context-separator {
-    display: none;
-  }
-
-  #viewRoot {
-    padding-top: 14px;
-  }
-}

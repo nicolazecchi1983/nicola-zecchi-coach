@@ -80,9 +80,17 @@ export function renderCalendarView({
         && eventDate.getDate() === cellDate.getDate()
     })
     const isToday = cellDate.toDateString() === today.toDateString()
+    const weekdayLabel = new Intl.DateTimeFormat('it-IT', { weekday: 'short' })
+      .format(cellDate)
+      .replace('.', '')
+      .toUpperCase()
+    const accessibleDate = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(cellDate)
 
-    return `<div class="calendar-cell ${muted ? 'is-muted' : ''} ${isToday ? 'is-today' : ''}" ${!muted && canCreate ? `data-create-event-date="${dateValue}"` : ''}>
-      <span class="day-number ${isToday ? 'is-today' : ''}">${cellDate.getDate()}</span>
+    return `<div class="calendar-cell ${muted ? 'is-muted' : ''} ${isToday ? 'is-today' : ''} ${dayEvents.length ? 'has-events' : 'is-empty'}" aria-label="${escapeHtml(accessibleDate)}" ${!muted && canCreate ? `data-create-event-date="${dateValue}"` : ''}>
+      <div class="calendar-cell-date">
+        <span class="calendar-cell-weekday">${weekdayLabel}</span>
+        <span class="day-number ${isToday ? 'is-today' : ''}">${cellDate.getDate()}</span>
+      </div>
       <div class="calendar-cell-events">
         ${dayEvents.map((event) => `<button class="calendar-event calendar-event--${event.type} ${event.type === 'match' && event.matchType ? `calendar-event--match-${event.matchType}` : ''}" data-open-event="${event.id}" type="button">
           <strong><span class="calendar-event__icon">${eventTypeIcon(event.type, icon)}</span>${event.title}</strong>
@@ -100,7 +108,7 @@ export function renderCalendarView({
   })()
 
   return `<section class="view page-view">
-    <div class="page-head"><div><h1>Calendario</h1><p><span>${escapeHtml(team.season ? `STAGIONE ${team.season}` : 'STAGIONE')}</span>${team.category ? `<b>•</b>${escapeHtml(team.category)}` : ''}</p></div>
+    <div class="page-head"><div><h1>Calendario</h1><p><span>${escapeHtml(team.season ? `STAGIONE ${team.season}` : 'STAGIONE')}</span>${team.category ? `<b>•</b>${escapeHtml(team.category)}` : ''}${team.competitionGroup ? `<b>•</b>${escapeHtml(`GIRONE ${team.competitionGroup}`)}` : ''}</p></div>
       <div class="page-head-actions calendar-page-actions">
         <button class="calendar-today-button calendar-today-button--prominent" type="button" data-calendar-today>Oggi</button>
         ${canCreate ? `<details class="calendar-actions-menu" data-calendar-actions-menu>

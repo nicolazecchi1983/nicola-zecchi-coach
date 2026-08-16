@@ -115,3 +115,71 @@ Secondary destinations currently exposed through `Altro`:
 - Impostazioni
 
 Match sub-sections remain owned by Match Workspace and are not duplicated in global navigation.
+
+
+## M1.3A — Mobile Navigation Drawer + Brand-Neutral Palette
+
+This decision supersedes the M1.2 bottom-navigation presentation.
+
+Permanent navigation contract:
+
+- desktop uses the persistent sidebar;
+- mobile uses a left navigation drawer opened from the global topbar;
+- there is no global bottom navigation on mobile;
+- every destination in the drawer shows both icon and text label;
+- destinations are grouped by product meaning: Principale, Training, Match, Squadra, Sistema;
+- the drawer owns safe-area handling, vertical overflow, backdrop and Escape/close behavior;
+- selecting a destination closes the drawer and preserves the same route/access-control logic used by desktop;
+- Match Workspace sub-routes remain inside Match and are not duplicated as global destinations.
+
+Permanent color contract:
+
+- STAFF application chrome uses a product-owned, brand-neutral dark palette;
+- team crest/logo colors must never drive navigation, surfaces, controls, selection states or semantic colors;
+- team colors may appear only in team identity content (logo, kit/pitch visualization, exported team documents when explicitly required);
+- no yellow/gold is part of the global STAFF UI palette;
+- warning semantics use orange, while destructive states use coral/red and positive states use green;
+- the primary STAFF accent remains cyan/blue and is used sparingly for focus, selection and primary actions.
+
+
+## M1.3B — Drawer Reliability and Training Editor Compaction
+
+- drawer text labels are explicitly owned by the drawer and cannot be hidden by legacy sidebar/mobile rules;
+- a closed drawer is inert as well as aria-hidden;
+- focus is restored to the menu trigger before the drawer is hidden;
+- opening the drawer moves focus to the close control;
+- the Training Sheet published-selector area uses a compact two-row mobile command cluster;
+- editor-only parallel-work surfaces use the dark STAFF palette; white remains reserved for document/print representation;
+- M1.3B does not redesign Training Library, Calendar, Match Post-gara or document generation.
+
+
+## M1.3E — Match Workspace Single Navigation Source
+
+- the Match Workspace navigation is the single visible index of match sections;
+- duplicated section cards are removed from the workspace landing view;
+- selecting a workflow item routes directly to its native section;
+- no secondary preview-card layer is introduced;
+- section descriptions remain domain metadata but are not repeated in the landing view;
+- this reduces UI code without changing Match domain models, persistence, routes or permissions.
+
+
+## M1.3F — Match Team Mobile Width and Shared Team Visuals
+
+- Nostra squadra and Avversario use the same mobile content-width contract;
+- the native Match header/navigation keep their normal page gutter while the team work surface reclaims nested legacy padding;
+- football pitches use the full available work-surface width;
+- own-team and opponent markers share the same visual scale intent, while each native domain owns its responsive geometry;
+- captain and vice-captain remain the existing Match domain fields and drag/click hooks; only their presentation is grouped as labelled role controls;
+- opponent appearance keeps the existing persisted primary/secondary/pattern fields and opens them through a match-scoped progressive disclosure owned by `matchOpponent.css`;
+- no Match persistence, route, permission, formation model or report schema is changed.
+
+
+## M1.3G — Match Team Visual Unification
+
+- Nostra squadra and Avversario use the same mobile width contract;
+- team identity and opponent appearance use one shared STAFF color-picker component;
+- all nine preset swatches stay on one row on desktop and mobile; custom color is a separate control below;
+- captain and vice-captain are selected from the current starting XI via dropdowns while canonical hidden Match fields remain captain and vice_captain;
+- own-team and opponent football tokens share a restrained ring, depth and number-legibility language across desktop and mobile;
+- the our-team workflow label resolves dynamically from configured team identity and is never hardcoded to a club;
+- no Match persistence schema, route, formation schema or roster source is changed.

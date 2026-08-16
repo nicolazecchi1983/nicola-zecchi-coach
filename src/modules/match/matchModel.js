@@ -1,28 +1,36 @@
+/** @typedef {Record<string, any>} MatchDocumentInput */
+/** @typedef {{code: string, field: string, message: string}} ValidationIssue */
+
 export const MATCH_DRAFT_SCHEMA_VERSION = 3
 export const MATCH_DOCUMENT_SCHEMA_VERSION = 1
 
 const HOME_AWAY_VALUES = new Set(['home', 'away', 'neutral'])
 
+/** @param {unknown} value @returns {string} */
 function cleanText(value) {
   return String(value ?? '').trim()
 }
 
+/** @param {unknown} value @returns {string|null} */
 function normalizeTimestamp(value) {
   if (!value) return null
-  const date = value instanceof Date ? value : new Date(value)
+  const date = value instanceof Date ? value : new Date(/** @type {string|number} */ (value))
   return Number.isNaN(date.getTime()) ? null : date.toISOString()
 }
 
+/** @param {string} code @param {string} field @param {string} message @returns {Readonly<ValidationIssue>} */
 function createValidationIssue(code, field, message) {
   return Object.freeze({ code, field, message })
 }
 
+/** @param {unknown} home @param {unknown} away @returns {string} */
 export function normalizeScore(home, away) {
   const left = String(home ?? '').trim()
   const right = String(away ?? '').trim()
   return left || right ? `${left || 0}-${right || 0}` : ''
 }
 
+/** @param {unknown} value @returns {{home:string, away:string, display:string}} */
 export function parseScore(value) {
   const normalized = String(value ?? '').trim().replace(/\s+/g, '').replace(':', '-')
   if (!normalized) return { home: '', away: '', display: '' }
@@ -33,14 +41,16 @@ export function parseScore(value) {
   return { home, away, display: `${home}-${away}` }
 }
 
+/** @param {unknown} value @returns {'home'|'away'|'neutral'} */
 export function normalizeMatchHomeAway(value) {
   const normalized = cleanText(value).toLocaleLowerCase('it-IT')
-  if (HOME_AWAY_VALUES.has(normalized)) return normalized
+  if (HOME_AWAY_VALUES.has(normalized)) return /** @type {'home'|'away'|'neutral'} */ (normalized)
   if (normalized === 'trasferta') return 'away'
   if (normalized === 'campo neutro' || normalized === 'neutro') return 'neutral'
   return 'home'
 }
 
+/** @param {MatchDocumentInput} [input] @returns {string} */
 export function resolveMatchLocation(input = {}) {
   const explicit = cleanText(input.location)
   if (explicit) return explicit
@@ -55,6 +65,7 @@ export function resolveMatchLocation(input = {}) {
   return ''
 }
 
+/** @param {MatchDocumentInput} [input] @returns {MatchDocumentInput} */
 export function normalizeMatchDocument(input = {}) {
   const result = parseScore(input.result || normalizeScore(input.result_home, input.result_away))
   const halfResult = parseScore(input.half_result || normalizeScore(input.half_result_home, input.half_result_away))
@@ -70,7 +81,7 @@ export function normalizeMatchDocument(input = {}) {
     opponent: cleanText(input.opponent),
     homeAway: normalizeMatchHomeAway(homeAwaySource),
     location: resolveMatchLocation(input),
-    round: cleanText(input.round ?? input.matchDay ?? input.match_day),
+    round: cleanText(input.competitionRound ?? input.competition_round ?? input.round ?? input.matchDay ?? input.match_day),
     result: result.display,
     result_home: result.home,
     result_away: result.away,
@@ -82,6 +93,7 @@ export function normalizeMatchDocument(input = {}) {
   }
 }
 
+/** @param {MatchDocumentInput} [input] */
 export function inspectMatchDocument(input = {}) {
   const data = normalizeMatchDocument(input)
   const errors = []
@@ -108,6 +120,7 @@ export function inspectMatchDocument(input = {}) {
   })
 }
 
+/** @param {any} form @param {string} prefix */
 function syncScoreFields(form, prefix) {
   const displayField = form.elements[prefix]
   const homeField = form.elements[`${prefix}_home`]
@@ -131,13 +144,14 @@ function syncScoreFields(form, prefix) {
   }
 }
 
+/** @param {any} form @returns {Record<string, any>} */
 export function collectMatchFormData(form) {
   if (!form) return {}
   syncScoreFields(form, 'result')
   syncScoreFields(form, 'half_result')
 
-  const data = Object.fromEntries(new FormData(form).entries())
-  form.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+  const data = /** @type {Record<string, any>} */ (Object.fromEntries(new FormData(form).entries()))
+  form.querySelectorAll('input[type="checkbox"]').forEach((/** @type {HTMLInputElement} */ input) => {
     data[input.name] = input.checked
   })
 
@@ -147,8 +161,9 @@ export function collectMatchFormData(form) {
   }
 }
 
+/** @param {unknown} raw @returns {Record<string, any>|null} */
 export function getMatchDraftPayload(raw) {
   if (!raw || typeof raw !== 'object') return null
-  const { _schemaVersion, ...data } = raw
+  const { _schemaVersion, ...data } = /** @type {Record<string, any>} */ (raw)
   return data
 }

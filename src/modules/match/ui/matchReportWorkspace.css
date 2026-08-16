@@ -1,0 +1,18 @@
+/* Match Report Workspace canonical owner — 0.27.41. */
+.match-report-workspace-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin:20px 0;padding:18px 20px;border:1px solid #1d4c68;border-radius:18px;
+  background:linear-gradient(145deg,#082235,#071824);
+}
+.match-report-workspace-toolbar>div{display:grid;gap:4px}
+.match-report-workspace-toolbar span{font-size:.72rem;font-weight:900;letter-spacing:.14em;color:#35caff}
+.match-report-workspace-toolbar strong{font-size:1rem;color:#fff}
+.match-report-workspace-toolbar small{color:#8fb3cc}
+.match-report-workspace-preview{background:linear-gradient(135deg,#cfd7df,#eef2f5);border-radius:20px;padding:28px;overflow:auto}
+.match-report-workspace-preview .match-report-paper{width:min(920px,100%);margin:0 auto;background:#fff;color:#10213a;box-shadow:0 18px 50px rgba(0,0,0,.28)}
+.match-report-workspace-empty .primary-action{margin-top:10px}
+@media(max-width:760px){
+  .match-report-workspace-toolbar{align-items:stretch;flex-direction:column}
+  .match-report-workspace-toolbar .primary-action{width:100%}
+  .match-report-workspace-preview{padding:12px}
+}

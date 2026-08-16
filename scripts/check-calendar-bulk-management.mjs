@@ -6,6 +6,7 @@ import {
 
 const calendarView = fs.readFileSync('src/modules/calendar/ui/calendarView.js','utf8')
 const controller = fs.readFileSync('src/app/appController.js','utf8')
+const runtime = fs.readFileSync('src/modules/calendar/events/calendarRuntimeActions.js','utf8')
 const service = fs.readFileSync('src/modules/calendar/calendarService.js','utf8')
 
 const events = [
@@ -33,10 +34,10 @@ const checks = [
   ['Campionato seleziona solo partite league', league.selected.length === 2],
   ['Range senza date non seleziona tutto accidentalmente', blankRange.selected.length === 0],
   ['Delete massivo usa una query Supabase .in', service.includes(".delete()") && service.includes(".in('id', ids)")],
-  ['Controller richiede CALENDAR_DELETE', controller.includes('ACCESS_CAPABILITIES.CALENDAR_DELETE')],
-  ['Controller richiede conferma checkbox', controller.includes('form.elements.confirm?.checked')],
-  ['Controller richiede conferma finale', controller.includes('window.confirm(question)')],
-  ['Eventi protetti non vengono passati al delete', controller.includes('previewNow.deletableEvents')],
+  ['Calendar runtime richiede CALENDAR_DELETE via capability injection', runtime.includes('capabilities.CALENDAR_DELETE') && controller.includes('capabilities: ACCESS_CAPABILITIES')],
+  ['Controller richiede conferma checkbox', runtime.includes('form.elements.confirm?.checked')],
+  ['Controller richiede conferma finale', runtime.includes('confirmUser(question)')],
+  ['Eventi protetti non vengono passati al delete', runtime.includes('previewNow.deletableEvents')],
 ]
 
 let passed=0

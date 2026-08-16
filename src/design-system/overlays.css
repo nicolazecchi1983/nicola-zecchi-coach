@@ -1,0 +1,448 @@
+/* STAFF Design System v1 — DS1.7 Modals, Drawers & Overlays
+   Shared overlay grammar. Domain modules own content and actions; this layer owns
+   backdrop, panel geometry, headers, close controls, footer rhythm and mobile behavior. */
+
+:root {
+  --staff-overlay-backdrop: rgba(3, 8, 13, 0.76);
+  --staff-overlay-backdrop-soft: rgba(3, 8, 13, 0.62);
+  --staff-overlay-panel: var(--staff-color-bg-panel);
+  --staff-overlay-panel-raised: var(--staff-color-bg-panel-raised);
+  --staff-overlay-border: var(--staff-color-border);
+  --staff-overlay-shadow: 0 28px 72px rgba(0, 0, 0, 0.42);
+  --staff-overlay-width-sm: 540px;
+  --staff-overlay-width-md: 760px;
+  --staff-overlay-width-lg: 1040px;
+  --staff-overlay-head-pad: var(--staff-space-4);
+  --staff-overlay-body-pad: var(--staff-space-4);
+  --staff-overlay-footer-pad: var(--staff-space-3) var(--staff-space-4);
+}
+
+body.modal-open,
+body.new-event-modal-open,
+body.drawer-open {
+  overflow: hidden;
+}
+
+/* Backdrops */
+.new-event-modal-backdrop,
+.analysis-template-manager-backdrop,
+.match-report-dialog {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--staff-space-4);
+  background: var(--staff-overlay-backdrop);
+  backdrop-filter: blur(8px);
+}
+
+.new-event-modal-backdrop { z-index: 1000; }
+.analysis-template-manager-backdrop { z-index: 1200; }
+.match-report-dialog { z-index: 10000; }
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: var(--staff-overlay-backdrop-soft);
+  backdrop-filter: blur(4px);
+}
+
+/* Canonical modal panels */
+.new-event-modal,
+.analysis-template-manager,
+.match-report-dialog-panel {
+  border: 1px solid var(--staff-overlay-border);
+  background: var(--staff-overlay-panel);
+  box-shadow: var(--staff-overlay-shadow);
+}
+
+.new-event-modal {
+  width: min(var(--staff-overlay-width-sm), 100%);
+  max-height: calc(100dvh - (2 * var(--staff-space-4)));
+  overflow: hidden;
+  border-radius: var(--staff-radius-large);
+  color: var(--staff-color-text);
+}
+
+.season-import-modal,
+.player-profile-modal {
+  width: min(var(--staff-overlay-width-md), 100%);
+}
+
+.analysis-template-manager {
+  width: min(var(--staff-overlay-width-lg), 96vw);
+  max-height: min(90dvh, 920px);
+  overflow: hidden;
+  border-radius: var(--staff-radius-large);
+}
+
+.match-report-dialog-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(1180px, 100%);
+  height: min(92dvh, 980px);
+  overflow: hidden;
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-overlay-panel);
+}
+
+/* Shared modal headers */
+.new-event-modal__head,
+.analysis-template-manager-head,
+.match-report-dialog-panel > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--staff-space-3);
+  padding: var(--staff-overlay-head-pad);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
+  background: var(--staff-overlay-panel);
+}
+
+.new-event-modal__head span,
+.analysis-template-manager-head span,
+.match-report-dialog-panel > header span {
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .105em;
+  text-transform: uppercase;
+}
+
+.new-event-modal__head h2,
+.analysis-template-manager-head h2,
+.match-report-dialog-panel > header h2 {
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-section-title);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: var(--staff-line-height-heading);
+  margin: 0;
+  letter-spacing: -.025em;
+}
+
+.new-event-modal__head h2 { margin-top: var(--staff-space-1); }
+
+.analysis-template-manager-head p {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-secondary);
+  line-height: var(--staff-line-height-secondary);
+}
+
+/* One close-button language */
+.new-event-modal__close,
+.analysis-template-manager-close,
+.match-report-dialog-panel > header button,
+.drawer-head button {
+  width: var(--staff-control-height-compact);
+  height: var(--staff-control-height-compact);
+  min-width: var(--staff-touch-target-min);
+  min-height: var(--staff-touch-target-min);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-control);
+  background: transparent;
+  color: var(--staff-color-text-secondary);
+  box-shadow: none;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition:
+    background-color var(--staff-motion-normal) var(--staff-ease-standard),
+    border-color var(--staff-motion-normal) var(--staff-ease-standard),
+    color var(--staff-motion-normal) var(--staff-ease-standard),
+    box-shadow var(--staff-motion-normal) var(--staff-ease-standard);
+}
+
+.new-event-modal__close:hover,
+.analysis-template-manager-close:hover,
+.match-report-dialog-panel > header button:hover,
+.drawer-head button:hover {
+  background: var(--staff-color-bg-hover);
+  border-color: var(--staff-color-border-strong);
+  color: var(--staff-color-text);
+}
+
+.new-event-modal__close:focus-visible,
+.analysis-template-manager-close:focus-visible,
+.match-report-dialog-panel > header button:focus-visible,
+.drawer-head button:focus-visible {
+  outline: none;
+  border-color: var(--staff-color-primary);
+  box-shadow: var(--staff-shadow-focus);
+}
+
+.new-event-modal__close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Modal body / form rhythm */
+.new-event-form {
+  display: grid;
+  gap: var(--staff-space-3);
+  max-height: calc(100dvh - 150px);
+  padding: var(--staff-overlay-body-pad);
+  overflow-y: auto;
+}
+
+.analysis-template-manager-toolbar,
+.analysis-template-manager-name-row,
+.analysis-template-manager-body,
+.analysis-template-manager-add-phase-row {
+  padding-inline: var(--staff-overlay-body-pad);
+}
+
+.analysis-template-manager-body {
+  gap: var(--staff-space-2);
+}
+
+.match-report-dialog-body {
+  overflow: auto;
+  padding: var(--staff-space-4);
+  background: var(--staff-color-bg-app);
+}
+
+.match-report-dialog-body .match-report-paper {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  box-shadow: var(--staff-shadow-panel);
+}
+
+/* Footer actions should feel like one anchored command area. */
+.modal-actions,
+.new-event-modal__actions,
+.analysis-template-manager-footer,
+.match-report-dialog-panel > footer {
+  gap: var(--staff-space-2);
+  border-top: 1px solid var(--staff-color-border-subtle);
+  background: var(--staff-overlay-panel);
+}
+
+.modal-actions,
+.new-event-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--staff-space-2);
+}
+
+.new-event-modal__actions {
+  margin-top: var(--staff-space-2);
+  padding-top: var(--staff-space-3);
+}
+
+.analysis-template-manager-footer,
+.match-report-dialog-panel > footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--staff-space-2);
+  padding: var(--staff-overlay-footer-pad);
+}
+
+/* Calendar event drawer: same grammar, side-sheet geometry. */
+.event-drawer {
+  position: fixed;
+  z-index: 71;
+  top: 0;
+  right: 0;
+  width: min(420px, 92vw);
+  height: 100dvh;
+  overflow: auto;
+  padding: var(--staff-space-4);
+  border-left: 1px solid var(--staff-color-border);
+  background: var(--staff-overlay-panel);
+  box-shadow: -20px 0 56px rgba(0, 0, 0, 0.30);
+}
+
+.drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--staff-space-3);
+  padding-bottom: var(--staff-space-3);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
+}
+
+.drawer-head span {
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .105em;
+  text-transform: uppercase;
+}
+
+.drawer-head h2 {
+  margin: var(--staff-space-1) 0 0;
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-section-title);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: var(--staff-line-height-heading);
+  letter-spacing: -.025em;
+}
+
+.drawer-section {
+  padding: var(--staff-space-3) 0;
+  border-bottom: 1px solid var(--staff-color-border-subtle);
+}
+
+.drawer-section label,
+.drawer-section strong,
+.drawer-section small,
+.drawer-grid span,
+.drawer-grid strong {
+  display: block;
+}
+
+.drawer-section label,
+.drawer-grid span {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+}
+
+.drawer-section strong {
+  margin-top: var(--staff-space-1);
+  font-size: var(--staff-font-subsection-title);
+}
+
+.drawer-section small {
+  margin-top: var(--staff-space-1);
+  color: var(--staff-color-primary-hover);
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--staff-space-2);
+  padding: var(--staff-space-3) 0;
+}
+
+.drawer-grid div {
+  padding: var(--staff-space-3);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-medium);
+  background: var(--staff-color-bg-panel-raised);
+}
+
+.drawer-actions {
+  display: flex;
+  gap: var(--staff-space-2);
+  padding-top: var(--staff-space-3);
+}
+
+.drawer-actions button {
+  flex: 1 1 0;
+}
+
+/* Mobile: modals become bottom/full-height work surfaces, not squeezed desktop cards. */
+@media (max-width: 760px) {
+  .new-event-modal-backdrop,
+  .analysis-template-manager-backdrop,
+  .match-report-dialog {
+    align-items: end;
+    padding: 0;
+  }
+
+  .new-event-modal,
+  .analysis-template-manager,
+  .match-report-dialog-panel {
+    width: 100%;
+    max-width: none;
+    max-height: 94dvh;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
+  }
+
+  .match-report-dialog-panel {
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .analysis-template-manager-backdrop {
+    align-items: stretch;
+  }
+
+  .analysis-template-manager {
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .new-event-modal__head,
+  .analysis-template-manager-head,
+  .match-report-dialog-panel > header {
+    padding: var(--staff-space-3);
+  }
+
+  .new-event-form,
+  .analysis-template-manager-toolbar,
+  .analysis-template-manager-name-row,
+  .analysis-template-manager-body,
+  .analysis-template-manager-add-phase-row {
+    padding-inline: var(--staff-space-3);
+  }
+
+  .new-event-form {
+    max-height: calc(94dvh - 88px);
+    padding-bottom: var(--staff-space-4);
+  }
+
+  .new-event-modal__actions {
+    position: sticky;
+    bottom: calc(-1 * var(--staff-space-4));
+    margin: 0 calc(-1 * var(--staff-space-3)) calc(-1 * var(--staff-space-4));
+    padding: var(--staff-space-3);
+    padding-bottom: max(var(--staff-space-3), env(safe-area-inset-bottom));
+    background: var(--staff-overlay-panel);
+  }
+
+  .new-event-modal__actions button {
+    flex: 1 1 0;
+  }
+
+  .analysis-template-manager-footer,
+  .match-report-dialog-panel > footer {
+    padding: var(--staff-space-3);
+    padding-bottom: max(var(--staff-space-3), env(safe-area-inset-bottom));
+  }
+
+  .analysis-template-manager-footer > div,
+  .match-report-dialog-panel > footer {
+    width: 100%;
+  }
+
+  .match-report-dialog-body {
+    padding: var(--staff-space-3);
+  }
+
+  .match-report-dialog-panel > footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .event-drawer {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: min(88dvh, 720px);
+    padding: var(--staff-space-3);
+    padding-bottom: max(var(--staff-space-4), env(safe-area-inset-bottom));
+    border-top: 1px solid var(--staff-color-border);
+    border-left: 0;
+    border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
+    box-shadow: 0 -20px 56px rgba(0, 0, 0, 0.34);
+  }
+
+  .drawer-actions {
+    position: sticky;
+    bottom: calc(-1 * var(--staff-space-4));
+    margin: 0 calc(-1 * var(--staff-space-3));
+    padding: var(--staff-space-3);
+    padding-bottom: max(var(--staff-space-3), env(safe-area-inset-bottom));
+    background: var(--staff-overlay-panel);
+  }
+}

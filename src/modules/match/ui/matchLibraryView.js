@@ -93,6 +93,7 @@ export function createMatchLibraryView({
         <div class="match-library-status"><span>${escapeHtml(match.documentStatus)}</span><small>${match.source === 'calendar' ? 'Calendario' : 'Legacy Library'}</small></div>
         <div class="match-library-actions">
           <button type="button" class="button button--primary" data-open-match-workspace="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}">Apri partita</button>
+          <button type="button" class="button button--secondary match-library-statistics-button" data-open-match-statistics="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}">Statistiche</button>
           ${match.source === 'library' ? `<button type="button" class="icon-button" data-delete-library-match="${escapeHtml(match.id)}" aria-label="Elimina gara legacy">×</button>` : ''}
         </div>
       </article>`
@@ -148,10 +149,10 @@ export function createMatchLibraryView({
       </form>
 
       <div class="match-library-toolbar">
-        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input type="search" placeholder="Cerca avversario, competizione o impianto" data-match-library-search></label>
-        <select data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
-        <select data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select>
-        <select data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
+        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca avversario, competizione o impianto" data-match-library-search></label>
+        <select name="match_library_competition" data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
+        <select name="match_library_location" data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select>
+        <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
       </div>
 
       <div class="match-library-summary"><strong data-match-library-visible-count>${matches.length}</strong><span>partite</span></div>

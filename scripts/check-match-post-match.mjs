@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import {
   mergeMatchPostMatchIntoEventNotes,
+  normalizeMatchPostMatch,
   parsePostMatchMaterials,
   readMatchPostMatchFromEventNotes,
 } from '../src/modules/match/matchPostMatchModel.js'
@@ -9,6 +10,7 @@ const controller = fs.readFileSync('src/app/appController.js', 'utf8')
 const service = fs.readFileSync('src/modules/match/matchPostMatchService.js', 'utf8')
 const view = fs.readFileSync('src/modules/match/ui/matchPostMatchView.js', 'utf8')
 const workflow = fs.readFileSync('src/modules/match/matchWorkflowModel.js', 'utf8')
+const matchWorkspaceEvents = fs.readFileSync('src/modules/match/events/matchWorkspaceEvents.js','utf8')
 
 const sourceNotes = JSON.stringify({
   type: 'match_event',
@@ -25,6 +27,7 @@ const parsed = JSON.parse(merged)
 const loaded = readMatchPostMatchFromEventNotes(merged)
 const validLinks = parsePostMatchMaterials('Video | https://example.com/video')
 const invalidLinks = parsePostMatchMaterials('javascript:alert(1)')
+const defaults = normalizeMatchPostMatch({}).sections
 
 const checks = [
   ['Workflow mantiene Post gara tra le sette sezioni', workflow.includes("key: 'post-match'")],
@@ -38,9 +41,10 @@ const checks = [
   ['Debrief Post gara viene riletto', loaded.debrief === 'Partita utile'],
   ['Link http/https accettato', validLinks.valid && validLinks.materials.length === 1],
   ['Protocollo non sicuro rifiutato', !invalidLinks.valid],
-  ['Vista espone priorità microciclo', view.includes('Priorità prossimo microciclo')],
-  ['Vista espone follow-up individuali', view.includes('Follow-up individuali')],
-  ['Vista espone materiali collegati', view.includes('Video e materiali')],
+  ['Schema v2 espone priorità microciclo', defaults.some((section) => section.id === 'microcyclePriorities' && section.title === 'Priorità prossimo microciclo')],
+  ['Schema v2 espone follow-up individuali', defaults.some((section) => section.id === 'individualFollowUps' && section.title === 'Follow-up individuali')],
+  ['Schema v2 espone materiali collegati', defaults.some((section) => section.id === 'materials' && section.kind === 'materials')],
+  ['Vista usa sezioni accordion chiuse', view.includes('data-post-match-section-toggle') && view.includes('aria-expanded=\"false\"')],
 ]
 
 let passed = 0

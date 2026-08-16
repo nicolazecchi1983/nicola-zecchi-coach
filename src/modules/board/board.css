@@ -1,0 +1,116 @@
+/* STAFF 0.27.32 — Board canonical ownership.
+   Desktop/tablet Board presentation lives here. Real-device mobile geometry remains
+   centralized in design-system/responsive.css. No runtime or persistence behavior. */
+
+.board-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.board-toolbar label {
+  display: grid;
+  gap: 7px;
+}
+
+.board-toolbar select {
+  height: 54px;
+  border: 1px solid #24506a;
+  border-radius: 14px;
+  background: #061827;
+  color: #fff;
+  padding: 0 14px;
+}
+
+.board-color-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.board-color-controls input {
+  width: 76px;
+  height: 54px;
+  border: 0;
+  border-radius: 12px;
+  background: #071b2a;
+  padding: 4px;
+}
+
+.board-pitch {
+  --board-home: #07194f;
+  --board-away: #9f1239;
+  position: relative;
+  max-width: 900px;
+  aspect-ratio: 68 / 105;
+  margin: 0 auto;
+  border: 5px solid #d8e9df;
+  border-radius: 20px;
+  overflow: hidden;
+  background: repeating-linear-gradient(90deg, #176d45 0 12.5%, #1d7b4f 12.5% 25%);
+  touch-action: none;
+}
+
+.board-pitch::before,
+.board-pitch::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  height: 19%;
+  border: 2px solid rgba(255, 255, 255, .72);
+}
+
+.board-pitch::before {
+  top: 3%;
+  border-top: 0;
+}
+
+.board-pitch::after {
+  bottom: 3%;
+  border-bottom: 0;
+}
+
+.board-token {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid #74d4ff;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  z-index: 4;
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 5px 16px #0008;
+}
+
+.board-token--home { background: var(--board-home); }
+.board-token--away { background: var(--board-away); border-color: #ffb2c3; }
+
+.board-token small {
+  position: absolute;
+  top: 48px;
+  white-space: nowrap;
+  background: #061827dd;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+}
+
+.board-help {
+  text-align: center;
+  color: #9fbdd1;
+  margin-top: 15px;
+}
+
+@media (max-width: 900px) {
+  .board-toolbar { grid-template-columns: 1fr; }
+  .board-color-controls { justify-content: stretch; }
+  .board-color-controls label { flex: 1; }
+  .board-pitch { width: 100%; }
+}

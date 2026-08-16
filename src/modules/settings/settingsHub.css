@@ -1,0 +1,15 @@
+/* STAFF Settings Hub canonical owner — 0.27.42 / Cleanup Pass 29 */
+/* Legacy V5.6 settings-hub baseline, preserved without visual redesign. */
+.settings-grid { display: grid; gap: 18px; max-width: 980px; }
+.settings-card { width: 100%; display: grid; grid-template-columns: 58px 1fr auto; align-items: center; gap: 18px; padding: 24px; border: 1px solid #183b52; border-radius: 18px; background: #071b2a; color: #fff; text-align: left; cursor: pointer; }
+.settings-card:hover { border-color: #18bfff; transform: translateY(-1px); }
+.settings-card-icon { width: 58px; height: 58px; border-radius: 15px; display: grid; place-items: center; background: #0b3856; color: #27c4ff; }
+.settings-card span:nth-child(2) { display: grid; gap: 5px; }
+.settings-card strong { font-size: 1.18rem; }
+.settings-card small { color: #94b7d0; font-size: .98rem; }
+.settings-card b { font-size: 1.6rem; color: #24c4ff; }
+
+@media (max-width: 720px) {
+  .settings-card { grid-template-columns: 50px 1fr auto; padding: 18px; }
+  .settings-card-icon { width: 50px; height: 50px; }
+}

@@ -1,0 +1,321 @@
+{
+  "id": "lnd-serie-d-2026-27-girone-e-current-team",
+  "label": "Calendario ufficiale LND · Serie D · Girone E",
+  "sourceFile": "Tabellone-Girone-E.pdf",
+  "season": "2026/27",
+  "category": "Serie D",
+  "competitionGroup": "E",
+  "teamAliases": [
+    "Mezzolara",
+    "Mezz"
+  ],
+  "sourceNotes": "Il tabellone ufficiale contiene date e accoppiamenti, non gli orari. STAFF propone 15:30 come valore tecnico da verificare nell’anteprima prima dell’importazione.",
+  "rows": [
+    {
+      "matchDay": "1",
+      "date": "2026-09-06",
+      "time": "15:30",
+      "opponent": "Rondinella Marzocco",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "2",
+      "date": "2026-09-13",
+      "time": "15:30",
+      "opponent": "Siena",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "3",
+      "date": "2026-09-16",
+      "time": "15:30",
+      "opponent": "Nuova Ternana",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "4",
+      "date": "2026-09-20",
+      "time": "15:30",
+      "opponent": "Ghiviborgo",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "5",
+      "date": "2026-09-27",
+      "time": "15:30",
+      "opponent": "Grassina",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "6",
+      "date": "2026-10-04",
+      "time": "15:30",
+      "opponent": "S. Donato Tavarnelle",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "7",
+      "date": "2026-10-11",
+      "time": "15:30",
+      "opponent": "Sasso Marconi",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "8",
+      "date": "2026-10-18",
+      "time": "15:30",
+      "opponent": "Flaminia",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "9",
+      "date": "2026-10-25",
+      "time": "15:30",
+      "opponent": "Terranuova Traiana",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "10",
+      "date": "2026-11-01",
+      "time": "15:30",
+      "opponent": "Prato",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "11",
+      "date": "2026-11-08",
+      "time": "15:30",
+      "opponent": "Follonica Gavorrano",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "12",
+      "date": "2026-11-15",
+      "time": "15:30",
+      "opponent": "Scandicci",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "13",
+      "date": "2026-11-22",
+      "time": "15:30",
+      "opponent": "Seravezza",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "14",
+      "date": "2026-11-29",
+      "time": "15:30",
+      "opponent": "Lucchese",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "15",
+      "date": "2026-12-06",
+      "time": "15:30",
+      "opponent": "Tau Altopascio",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "16",
+      "date": "2026-12-13",
+      "time": "15:30",
+      "opponent": "Progresso",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "17",
+      "date": "2026-12-20",
+      "time": "15:30",
+      "opponent": "Aquila Montevarchi",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "18",
+      "date": "2027-01-06",
+      "time": "15:30",
+      "opponent": "Rondinella Marzocco",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "19",
+      "date": "2027-01-10",
+      "time": "15:30",
+      "opponent": "Siena",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "20",
+      "date": "2027-01-17",
+      "time": "15:30",
+      "opponent": "Nuova Ternana",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "21",
+      "date": "2027-01-24",
+      "time": "15:30",
+      "opponent": "Ghiviborgo",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "22",
+      "date": "2027-01-31",
+      "time": "15:30",
+      "opponent": "Grassina",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "23",
+      "date": "2027-02-07",
+      "time": "15:30",
+      "opponent": "S. Donato Tavarnelle",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "24",
+      "date": "2027-02-14",
+      "time": "15:30",
+      "opponent": "Sasso Marconi",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "25",
+      "date": "2027-02-21",
+      "time": "15:30",
+      "opponent": "Flaminia",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "26",
+      "date": "2027-02-28",
+      "time": "15:30",
+      "opponent": "Terranuova Traiana",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "27",
+      "date": "2027-03-14",
+      "time": "15:30",
+      "opponent": "Prato",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "28",
+      "date": "2027-03-21",
+      "time": "15:30",
+      "opponent": "Follonica Gavorrano",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "29",
+      "date": "2027-03-25",
+      "time": "15:30",
+      "opponent": "Scandicci",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "30",
+      "date": "2027-04-04",
+      "time": "15:30",
+      "opponent": "Seravezza",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "31",
+      "date": "2027-04-11",
+      "time": "15:30",
+      "opponent": "Lucchese",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "32",
+      "date": "2027-04-18",
+      "time": "15:30",
+      "opponent": "Tau Altopascio",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "33",
+      "date": "2027-04-25",
+      "time": "15:30",
+      "opponent": "Progresso",
+      "homeAway": "away",
+      "competition": "Campionato",
+      "location": ""
+    },
+    {
+      "matchDay": "34",
+      "date": "2027-05-02",
+      "time": "15:30",
+      "opponent": "Aquila Montevarchi",
+      "homeAway": "home",
+      "competition": "Campionato",
+      "location": ""
+    }
+  ]
+}

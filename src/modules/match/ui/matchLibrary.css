@@ -1,0 +1,208 @@
+/* STAFF 0.27.26 — Match Library canonical owner
+   Consolidates A.12, B2.3-R2, B2.4-R18, M1.3H and M2.0 generations.
+   Domain logic remains outside CSS; this file owns Match Library geometry/presentation. */
+
+.match-library {
+  display: grid;
+  gap: 24px;
+}
+
+.match-library-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.match-library-heading .eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--staff-color-primary);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.match-library-create {
+  padding: 22px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-card);
+  background: var(--staff-color-bg-surface);
+  color: var(--staff-color-text);
+  box-shadow: none;
+}
+
+.match-library-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.match-library-form-grid label {
+  display: grid;
+  gap: 7px;
+  color: var(--staff-color-text);
+  font-weight: 700;
+}
+
+.match-library-form-grid input,
+.match-library-form-grid select,
+.match-library-toolbar select,
+.match-library-search {
+  min-height: 48px;
+  border: 1px solid #294354;
+  border-radius: 13px;
+  background: #0b1721;
+  color: #edf5fa;
+  box-shadow: none;
+}
+
+.match-library-form-grid input,
+.match-library-form-grid select,
+.match-library-toolbar select {
+  width: 100%;
+  padding: 0 13px;
+  font: inherit;
+}
+
+.match-library-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.match-library-toolbar {
+  display: grid;
+  grid-template-columns: minmax(340px, 1.2fr) repeat(3, minmax(190px, .8fr));
+  align-items: stretch;
+  gap: 12px;
+}
+
+.match-library-search {
+  display: flex;
+  align-items: center;
+  padding-inline: 14px;
+}
+
+.match-library-search .nav-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  color: #60708f;
+}
+
+.match-library-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #edf5fa;
+  font: inherit;
+}
+
+.match-library-search input::placeholder { color: #738b9b; }
+.match-library-summary { display: flex; align-items: baseline; gap: 8px; color: #87a9bf; }
+.match-library-summary strong { color: var(--staff-color-text); font-size: 1.5rem; }
+.match-library-list { display: grid; gap: 10px; }
+
+.match-library-card {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 150px auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 112px;
+  padding: 18px 20px;
+  border: 1px solid #233c4c;
+  border-radius: 16px;
+  background: #0a1822;
+  color: #e8f1f6;
+  box-shadow: none;
+}
+
+.match-library-date {
+  display: grid;
+  gap: 4px;
+  padding-right: 18px;
+  border-right: 1px solid #294454;
+}
+
+.match-library-date strong { color: #f5f8fa; text-transform: capitalize; }
+.match-library-date span,
+.match-library-main p,
+.match-library-status small { color: #8fa5b4; }
+.match-library-main { min-width: 0; }
+.match-library-kicker { color: #58c6f2; font-size: .74rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.match-library-main h3 { margin: 5px 0; color: #f5f8fa; font-size: 1.05rem; }
+.match-library-main h3 b { display: inline-block; min-width: 44px; text-align: center; }
+.match-library-main p { margin: 0; font-size: .88rem; }
+.match-library-status { display: grid; gap: 4px; }
+.match-library-status span { color: #58c6f2; font-size: .84rem; font-weight: 800; }
+.match-library-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.match-library-actions .button { min-height: 42px; border-color: #31576f; background: #0c1e2a; color: #f2f7fa; }
+.match-library-actions .match-library-statistics-button {
+  background: transparent;
+  color: #9fdcf4;
+  border-color: #2b5972;
+}
+.match-library-actions .match-library-statistics-button:hover {
+  background: #0c2230;
+  color: #e9f8ff;
+}
+
+.match-library-month,
+.match-library-group,
+.match-library-list details {
+  overflow: hidden;
+  border: 1px solid #223d4e;
+  border-radius: 16px;
+  background: #0a1721;
+  color: #e9f2f7;
+}
+
+.match-library-month > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 15px 18px;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.match-library-month > summary::-webkit-details-marker { display: none; }
+.match-library-month > summary > span:first-child { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.match-library-month > summary strong { color: #f5f8fa; font-size: 15px; }
+.match-library-month > summary small { color: #8fa5b4; font-size: 12px; }
+.match-library-month > summary small b { color: #e9f2f7; }
+.match-library-month-chevron { color: #8fa5b4; font-size: 20px; line-height: 1; transition: transform .18s ease; }
+.match-library-month[open] .match-library-month-chevron { transform: rotate(180deg); }
+.match-library-month-content { display: grid; }
+.match-library-month-content .match-library-card { border-radius: 0; border-right: 0; border-bottom: 0; border-left: 0; }
+.match-library-month-content .match-library-card:first-child { border-top: 1px solid #223d4e; }
+
+@media (min-width: 1001px) {
+  .match-library-toolbar {
+    grid-template-columns: minmax(340px, 1.2fr) repeat(3, minmax(190px, .8fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .match-library-toolbar { grid-template-columns: 1fr 1fr; }
+  .match-library-card { grid-template-columns: 100px minmax(0, 1fr) auto; }
+  .match-library-status { display: none; }
+}
+
+@media (max-width: 760px) {
+  .match-library-heading { align-items: stretch; flex-direction: column; }
+  .match-library-form-grid,
+  .match-library-toolbar { grid-template-columns: 1fr; }
+  .match-library-card { grid-template-columns: 1fr; gap: 12px; }
+  .match-library-date { display: flex; justify-content: space-between; padding: 0 0 10px; border-right: 0; border-bottom: 1px solid #294454; }
+  .match-library-actions { justify-content: stretch; }
+  .match-library-actions .button { flex: 1; }
+  .match-library-month > summary { padding: 13px 14px; }
+  .match-library-month > summary > span:first-child { display: grid; gap: 3px; }
+}

@@ -1,0 +1,95 @@
+/* STAFF 0.29.25 — canonical premium team-token visual foundation.
+   Own team, opponent and Settings preview share one physical token language.
+   Context owners still provide colors/patterns and runtime behaviour. */
+.staff-team-token {
+  --staff-token-size: 36px;
+  width: var(--staff-token-size);
+  height: var(--staff-token-size);
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(244,250,253,.96);
+  border-radius: 50%;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  font-weight: 950;
+  letter-spacing: -.025em;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  outline: 2px solid rgba(3,14,21,.74);
+  outline-offset: 1px;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.36),
+    0 2px 5px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -7px 12px rgba(0,0,0,.16);
+  filter: saturate(1.04) contrast(1.02);
+}
+
+.staff-team-token--preview {
+  --staff-token-size: 38px;
+  font-size: 1.25rem;
+  outline-width: 3px;
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.36),
+    0 3px 7px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -11px 18px rgba(0,0,0,.17);
+}
+
+/* STAFF 0.29.28 — canonical Match token renderer.
+   Match consumers own position/labels only; the physical shell and kit rendering live here. */
+.staff-match-token {
+  border: 0;
+  background: transparent;
+  color: #fff;
+}
+
+.staff-match-token__shell {
+  --staff-token-primary-resolved: var(--staff-token-primary, #07194f);
+  --staff-token-secondary-resolved: var(--staff-token-secondary, #f8fafc);
+  border-color: color-mix(in srgb, var(--staff-token-secondary-resolved) 78%, #fff);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.16), transparent 28%),
+    var(--staff-token-primary-resolved);
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+}
+
+[data-staff-token-pattern="vertical"] .staff-match-token__shell {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.14), transparent 28%),
+    repeating-linear-gradient(90deg,
+      var(--staff-token-primary-resolved) 0 8px,
+      var(--staff-token-secondary-resolved) 8px 13px);
+}
+
+[data-staff-token-pattern="horizontal"] .staff-match-token__shell {
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.14), transparent 28%),
+    repeating-linear-gradient(0deg,
+      var(--staff-token-primary-resolved) 0 8px,
+      var(--staff-token-secondary-resolved) 8px 13px);
+}
+
+.staff-match-token__number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+}
+
+.staff-match-token:hover .staff-match-token__shell,
+.staff-match-token:focus-visible .staff-match-token__shell {
+  filter: brightness(1.08);
+}
+
+.staff-match-token.is-dragging .staff-match-token__shell {
+  transform: scale(1.04);
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.42),
+    0 3px 8px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.30),
+    inset 0 -7px 12px rgba(0,0,0,.16);
+}

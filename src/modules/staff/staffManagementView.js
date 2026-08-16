@@ -21,7 +21,7 @@ export function renderStaffManagementView({ can, capabilities, staffProfiles, cu
         <div class="staff-member-fields">
           <label class="form-field"><span>Nome</span><input name="first_name" value="${escapeHtml(profile.first_name || '')}" required ${ownerLocked ? 'disabled' : ''}></label>
           <label class="form-field"><span>Cognome</span><input name="last_name" value="${escapeHtml(profile.last_name || '')}" required ${ownerLocked ? 'disabled' : ''}></label>
-          <label class="form-field staff-email-field"><span>Email</span><input value="${escapeHtml(profile.email || '')}" disabled></label>
+          <label class="form-field staff-email-field"><span>Email</span><input name="staff_email_display" value="${escapeHtml(profile.email || '')}" disabled></label>
           <label class="form-field"><span>Ruolo nello staff tecnico</span><select name="role" ${ownerLocked ? 'disabled' : ''}>${technicalRoleOptions(profile.role)}</select></label>
           <label class="form-field"><span>Livello di accesso</span><select name="app_role" ${isTeamOwner ? 'disabled' : ''}>${appRoleOptions(level, { includeOwner: isTeamOwner })}</select></label>
           <label class="staff-active-toggle"><input name="active" type="checkbox" ${profile.active !== false ? 'checked' : ''} ${isTeamOwner ? 'disabled' : ''}><span>Account attivo</span></label>

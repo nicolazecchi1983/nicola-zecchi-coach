@@ -1,0 +1,152 @@
+/* STAFF 0.27.31 — Convocazioni canonical ownership.
+   Presentation only. Shared surfaces/controls and final mobile geometry remain
+   owned by the Design System layers loaded later in the cascade. */
+
+.callups-panel {
+  margin: 0 0 28px;
+  background: #0b2233;
+  border: 1px solid #1e455e;
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.callups-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.callups-head span {
+  color: #2dc4ff;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.callups-head h2 { margin: 5px 0; }
+.callups-head p { color: #9fbdd1; }
+
+.callups-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: #07194f;
+  white-space: nowrap;
+}
+
+.callups-counter strong {
+  font-size: 32px;
+  color: #fff;
+}
+
+.callups-counter span {
+  color: #7cdcff;
+  font-size: .82rem;
+}
+
+.callups-toolbar {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin: 22px 0;
+}
+
+.callups-toolbar [data-callups-pdf] {
+  height: 50px;
+  min-height: 50px;
+  align-self: end;
+}
+
+.callups-toolbar label {
+  display: grid;
+  gap: 7px;
+}
+
+.callups-toolbar input {
+  height: 50px;
+  border: 1px solid #24506a;
+  border-radius: 13px;
+  background: #061827;
+  color: #fff;
+  padding: 0 14px;
+}
+
+.callups-alert {
+  padding: 12px 15px;
+  border-radius: 12px;
+  background: #53300b;
+  color: #ffd18a;
+  margin-bottom: 14px;
+  font-weight: 800;
+}
+
+.callups-role-groups {
+  display: grid;
+  gap: 18px;
+}
+
+.callups-role-group {
+  display: grid;
+  gap: 10px;
+}
+
+.callups-role-group > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 8px;
+  border-bottom: 1px solid #1e455e;
+}
+
+.callups-role-group > header span {
+  color: #2dc4ff;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.callups-role-group > header small {
+  min-width: 30px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #07194f;
+  color: #7cdcff;
+  text-align: center;
+  font-weight: 800;
+}
+
+.callups-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.callup-player {
+  display: grid;
+  grid-template-columns: auto 42px 1fr auto;
+  gap: 11px;
+  align-items: center;
+  border: 1px solid #1c4056;
+  border-radius: 14px;
+  padding: 11px 13px;
+  background: #071b2a;
+}
+
+.callup-player:has(input:checked) {
+  border-color: #2dc4ff;
+  background: #0a2b40;
+}
+
+.callup-player b { color: #2dc4ff; }
+.callup-player small { color: #87a9bf; }
+.callup-player input { width: 18px; height: 18px; }
+
+@media (max-width: 900px) {
+  .callups-list { grid-template-columns: 1fr; }
+  .callups-toolbar { grid-template-columns: 1fr; }
+  .callups-head { align-items: center; }
+  .callups-toolbar button { width: 100%; }
+}

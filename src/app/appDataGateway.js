@@ -2,17 +2,22 @@ import { supabase } from '../supabase.js'
 import { listCalendarEvents } from '../modules/calendar/calendarService.js'
 import { parseMatchTitle } from '../modules/calendar/ui/calendarView.js'
 import { readTrainingLibraryFeedback } from '../modules/training/trainingLibraryService.js'
+import { withDataAccessRetry } from '../infrastructure/dataAccess/withDataAccessRetry.js'
+import { DATA_OPERATION_KIND } from '../infrastructure/dataAccess/dataOperationPolicy.js'
 
 export async function loadAccessProfile(user) {
   if (!user?.id) {
     return { profile: null, role: 'observer', accessRole: 'read_only' }
   }
 
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, first_name, last_name, email, role, app_role, active')
-    .eq('id', user.id)
-    .maybeSingle()
+  const { data, error } = await withDataAccessRetry(
+    () => supabase
+      .from('profiles')
+      .select('id, first_name, last_name, email, role, app_role, active')
+      .eq('id', user.id)
+      .maybeSingle(),
+    { kind: DATA_OPERATION_KIND.READ, stage: 'access-profile' },
+  )
 
   if (error) {
     console.error('Errore caricamento profilo:', error.message)
@@ -32,11 +37,14 @@ export async function loadAccessProfile(user) {
 }
 
 export async function loadMatchAnalysisEntries() {
-  const { data, error } = await supabase
-    .from('match_analysis')
-    .select('*')
-    .order('match_date', { ascending: false })
-    .order('minute', { ascending: true })
+  const { data, error } = await withDataAccessRetry(
+    () => supabase
+      .from('match_analysis')
+      .select('*')
+      .order('match_date', { ascending: false })
+      .order('minute', { ascending: true }),
+    { kind: DATA_OPERATION_KIND.READ, stage: 'match-analysis-list' },
+  )
 
   if (error) {
     console.warn('Analisi gare non ancora collegata:', error.message)
@@ -77,7 +85,12 @@ export async function loadCalendarEventModels() {
       place: event.location || '',
       type: event.event_type || 'training',
       startAt: event.start_at,
-      matchDay: event.match_day ?? null,
+      matchDay: (event.event_type === 'match' && parsedNotes?.type === 'match_event')
+        ? (parsedNotes.competition_round ?? null)
+        : (event.match_day ?? null),
+      competitionRound: (event.event_type === 'match' && parsedNotes?.type === 'match_event')
+        ? (parsedNotes.competition_round ?? null)
+        : null,
       presentCount: event.present_count ?? null,
       squadTotal: event.squad_total ?? null,
       trainingSheetPath,

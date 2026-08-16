@@ -29,24 +29,23 @@ export function createMatchPostMatchService({ getEvent, updateEvent, reloadEvent
         })
       }
 
-      const parsedMaterials = parsePostMatchMaterials(input.materialsText || '')
-      if (!parsedMaterials.valid) {
-        throw new AppError(parsedMaterials.errors.join(' '), {
-          code: 'MATCH_POST_MATCH_MATERIAL_INVALID',
-          stage: 'validation',
-          userMessage: parsedMaterials.errors[0],
-        })
+      const sections = Array.isArray(input.sections) ? input.sections : []
+      const materialsSection = sections.find((section) => section.id === 'materials')
+      if (materialsSection) {
+        const parsedMaterials = parsePostMatchMaterials(materialsSection.content || '')
+        if (!parsedMaterials.valid) {
+          throw new AppError(parsedMaterials.errors.join(' '), {
+            code: 'MATCH_POST_MATCH_MATERIAL_INVALID',
+            stage: 'validation',
+            userMessage: parsedMaterials.errors[0],
+          })
+        }
       }
 
       const current = readMatchPostMatchFromEventNotes(event.notes)
       const next = normalizeMatchPostMatch({
         ...current,
-        debrief: input.debrief,
-        positives: input.positives,
-        issues: input.issues,
-        microcyclePriorities: input.microcyclePriorities,
-        individualFollowUps: input.individualFollowUps,
-        materials: parsedMaterials.materials,
+        sections,
         updatedAt: new Date().toISOString(),
       })
 

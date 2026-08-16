@@ -11,9 +11,7 @@ export const APP_MENU = [
   ['our-team', 'Nostra squadra'],
   ['opponent', 'Avversario'],
   ['analysis', 'Analisi Gare'],
-  ['board', 'Board'],
   ['squad', 'Rosa'],
-  ['methodology', 'Metodologia'],
   ['settings', 'Impostazioni'],
 ]
 
@@ -21,54 +19,99 @@ const SIDEBAR_GROUPS = [
   { key: 'primary', items: [['dashboard', 'Dashboard', 'dashboard'], ['calendar', 'Calendario', 'calendar']] },
   { key: 'training', label: 'Training', items: [['training-sheet', 'Training Sheet', 'training-sheet'], ['library', 'Training Library', 'library']] },
   { key: 'match', label: 'Match', items: [['match-library', 'Match Library', 'match-library']] },
-  { key: 'management', items: [['board', 'Board', 'board'], ['squad', 'Rosa', 'squad'], ['methodology', 'Metodologia', 'methodology'], ['settings', 'Impostazioni', 'settings']] },
+  { key: 'management', items: [['squad', 'Rosa', 'squad'], ['settings', 'Impostazioni', 'settings']] },
 ]
 
 
-const MOBILE_PRIMARY_NAV = [
-  ['dashboard', 'Home', 'dashboard'],
-  ['calendar', 'Calendario', 'calendar'],
-  ['training-sheet', 'Training', 'training-sheet'],
-  ['match-library', 'Match', 'match-library'],
+const MOBILE_DRAWER_GROUPS = [
+  {
+    key: 'primary',
+    label: 'Principale',
+    items: [
+      ['dashboard', 'Dashboard', 'dashboard'],
+      ['calendar', 'Calendario', 'calendar'],
+    ],
+  },
+  {
+    key: 'training',
+    label: 'Training',
+    items: [
+      ['training-sheet', 'Training Sheet', 'training-sheet'],
+      ['library', 'Training Library', 'library'],
+    ],
+  },
+  {
+    key: 'match',
+    label: 'Match',
+    items: [
+      ['match-library', 'Match Library', 'match-library'],
+    ],
+  },
+  {
+    key: 'team',
+    label: 'Squadra',
+    items: [
+      ['squad', 'Rosa', 'squad'],
+    ],
+  },
+  {
+    key: 'system',
+    label: 'Sistema',
+    items: [
+      ['settings', 'Impostazioni', 'settings'],
+    ],
+  },
 ]
 
-const MOBILE_MORE_NAV = [
-  ['library', 'Training Library', 'library'],
-  ['board', 'Board', 'board'],
-  ['squad', 'Rosa', 'squad'],
-  ['methodology', 'Metodologia', 'methodology'],
-  ['settings', 'Impostazioni', 'settings'],
-]
-
-export function renderMobileNavigation() {
+export function renderMobileNavigation({ identity = {}, team = {}, renderTeamLogo, escapeHtml } = {}) {
   const accessibleKeys = new Set(filterAccessibleMenu(APP_MENU).map(([key]) => key))
-  const renderMobileItem = ([key, label, iconKey], className = '') => {
+  const renderItem = ([key, label, iconKey]) => {
     if (!accessibleKeys.has(key)) return ''
-    return `<button class="mobile-nav-item nav-item ${className}" type="button" data-section="${key}">
-      <span class="mobile-nav-icon">${icon(iconKey || key)}</span>
-      <span class="mobile-nav-label">${label}</span>
+    return `<button class="mobile-drawer-item nav-item" type="button" data-section="${key}">
+      <span class="mobile-drawer-item__icon">${icon(iconKey || key)}</span>
+      <span class="mobile-drawer-item__label">${label}</span>
     </button>`
   }
 
-  const primary = MOBILE_PRIMARY_NAV.map((item) => renderMobileItem(item)).join('')
-  const more = MOBILE_MORE_NAV.map((item) => renderMobileItem(item, 'mobile-more-item')).join('')
+  const groups = MOBILE_DRAWER_GROUPS.map((group) => {
+    const items = group.items.map(renderItem).join('')
+    if (!items) return ''
+    return `<section class="mobile-drawer-group" data-mobile-drawer-group="${group.key}">
+      <div class="mobile-drawer-group__label">${group.label}</div>
+      <div class="mobile-drawer-group__items">${items}</div>
+    </section>`
+  }).join('')
 
-  return `<nav class="mobile-navigation" aria-label="Navigazione principale mobile">
-    <div class="mobile-more-sheet" data-mobile-more-sheet aria-hidden="true">
-      <div class="mobile-more-sheet__head">
-        <div><strong>Altro</strong><span>Sezioni STAFF</span></div>
-        <button class="mobile-more-close" type="button" data-mobile-more-close aria-label="Chiudi menu">${icon('close')}</button>
-      </div>
-      <div class="mobile-more-grid">${more}</div>
-    </div>
-    <div class="mobile-nav-bar">
-      ${primary}
-      <button class="mobile-nav-item mobile-nav-more" type="button" data-mobile-more-toggle aria-expanded="false">
-        <span class="mobile-nav-icon">${icon('menu')}</span>
-        <span class="mobile-nav-label">Altro</span>
-      </button>
-    </div>
-  </nav>`
+  const teamName = escapeHtml?.(team?.shortName || team?.name || 'STAFF') || 'STAFF'
+  const season = team?.season ? `Stagione ${escapeHtml?.(team.season) || team.season}` : 'STAFF'
+  const name = escapeHtml?.(identity?.name || 'Utente') || 'Utente'
+  const role = escapeHtml?.(identity?.role || 'Staff') || 'Staff'
+  const initial = escapeHtml?.(identity?.initial || 'S') || 'S'
+  const logo = typeof renderTeamLogo === 'function'
+    ? renderTeamLogo('mobile-drawer-brand__logo')
+    : `<span class="mobile-drawer-brand__fallback">S</span>`
+
+  return `<div class="mobile-drawer-shell" data-mobile-drawer-shell aria-hidden="true">
+    <button class="mobile-drawer-backdrop" type="button" data-mobile-drawer-close aria-label="Chiudi menu"></button>
+    <aside class="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu STAFF">
+      <header class="mobile-drawer-head">
+        <div class="mobile-drawer-brand">
+          ${logo}
+          <div class="mobile-drawer-brand__copy">
+            <strong>STAFF</strong>
+            <span>${teamName} · ${season}</span>
+          </div>
+        </div>
+        <button class="mobile-drawer-close" type="button" data-mobile-drawer-close aria-label="Chiudi menu">${icon('close')}</button>
+      </header>
+      <nav class="mobile-drawer-nav" aria-label="Navigazione principale mobile">${groups}</nav>
+      <footer class="mobile-drawer-profile">
+        <span class="mobile-drawer-profile__avatar" aria-hidden="true">${initial}</span>
+        <span class="mobile-drawer-profile__copy"><strong>${name}</strong><small>${role}</small></span>
+        <button class="mobile-drawer-profile__settings nav-item" type="button" data-section="settings" aria-label="Apri impostazioni">${icon('settings')}</button>
+      </footer>
+    </aside>
+  </div>`
 }
 
 export function renderSidebarMenu() {

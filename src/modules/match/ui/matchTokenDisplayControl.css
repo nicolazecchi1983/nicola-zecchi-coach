@@ -1,0 +1,93 @@
+/* Match Token Display Control — shared Match-domain component.
+   Owns only visibility toggles (Numero / Cognome / Foto).
+   Token appearance (colors/pattern) belongs to the team/opponent appearance source, not here. */
+.match-token-display {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.match-token-display__label {
+  color: #b7d5e7;
+  font-size: .72rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.match-token-display__options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 54px;
+  height: 54px;
+}
+
+.match-token-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  height: 40px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  border: 1px solid rgba(62, 144, 187, .28);
+  border-radius: 11px;
+  background: rgba(8, 29, 42, .44);
+  color: #a9c2d2;
+  font-size: .88rem;
+  font-weight: 760;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .16s ease, background .16s ease, color .16s ease, box-shadow .16s ease;
+}
+
+.match-token-toggle:hover {
+  border-color: rgba(53, 202, 255, .52);
+  color: #e9f6fc;
+}
+
+.match-token-toggle:has(input:checked) {
+  border-color: rgba(53, 202, 255, .68);
+  background: rgba(18, 92, 127, .30);
+  color: #f5fbff;
+  box-shadow: inset 0 0 0 1px rgba(53, 202, 255, .08);
+}
+
+.match-token-toggle input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.match-token-toggle:has(input:focus-visible) {
+  outline: 2px solid #35caff;
+  outline-offset: 2px;
+}
+
+.match-token-toggle:has(input:checked)::before {
+  content: '✓';
+  margin-right: 7px;
+  color: #35caff;
+  font-size: .78rem;
+  font-weight: 950;
+}
+
+@media (max-width: 760px) {
+  .match-token-display__options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    height: auto;
+    min-height: 0;
+  }
+
+  .match-token-toggle {
+    min-width: 0;
+    width: 100%;
+    padding-inline: 10px;
+  }
+}

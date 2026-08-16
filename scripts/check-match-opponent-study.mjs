@@ -7,6 +7,7 @@ const view = fs.readFileSync(new URL('../src/modules/match/ui/matchOpponentStudy
 const controller = fs.readFileSync(new URL('../src/modules/match/ui/matchOpponentStudyController.js', import.meta.url), 'utf8')
 const app = fs.readFileSync(new URL('../src/app/appController.js', import.meta.url), 'utf8')
 const calendarService = fs.readFileSync(new URL('../src/modules/match/matchCalendarService.js', import.meta.url), 'utf8')
+const adapters = fs.readFileSync('src/app/appViewAdapters.js', 'utf8')
 
 const checks = [
   ['Studio avversario ha modello dedicato', model.includes('normalizeMatchOpponentStudy') && model.includes('MATCH_OPPONENT_STUDY_SCHEMA_VERSION')],
@@ -22,7 +23,7 @@ const checks = [
   ['UI contiene report, materiali, link e lettura tecnica', ['Report Match Analyst', 'Video e documenti', 'Link esterni', 'Lettura tecnica'].every((label) => view.includes(label))],
   ['Controller protegge doppio invio durante upload', controller.includes('setBusy(form, true)') && controller.includes('disabled = busy')],
   ['Controller apre asset privati tramite signed URL', controller.includes('getAssetUrl') && controller.includes('window.open(url')],
-  ['App usa evento Calendario come sorgente dello studio', app.includes('renderMatchOpponentStudyView') && app.includes('eventModel') && app.includes('getEvent: getCalendarEvent')],
+  ['App usa evento Calendario come sorgente dello studio', adapters.includes('appState.calendarEvents.find') && adapters.includes('createMatchOpponentStudyService') && adapters.includes('getEvent: getCalendarEvent')],
   ['Pubblicazione Match preserva metadata già presenti', calendarService.includes('existingNotes') && calendarService.includes('...parseMatchEventNotes(existingNotes)')],
 ]
 

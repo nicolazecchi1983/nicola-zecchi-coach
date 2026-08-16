@@ -58,20 +58,14 @@ export function createMatchWorkspaceView({
             <h1>${escapeHtml(homeTeam)} <b>${escapeHtml(score)}</b> ${escapeHtml(awayTeam)}</h1>
             <p>${escapeHtml(safeDateLabel(match.date || active.date))}${match.time ? ` · ${escapeHtml(match.time)}` : ''} · ${escapeHtml(match.venue || 'Impianto da definire')}</p>
           </div>
-          <div class="match-workspace-meta"><button type="button" class="button button--secondary" data-workspace-action="statistics">Apri statistiche</button><span class="match-workspace-phase" data-match-phase="${escapeHtml(phase)}">${escapeHtml(getMatchWorkflowPhaseLabel(phase))}</span><span class="match-workspace-id">MATCH ID · ${escapeHtml(String(match.id))}</span></div>
+          <div class="match-workspace-meta"><button type="button" class="button button--secondary" data-workspace-action="statistics">Apri statistiche</button><span class="match-workspace-phase" data-match-phase="${escapeHtml(phase)}">${escapeHtml(getMatchWorkflowPhaseLabel(phase))}</span></div>
         </div>
       </header>
 
       <nav class="match-workspace-tabs" aria-label="Workflow partita">
-        ${sections.map((section, index) => `<button type="button" data-workspace-action="${escapeHtml(section.key)}"><b>${String(index + 1).padStart(2, '0')}</b><span>${escapeHtml(section.label)}</span></button>`).join('')}
+        ${sections.map((section, index) => { const label = section.key === 'our-team' ? ourName : section.label; return `<button type="button" data-workspace-action="${escapeHtml(section.key)}"><b>${String(index + 1).padStart(2, '0')}</b><span>${escapeHtml(label)}</span></button>` }).join('')}
       </nav>
 
-      <div class="match-workspace-grid">
-        ${sections.map((section, index) => `<article class="match-workspace-card">
-          <div><span>${String(index + 1).padStart(2, '0')}</span><h2>${escapeHtml(section.label)}</h2><p>${escapeHtml(section.description)}</p></div>
-          <button type="button" class="button button--primary" data-workspace-action="${escapeHtml(section.key)}">${escapeHtml(section.actionLabel)}</button>
-        </article>`).join('')}
-      </div>
     </section>`
   }
 }

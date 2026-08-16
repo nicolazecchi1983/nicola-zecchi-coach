@@ -6,11 +6,14 @@ const root = process.cwd()
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
 
 const app = read('src/app/appController.js')
+const trainingEditorEvents = read('src/modules/training/events/trainingEditorEvents.js')
+const runtime = `${app}\n${trainingEditorEvents}`
 const rosterService = read('src/modules/roster/rosterService.js')
 const rosterView = read('src/modules/roster/rosterView.js')
 const rosterRepository = read('src/infrastructure/repositories/rosterRepository.js')
 const teamSettings = read('src/modules/settings/teamSettingsView.js')
 const opponentStudy = read('src/modules/match/ui/matchOpponentStudyView.js')
+const workspaceShell = read('src/modules/match/workspace/matchWorkspaceShell.js')
 const sql = read('supabase/20260808_team_roster_foundation.sql')
 const playerIdentitySql = read('supabase/20260808_player_identity_foundation_r9.sql')
 const teamProfile = read('src/services/teamProfile.js')
@@ -23,12 +26,12 @@ const checks = [
   ['soft removal preserves history', rosterRepository.includes("active: false")],
   ['roster management actions', rosterView.includes('data-roster-create') && rosterView.includes('data-roster-edit')],
   ['team and roster settings wording', teamSettings.includes('Squadra e Rosa')],
-  ['opponent study navigation always visible', (opponentStudy.match(/matchContextNavigationHtml\('opponent-study'\)/g) || []).length >= 2],
+  ['opponent study navigation always visible through workspace shell', opponentStudy.includes('matchWorkspaceShellHtml') && workspaceShell.includes('matchContextNavigationHtml(activeSection')],
   ['database relation team players', sql.includes('references public.teams(id)')],
   ['player identity no longer name-key unique', playerIdentitySql.includes('drop constraint if exists team_players_team_key_unique')],
   ['RLS enabled', sql.includes('enable row level security')],
   ['neutral default team identity', teamProfile.includes("name: 'La tua squadra'") && !teamProfile.includes("name: 'Mezzolara Calcio'")],
-  ['training preview uses configured team', app.includes("const team = getTeamProfile()") && app.includes("teamBrand") && !app.includes('<img src="/mezzolara-logo.png" alt="Mezzolara Calcio">')],
+  ['training preview uses configured team', runtime.includes("const team = getTeamProfile()") && runtime.includes("teamBrand") && !runtime.includes('<img src="/mezzolara-logo.png" alt="Mezzolara Calcio">')],
 ]
 
 const failed = checks.filter(([, ok]) => !ok)

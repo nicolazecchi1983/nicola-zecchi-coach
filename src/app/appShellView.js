@@ -51,6 +51,7 @@ export function renderAppShell({ user, team, currentUserRole, currentUserProfile
     <aside class="sidebar"><div class="sidebar-brand">${renderTeamLogo('brand-square team-brand-logo')}<div><strong>${escapeHtml(resolveSidebarTeamName(team))}</strong></div></div><nav class="sidebar-nav">${renderSidebarMenu()}</nav></aside>
     <div class="workspace">
       <header class="topbar">
+        <button class="mobile-menu-trigger" type="button" data-mobile-drawer-open aria-label="Apri menu STAFF" aria-expanded="false">${icon('menu')}</button>
         <div class="topbar-context" aria-label="Contesto STAFF">
           ${team?.season ? `<span class="topbar-context-season">Stagione ${escapeHtml(team.season)}</span>` : '<span class="topbar-context-product">STAFF</span>'}
         </div>
@@ -58,7 +59,7 @@ export function renderAppShell({ user, team, currentUserRole, currentUserProfile
       </header>
       <main id="viewRoot">${renderDashboard()}</main>
     </div>
-    ${renderMobileNavigation()}
+    ${renderMobileNavigation({ identity, team, renderTeamLogo, escapeHtml })}
     <div id="drawerRoot"></div><div id="modalRoot"></div><div id="documentViewerRoot"></div>
   </div>`
 }

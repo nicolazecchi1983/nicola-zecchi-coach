@@ -9,6 +9,8 @@ const repository = read('src/infrastructure/repositories/teamFacilitiesRepositor
 const locationModel = read('src/modules/team/teamLocationModel.js')
 const settings = read('src/modules/settings/teamSettingsView.js')
 const controller = read('src/app/appController.js')
+const calendarEventViews = read('src/modules/calendar/ui/calendarEventViewBuilders.js')
+const calendarRuntime = read('src/modules/calendar/events/calendarRuntimeActions.js')
 
 const checks = [
   ['persistent team_facilities table', /create table if not exists public\.team_facilities/i.test(sql)],
@@ -19,9 +21,9 @@ const checks = [
   ['service delegates persistence to repository', /teamFacilitiesRepository/.test(service) && !/supabase\.js/.test(service)],
   ['location model reads facilities not calendar events', /facilities\.map/.test(locationModel) && !/events\.map/.test(locationModel)],
   ['settings manage facilities', /data-team-facilities-list/.test(settings) && /data-add-team-facility/.test(settings)],
-  ['training options use teamFacilities', /getTeamLocationOptions\(appState\.teamFacilities\)/.test(controller)],
-  ['calendar non-training location stays free', /Inserisci luogo…/.test(controller)],
-  ['calendar events not facility source', !/getTeamLocationOptions\(appState\.calendarEvents/.test(controller)],
+  ['training options use teamFacilities', /getTeamLocationOptions\(getFacilities\(\)\)/.test(calendarEventViews)],
+  ['calendar non-training location stays free', /Inserisci luogo…/.test(calendarRuntime)],
+  ['calendar events not facility source', !/getTeamLocationOptions\(appState\.calendarEvents/.test(controller) && !/getTeamLocationOptions\(appState\.calendarEvents/.test(calendarEventViews)],
 ]
 
 let failed = 0

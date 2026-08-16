@@ -93,6 +93,13 @@ export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadE
         updatedAt: new Date().toISOString(),
       }))
     },
+    saveTechnicalAnalysis(matchId, technicalAnalysis) {
+      return mutate(matchId, (current) => ({
+        ...current,
+        technicalAnalysis,
+        updatedAt: new Date().toISOString(),
+      }))
+    },
     addLink(matchId, input) {
       const inspected = validateExternalStudyLink(input)
       if (!inspected.valid) {

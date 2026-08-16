@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/modules/roster/rosterDomain.js",
+    "src/modules/calendar/seasonCalendarImportModel.js",
+    "src/modules/match/matchModel.js",
+    "src/modules/training/trainingSheetModel.js"
+  ]
+}

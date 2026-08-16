@@ -6,6 +6,7 @@ const workspace = fs.readFileSync(new URL('../src/modules/match/ui/matchWorkspac
 const calendarService = fs.readFileSync(new URL('../src/modules/match/matchCalendarService.js', import.meta.url), 'utf8')
 const gateway = fs.readFileSync(new URL('../src/app/appDataGateway.js', import.meta.url), 'utf8')
 const app = fs.readFileSync(new URL('../src/app/appController.js', import.meta.url), 'utf8')
+const matchLibraryEvents = fs.readFileSync(new URL('../src/modules/match/events/matchLibraryEvents.js', import.meta.url), 'utf8')
 const access = fs.readFileSync(new URL('../src/core/accessControl.js', import.meta.url), 'utf8')
 
 const labels = [
@@ -23,8 +24,8 @@ const checks = [
   ['Fase Match derivata automaticamente dal tempo', workflow.includes('getMatchWorkflowPhase') && workflow.includes("'pre-match'") && workflow.includes("'match-day'") && workflow.includes("'post-match'")],
   ['Crea partita supporta origine Calendario', libraryView.includes('Dal Calendario') && libraryView.includes('data-match-calendar-event')],
   ['Crea partita supporta nuova gara', libraryView.includes('Nuova partita') && libraryView.includes('data-match-new-fields')],
-  ['Nuova gara crea evento Calendario', calendarService.includes('async createMatch') && app.includes('calendarService.createMatch(data)')],
-  ['Partita Calendario mantiene lo stesso event ID', app.includes("id: calendarMatch.id") && app.includes("staff-active-match")],
+  ['Nuova gara crea evento Calendario', calendarService.includes('async createMatch') && matchLibraryEvents.includes('calendarService.createMatch(data)')],
+  ['Partita Calendario mantiene lo stesso event ID', matchLibraryEvents.includes("id: calendarMatch.id") && matchLibraryEvents.includes("staff-active-match")],
   ['Casa/trasferta persiste dal payload Calendario', calendarService.includes('home_away: homeAway') && gateway.includes('homeAway: parsedNotes')],
   ['Workspace usa il modello workflow condiviso', workspace.includes('getMatchWorkflowSections') && workspace.includes('getMatchWorkflowPhase')],
   ['Nostra squadra e Avversario sono sezioni native', app.includes("'our-team': nativeOurTeamView") && app.includes("opponent: nativeOpponentView") && !app.includes("setView('match-sheet', 'Match Sheet Editor')")],

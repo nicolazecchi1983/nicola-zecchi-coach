@@ -1,0 +1,498 @@
+/* STAFF 0.21.0 — Match Workspace Foundation
+   Canonical geometry and surface contract for all seven match sections. */
+
+:root{
+  --match-workspace-max:var(--product-page-max);
+  --match-workspace-inline:var(--product-page-inline);
+  --match-workspace-inline-mobile:var(--product-page-inline-mobile);
+  --match-workspace-bottom:var(--product-page-bottom);
+  --match-workspace-header-nav-gap:var(--product-header-nav-gap);
+  --match-workspace-nav-content-gap:var(--product-nav-content-gap);
+  --match-workspace-surface-gap:var(--product-section-gap);
+  --match-section-gap:16px;
+  --match-section-gap-mobile:12px;
+  --match-inner-gap:12px;
+  --match-workspace-surface-padding:var(--product-surface-padding);
+  --match-workspace-surface-padding-mobile:var(--product-surface-padding-mobile);
+  --match-workspace-radius:var(--product-radius);
+  --match-workspace-surface:var(--product-surface);
+  --match-workspace-surface-2:#0b2230;
+  --match-workspace-border:var(--product-border);
+  --match-workspace-text:var(--product-text);
+  --match-workspace-muted:var(--product-muted);
+  --match-workspace-accent:var(--product-accent);
+}
+
+.match-workspace-shell{
+  --product-nav-columns:7;
+  --product-nav-tablet-columns:4;
+  --product-nav-mobile-columns:2;
+}
+
+/* Page geometry, header rhythm, content stack and base surfaces belong to Product UI Foundation. */
+
+/* Navigation geometry and active state are owned by Product UI Foundation. */
+
+/* Every first-level content surface starts at the exact same x-axis. */
+.match-workspace-shell__content > *{
+  min-width:0;
+  margin-left:0!important;
+  margin-right:0!important;
+}
+
+/* Native our-team/opponent: keep domain logic, strip legacy page geometry. */
+.match-native-surface{
+  padding:0;
+  overflow:visible;
+}
+
+.match-native-surface .match-native-legacy-host,
+.match-native-surface .match-editor,
+.match-native-surface .match-editor>form,
+.match-native-surface .match-step.staff-card{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+}
+
+.match-native-surface .match-editor{
+  padding:0!important;
+  background:transparent!important;
+}
+
+.match-native-surface .match-page-header,
+.match-native-surface .match-step-nav,
+.match-native-surface .staff-editor-footer{
+  display:none!important;
+}
+
+.match-native-surface .match-step{
+  display:none!important;
+}
+
+/* Native team/opponent steps own a vertical section grid.
+   Do not collapse them to block: their canonical section spacing depends on grid gap. */
+.match-native-surface .match-native-legacy-host--our-team .match-step[data-match-step="2"],
+.match-native-surface .match-native-legacy-host--opponent .match-step[data-match-step="3"]{
+  display:grid!important;
+}
+
+/* The legacy step is content now, not another page card. */
+.match-native-surface .match-step.staff-card{
+  padding:24px!important;
+  border:0!important;
+  border-radius:var(--match-workspace-radius)!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Canonical dark surfaces for sections that historically had a second visual theme. */
+.match-workspace-shell .callups-panel--standalone,
+.match-workspace-shell .match-lifecycle-analysis,
+.match-workspace-shell .match-study-materials,
+.match-workspace-shell .match-study-analysis-panel .analysis-schema-editor,
+.match-workspace-shell .match-report-workspace-toolbar,
+.match-workspace-shell .match-report-workspace-empty,
+.match-workspace-shell .post-match-status-row article{
+  border-color:var(--match-workspace-border)!important;
+  background:var(--match-workspace-surface)!important;
+  color:var(--match-workspace-text)!important;
+  box-shadow:none!important;
+}
+
+/* Callups: shell owns the outer card. */
+.match-workspace-shell .callups-panel--standalone{
+  margin:0!important;
+  border-radius:var(--match-workspace-radius)!important;
+}
+
+/* Analysis: no autonomous outer width/margins. */
+.match-workspace-shell .match-lifecycle-analysis{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  border-radius:var(--match-workspace-radius)!important;
+}
+
+/* Opponent Study uses the canonical Product Page Shell geometry. */
+.match-workspace-shell .match-study-materials{
+  margin:0!important;
+}
+
+.match-workspace-shell .match-study-grid{
+  margin:0!important;
+}
+
+/* Report empty/full state. */
+.match-workspace-shell .match-report-workspace-toolbar{
+  width:100%;
+  margin:0!important;
+  border-radius:var(--match-workspace-radius)!important;
+}
+
+.match-workspace-shell .match-report-workspace-empty{
+  min-height:220px!important;
+  width:100%!important;
+  display:grid!important;
+  align-content:center!important;
+  justify-items:start!important;
+  gap:10px!important;
+  margin:0!important;
+  padding:var(--match-workspace-surface-padding)!important;
+  border:1px solid var(--match-workspace-border)!important;
+  border-radius:var(--match-workspace-radius)!important;
+}
+
+.match-workspace-shell .match-report-workspace-empty p{
+  max-width:900px;
+  color:var(--match-workspace-muted)!important;
+}
+
+/* Post gara status remains part of the shared Match language; accordion sections are domain-owned. */
+.match-workspace-shell .post-match-status-row,
+.match-workspace-shell .post-match-form{
+  width:100%;
+  margin:0;
+}
+
+.match-workspace-shell .post-match-status-row article{
+  border:1px solid var(--match-workspace-border)!important;
+  border-radius:var(--match-workspace-radius)!important;
+}
+
+.match-workspace-shell .post-match-status-row span{
+  color:#7f9aaa!important;
+}
+
+.match-workspace-shell .post-match-status-row strong{
+  color:var(--match-workspace-text)!important;
+}
+
+@media(max-width:760px){.match-native-surface .match-step.staff-card{
+    padding:16px!important;
+  }
+
+  .match-workspace-shell .post-match-status-row{
+    grid-template-columns:1fr!important;
+  }
+}
+
+/* STAFF 0.27.34 — Legacy Match Workspace presentation ownership. */
+.match-workspace { display: grid; gap: 22px; }
+.match-workspace-header { padding: 26px; border: 1px solid rgba(15,37,82,.1); border-radius: 20px; background: linear-gradient(135deg,#07194f,#123d7a); color: #fff; box-shadow: 0 18px 45px rgba(7,25,79,.16); }
+.match-workspace-back { padding: 0; border: 0; background: transparent; color: rgba(255,255,255,.72); font: inherit; font-weight: 700; cursor: pointer; }
+.match-workspace-title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 20px; }
+.match-workspace-title-row .eyebrow { color: #7dd3fc; }
+.match-workspace-title-row h1 { margin: 6px 0 5px; font-size: clamp(1.65rem,3vw,2.6rem); }
+.match-workspace-title-row h1 b { display: inline-block; margin: 0 10px; color: #7dd3fc; }
+.match-workspace-title-row p { margin: 0; color: rgba(255,255,255,.72); }
+.match-workspace-id { flex: 0 0 auto; padding: 9px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: rgba(255,255,255,.72); font-size: .72rem; font-weight: 800; letter-spacing: .05em; }
+.match-workspace-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 3px; }
+.match-workspace-tabs button { min-height: 42px; padding: 0 15px; border: 1px solid rgba(15,37,82,.12); border-radius: 999px; background: #fff; color: #243b64; font: inherit; font-weight: 750; white-space: nowrap; cursor: pointer; }
+.match-workspace-tabs button:hover { border-color: #1875d1; color: #0b5db4; }
+.match-workspace-report-note { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid rgba(24,117,209,.18); border-radius: 14px; background: rgba(24,117,209,.055); color: #29466e; }
+.match-workspace-report-note strong { color: #0b5db4; }
+.match-workspace--empty { min-height: 55vh; place-items: center; }
+.match-workspace--empty .empty-state { display: grid; justify-items: center; max-width: 520px; text-align: center; }
+@media (max-width: 820px) {
+  .match-workspace-title-row { align-items: flex-start; flex-direction: column; }
+  .match-workspace-id { display: none; }
+  .match-workspace-report-note { align-items: flex-start; flex-direction: column; }
+}
+
+/* Shared Match context header/back-button geometry (consolidated A.13.5/A.13.6). */
+.match-context-page-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+}
+.match-context-page-head>div:first-child{min-width:0}
+.match-context-page-head h1{overflow-wrap:anywhere}
+.match-context-back{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  min-height:44px;
+  min-width:180px;
+  padding:0 18px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+.match-head-tools .match-context-back{min-width:180px}
+@media(max-width:860px){
+  .match-context-page-head{align-items:stretch;flex-direction:column}
+  .match-context-page-head .match-context-back,
+  .match-head-tools .match-context-back{width:100%}
+  .match-head-tools{flex-wrap:wrap}
+}
+
+/* B2.2 — Match workflow metadata and section state. */
+.match-workspace-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.match-workspace-phase {
+  padding: 9px 12px;
+  border: 1px solid rgba(125, 211, 252, .34);
+  border-radius: 999px;
+  color: #bae6fd;
+  background: rgba(14, 116, 144, .18);
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.match-workspace-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.match-workspace-tabs button b {
+  color: #1875d1;
+  font-size: .72rem;
+}
+.match-workflow-section .empty-state {
+  min-height: 300px;
+  place-items: center;
+  text-align: center;
+}
+
+/* B2.3-R2 — dark tab baseline retained for the legacy workspace view. */
+.match-workspace-tabs{scrollbar-width:none}
+.match-workspace-tabs::-webkit-scrollbar{display:none}
+.match-workspace-tabs button{background:#0b2233;border-color:#1e455e;color:#b9cedb}
+.match-workspace-tabs button:hover{background:#0d2b40;border-color:#2dc4ff;color:#fff}
+
+/* M2.0 — final legacy Match Workspace presentation. */
+.match-workspace-header{
+  padding:24px 26px!important;
+  border:1px solid #223c4d!important;
+  border-radius:20px!important;
+  background:#0a1721!important;
+  color:#eef5f8!important;
+  box-shadow:none!important;
+}
+.match-workspace-back{color:#90a7b5!important}
+.match-workspace-title-row{margin-top:18px!important;align-items:flex-end!important}
+.match-workspace-title-row .eyebrow{color:#58c6f2!important}
+.match-workspace-title-row h1{color:#f5f8fa!important}
+.match-workspace-title-row h1 b{color:#58c6f2!important}
+.match-workspace-title-row p{color:#8fa5b4!important}
+.match-workspace-meta{max-width:310px}
+.match-workspace-id{display:none!important}
+.match-workspace-phase{
+  border-color:#31566b!important;
+  background:#0d2633!important;
+  color:#a9d9ec!important;
+}
+.match-workspace-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  overflow:visible!important;
+  padding:0!important;
+  margin-bottom:20px!important;
+}
+.match-workspace-tabs button{
+  display:flex!important;
+  justify-content:flex-start!important;
+  min-width:0!important;
+  width:100%!important;
+  min-height:48px!important;
+  padding:8px 12px!important;
+  border:1px solid #294454!important;
+  border-radius:13px!important;
+  background:#0a1a25!important;
+  color:#9eb1bd!important;
+  white-space:normal!important;
+  line-height:1.12!important;
+}
+.match-workspace-tabs button b{color:#41baf0!important}
+.match-workspace-tabs button:hover{
+  border-color:#3aaedd!important;
+  background:#0d2633!important;
+  color:#fff!important;
+}
+
+@media(max-width:760px){
+  .match-workspace-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+/* STAFF 0.29.1 — Match Workspace Shell Visual Hierarchy
+   One domain-scoped visual hierarchy for all seven Match sections.
+   Product UI keeps shared geometry; Match owns only its contextual emphasis. */
+.match-workspace-shell__header{
+  position:relative;
+  align-items:center;
+  min-height:118px;
+  margin-bottom:var(--staff-space-3)!important;
+  padding:22px 24px;
+  overflow:hidden;
+  border:1px solid var(--match-workspace-border);
+  border-radius:var(--staff-radius-card);
+  background:var(--staff-color-bg-panel);
+}
+
+.match-workspace-shell__header::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:3px;
+  background:var(--match-workspace-accent);
+}
+
+.match-workspace-shell__intro{
+  min-width:0;
+  display:grid;
+  gap:5px;
+}
+
+.match-workspace-shell__eyebrow{
+  color:var(--match-workspace-accent);
+  font-size:var(--staff-font-caption);
+  font-weight:var(--staff-font-weight-bold);
+  letter-spacing:.12em;
+  line-height:1;
+}
+
+.match-workspace-shell__header h1{
+  max-width:900px;
+  font-size:clamp(1.65rem,2.4vw,2.25rem);
+  line-height:1.02;
+  letter-spacing:-.04em;
+}
+
+.match-workspace-shell__header p{
+  max-width:760px;
+  margin:1px 0 0;
+  color:var(--match-workspace-muted);
+  font-size:.79rem;
+  line-height:1.35;
+}
+
+.match-workspace-shell__header .match-context-back{
+  min-width:0;
+  min-height:42px;
+  padding-inline:15px;
+  border-color:var(--match-workspace-border);
+  background:transparent;
+}
+
+.match-workspace-shell > .product-section-nav{
+  gap:7px!important;
+  margin-bottom:var(--staff-space-3)!important;
+}
+
+.match-workspace-shell > .product-section-nav button{
+  position:relative;
+  height:58px!important;
+  min-height:58px!important;
+  gap:9px!important;
+  padding:10px 12px!important;
+  border-radius:var(--staff-radius-control)!important;
+  background:transparent!important;
+}
+
+.match-workspace-shell > .product-section-nav button::after{
+  content:"";
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  left:10px;
+  height:2px;
+  border-radius:999px;
+  background:transparent;
+}
+
+.match-workspace-shell > .product-section-nav button b{
+  min-width:20px!important;
+  color:var(--staff-color-text-faint)!important;
+  font-size:.66rem!important;
+  letter-spacing:.04em;
+}
+
+.match-workspace-shell > .product-section-nav button span{
+  font-size:clamp(.72rem,.68vw,.84rem)!important;
+  font-weight:var(--staff-font-weight-semibold)!important;
+}
+
+.match-workspace-shell > .product-section-nav button.is-active{
+  border-color:var(--staff-color-border-strong)!important;
+  background:var(--staff-color-bg-panel-raised)!important;
+  box-shadow:none!important;
+}
+
+.match-workspace-shell > .product-section-nav button.is-active::after{
+  background:var(--match-workspace-accent);
+}
+
+.match-workspace-shell > .product-section-nav button.is-active b{
+  color:var(--match-workspace-accent)!important;
+}
+
+.match-workspace-shell__content{
+  gap:var(--staff-space-3);
+}
+
+@media(max-width:1180px) and (min-width:761px){
+  .match-workspace-shell__header{
+    min-height:108px;
+    padding:20px;
+  }
+
+  .match-workspace-shell > .product-section-nav button{
+    height:56px!important;
+    min-height:56px!important;
+  }
+}
+
+@media(max-width:760px){
+  .match-workspace-shell__header{
+    min-height:0;
+    align-items:stretch;
+    gap:16px;
+    padding:17px 16px 16px;
+  }
+
+  .match-workspace-shell__header h1{
+    font-size:clamp(1.55rem,7.2vw,1.95rem)!important;
+    line-height:1.02!important;
+  }
+
+  .match-workspace-shell__header p{
+    display:block;
+    overflow:visible;
+    margin-top:1px;
+    font-size:.76rem!important;
+    line-height:1.35!important;
+    -webkit-line-clamp:unset;
+  }
+
+  .match-workspace-shell__header .match-context-back{
+    width:auto;
+    align-self:flex-start;
+    min-height:42px;
+  }
+
+  .match-workspace-shell > .product-section-nav{
+    gap:7px!important;
+    margin-bottom:16px!important;
+  }
+
+  .match-workspace-shell > .product-section-nav button{
+    height:54px!important;
+    min-height:54px!important;
+    padding:8px 10px!important;
+  }
+
+  .match-workspace-shell > .product-section-nav button span{
+    font-size:.75rem!important;
+  }
+}

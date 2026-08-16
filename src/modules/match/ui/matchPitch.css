@@ -1,0 +1,61 @@
+/* STAFF 0.29.34 — Canonical Match Pitch Geometry
+   One grass material + one vector geometry owner for Nostra squadra and Avversario.
+   The raster owns only the approved Premium Real – Natural grass surface.
+   The SVG owns every football marking, so circles and proportions cannot deform independently. */
+.staff-match-pitch {
+  position: relative;
+  aspect-ratio: 68 / 105;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  border: 1px solid rgba(213, 232, 191, .42);
+  border-radius: 18px;
+  background-color: #315d24;
+  background-image: url('/assets/match-pitch-premium-real-natural-grass.webp');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow:
+    0 24px 56px rgba(0,0,0,.28),
+    0 7px 20px rgba(0,0,0,.18);
+}
+
+.staff-match-pitch::before,
+.staff-match-pitch::after {
+  content: none;
+}
+
+.staff-match-pitch .match-pitch-svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.staff-match-pitch .match-pitch-lines > * {
+  fill: none;
+  stroke: rgba(247, 249, 240, .88);
+  stroke-width: .22;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.staff-match-pitch .pitch-centre-spot,
+.staff-match-pitch .pitch-penalty-spot {
+  fill: rgba(250, 251, 244, .94);
+  stroke: none;
+}
+
+.staff-match-pitch .match-pitch-goal {
+  fill: rgba(238, 243, 234, .035);
+  stroke: rgba(244, 247, 238, .64);
+  stroke-width: .14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

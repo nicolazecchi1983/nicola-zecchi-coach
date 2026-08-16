@@ -45,6 +45,14 @@ export function buildMatchCalendarEventPayload(matchData = {}, { includeReport =
   const matchType = matchTypeFromCompetition(matchData.competition)
   const homeAway = parseHomeAway(matchData.homeAway ?? matchData.home_away ?? matchData.venue)
 
+  const competitionRound = String(
+    matchData.competitionRound
+      ?? matchData.round
+      ?? matchData.matchDay
+      ?? matchData.match_day
+      ?? '',
+  ).trim()
+
   const notesPayload = {
     ...parseMatchEventNotes(existingNotes),
     type: 'match_event',
@@ -52,6 +60,7 @@ export function buildMatchCalendarEventPayload(matchData = {}, { includeReport =
     match_type: matchType,
     opponent,
     home_away: homeAway,
+    competition_round: competitionRound || null,
   }
 
   if (includeReport) {
@@ -65,7 +74,9 @@ export function buildMatchCalendarEventPayload(matchData = {}, { includeReport =
     event_type: 'match',
     start_at: createStartAt(date, time),
     location: String(matchData.location ?? matchData.venue ?? '').trim() || null,
-    match_day: matchData.matchDay === '' || matchData.matchDay == null ? null : Number(matchData.matchDay),
+    // events.match_day appartiene al dominio Training (MD, MD-1, MD+1...).
+    // La giornata di campionato vive nel documento nativo match_event.
+    match_day: null,
     present_count: null,
     squad_total: null,
     training_sheet_path: null,

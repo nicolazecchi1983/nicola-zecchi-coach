@@ -1,0 +1,204 @@
+/* STAFF Design System v1 — DS1.2 Page Shell & Visual Hierarchy
+   Canonical page rhythm shared by Dashboard, Calendar, Training, Match,
+   Roster, Profile and Settings. Domain modules own content, not page geometry. */
+
+:root {
+  --staff-page-inline: var(--staff-space-5);
+  --staff-page-inline-tablet: var(--staff-space-4);
+  --staff-page-inline-mobile: var(--staff-space-3);
+  --staff-page-top: var(--staff-space-4);
+  --staff-page-bottom: var(--staff-space-6);
+  --staff-page-header-gap: var(--staff-space-4);
+  --staff-page-content-gap: var(--staff-space-4);
+  --staff-page-title-max: 920px;
+}
+
+#viewRoot {
+  width: 100%;
+  max-width: var(--staff-content-max);
+  margin-inline: auto;
+  padding: var(--staff-page-top) var(--staff-page-inline) var(--staff-page-bottom);
+  box-sizing: border-box;
+}
+
+.page-view {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* One page header grammar across the whole product. */
+.page-head,
+.product-page-header,
+.product-page-shell > .page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--staff-page-header-gap);
+  margin: 0 0 var(--staff-page-content-gap);
+  min-width: 0;
+}
+
+.page-head > div:first-child,
+.product-page-header > div:first-child {
+  min-width: 0;
+  max-width: var(--staff-page-title-max);
+}
+
+.page-head h1,
+.product-page-header h1,
+.product-page-shell > .page-head h1 {
+  margin: 0;
+  color: var(--staff-color-text);
+  font-family: var(--staff-font-family);
+  font-size: var(--staff-font-page-title);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: var(--staff-line-height-tight);
+  letter-spacing: -.038em;
+  text-wrap: balance;
+}
+
+.page-head p,
+.product-page-header p,
+.product-page-shell > .page-head p {
+  margin: var(--staff-space-2) 0 0;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-secondary);
+  line-height: 1.42;
+}
+
+.page-head p span,
+.product-page-header p span,
+.product-page-shell > .page-head p span {
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .105em;
+  text-transform: uppercase;
+}
+
+.page-head p b,
+.product-page-header p b,
+.product-page-shell > .page-head p b {
+  margin-inline: var(--staff-space-2);
+  color: var(--staff-color-text-faint);
+  font-weight: var(--staff-font-weight-medium);
+}
+
+.page-head-actions,
+.calendar-page-actions,
+.team-settings-actions,
+.match-library-actions,
+.post-match-actions,
+.analysis-lifecycle-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--staff-space-2);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+/* Shared section hierarchy for new/refactored surfaces. */
+.staff-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--staff-space-3);
+  margin: 0 0 var(--staff-space-3);
+}
+
+.staff-section-head > div:first-child {
+  min-width: 0;
+}
+
+.staff-section-head h2 {
+  margin: 0;
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-section-title);
+  font-weight: var(--staff-font-weight-semibold);
+  line-height: 1.18;
+  letter-spacing: -.02em;
+}
+
+.staff-section-head p {
+  margin: var(--staff-space-1) 0 0;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-secondary);
+  line-height: var(--staff-line-height-body);
+}
+
+.staff-section-kicker {
+  display: inline-block;
+  margin-bottom: var(--staff-space-1);
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .105em;
+  text-transform: uppercase;
+}
+
+/* Product shells inherit outer geometry from #viewRoot.
+   They may own domain max-width/navigation, never a second page gutter. */
+.product-page-shell {
+  min-width: 0;
+}
+
+@media (max-width: 980px) {
+  :root {
+    --staff-page-inline: var(--staff-page-inline-tablet);
+  }
+
+  .page-head,
+  .product-page-header,
+  .product-page-shell > .page-head {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --staff-page-inline: var(--staff-page-inline-mobile);
+    --staff-page-top: var(--staff-space-3);
+    --staff-page-bottom: calc(28px + var(--staff-safe-bottom, 0px));
+    --staff-page-header-gap: var(--staff-space-3);
+    --staff-page-content-gap: var(--staff-space-3);
+  }
+
+  #viewRoot {
+    padding-left: max(var(--staff-page-inline), var(--staff-safe-left, 0px));
+    padding-right: max(var(--staff-page-inline), var(--staff-safe-right, 0px));
+  }
+
+  .page-head,
+  .product-page-header,
+  .product-page-shell > .page-head,
+  .staff-section-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .page-head h1,
+  .product-page-header h1,
+  .product-page-shell > .page-head h1 {
+    font-size: clamp(1.78rem, 8.6vw, 2.28rem);
+    line-height: 1.02;
+    letter-spacing: -.032em;
+  }
+
+  .page-head p,
+  .product-page-header p,
+  .product-page-shell > .page-head p {
+    font-size: var(--staff-font-secondary);
+  }
+
+  .page-head-actions,
+  .calendar-page-actions,
+  .team-settings-actions,
+  .match-library-actions,
+  .post-match-actions,
+  .analysis-lifecycle-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

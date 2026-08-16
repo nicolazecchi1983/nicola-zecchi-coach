@@ -6,6 +6,10 @@ import {
 } from '../src/modules/training/trainingCalendarIntegration.js'
 
 const controller = await readFile(new URL('../src/app/appController.js', import.meta.url), 'utf8')
+const trainingEditorEvents = await readFile(new URL('../src/modules/training/events/trainingEditorEvents.js', import.meta.url), 'utf8')
+const calendarRuntimeActions = await readFile(new URL('../src/modules/calendar/events/calendarRuntimeActions.js', import.meta.url), 'utf8')
+const calendarEventViews = await readFile(new URL('../src/modules/calendar/ui/calendarEventViewBuilders.js', import.meta.url), 'utf8')
+const runtime = `${controller}\n${trainingEditorEvents}\n${calendarRuntimeActions}\n${calendarEventViews}`
 const service = await readFile(new URL('../src/modules/training/trainingSheetService.js', import.meta.url), 'utf8')
 
 const events = [
@@ -67,17 +71,17 @@ const movedPublished = resolveTrainingCalendarPublishTarget({
 assert.equal(movedPublished.event?.id, 'current-published')
 assert.ok(movedPublished.duplicateEvents.some((event) => event.id === 'target-slot'))
 
-assert.doesNotMatch(controller, /name="trainingSheet"/)
-assert.doesNotMatch(controller, /uploadTrainingSheet\(/)
-assert.match(controller, /resolveTrainingCalendarPublishTarget\(/)
-assert.match(controller, /duplicateEvents: publishTarget\.duplicateEvents/)
-assert.match(controller, /deleteEvent: deleteCalendarEvent/)
+assert.doesNotMatch(runtime, /name="trainingSheet"/)
+assert.doesNotMatch(runtime, /uploadTrainingSheet\(/)
+assert.match(runtime, /resolveTrainingCalendarPublishTarget\(/)
+assert.match(runtime, /duplicateEvents: publishTarget\.duplicateEvents/)
+assert.match(runtime, /deleteEvent: deleteCalendarEvent/)
 assert.match(service, /duplicateEvents = \[\]/)
 assert.match(service, /pendingDeletionEventIds/)
 assert.match(service, /await deleteEvent\(duplicateEvent\.id\)/)
 assert.match(service, /TRAINING_LOCAL_DOWNLOAD_FAILED/)
-assert.match(controller, /Si crea dopo aver salvato l’allenamento/)
-assert.match(controller, /La Training Sheet si modifica dal suo Editor/)
-assert.match(controller, /currentEvent\.trainingSheetPath/)
+assert.match(runtime, /Si crea dopo aver salvato l’allenamento/)
+assert.match(runtime, /La Training Sheet si modifica dal suo Editor/)
+assert.match(runtime, /currentEvent\.trainingSheetPath/)
 
 console.log('TRAINING EVENT LINK INTEGRITY: OK')

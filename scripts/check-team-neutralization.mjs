@@ -23,12 +23,13 @@ function walk(dir) {
 
 walk(root)
 const controller = fs.readFileSync(path.join(root, 'app/appController.js'), 'utf8')
+const calendarEventViews = fs.readFileSync(path.join(root, 'modules/calendar/ui/calendarEventViewBuilders.js'), 'utf8')
 const parser = fs.readFileSync(path.join(root, 'services/trainingSheetParser.js'), 'utf8')
 const shell = fs.readFileSync(path.join(root, 'app/appShellView.js'), 'utf8')
 const report = fs.readFileSync(path.join(root, 'modules/match/matchReportRenderer.js'), 'utf8')
 
 const rules = [
-  ['locations derive from team facilities', controller.includes('getTeamLocationOptions(appState.teamFacilities') && !controller.includes('getTeamLocationOptions(appState.calendarEvents')],
+  ['locations derive from team facilities', calendarEventViews.includes('getTeamLocationOptions(getFacilities())') && !calendarEventViews.includes('getTeamLocationOptions(appState.calendarEvents')],
   ['training parser accepts runtime context', parser.includes('context = {}') && parser.includes('context.coach')],
   ['frontend identity has no email whitelist', !shell.includes('KNOWN_PROFILES')],
   ['match report watermark derives from team', report.includes('teamMark') && report.includes('${escape(teamName)} · MATCH REPORT')],

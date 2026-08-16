@@ -15,10 +15,10 @@
   border: 1px solid transparent;
   border-radius: var(--staff-radius-control);
   font: inherit;
-  font-weight: 800;
+  font-weight: var(--staff-font-weight-bold);
   line-height: 1;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+  transition: background-color var(--staff-motion-normal) var(--staff-ease-standard), border-color var(--staff-motion-normal) var(--staff-ease-standard), color var(--staff-motion-normal) var(--staff-ease-standard), box-shadow var(--staff-motion-normal) var(--staff-ease-standard), opacity var(--staff-motion-normal) var(--staff-ease-standard);
 }
 
 .staff-button:focus-visible,
@@ -35,7 +35,7 @@
 .staff-button--primary {
   background: var(--staff-color-primary);
   border-color: var(--staff-color-primary);
-  color: #03111b;
+  color: var(--staff-color-primary-contrast);
 }
 
 .staff-button--primary:hover:not(:disabled) {
@@ -55,9 +55,9 @@
 }
 
 .staff-button--danger {
-  background: rgba(255, 101, 119, 0.1);
-  border-color: rgba(255, 101, 119, 0.58);
-  color: #ffb7c0;
+  background: var(--staff-color-danger-soft);
+  border-color: var(--staff-color-danger-border);
+  color: var(--staff-color-danger-text);
 }
 
 .staff-button--ghost {
@@ -83,7 +83,7 @@
   min-height: var(--staff-control-height);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 760px) {
   .staff-button,
   .staff-control,
   .staff-toolbar > * {

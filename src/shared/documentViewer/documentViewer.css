@@ -1,0 +1,17 @@
+/* STAFF 0.27.40 · Shared Document Viewer canonical owner
+   Migrated from legacy style.css without visual redesign. */
+
+body.document-viewer-open{overflow:hidden}
+.document-viewer-backdrop{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:20px;background:rgba(1,10,18,.78);backdrop-filter:blur(8px)}
+.document-viewer{width:min(1180px,100%);height:min(92vh,920px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid #28526a;border-radius:24px;background:#0a2232;box-shadow:0 28px 90px rgba(0,0,0,.55)}
+.document-viewer-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 22px;border-bottom:1px solid #23485e;background:#0b2638}
+.document-viewer-header span{display:block;color:#2dc4ff;font-size:12px;font-weight:900;letter-spacing:.14em}
+.document-viewer-header h2{margin:4px 0 0;color:#f3f8fb;font-size:clamp(20px,2.2vw,30px)}
+.document-viewer-close{width:48px;height:48px;display:grid;place-items:center;border:1px solid #2b5369;border-radius:14px;background:#102e40;color:#e8f3f9;font:inherit;font-size:30px;line-height:1;cursor:pointer}
+.document-viewer-close:hover{background:#153a4f}.document-viewer-close:focus-visible{outline:3px solid rgba(45,196,255,.34);outline-offset:2px}
+.document-viewer-body{min-height:0;padding:16px;background:#17232d}
+.document-viewer-frame{width:100%;height:100%;min-height:420px;border:0;border-radius:12px;background:#fff}
+.document-viewer-image{display:block;max-width:100%;max-height:100%;margin:auto;object-fit:contain;border-radius:10px;background:#fff}
+.document-viewer-footer{display:flex;justify-content:flex-end;gap:12px;padding:14px 18px;border-top:1px solid #23485e;background:#0b2638}
+.document-viewer-footer .portal-action-button{text-decoration:none;min-width:180px}
+@media(max-width:720px){.document-viewer-backdrop{padding:0}.document-viewer{width:100%;height:100dvh;border-radius:0;border:0}.document-viewer-header{padding:14px 16px}.document-viewer-body{padding:8px}.document-viewer-frame{min-height:0;border-radius:8px}.document-viewer-footer{display:grid;grid-template-columns:1fr 1fr;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}.document-viewer-footer .portal-action-button{min-width:0;padding-inline:10px}}

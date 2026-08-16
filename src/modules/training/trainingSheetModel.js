@@ -1,3 +1,7 @@
+/** @typedef {'draft'|'published'} TrainingSheetStatus */
+/** @typedef {Record<string, any>} TrainingSheetInput */
+/** @typedef {{code:string, field:string, message:string}} ValidationIssue */
+
 export const TRAINING_SHEET_STATUS = Object.freeze({
   DRAFT: 'draft',
   PUBLISHED: 'published',
@@ -5,29 +9,35 @@ export const TRAINING_SHEET_STATUS = Object.freeze({
 
 const TRAINING_SHEET_STATUSES = new Set(Object.values(TRAINING_SHEET_STATUS))
 
+/** @type {Readonly<Record<TrainingSheetStatus, Set<TrainingSheetStatus>>>} */
 const STATUS_TRANSITIONS = Object.freeze({
   [TRAINING_SHEET_STATUS.DRAFT]: new Set([TRAINING_SHEET_STATUS.PUBLISHED]),
   [TRAINING_SHEET_STATUS.PUBLISHED]: new Set(),
 })
 
+/** @param {unknown} value @returns {string|null} */
 function normalizeTimestamp(value) {
   if (!value) return null
-  const date = value instanceof Date ? value : new Date(value)
+  const date = value instanceof Date ? value : new Date(/** @type {string|number} */ (value))
   return Number.isNaN(date.getTime()) ? null : date.toISOString()
 }
 
+/** @param {unknown} value @returns {TrainingSheetStatus} */
 function normalizeStatus(value) {
   const status = String(value || '').toLowerCase()
   // Compatibilità con le release B1 iniziali: "archived" non è più uno stato
   // operativo. Le vecchie schede archiviate tornano ad essere normali TS pubblicate.
   if (status === 'archived') return TRAINING_SHEET_STATUS.PUBLISHED
-  return TRAINING_SHEET_STATUSES.has(status) ? status : TRAINING_SHEET_STATUS.DRAFT
+  const typedStatus = /** @type {TrainingSheetStatus} */ (status)
+  return TRAINING_SHEET_STATUSES.has(typedStatus) ? typedStatus : TRAINING_SHEET_STATUS.DRAFT
 }
 
+/** @param {string} code @param {string} field @param {string} message @returns {Readonly<ValidationIssue>} */
 function createValidationIssue(code, field, message) {
   return Object.freeze({ code, field, message })
 }
 
+/** @param {TrainingSheetInput} [input] @returns {TrainingSheetInput & {status: TrainingSheetStatus}} */
 export function normalizeTrainingSheetData(input = {}) {
   const progressive = Math.max(1, Number(input.progressive || 1))
   const status = normalizeStatus(input.status)
@@ -53,6 +63,7 @@ export function normalizeTrainingSheetData(input = {}) {
   }
 }
 
+/** @param {TrainingSheetInput} input */
 export function inspectTrainingSheetForPublish(input) {
   const data = normalizeTrainingSheetData(input)
   const errors = []
@@ -81,10 +92,12 @@ export function inspectTrainingSheetForPublish(input) {
 
 // Compatibilità con il flusso esistente: il service continua a ricevere un errore
 // quando mancano i dati minimi, mentre la UI futura potrà usare il risultato strutturato.
+/** @param {TrainingSheetInput} data */
 export function validateTrainingSheetForPublish(data) {
   const result = inspectTrainingSheetForPublish(data)
   if (!result.valid) {
     const fields = result.errors.map((issue) => issue.field)
+    /** @type {Record<string, string>} */
     const labels = {
       date: 'data',
       time: 'orario',
@@ -95,12 +108,14 @@ export function validateTrainingSheetForPublish(data) {
   return result
 }
 
+/** @param {unknown} currentStatus @param {unknown} nextStatus @returns {boolean} */
 export function canTransitionTrainingSheetStatus(currentStatus, nextStatus) {
   const current = normalizeStatus(currentStatus)
   const next = normalizeStatus(nextStatus)
   return STATUS_TRANSITIONS[current]?.has(next) === true
 }
 
+/** @param {TrainingSheetInput} input @param {unknown} nextStatus @param {Date} [now] */
 export function transitionTrainingSheetStatus(input, nextStatus, now = new Date()) {
   const data = normalizeTrainingSheetData(input)
   const next = normalizeStatus(nextStatus)
@@ -125,6 +140,7 @@ export function transitionTrainingSheetStatus(input, nextStatus, now = new Date(
 }
 
 
+/** @param {TrainingSheetInput} input @param {Date} [now] */
 export function publishTrainingSheetData(input, now = new Date()) {
   const data = normalizeTrainingSheetData(input)
   if (data.status === TRAINING_SHEET_STATUS.DRAFT) {
@@ -141,12 +157,14 @@ export function publishTrainingSheetData(input, now = new Date()) {
   })
 }
 
+/** @param {TrainingSheetInput} data @returns {string} */
 export function buildTrainingSheetFileName(data) {
   const progressive = String(Number(data.progressive || 1)).padStart(3, '0')
   const [year = '', month = '', day = ''] = String(data.date || '').split('-')
   return `ALL_${progressive} - ${day}${month}${year}.pdf`
 }
 
+/** @param {unknown} value @param {string} [fallback] @returns {string} */
 export function sanitizePathSegment(value, fallback = 'unknown') {
   const normalized = String(value || '')
     .normalize('NFD')
@@ -157,6 +175,7 @@ export function sanitizePathSegment(value, fallback = 'unknown') {
   return normalized || fallback
 }
 
+/** @param {{teamId?: string|null, teamName?: string|null, season?: string|null, date?: string|null, fileName: string}} input */
 export function buildTrainingSheetStoragePath({ teamId, teamName, season, date, fileName }) {
   // Il profilo locale può essere disponibile prima che Supabase restituisca l'id squadra.
   // Il percorso deve quindi restare pubblicabile anche in quella fase, come accadeva
@@ -174,6 +193,7 @@ export function buildTrainingSheetStoragePath({ teamId, teamName, season, date, 
   ].join('/')
 }
 
+/** @param {{data: TrainingSheetInput, filePath: string, squadTotal: number}} input */
 export function buildTrainingSheetEventPayload({ data, filePath, squadTotal }) {
   return {
     title: 'Allenamento',

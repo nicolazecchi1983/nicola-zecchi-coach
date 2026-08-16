@@ -1,3 +1,5 @@
+import { matchAnalysisSchemaEntries, parseMatchAnalysisSchema } from './matchAnalysisSchema.js'
+
 const POSSESSION_LABELS = [
   'Costruzione da rimessa',
   'Costruzione media',
@@ -110,6 +112,18 @@ export function buildMatchReportModel({ data = {}, root, team = {} } = {}) {
       .join(' · ')
     : ''
 
+
+  const opponentAnalysis = matchAnalysisSchemaEntries(parseMatchAnalysisSchema(data.opponent_analysis_schema, {
+    possession: possessionNotes.map((item) => `${item.label}: ${item.note}`).join('\n'),
+    nonPossession: nonPossessionNotes.map((item) => `${item.label}: ${item.note}`).join('\n'),
+    transitions: '',
+  }))
+  const matchAnalysis = matchAnalysisSchemaEntries(parseMatchAnalysisSchema(data.analysis_schema, {
+    possession: data.analysis_possession,
+    nonPossession: data.analysis_non_possession,
+    transitions: data.analysis_transitions,
+  }))
+
   return {
     team,
     data,
@@ -125,5 +139,7 @@ export function buildMatchReportModel({ data = {}, root, team = {} } = {}) {
     nonPossessionNotes,
     setPieces,
     penaltySummary,
+    opponentAnalysis,
+    matchAnalysis,
   }
 }

@@ -27,6 +27,7 @@ const allowedSupabaseImports = new Set([
   'src/infrastructure/repositories/playerProfileRepository.js',
   'src/infrastructure/repositories/rosterRepository.js',
   'src/infrastructure/repositories/teamFacilitiesRepository.js',
+  'src/infrastructure/repositories/analysisTemplateRepository.js',
   'src/modules/calendar/calendarService.js',
   'src/modules/staff/staffService.js',
   // Debito tecnico noto: da estrarre progressivamente dalla UI.

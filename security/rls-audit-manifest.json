@@ -1,0 +1,79 @@
+{
+  "version": 2,
+  "generatedFor": "STAFF 0.26.4-R1",
+  "browserDataApiTables": {
+    "analysis_templates": {
+      "scope": "team+owner",
+      "repoRlsEvidence": "verified+live-hardening-prepared",
+      "migration": "supabase/20260810_analysis_templates_foundation.sql"
+    },
+    "events": {
+      "scope": "team/legacy",
+      "repoRlsEvidence": "runtime-db-verification-required"
+    },
+    "match_analysis": {
+      "scope": "team/legacy",
+      "repoRlsEvidence": "live-finding-hardening-prepared",
+      "hardeningMigration": "supabase/20260812_security_rls_hardening_r2.sql"
+    },
+    "player_profiles": {
+      "scope": "player->team",
+      "repoRlsEvidence": "live-finding-hardening-prepared",
+      "relationMigration": "supabase/20260808_player_profile_identity_r13.sql",
+      "hardeningMigration": "supabase/20260812_security_rls_hardening_r2.sql"
+    },
+    "profiles": {
+      "scope": "user/staff",
+      "repoRlsEvidence": "live-finding-hardening-prepared",
+      "hardeningMigration": "supabase/20260812_security_rls_hardening_r2.sql"
+    },
+    "team_facilities": {
+      "scope": "team",
+      "repoRlsEvidence": "verified",
+      "migration": "supabase/20260808_team_facilities_foundation_r11.sql"
+    },
+    "team_members": {
+      "scope": "team",
+      "repoRlsEvidence": "runtime-db-verification-required"
+    },
+    "team_players": {
+      "scope": "team",
+      "repoRlsEvidence": "verified",
+      "migration": "supabase/20260808_team_roster_foundation.sql"
+    },
+    "teams": {
+      "scope": "team",
+      "repoRlsEvidence": "runtime-db-verification-required"
+    },
+    "training_sheet_drafts": {
+      "scope": "user",
+      "repoRlsEvidence": "runtime-db-verification-required"
+    }
+  },
+  "storage": {
+    "team-assets": {
+      "usage": "public team logos",
+      "verification": "bucket-public-status-and-write-policies-required"
+    },
+    "training-sheets": {
+      "usage": "private Training Sheets and Match opponent-study assets",
+      "verification": "bucket-private-status-and-storage.objects-policies-required"
+    }
+  },
+  "privilegedServerCode": {
+    "supabase/functions/create-staff-user/index.ts": {
+      "serviceRoleAllowed": true,
+      "requirements": [
+        "caller JWT validated",
+        "active owner/admin verified",
+        "team access verified before admin action"
+      ]
+    }
+  },
+  "liveAuditFindings": {
+    "match_analysis": "authenticated SELECT USING(true) found; R2 adds team_id + scoped policies",
+    "player_profiles": "authenticated SELECT USING(true) found; R2 scopes via player_id -> team_players.team_id",
+    "profiles": "authenticated SELECT USING(true) and hard-coded owner update bypass found; R2 replaces read policy and removes global owner update policies",
+    "analysis_templates": "live DB still had pre-hardening UPDATE policy; R2 reapplies team-scoped UPDATE/DELETE"
+  }
+}

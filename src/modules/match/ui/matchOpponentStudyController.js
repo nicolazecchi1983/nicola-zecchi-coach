@@ -1,4 +1,5 @@
 import { getUserErrorMessage } from '../../../core/appError.js'
+import { bindMatchAnalysisSchemaEditors } from './matchAnalysisSchemaView.js'
 
 function setMessage(root, key, message, type = '') {
   const node = root.querySelector(`[data-study-message="${key}"]`)
@@ -13,10 +14,11 @@ function setBusy(form, busy) {
   })
 }
 
-export function bindMatchOpponentStudy({ root, service, activeMatch, team, refresh }) {
+export function bindMatchOpponentStudy({ root, service, activeMatch, team, analysisTemplateOptions = {}, refresh }) {
   const section = root.querySelector('[data-opponent-study]')
   if (!section || !activeMatch?.id) return
   const matchId = String(activeMatch.id)
+  bindMatchAnalysisSchemaEditors(section, analysisTemplateOptions)
 
   const setFormOpen = (key, open) => {
     const form = section.querySelector(`[data-study-collapsible="${key}"]`)
@@ -35,6 +37,20 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, refre
     button.addEventListener('click', () => setFormOpen(button.dataset.studyCloseForm, false))
   })
 
+  section.querySelector('[data-study-notes-form]')?.addEventListener('analysis-schema-structure-change', async (event) => {
+    const form = event.currentTarget
+    const hidden = form.querySelector('[data-analysis-schema-value]')
+    if (!hidden) return
+    try {
+      const technicalAnalysis = JSON.parse(String(hidden.value || '{}'))
+      await service.saveTechnicalAnalysis(matchId, technicalAnalysis)
+      setMessage(section, 'notes', 'Struttura salvata automaticamente.', 'success')
+    } catch (error) {
+      console.error('Salvataggio automatico struttura studio avversario non riuscito:', error)
+      setMessage(section, 'notes', getUserErrorMessage(error, 'Salvataggio automatico non riuscito.'), 'error')
+    }
+  })
+
   section.querySelector('[data-study-notes-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault()
     const form = event.currentTarget
@@ -42,7 +58,9 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, refre
     setMessage(section, 'notes', '')
     try {
       const data = Object.fromEntries(new FormData(form).entries())
-      service.saveNotes(matchId, data)
+      let technicalAnalysis = {}
+      try { technicalAnalysis = JSON.parse(String(data.technical_analysis || '{}')) } catch { technicalAnalysis = {} }
+      await service.saveTechnicalAnalysis(matchId, technicalAnalysis)
       setMessage(section, 'notes', 'Studio salvato.', 'success')
     } catch (error) {
       console.error('Salvataggio studio avversario non riuscito:', error)

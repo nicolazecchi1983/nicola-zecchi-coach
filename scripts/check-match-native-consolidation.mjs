@@ -8,6 +8,7 @@ const studyView = fs.readFileSync(new URL('../src/modules/match/ui/matchOpponent
 const studyController = fs.readFileSync(new URL('../src/modules/match/ui/matchOpponentStudyController.js', import.meta.url), 'utf8')
 const printEngine = fs.readFileSync(new URL('../src/shared/print/printEngine.js', import.meta.url), 'utf8')
 const pdfService = fs.readFileSync(new URL('../src/services/pdfService.js', import.meta.url), 'utf8')
+const callupsEvents = fs.readFileSync('src/modules/match/events/callupsEvents.js','utf8')
 
 const checks = [
   ['Match Sheet Editor non registrato come route', !app.includes("'match-sheet': matchSheetEditorView") && !nav.includes("['match-sheet', 'Match Sheet Editor']")],
@@ -19,7 +20,7 @@ const checks = [
   ['Form opzionali possono aprire e chiudere', studyController.includes('setFormOpen') && studyController.includes('data-study-close-form')],
   ['Print Engine supporta CSS extra nel payload', printEngine.includes('normalizeExtraStyles') && printEngine.includes('extraStyles: styles')],
   ['PDF service non annida style nel contenuto', pdfService.includes('openPrintHtmlDocument({ title, html, className, styles })')],
-  ['PDF convocazioni usa ruoli', app.includes("roleOrder = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante', 'Altro']") && app.includes('class="roles"')],
+  ['PDF convocazioni usa ruoli', callupsEvents.includes('check.dataset.callupRole') && callupsEvents.includes("Portiere:'PORTIERI'") && callupsEvents.includes("Attaccante:'ATTACCANTI'")],
 ]
 
 let failed = 0

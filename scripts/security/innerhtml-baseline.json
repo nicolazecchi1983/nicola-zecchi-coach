@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "policy": "Current reviewed HTML injection sinks. Counts may decrease without manifest changes; any increase/new file requires explicit security review and manifest update.",
+  "sinks": {
+    "src/shared/print/printEngine.js": {
+      "innerHTML": 1,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-renderer",
+      "reason": "Print engine receives already-rendered application HTML."
+    },
+    "src/shared/documentViewer/documentViewerController.js": {
+      "innerHTML": 2,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Document viewer uses shared builder or clears host."
+    },
+    "src/modules/roster/events/playerProfileEvents.js": {
+      "innerHTML": 2,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Player profile modal builder plus clear operation."
+    },
+    "src/modules/staff/events/staffEvents.js": {
+      "innerHTML": 2,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Staff management view builder."
+    },
+    "src/modules/team/events/teamRosterEvents.js": {
+      "innerHTML": 5,
+      "insertAdjacentHTML": 0,
+      "classification": "mixed-reviewed",
+      "reason": "Static fragments, trusted team logo builder, roster modal builder, clear operations."
+    },
+    "src/modules/match/matchReportService.js": {
+      "innerHTML": 2,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-renderer",
+      "reason": "Match report renderer output and inline rendered preview."
+    },
+    "src/modules/match/ui/matchAnalysisSchemaView.js": {
+      "innerHTML": 12,
+      "insertAdjacentHTML": 0,
+      "classification": "escaped-template",
+      "reason": "Schema/template builders; free text paths use canonical escapeHtml."
+    },
+    "src/modules/match/ui/matchReportPreview.js": {
+      "innerHTML": 1,
+      "insertAdjacentHTML": 0,
+      "classification": "dom-serialization",
+      "reason": "Embeds outerHTML from an already-rendered report paper."
+    },
+    "src/modules/match/events/matchAnalysisEvents.js": {
+      "innerHTML": 3,
+      "insertAdjacentHTML": 0,
+      "classification": "mixed-reviewed",
+      "reason": "Renderer output, escaped validation text, analysis view builder."
+    },
+    "src/modules/match/events/legacyMatchEditorEvents.js": {
+      "innerHTML": 6,
+      "insertAdjacentHTML": 1,
+      "classification": "mixed-reviewed",
+      "reason": "Legacy runtime templates; dynamic free text is escaped or produced by reviewed builders."
+    },
+    "src/modules/training/events/trainingDraftAndVoiceEvents.js": {
+      "innerHTML": 3,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Training result builder plus clear operation."
+    },
+    "src/modules/training/events/trainingEditorEvents.js": {
+      "innerHTML": 4,
+      "insertAdjacentHTML": 1,
+      "classification": "mixed-reviewed",
+      "reason": "Training preview/phase templates plus clear operations; dynamic fields follow canonical escaping."
+    },
+    "src/modules/calendar/events/calendarRuntimeActions.js": {
+      "innerHTML": 14,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Calendar/modal/drawer builders, option builder and clear operations."
+    },
+    "src/modules/calendar/events/calendarEvents.js": {
+      "innerHTML": 3,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-builder",
+      "reason": "Calendar view builder."
+    },
+    "src/app/appKernel.js": {
+      "innerHTML": 1,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-workspace-html",
+      "reason": "Application kernel mounts registry-produced workspace HTML."
+    },
+    "src/app/appWorkspaceEngine.js": {
+      "innerHTML": 1,
+      "insertAdjacentHTML": 0,
+      "classification": "trusted-workspace-html",
+      "reason": "Workspace registry activation returns application-owned HTML."
+    },
+    "src/app/appController.js": {
+      "innerHTML": 2,
+      "insertAdjacentHTML": 0,
+      "classification": "clear-only",
+      "reason": "Clears modal and drawer roots."
+    }
+  }
+}

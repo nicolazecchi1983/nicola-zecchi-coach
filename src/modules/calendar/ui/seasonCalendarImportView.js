@@ -11,17 +11,22 @@ function rowHtml(row, index, escapeHtml) {
   </tr>`
 }
 
-export function renderSeasonCalendarImportModal({ rows = [], escapeHtml }) {
+export function renderSeasonCalendarImportModal({ rows = [], team = {}, officialSource = null, sourceMode = '', escapeHtml }) {
   const hasRows = rows.length > 0
   return `<div class="new-event-modal-backdrop season-import-backdrop" data-close-season-import>
     <section class="new-event-modal season-import-modal" role="dialog" aria-modal="true" aria-label="Importa calendario stagione">
       <div class="new-event-modal__head"><div><span>CALENDARIO</span><h2>Importa calendario stagione</h2></div><button type="button" class="new-event-modal__close" data-close-season-import aria-label="Chiudi">×</button></div>
-      <div class="season-import-intro"><strong>Una sola fonte dati.</strong><p>Le partite confermate vengono create nel Calendario e compariranno automaticamente nella Match Library.</p></div>
+      <div class="season-import-intro season-import-intro-compact"><strong>${escapeHtml([team.category, team.competitionGroup ? `Girone ${team.competitionGroup}` : '', team.season].filter(Boolean).join(' · ') || 'Calendario stagione')}</strong><p>Le partite confermate vengono create nel Calendario e compariranno automaticamente nella Match Library.</p></div>
       ${!hasRows ? `<div class="season-import-source">
-        <label class="season-import-drop"><input type="file" accept=".csv,text/csv,application/pdf,image/png,image/jpeg,image/webp" data-season-import-file><strong>Carica calendario stagione</strong><span>PDF, immagine oppure CSV. Prima di creare le partite STAFF mostra sempre l’anteprima da verificare.</span><small>PDF/immagine: collegamento estrattore documentale in preparazione · CSV già operativo</small></label>
+        ${officialSource ? `<section class="season-import-official-source">
+          <div><span>FONTE UFFICIALE DISPONIBILE</span><strong>${escapeHtml(officialSource.label)}</strong><p>${escapeHtml(officialSource.sourceNotes)}</p></div>
+          <button type="button" class="primary-action" data-use-official-season-calendar>Prepara anteprima calendario ufficiale</button>
+        </section>` : ''}
+        <label class="season-import-drop"><input name="season_calendar_file" type="file" accept=".csv,text/csv,application/pdf,image/png,image/jpeg,image/webp" data-season-import-file><strong>Carica calendario stagione</strong><span>PDF, immagine oppure CSV. Prima di creare le partite STAFF mostra sempre l’anteprima da verificare.</span><small>${officialSource ? 'Per il calendario ufficiale riconosciuto usa il pulsante sopra. CSV resta disponibile per altri calendari.' : 'CSV già operativo · PDF/immagine richiedono una fonte documentale riconosciuta.'}</small></label>
         <details><summary>Formato CSV supportato</summary><code>giornata,data,ora,avversario,casa_trasferta,competizione<br>1,2026-09-06,15:30,Imolese,casa,Campionato</code></details>
       </div>` : `<form data-season-import-form>
-        <div class="season-import-table-wrap"><table class="season-import-table"><thead><tr><th>G.</th><th>Data</th><th>Ora</th><th>Avversario</th><th>Campo</th><th>Competizione</th><th>Stato</th></tr></thead><tbody>${rows.map((row,index)=>rowHtml(row,index,escapeHtml)).join('')}</tbody></table></div>
+        ${sourceMode === 'official' && officialSource ? `<div class="season-import-preview-warning season-import-preview-warning-compact"><strong>Controllo prima dell’importazione</strong><span>${escapeHtml(officialSource.sourceNotes)}</span></div>` : ''}
+        <div class="season-import-table-wrap"><table class="season-import-table"><colgroup><col class="season-import-col-day"><col class="season-import-col-date"><col class="season-import-col-time"><col class="season-import-col-opponent"><col class="season-import-col-home-away"><col class="season-import-col-competition"><col class="season-import-col-status"></colgroup><thead><tr><th>G.</th><th>Data</th><th>Ora</th><th>Avversario</th><th>Campo</th><th>Competizione</th><th>Stato</th></tr></thead><tbody>${rows.map((row,index)=>rowHtml(row,index,escapeHtml)).join('')}</tbody></table></div>
         <div class="season-import-actions"><span data-season-import-message></span><button type="button" class="button" data-season-import-reset>Cambia file</button><button type="submit" class="primary-action">Importa ${rows.filter(r=>r.importStatus==='new').length} partite</button></div>
       </form>`}
     </section>

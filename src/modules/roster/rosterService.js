@@ -9,6 +9,7 @@ import {
 } from '../../infrastructure/repositories/rosterRepository.js'
 import { toSlugKey } from '../../shared/text/textNormalization.js'
 import { isLegacyRosterCandidate, shouldUseLegacyRoster } from './rosterDomain.js'
+import { AppError } from '../../core/appError.js'
 
 const ROLE_ORDER = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante']
 
@@ -147,6 +148,21 @@ export async function saveRosterPlayer({ team, player, legacyPlayers = [] } = {}
   const normalized = normalizePlayer(player)
   if (!normalized.name) throw new Error('Nome e cognome sono obbligatori.')
 
+  const shirtNumber = normalized.number === '' || normalized.number == null ? null : Number(normalized.number)
+  if (shirtNumber != null && (!Number.isInteger(shirtNumber) || shirtNumber < 1 || shirtNumber > 99)) {
+    throw new AppError('Numero maglia non valido.', { code: 'ROSTER_SHIRT_NUMBER_INVALID', stage: 'roster-player-save', userMessage: 'Il numero maglia deve essere compreso tra 1 e 99.' })
+  }
+  if (shirtNumber != null) {
+    const { data: activeRows, error: rosterError } = await listTeamPlayers(team.id)
+    if (rosterError) throw rosterError
+    const conflict = (activeRows || []).find((row) =>
+      Number(row.shirt_number) === shirtNumber && String(row.id || '') !== String(normalized.id || '')
+    )
+    if (conflict) {
+      throw new AppError('Numero maglia già assegnato.', { code: 'ROSTER_SHIRT_NUMBER_CONFLICT', stage: 'roster-player-save', userMessage: `Il numero ${shirtNumber} è già assegnato a ${conflict.full_name || 'un altro giocatore'}.` })
+    }
+  }
+
   const payload = {
     team_id: team.id,
     player_key: normalized.key || toSlugKey(normalized.name),
@@ -156,7 +172,7 @@ export async function saveRosterPlayer({ team, player, legacyPlayers = [] } = {}
     birth_year: normalized.year ? Number(normalized.year) : null,
     preferred_foot: normalized.foot || null,
     status: normalized.status || 'Disponibile',
-    shirt_number: normalized.number === '' || normalized.number == null ? null : Number(normalized.number),
+    shirt_number: shirtNumber,
     active: true,
     updated_at: new Date().toISOString(),
   }

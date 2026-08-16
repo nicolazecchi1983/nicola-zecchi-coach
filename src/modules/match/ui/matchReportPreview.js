@@ -1,3 +1,4 @@
+import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 export function createMatchReportPreview({
   matchReportService,
   state,
@@ -73,7 +74,7 @@ return function openMatchReportPreview() {
             button.disabled = false
           } catch (error) {
             console.error('Salvataggio Match Report nel Calendario non riuscito:', error)
-            if (state) state.textContent = error.message || 'Salvataggio nel Calendario non riuscito'
+            if (state) state.textContent = getDataAccessUserMessage(error, undefined, { stage: 'match-report-calendar-save' })
             button.textContent = 'Riprova salvataggio'
             button.disabled = false
           }

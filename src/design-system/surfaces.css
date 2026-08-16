@@ -1,0 +1,217 @@
+/* STAFF Design System v1 — DS1.4 Surfaces, Cards & Section Hierarchy
+   Surfaces communicate grouping, not decoration. This layer progressively
+   neutralizes legacy card styling without changing domain layout or behavior. */
+
+:root {
+  --staff-surface-bg: var(--staff-color-bg-panel);
+  --staff-surface-bg-raised: var(--staff-color-bg-panel-raised);
+  --staff-surface-border: var(--staff-color-border-subtle);
+  --staff-surface-border-hover: var(--staff-color-border);
+  --staff-surface-padding: var(--staff-space-4);
+  --staff-surface-padding-compact: var(--staff-space-3);
+  --staff-surface-gap: var(--staff-space-3);
+}
+
+/* Canonical primitives for new/refactored UI. */
+.staff-surface,
+.staff-card {
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--staff-surface-border);
+  background: var(--staff-surface-bg);
+  color: var(--staff-color-text);
+  box-shadow: none;
+}
+
+.staff-surface {
+  padding: var(--staff-surface-padding);
+  border-radius: var(--staff-radius-card);
+}
+
+.staff-card {
+  padding: var(--staff-surface-padding-compact);
+  border-radius: var(--staff-radius-medium);
+}
+
+.staff-section {
+  min-width: 0;
+  padding-block: var(--staff-space-4);
+  border-top: 1px solid var(--staff-surface-border);
+}
+
+.staff-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Existing shared panel owns both geometry and visual surface. */
+.panel {
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--staff-surface-border);
+  border-radius: var(--staff-radius-card);
+  background: var(--staff-surface-bg);
+  box-shadow: none;
+}
+
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--staff-space-3);
+}
+
+.panel-head span {
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .1em;
+}
+
+/* Existing shared containers converge on one neutral surface language. */
+.panel,
+.stat-card,
+.player-card,
+.analysis-card,
+.profile-card,
+.team-settings-card,
+.callups-panel,
+.staff-create-card,
+.library-sheet-card,
+.settings-card,
+.event-info-card {
+  border-color: var(--staff-surface-border);
+  background: var(--staff-surface-bg);
+  box-shadow: none;
+}
+
+.panel,
+.player-card,
+.analysis-card,
+.profile-card,
+.team-settings-card,
+.callups-panel,
+.staff-create-card,
+.settings-card {
+  border-radius: var(--staff-radius-card);
+}
+
+.stat-card,
+.library-sheet-card,
+.event-info-card {
+  border-radius: var(--staff-radius-medium);
+}
+
+/* Dashboard: hierarchy comes from spacing/typography, not nested gradients. */
+.panel-head {
+  padding: var(--staff-space-3) var(--staff-space-3) 12px;
+  border-bottom-color: var(--staff-surface-border);
+}
+
+.panel-head h2 {
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-section-title);
+  font-weight: var(--staff-font-weight-semibold);
+  letter-spacing: -.02em;
+}
+
+.panel-head > strong {
+  color: var(--staff-color-text-secondary);
+}
+
+.training-summary {
+  gap: var(--staff-space-2);
+  padding: var(--staff-space-3);
+}
+
+.training-summary div {
+  border-color: var(--staff-surface-border);
+  background: transparent;
+}
+
+/* KPI cards are allowed as real summary containers, but stay quiet. */
+.stat-card {
+  background: var(--staff-surface-bg-raised);
+}
+
+.stat-card span,
+.stat-card small {
+  color: var(--staff-color-text-secondary);
+}
+
+/* Roster / settings / library cards share the same interaction depth. */
+.player-card,
+.settings-card,
+.library-sheet-card {
+  transition:
+    background-color var(--staff-motion-normal) var(--staff-ease-standard),
+    border-color var(--staff-motion-normal) var(--staff-ease-standard);
+}
+
+.settings-card:hover,
+.library-sheet-card:hover {
+  border-color: var(--staff-surface-border-hover);
+  background: var(--staff-surface-bg-raised);
+  transform: none;
+}
+
+.player-meta,
+.player-card__actions {
+  border-top-color: var(--staff-surface-border);
+}
+
+/* Small metadata blocks remain subordinate to the parent surface. */
+.event-info-card {
+  background: var(--staff-surface-bg-raised);
+}
+
+.event-info-card > span {
+  color: var(--staff-color-text-secondary);
+}
+
+/* Shared empty-state geometry migrated from legacy style.css in 0.27.42. */
+.placeholder-panel {
+  display: grid;
+  min-height: 420px;
+  padding: 30px;
+  place-items: center;
+  text-align: center;
+  border: 1px solid var(--staff-surface-border);
+  border-radius: var(--staff-radius-card);
+}
+.placeholder-panel h2 { margin-bottom: 8px; }
+.placeholder-panel p { max-width: 540px; margin: 0; color: var(--staff-color-text-secondary); }
+
+/* Empty states should not look like another heavy card. */
+.placeholder-panel,
+.library-empty-state,
+.library-no-results,
+.product-empty-state {
+  background: transparent;
+  border-color: var(--staff-surface-border);
+  box-shadow: none;
+}
+
+/* Product surfaces keep domain grouping but with a quieter edge. */
+.product-surface,
+.training-product-shell .ts-form-card {
+  box-shadow: none;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --staff-surface-padding: var(--staff-space-3);
+  }
+
+  .panel-head {
+    padding-inline: var(--staff-space-3);
+  }
+
+  .staff-section {
+    padding-block: var(--staff-space-3);
+  }
+}
+
+@media (max-width: 760px) {
+  .placeholder-panel { min-height: 340px; padding: 24px 18px; }
+}

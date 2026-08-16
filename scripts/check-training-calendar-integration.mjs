@@ -2,19 +2,22 @@ import fs from 'node:fs'
 
 const integration = fs.readFileSync('src/modules/training/trainingCalendarIntegration.js', 'utf8')
 const controller = fs.readFileSync('src/app/appController.js', 'utf8')
+const trainingEditorEvents = fs.readFileSync('src/modules/training/events/trainingEditorEvents.js', 'utf8')
+const calendarEventViews = fs.readFileSync('src/modules/calendar/ui/calendarEventViewBuilders.js', 'utf8')
+const runtime = `${controller}\n${trainingEditorEvents}\n${calendarEventViews}`
 const calendarView = fs.readFileSync('src/modules/calendar/ui/calendarView.js', 'utf8')
 
 const checks = [
   ['helper calendario Training presente', integration.includes('buildTrainingDraftFromCalendarEvent')],
   ['ricerca evento centralizzata', integration.includes('findTrainingCalendarEvent')],
-  ['evento senza TS genera una bozza', controller.includes('Bozza collegata al Calendario')],
-  ['drawer apre o crea la TS', controller.includes('data-open-training-sheet-editor')],
-  ['pubblicazione risolve lo stesso evento', controller.includes('resolveTrainingCalendarPublishTarget({')],
+  ['evento senza TS genera una bozza', runtime.includes('Bozza collegata al Calendario')],
+  ['drawer apre o crea la TS', runtime.includes('data-open-training-sheet-editor')],
+  ['pubblicazione risolve lo stesso evento', runtime.includes('resolveTrainingCalendarPublishTarget({')],
   ['Calendario distingue TS pubblicata', calendarView.includes('TS pubblicata')],
   ['Calendario mostra Crea TS quando assente', calendarView.includes('Crea TS')],
-  ['nessuna archiviazione manuale in UI', !controller.includes('data-archive-training-sheet')],
-  ['nessun upload manuale TS nel Calendario', !controller.includes('name="trainingSheet"') && !controller.includes('uploadTrainingSheet(')],
-  ['Calendario indirizza al TS Editor', controller.includes('Crea Training Sheet') && controller.includes('Apri nel TS Editor')],
+  ['nessuna archiviazione manuale in UI', !runtime.includes('data-archive-training-sheet')],
+  ['nessun upload manuale TS nel Calendario', !runtime.includes('name="trainingSheet"') && !runtime.includes('uploadTrainingSheet(')],
+  ['Calendario indirizza al TS Editor', runtime.includes('Crea Training Sheet') && runtime.includes('Apri nel TS Editor')],
 ]
 
 const failed = checks.filter(([, ok]) => !ok)

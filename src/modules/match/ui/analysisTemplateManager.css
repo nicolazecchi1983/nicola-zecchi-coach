@@ -1,0 +1,256 @@
+/* STAFF 0.27.18 — Analysis Template Manager canonical domain owner.
+   overlays.css owns backdrop/panel/header/close/footer shell grammar.
+   This file owns manager-specific internal layout and one-scroll behavior. */
+
+.analysis-template-manager {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90dvh, 920px);
+  overflow: hidden;
+}
+
+.analysis-template-manager-head > div {
+  display: grid;
+  gap: var(--staff-space-1);
+}
+
+.analysis-template-manager-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: end;
+  gap: var(--staff-space-2);
+  padding-block: 12px 10px;
+}
+
+.analysis-template-manager-toolbar label,
+.analysis-template-manager-name-row label,
+.analysis-template-manager-phase-head label {
+  display: grid;
+  gap: var(--staff-space-1);
+  min-width: 0;
+}
+
+.analysis-template-manager-toolbar label > span,
+.analysis-template-manager-name-row label > span,
+.analysis-template-manager-phase-head label > span {
+  color: var(--staff-color-text-muted);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+}
+
+.analysis-template-manager-toolbar select,
+.analysis-template-manager-name-row input,
+.analysis-template-manager-phase-head input,
+.analysis-template-manager-subsection input,
+.analysis-template-manager-add-subsection select {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--staff-control-height-compact);
+  box-sizing: border-box;
+  padding: 7px 10px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-control);
+  background: var(--staff-color-bg-control);
+  color: var(--staff-color-text);
+}
+
+.analysis-template-manager-danger {
+  color: var(--staff-color-danger-text);
+}
+
+.analysis-template-manager-name-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+  padding-block: 0 12px;
+}
+
+.analysis-template-manager-name-row > span {
+  padding-bottom: 10px;
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .08em;
+}
+
+.analysis-template-manager-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-block: var(--staff-space-1) var(--staff-space-3);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.analysis-template-manager-phase {
+  flex: 0 0 auto;
+  min-width: 0;
+  overflow: visible;
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-medium);
+  background: var(--staff-color-bg-panel-raised);
+}
+
+.analysis-template-manager-phase-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--staff-color-border-subtle);
+  background: var(--staff-color-bg-panel);
+}
+
+.analysis-template-manager-phase-card-head > div {
+  display: grid;
+  gap: 2px;
+}
+
+.analysis-template-manager-phase-card-head > div > span {
+  color: var(--staff-color-primary-hover);
+  font-size: .58rem;
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .12em;
+}
+
+.analysis-template-manager-phase-card-head strong {
+  color: var(--staff-color-text);
+  font-size: .96rem;
+}
+
+.analysis-template-manager-phase-card-head small {
+  color: var(--staff-color-text-muted);
+  font-size: .67rem;
+  white-space: nowrap;
+}
+
+.analysis-template-manager-phase-body {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.analysis-template-manager-phase-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--staff-space-2);
+}
+
+.analysis-template-manager-subsections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.analysis-template-manager-subsection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.analysis-template-manager-subsection button {
+  min-height: var(--staff-control-height-compact);
+  padding: 0;
+}
+
+.analysis-template-manager-add-subsection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--staff-space-2);
+}
+
+.analysis-template-manager-add-phase-row {
+  padding-block: 0 12px;
+}
+
+.analysis-template-manager-footer p {
+  margin: 0;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+}
+
+.analysis-template-manager-footer p[data-type="success"] {
+  color: var(--staff-color-positive);
+}
+
+.analysis-template-manager-footer p[data-type="error"] {
+  color: var(--staff-color-danger-text);
+}
+
+.analysis-template-manager-footer > div {
+  display: flex;
+  gap: var(--staff-space-2);
+}
+
+@media (max-width: 760px) {
+  .analysis-template-manager {
+    display: block;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .analysis-template-manager-toolbar {
+    grid-template-columns: 1fr 1fr;
+    padding-block: 10px;
+  }
+
+  .analysis-template-manager-toolbar label {
+    grid-column: 1 / -1;
+  }
+
+  .analysis-template-manager-name-row {
+    grid-template-columns: 1fr;
+    padding-block: 0 10px;
+  }
+
+  .analysis-template-manager-name-row > span {
+    padding-bottom: 0;
+  }
+
+  .analysis-template-manager-body {
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    padding-block: 2px 14px;
+  }
+
+  .analysis-template-manager-subsections,
+  .analysis-template-manager-phase-head,
+  .analysis-template-manager-add-subsection {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-template-manager-add-phase-row {
+    padding-block: 0 10px;
+  }
+
+  .analysis-template-manager-add-phase-row button {
+    width: 100%;
+  }
+
+  .analysis-template-manager-footer {
+    position: static;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .analysis-template-manager-footer > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

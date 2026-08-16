@@ -1,4 +1,6 @@
-export const MATCH_OPPONENT_STUDY_SCHEMA_VERSION = 1
+import { createMatchAnalysisSchema, createMatchAnalysisSchemaFromLegacy } from './matchAnalysisSchema.js'
+
+export const MATCH_OPPONENT_STUDY_SCHEMA_VERSION = 2
 
 export const MATCH_OPPONENT_STUDY_CATEGORIES = Object.freeze([
   'general',
@@ -63,6 +65,16 @@ export function normalizeMatchOpponentStudy(input = {}) {
       transitions: safeText(input.notes?.transitions),
       setPieces: safeText(input.notes?.setPieces),
     },
+    technicalAnalysis: createMatchAnalysisSchema(
+      input.technicalAnalysis != null
+        ? input.technicalAnalysis
+        : createMatchAnalysisSchemaFromLegacy({
+            possession: input.notes?.possession,
+            nonPossession: input.notes?.nonPossession,
+            transitions: input.notes?.transitions,
+            setPieces: input.notes?.setPieces,
+          }),
+    ),
     primaryReport: input.primaryReport?.path ? normalizeAsset({ ...input.primaryReport, kind: 'report' }) : null,
     assets: Array.isArray(input.assets) ? input.assets.map(normalizeAsset).filter((item) => item.path) : [],
     links: Array.isArray(input.links) ? input.links.map(normalizeLink).filter((item) => item.url) : [],

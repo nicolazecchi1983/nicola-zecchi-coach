@@ -1,5 +1,6 @@
-import { matchContextBackButtonHtml, matchContextNavigationHtml } from '../../../design-system/uiComponents.js'
+import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
 import { categoryLabel } from '../matchOpponentStudyModel.js'
+import { renderMatchAnalysisSchemaEditor } from './matchAnalysisSchemaView.js'
 
 function formatSize(bytes) {
   const value = Number(bytes) || 0
@@ -37,7 +38,7 @@ function linkCard(link, escapeHtml) {
   </article>`
 }
 
-export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml }) {
+export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml, teamName = '' }) {
   const matchId = String(activeMatch?.id || '')
   const opponent = activeMatch?.opponent || 'Partita selezionata'
   const notes = study?.notes || {}
@@ -45,82 +46,99 @@ export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml })
   const links = Array.isArray(study?.links) ? study.links : []
 
   if (!matchId) {
-    return `<section class="view page-view match-opponent-study match-workflow-section">
-      <div class="page-head match-context-page-head"><div><h1>Studio avversario</h1><p><span>MATCH WORKSPACE</span><b>•</b>Seleziona prima una partita dalla Match Library.</p></div>${matchContextBackButtonHtml()}</div>${matchContextNavigationHtml('opponent-study')}
-      <div class="empty-state"><h2>Nessuna partita selezionata</h2><p>Apri una partita dalla Match Library per preparare lo studio dell’avversario.</p></div>
-    </section>`
+    return matchWorkspaceShellHtml({
+      activeSection: 'opponent-study',
+      teamName,
+      titleHtml: 'Studio avversario',
+      descriptionHtml: 'Seleziona prima una partita dalla Match Library.',
+      className: 'match-opponent-study match-workflow-section',
+      contentHtml: '<div class="workspace-surface product-surface product-empty-state empty-state"><h2>Nessuna partita selezionata</h2><p>Apri una partita dalla Match Library per preparare lo studio dell’avversario.</p></div>',
+    })
   }
 
-  return `<section class="view page-view match-opponent-study" data-opponent-study data-match-id="${escapeHtml(matchId)}">
-    <div class="page-head match-context-page-head">
-      <div>
-        <h1>Studio avversario · ${escapeHtml(opponent)}</h1>
-        <p><span>MATCH WORKSPACE</span><b>•</b>Report, video, link esterni e lettura tecnica pre-partita.</p>
+  const contentHtml = `<section class="match-study-materials" aria-labelledby="match-study-materials-title">
+      <div class="match-study-materials-head">
+        <div>
+          <span>MATERIALI AVVERSARIO</span>
+          <h2 id="match-study-materials-title">Report, video e link</h2>
+        </div>
+        <p>Tutto il materiale pre-partita in un unico spazio operativo.</p>
       </div>
-      ${matchContextBackButtonHtml()}
-    </div>
-    ${matchContextNavigationHtml('opponent-study')}
 
-    <div class="match-study-grid">
-      <article class="section-card match-study-panel">
-        <div class="match-study-panel-head">
-          <div><span>01</span><h2>Report Match Analyst</h2><p>Un report principale, sempre sostituibile senza creare copie nella UI.</p></div>
-        </div>
-        <div data-primary-study-report>${assetCard(study?.primaryReport, { escapeHtml, primary: true })}</div>
-        <form class="match-study-upload-form" data-study-upload-form="report">
-          <label><span>Carica / sostituisci report</span><input type="file" name="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
-          <button class="primary-button" type="submit">Carica report</button>
-          <p class="form-message" data-study-message="report"></p>
-        </form>
-      </article>
+      <div class="match-study-materials-grid">
+        <article class="section-card match-study-panel match-study-material-card">
+          <div class="match-study-panel-head">
+            <div><span>01</span><h2>Report Match Analyst</h2><p>Il report principale dell’avversario.</p></div>
+          </div>
+          <div class="match-study-card-content" data-primary-study-report>${assetCard(study?.primaryReport, { escapeHtml, primary: true })}</div>
+          <div class="match-study-card-footer"><button class="secondary-button match-study-add-toggle" type="button" data-study-toggle-form="report">${study?.primaryReport ? 'Sostituisci report' : 'Carica report'}</button></div>
+          <form class="match-study-upload-form match-study-collapsible" data-study-upload-form="report" data-study-collapsible="report" hidden>
+            <label><span>Report</span><input type="file" name="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
+            <div class="match-study-form-actions"><button class="primary-button" type="submit">Carica report</button><button class="ghost-button" type="button" data-study-close-form="report">Annulla</button></div>
+            <p class="form-message" data-study-message="report"></p>
+          </form>
+        </article>
 
-      <article class="section-card match-study-panel">
-        <div class="match-study-panel-head">
-          <div><span>02</span><h2>Video e documenti</h2><p>Clip utili e materiali aggiuntivi. Per file video molto grandi preferisci un link esterno.</p></div>
-        </div>
-        <div class="match-study-resources" data-study-assets>
-          ${assets.length ? assets.map((asset) => assetCard(asset, { escapeHtml })).join('') : '<p class="match-study-empty">Nessun materiale caricato.</p>'}
-        </div>
-        <div class="match-study-add-row"><button class="secondary-button match-study-add-toggle" type="button" data-study-toggle-form="asset">＋ Aggiungi materiale</button></div>
-        <form class="match-study-upload-form match-study-upload-form--multi match-study-collapsible" data-study-upload-form="asset" data-study-collapsible="asset" hidden>
-          <label><span>Tipo</span><select name="kind"><option value="video">Video</option><option value="document">Documento</option></select></label>
-          <label><span>Categoria</span><select name="category"><option value="general">Generale</option><option value="possession">Possesso</option><option value="non-possession">Non possesso</option><option value="transitions">Transizioni</option><option value="set-pieces">Palle inattive</option></select></label>
-          <label><span>File</span><input type="file" name="file" required></label>
-          <div class="match-study-form-actions"><button class="primary-button" type="submit">Carica materiale</button><button class="ghost-button" type="button" data-study-close-form="asset">Annulla</button></div>
-          <p class="form-message" data-study-message="asset"></p>
-        </form>
-      </article>
+        <article class="section-card match-study-panel match-study-material-card">
+          <div class="match-study-panel-head">
+            <div><span>02</span><h2>Video e documenti</h2><p>Clip, PDF, immagini e altri materiali.</p></div>
+          </div>
+          <div class="match-study-card-content match-study-resources" data-study-assets>
+            ${assets.length ? assets.map((asset) => assetCard(asset, { escapeHtml })).join('') : '<p class="match-study-empty">0 file</p>'}
+          </div>
+          <div class="match-study-card-footer"><button class="secondary-button match-study-add-toggle" type="button" data-study-toggle-form="asset">＋ Aggiungi materiale</button></div>
+          <form class="match-study-upload-form match-study-upload-form--multi match-study-collapsible" data-study-upload-form="asset" data-study-collapsible="asset" hidden>
+            <label><span>Tipo</span><select name="kind"><option value="video">Video</option><option value="document">Documento</option></select></label>
+            <label><span>Categoria</span><select name="category"><option value="general">Generale</option><option value="possession">Possesso</option><option value="non-possession">Non possesso</option><option value="transitions">Transizioni</option><option value="set-pieces">Palle inattive</option></select></label>
+            <label><span>File</span><input type="file" name="file" required></label>
+            <div class="match-study-form-actions"><button class="primary-button" type="submit">Carica materiale</button><button class="ghost-button" type="button" data-study-close-form="asset">Annulla</button></div>
+            <p class="form-message" data-study-message="asset"></p>
+          </form>
+        </article>
 
-      <article class="section-card match-study-panel match-study-panel--wide">
-        <div class="match-study-panel-head">
-          <div><span>03</span><h2>Link esterni</h2><p>Hudl, YouTube, Drive o qualsiasi risorsa web utile allo studio.</p></div>
-        </div>
-        <div class="match-study-resources" data-study-links>
-          ${links.length ? links.map((link) => linkCard(link, escapeHtml)).join('') : '<p class="match-study-empty">Nessun link salvato.</p>'}
-        </div>
-        <div class="match-study-add-row"><button class="secondary-button match-study-add-toggle" type="button" data-study-toggle-form="link">＋ Aggiungi link</button></div>
-        <form class="match-study-link-form match-study-collapsible" data-study-link-form data-study-collapsible="link" hidden>
-          <label><span>Nome</span><input type="text" name="label" placeholder="Es. Ultime 3 gare"></label>
-          <label><span>Categoria</span><select name="category"><option value="general">Generale</option><option value="possession">Possesso</option><option value="non-possession">Non possesso</option><option value="transitions">Transizioni</option><option value="set-pieces">Palle inattive</option></select></label>
-          <label class="match-study-link-url"><span>Link</span><input type="url" name="url" placeholder="https://..." required></label>
-          <div class="match-study-form-actions"><button class="primary-button" type="submit">Salva link</button><button class="ghost-button" type="button" data-study-close-form="link">Annulla</button></div>
-          <p class="form-message" data-study-message="link"></p>
-        </form>
-      </article>
+        <article class="section-card match-study-panel match-study-material-card">
+          <div class="match-study-panel-head">
+            <div><span>03</span><h2>Link esterni</h2><p>Hudl, YouTube, Drive o altre risorse web.</p></div>
+          </div>
+          <div class="match-study-card-content match-study-resources" data-study-links>
+            ${links.length ? links.map((link) => linkCard(link, escapeHtml)).join('') : '<p class="match-study-empty">0 link</p>'}
+          </div>
+          <div class="match-study-card-footer"><button class="secondary-button match-study-add-toggle" type="button" data-study-toggle-form="link">＋ Aggiungi link</button></div>
+          <form class="match-study-link-form match-study-collapsible" data-study-link-form data-study-collapsible="link" hidden>
+            <label><span>Nome</span><input type="text" name="label" placeholder="Es. Ultime 3 gare"></label>
+            <label><span>Categoria</span><select name="category"><option value="general">Generale</option><option value="possession">Possesso</option><option value="non-possession">Non possesso</option><option value="transitions">Transizioni</option><option value="set-pieces">Palle inattive</option></select></label>
+            <label class="match-study-link-url"><span>Link</span><input type="url" name="url" placeholder="https://..." required></label>
+            <div class="match-study-form-actions"><button class="primary-button" type="submit">Salva link</button><button class="ghost-button" type="button" data-study-close-form="link">Annulla</button></div>
+            <p class="form-message" data-study-message="link"></p>
+          </form>
+        </article>
+      </div>
+    </section>
 
-      <article class="section-card match-study-panel match-study-panel--wide">
-        <div class="match-study-panel-head">
-          <div><span>04</span><h2>Lettura tecnica</h2><p>Note pre-partita organizzate senza trasformare lo studio in un report obbligatorio.</p></div>
-        </div>
+    <div class="match-study-grid match-study-grid--analysis">
+      <article class="section-card match-study-panel match-study-panel--wide match-study-analysis-panel">
         <form class="match-study-notes-form" data-study-notes-form>
-          <label><span>Possesso</span><textarea name="possession" rows="5" placeholder="Costruzione, sviluppo, rifinitura...">${escapeHtml(notes.possession || '')}</textarea></label>
-          <label><span>Non possesso</span><textarea name="nonPossession" rows="5" placeholder="Pressione, blocco, difesa area...">${escapeHtml(notes.nonPossession || '')}</textarea></label>
-          <label><span>Transizioni</span><textarea name="transitions" rows="5" placeholder="Comportamenti dopo recupero e perdita...">${escapeHtml(notes.transitions || '')}</textarea></label>
-          <label><span>Palle inattive</span><textarea name="setPieces" rows="5" placeholder="Corner, punizioni, rimesse...">${escapeHtml(notes.setPieces || '')}</textarea></label>
-          <label class="match-study-notes-general"><span>Note generali</span><textarea name="general" rows="4" placeholder="Sintesi e dettagli utili...">${escapeHtml(notes.general || '')}</textarea></label>
+          ${renderMatchAnalysisSchemaEditor({
+            name: 'technical_analysis',
+            schema: study?.technicalAnalysis,
+            title: 'Lettura tecnica',
+            description: 'Quattro macroaree di partenza. Apri, modifica o salva il tuo template personale.',
+          })}
           <div class="match-study-save-row"><button class="primary-button" type="submit">Salva studio</button><p class="form-message" data-study-message="notes"></p></div>
         </form>
       </article>
-    </div>
-  </section>`
+    </div>`
+
+  return matchWorkspaceShellHtml({
+    activeSection: 'opponent-study',
+    teamName,
+    titleHtml: `Studio avversario · ${escapeHtml(opponent)}`,
+    descriptionHtml: 'Report, video, link esterni e lettura tecnica pre-partita.',
+    className: 'match-opponent-study',
+    attributes: {
+      'data-opponent-study': true,
+      'data-match-id': escapeHtml(matchId),
+    },
+    contentHtml,
+  })
 }

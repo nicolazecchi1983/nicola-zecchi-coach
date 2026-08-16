@@ -1,0 +1,176 @@
+/* STAFF Design System v1 — DS1.6 Typography & Information Density
+   Typography creates hierarchy before color. Density is reduced through
+   consistent rhythm and metadata roles, not by shrinking interactive targets. */
+
+#viewRoot {
+  color: var(--staff-color-text);
+  font-family: var(--staff-font-family);
+  font-size: var(--staff-font-body);
+  line-height: var(--staff-line-height-body);
+}
+
+/* Shared section/title roles across legacy and modular views. */
+.panel-head h2,
+.dashboard-card-head h2,
+.section-title h2,
+.match-study-panel-head h2,
+.profile-card-head h2,
+.ts-section-title h3,
+.opponent-panel-head h3,
+.lineup-list h3,
+.bench-block h3,
+.match-events-grid h3 {
+  color: var(--staff-color-text);
+  font-family: var(--staff-font-family);
+  font-size: var(--staff-font-section-title);
+  font-weight: var(--staff-font-weight-semibold);
+  line-height: var(--staff-line-height-heading);
+  letter-spacing: -.02em;
+}
+
+.ts-section-title h3,
+.opponent-panel-head h3,
+.lineup-list h3,
+.bench-block h3,
+.match-events-grid h3 {
+  font-size: var(--staff-font-subsection-title);
+}
+
+/* Supporting copy is intentionally quieter than headings and controls. */
+.section-title p,
+.match-study-panel-head p,
+.opponent-panel-head p,
+.ts-field-help,
+.roster-foundation-note,
+.match-study-empty,
+.dashboard-empty-state,
+.library-empty-state,
+.library-no-results,
+.product-empty-state {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-secondary);
+  font-weight: var(--staff-font-weight-regular);
+  line-height: var(--staff-line-height-secondary);
+}
+
+/* Reusable eyebrow / metadata language. */
+.eyebrow,
+.dashboard-card-kicker,
+.dashboard-card-head span,
+.match-page-header__eyebrow,
+.staff-section-kicker {
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: .105em;
+  text-transform: uppercase;
+}
+
+.player-meta,
+.event-info-card > span,
+.match-study-resource small,
+.library-sheet-card small,
+.dashboard-training-history small,
+.dashboard-week-grid small,
+.profile-card small {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+  line-height: var(--staff-line-height-secondary);
+}
+
+/* Numeric information is easier to scan when figures do not shift width. */
+.stat-card strong,
+.event-info-card__value,
+.dashboard-day header strong,
+.dashboard-training-history b,
+.dashboard-week-grid b,
+.match-report-dialog-panel time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Match section markers become context labels, not competing blue cards. */
+.match-editor .section-title {
+  gap: var(--staff-space-3);
+  margin-bottom: var(--staff-space-4);
+}
+
+.match-editor .section-title > span {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 28px;
+  flex: 0 0 36px;
+  padding: 0;
+  border: 1px solid var(--staff-color-border);
+  border-radius: var(--staff-radius-small);
+  background: var(--staff-color-bg-panel-raised);
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: 1;
+}
+
+/* Compact repeated information blocks while keeping 44/48px controls intact. */
+.dashboard-card-head,
+.match-study-panel-head,
+.profile-card-head {
+  margin-bottom: var(--staff-space-3);
+}
+
+.match-study-resource,
+.event-info-card {
+  padding-block: var(--staff-space-2);
+}
+
+.match-study-resource > div:first-child {
+  gap: var(--staff-space-1);
+}
+
+/* Tables/data lists use a restrained hierarchy instead of oversized labels. */
+#viewRoot table th {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: 1.25;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+
+#viewRoot table td {
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-secondary);
+  line-height: 1.4;
+}
+
+/* Body copy should remain readable when users increase text spacing/zoom. */
+.page-head p,
+.staff-section-head p,
+.section-title p,
+.match-study-panel-head p,
+.opponent-panel-head p {
+  max-width: var(--staff-content-readable);
+  overflow: visible;
+  text-overflow: clip;
+}
+
+@media (max-width: 760px) {
+  .match-editor .section-title {
+    gap: var(--staff-space-2);
+    margin-bottom: var(--staff-space-3);
+  }
+
+  .match-editor .section-title > span {
+    width: 32px;
+    height: 28px;
+    flex-basis: 32px;
+  }
+
+  .panel-head h2,
+  .dashboard-card-head h2,
+  .section-title h2,
+  .match-study-panel-head h2,
+  .profile-card-head h2 {
+    font-size: var(--staff-font-subsection-title);
+  }
+}

@@ -4,10 +4,11 @@ const dashboard = fs.readFileSync('src/modules/dashboard/dashboardView.js','utf8
 const calendar = fs.readFileSync('src/modules/calendar/ui/calendarView.js','utf8')
 const controller = fs.readFileSync('src/app/appController.js','utf8')
 const libraryModel = fs.readFileSync('src/modules/match/matchLibraryModel.js','utf8')
+const adapters = fs.readFileSync('src/app/appViewAdapters.js', 'utf8')
 
 const checks = [
   ['Dashboard non hardcode stagione 2026/27', !dashboard.includes('STAGIONE 2026/27')],
-  ['Dashboard riceve profilo squadra', dashboard.includes('team = {}') && controller.includes('renderDashboardView(appState.calendarEvents, getTeamProfile())')],
+  ['Dashboard riceve profilo squadra', adapters.includes('renderDashboardView(appState.calendarEvents, getTeamProfile())')],
   ['Calendario non hardcode stagione 2026/27', !calendar.includes('STAGIONE 2026/27')],
   ['Calendario non hardcode Serie D', !calendar.includes('<b>•</b>Serie D')],
   ['Calendario usa stagione configurata', calendar.includes('team.season')],

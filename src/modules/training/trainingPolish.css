@@ -1,0 +1,528 @@
+/* STAFF Design System v1 — DS2.3 Training Polish
+   Training is a guided workbench: context first, one task at a time, controls quiet until selected.
+   Scope is visual/presentational only. Domain, persistence and event hooks remain unchanged. */
+
+.ts-manual-editor {
+  --training-section-max: 1180px;
+  --staff-mobile-page-title-size: clamp(1.52rem, 6.4vw, 1.86rem);
+}
+
+.ts-manual-editor .ts-editor-titlebar {
+  grid-template-columns: minmax(0, 1fr) minmax(400px, 500px);
+  align-items: start;
+  gap: var(--staff-space-4);
+  margin-bottom: var(--staff-space-4);
+}
+
+.ts-manual-editor .ts-editor-titlebar > div:first-child {
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-editor-titlebar > div:first-child > p {
+  white-space: nowrap;
+}
+
+/* Published-sheet command geometry is owned by trainingCommandBar.css. */
+
+.ts-manual-editor .ts-workspace--steps {
+  max-width: none;
+}
+
+/* Step containers are structural wrappers. Visual grouping belongs to the content blocks inside each step. */
+.ts-manual-editor .ts-workspace--steps > .ts-manual-form > .ts-form-card {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-step.is-active {
+  animation: training-step-in var(--staff-motion-normal) var(--staff-ease-standard);
+}
+
+@keyframes training-step-in {
+  from { opacity: .72; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Step 01 — session essentials: one compact operational surface. */
+.ts-manual-editor .ts-session-grid {
+  width: min(100%, var(--training-section-max));
+  grid-template-columns: minmax(150px, .75fr) minmax(140px, .65fr) minmax(260px, 1.2fr) minmax(150px, .65fr);
+  gap: var(--staff-space-3);
+  padding: var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-field {
+  gap: var(--staff-space-1);
+}
+
+.ts-manual-editor .ts-field > span,
+.ts-manual-editor .ts-choice-label {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-field-help {
+  margin-top: var(--staff-space-1);
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-label);
+  line-height: var(--staff-line-height-secondary);
+}
+
+/* Step 02 — roster: availability first, exceptions by disclosure. */
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
+  width: min(100%, var(--training-section-max));
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary {
+  padding: var(--staff-space-3) var(--staff-space-4) 0;
+  border: 1px solid var(--staff-color-border-subtle);
+  border-bottom: 0;
+  border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-present-count {
+  display: grid;
+  grid-template-columns: auto 88px;
+  align-items: center;
+  gap: var(--staff-space-3);
+  width: auto;
+  max-width: 300px;
+}
+
+.ts-manual-editor .ts-present-count > span {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ts-manual-editor .ts-present-count input {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  height: 48px;
+  min-height: 48px;
+  padding-inline: var(--staff-space-2);
+  color: var(--staff-color-text);
+  background: var(--staff-color-bg-panel-raised);
+  font-size: var(--staff-font-subsection-title);
+  font-weight: var(--staff-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.ts-manual-editor .ts-present-count .ts-field-help {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
+  gap: var(--staff-space-2);
+  padding: var(--staff-space-3) var(--staff-space-4) var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-multiselect,
+.ts-manual-editor .ts-selection-card.ts-aggregated-select {
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-medium);
+  background: var(--staff-color-bg-control);
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-multiselect[open],
+.ts-manual-editor .ts-aggregated-menu[open] > summary {
+  border-color: var(--staff-color-border-strong);
+}
+
+.ts-manual-editor .ts-multiselect summary {
+  min-height: var(--staff-control-height);
+  padding-inline: var(--staff-space-3);
+}
+
+.ts-manual-editor .ts-multiselect summary span,
+.ts-manual-editor .ts-selection-card__label {
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-secondary);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-multiselect summary b {
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-player-search {
+  border-color: var(--staff-color-border-subtle);
+  background: var(--staff-color-bg-panel-raised);
+}
+
+.ts-manual-editor .ts-player-option {
+  min-height: var(--staff-touch-target-min);
+  border-radius: var(--staff-radius-small);
+}
+
+.ts-manual-editor .ts-player-option:hover {
+  background: var(--staff-color-bg-hover);
+}
+
+.ts-manual-editor .ts-aggregated-menu > summary,
+.ts-manual-editor .ts-aggregated-panel,
+.ts-manual-editor .ts-aggregated-source-row,
+.ts-manual-editor .ts-aggregated-source-row input {
+  border-color: var(--staff-color-border-subtle);
+  background: var(--staff-color-bg-panel-raised);
+  color: var(--staff-color-text);
+}
+
+/* Step 03 — load: context first, then two equal metrics. */
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
+  width: min(100%, var(--training-section-max));
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block {
+  margin: 0 0 var(--staff-space-2);
+  padding: var(--staff-space-3) var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-md-selector {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: var(--staff-space-1);
+  margin-top: var(--staff-space-2);
+}
+
+.ts-manual-editor .ts-md-selector button {
+  min-height: var(--staff-control-height-compact);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-small);
+  background: transparent;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-semibold);
+  transition:
+    background-color var(--staff-motion-fast) var(--staff-ease-standard),
+    border-color var(--staff-motion-fast) var(--staff-ease-standard),
+    color var(--staff-motion-fast) var(--staff-ease-standard);
+}
+
+
+.ts-manual-editor .ts-md-selector button[data-md=""] {
+  color: var(--staff-color-text-faint);
+}
+
+.ts-manual-editor .ts-md-selector button[data-md="PREPARAZIONE"] {
+  font-size: var(--staff-font-label);
+  letter-spacing: .01em;
+}
+.ts-manual-editor .ts-md-selector button:hover,
+.ts-manual-editor .ts-md-selector button:focus-visible {
+  border-color: var(--staff-color-border);
+  background: var(--staff-color-bg-hover);
+  color: var(--staff-color-text);
+}
+
+.ts-manual-editor .ts-md-selector button.is-active {
+  border-color: var(--staff-color-primary);
+  background: var(--staff-color-primary);
+  color: var(--staff-color-primary-contrast);
+}
+
+.ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
+  grid-template-columns: minmax(260px, 1.25fr) repeat(2, minmax(220px, .85fr));
+  gap: var(--staff-space-3);
+  padding: var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-load-metric {
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-rating {
+  grid-template-columns: repeat(5, minmax(36px, 1fr));
+  gap: var(--staff-space-1);
+  width: 100%;
+  margin-top: var(--staff-space-2);
+}
+
+.ts-manual-editor .ts-rating button {
+  width: auto;
+  height: var(--staff-control-height-compact);
+  min-height: var(--staff-control-height-compact);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-small);
+  background: transparent;
+  color: var(--staff-color-text-secondary);
+}
+
+.ts-manual-editor .ts-rating button:hover,
+.ts-manual-editor .ts-rating button:focus-visible {
+  border-color: var(--staff-color-border);
+  background: var(--staff-color-bg-hover);
+  color: var(--staff-color-text);
+}
+
+.ts-manual-editor .ts-rating button.is-active {
+  border-color: var(--staff-color-primary);
+  background: var(--staff-color-primary);
+  color: var(--staff-color-primary-contrast);
+}
+
+/* Step 04 — phases: cards are justified here because each phase is an editable object. */
+.ts-manual-editor .ts-phases-editor {
+  width: min(100%, var(--training-section-max));
+  gap: var(--staff-space-3);
+}
+
+.ts-manual-editor .ts-phase-editor {
+  padding: var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-phase-editor-head {
+  margin-bottom: var(--staff-space-3);
+  padding-bottom: var(--staff-space-2);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
+}
+
+.ts-manual-editor .ts-phase-editor-head > strong {
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .08em;
+}
+
+.ts-manual-editor .ts-phase-editor-actions {
+  gap: var(--staff-space-2);
+}
+
+.ts-manual-editor .ts-split-phase-button,
+.ts-manual-editor .ts-remove-phase-button {
+  min-height: var(--staff-control-height-compact);
+}
+
+.ts-manual-editor .ts-remove-phase-button {
+  width: var(--staff-control-height-compact);
+  min-width: var(--staff-control-height-compact);
+}
+
+.ts-manual-editor .ts-phase-layout {
+  gap: var(--staff-space-3);
+}
+
+.ts-manual-editor .ts-phase-meta-fields {
+  gap: var(--staff-space-2);
+}
+
+.ts-manual-editor .ts-phase-advanced {
+  margin-top: var(--staff-space-3);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-medium);
+  background: transparent;
+}
+
+.ts-manual-editor .ts-phase-advanced summary {
+  min-height: var(--staff-touch-target-min);
+  display: flex;
+  align-items: center;
+  padding: var(--staff-space-2) var(--staff-space-3);
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-add-phase {
+  min-height: var(--staff-control-height);
+  margin-top: var(--staff-space-3);
+}
+
+/* Step 05 — principles: selectable concepts first, text only after the decision. */
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  width: min(100%, var(--training-section-max));
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars {
+  gap: var(--staff-space-2);
+  padding: var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-pillar span {
+  min-height: var(--staff-control-height);
+  padding: var(--staff-space-2) var(--staff-space-3);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-medium);
+  background: transparent;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-secondary);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-pillar input:checked + span,
+.ts-manual-editor .ts-pillar--create input:checked + span,
+.ts-manual-editor .ts-pillar--keep input:checked + span,
+.ts-manual-editor .ts-pillar--exploit input:checked + span,
+.ts-manual-editor .ts-pillar--defend input:checked + span {
+  border-color: var(--staff-color-primary);
+  background: color-mix(in srgb, var(--staff-color-primary) 12%, transparent);
+  color: var(--staff-color-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--staff-color-primary) 30%, transparent);
+}
+
+.ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: var(--staff-space-3);
+  margin-top: 0;
+  padding: 0 var(--staff-space-4) var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-ai-button {
+  min-height: var(--staff-control-height);
+}
+
+.ts-manual-editor .ts-ai-note {
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-caption);
+  line-height: var(--staff-line-height-secondary);
+}
+
+/* Step 06 — preview: document is the focal object, chrome stays quiet. */
+.ts-manual-editor .ts-live-column {
+  width: 100%;
+}
+
+.ts-manual-editor .ts-summary-head {
+  width: min(100%, var(--staff-content-readable));
+  margin-inline: auto;
+  border-color: var(--staff-color-border-subtle);
+}
+
+.ts-manual-editor .ts-preview-stage {
+  width: min(100%, var(--staff-content-readable));
+}
+
+.ts-manual-editor .ts-preview-toolbar {
+  padding: var(--staff-space-2) var(--staff-space-3);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-medium);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-preview-toolbar span {
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-label);
+}
+
+.ts-manual-editor .ts-preview-toolbar strong {
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-card-title);
+}
+
+.ts-manual-editor .ts-preview-toolbar button {
+  min-height: var(--staff-control-height);
+  border-radius: var(--staff-radius-medium);
+  background: var(--staff-color-primary);
+  color: var(--staff-color-primary-contrast);
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-paper-frame {
+  padding: var(--staff-space-4);
+  border-color: var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel-raised);
+}
+
+.ts-manual-editor .ts-publish-note {
+  width: min(100%, var(--staff-content-readable));
+  margin: var(--staff-space-2) auto 0;
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-caption);
+  text-align: center;
+}
+
+/* Workflow footer: persistent enough to reduce navigation effort, never floating over content. */
+.ts-manual-editor .ts-step-footer {
+  position: sticky;
+  bottom: var(--staff-space-2);
+  z-index: 12;
+  grid-template-columns: minmax(144px, 200px) 1fr minmax(144px, 200px);
+  gap: var(--staff-space-2);
+  margin-top: var(--staff-space-4);
+  padding: var(--staff-space-2);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: color-mix(in srgb, var(--staff-color-bg-app) 92%, transparent);
+  box-shadow: var(--staff-shadow-panel);
+}
+
+.ts-manual-editor .ts-step-footer > span {
+  color: var(--staff-color-text-faint);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-semibold);
+}
+
+.ts-manual-editor .ts-step-footer button {
+  min-height: var(--staff-control-height);
+}
+
+@media (max-width: 980px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-session-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-manual-editor .ts-roster-grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ts-manual-editor .ts-load-focus {
+    grid-column: 1 / -1;
+  }
+
+  .ts-manual-editor .ts-phase-layout {
+    grid-template-columns: 1fr;
+  }
+}

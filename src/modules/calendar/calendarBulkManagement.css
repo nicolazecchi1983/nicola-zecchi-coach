@@ -1,0 +1,30 @@
+/* STAFF Calendar Bulk Management canonical owner — 0.27.42 / Cleanup Pass 29 */
+/* R19.2 · Calendar actions + safe bulk management */
+
+.calendar-bulk-modal{width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto}
+.calendar-bulk-form{display:grid;gap:16px;padding:20px 24px 24px}
+.calendar-bulk-form>label,.calendar-bulk-fields label,.calendar-bulk-form [data-calendar-bulk-type] label,.calendar-bulk-form [data-calendar-bulk-competition] label{display:grid;gap:7px;color:#e8f1f6;font-size:.78rem;font-weight:700}
+.calendar-bulk-form select,.calendar-bulk-form input[type="date"]{width:100%;min-height:44px;padding:9px 11px;border:1px solid rgba(86,139,177,.35);border-radius:10px;color:#edf5fa;background:#081c2b}
+.calendar-bulk-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calendar-bulk-warning{padding:14px 16px;border:1px solid rgba(240,189,99,.25);border-radius:13px;background:rgba(240,189,99,.06)}
+.calendar-bulk-warning strong{color:#f0bd63}.calendar-bulk-warning p{margin:5px 0 0;color:#a9bbca;font-size:.78rem;line-height:1.5}
+.calendar-bulk-preview{display:grid;gap:12px;padding:16px;border:1px solid var(--soft);border-radius:14px;background:rgba(255,255,255,.025)}
+.calendar-bulk-preview-main{display:flex;align-items:baseline;gap:9px}.calendar-bulk-preview-main strong{font-size:1.8rem;color:#fff}.calendar-bulk-preview-main span{color:#9eb0bf}
+.calendar-bulk-preview-types,.calendar-bulk-preview-safety{display:flex;flex-wrap:wrap;gap:8px}
+.calendar-bulk-preview-types span,.calendar-bulk-preview-safety span{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.045);color:#b7c6d1;font-size:.72rem}
+.calendar-bulk-preview-safety .is-deletable{color:#63e0a0;background:rgba(78,230,155,.08)}
+.calendar-bulk-preview-safety .is-protected{color:#f0bd63;background:rgba(240,189,99,.08)}
+.calendar-bulk-preview details{color:#a9bbca;font-size:.75rem}.calendar-bulk-preview ul{margin:8px 0 0;padding-left:20px;line-height:1.6}
+.calendar-bulk-confirm{padding:12px 14px;border:1px solid rgba(255,255,255,.08);border-radius:11px;background:rgba(0,0,0,.12)}
+.calendar-bulk-confirm label{display:flex;align-items:flex-start;gap:9px;color:#c6d3dc;font-size:.76rem;line-height:1.45}
+.calendar-bulk-confirm input{margin-top:2px}
+.calendar-bulk-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px}.calendar-bulk-actions>span{margin-right:auto;color:#ff9a9a;font-size:.75rem}
+@media (max-width: 760px) {
+  .calendar-bulk-form { padding: 16px 14px; }
+  .calendar-bulk-fields { grid-template-columns: 1fr; }
+  .calendar-bulk-actions { flex-wrap: wrap; }
+  .calendar-bulk-actions > span { width: 100%; margin: 0; }
+}
+
+
+

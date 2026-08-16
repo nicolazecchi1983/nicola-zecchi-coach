@@ -1,0 +1,205 @@
+/* STAFF 0.27.24 — Season Calendar Import canonical owner
+   Consolidates R19.1, R21 and 0.19.5–0.19.8 from legacy style.css.
+   Presentation/layout only: no import-domain behavior lives here. */
+
+/* R19.1 · Season Calendar Import UI consistency */
+.season-import-modal{width:min(1120px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto}
+.season-import-modal .new-event-modal__head{position:sticky;top:0;z-index:2;background:rgba(8,24,38,.98)}
+.season-import-intro{margin:20px 24px 16px;padding:15px 17px;border:1px solid var(--soft);border-radius:14px;background:rgba(255,255,255,.035)}
+.season-import-intro strong{color:#edf5fa}.season-import-intro p{margin:4px 0 0;color:var(--muted)}
+.season-import-source{display:grid;gap:14px;padding:0 24px 24px}
+.season-import-drop{position:relative;display:grid;place-items:center;gap:7px;min-height:180px;padding:34px 22px;border:1px dashed rgba(54,190,244,.55);border-radius:16px;background:rgba(25,155,225,.055);text-align:center;cursor:pointer}
+.season-import-drop:hover{background:rgba(25,155,225,.09);border-color:var(--cyan)}
+.season-import-drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.season-import-drop strong{color:#f3f8fb;font-size:1.05rem}.season-import-drop span{max-width:680px;color:#a9bbca;font-size:.8rem;line-height:1.5}
+.season-import-drop small{color:#6f899d;font-size:.7rem}
+.season-import-source details{color:#a9bbca}.season-import-source code{display:block;margin-top:10px;padding:12px;border:1px solid var(--soft);border-radius:10px;color:#dbe8f0;background:rgba(0,0,0,.16);white-space:normal}
+.season-import-table-wrap{margin:0 24px;overflow:auto;border:1px solid var(--soft);border-radius:14px}.season-import-table{width:100%;border-collapse:collapse}
+.season-import-table th,.season-import-table td{padding:9px;border-bottom:1px solid var(--soft);text-align:left}.season-import-table th{color:#9db1c1;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.season-import-table input,.season-import-table select{min-width:90px;width:100%;border:1px solid rgba(86,139,177,.35);border-radius:8px;padding:9px;color:#edf5fa;background:#081c2b}
+.season-import-table td:nth-child(4) input{min-width:180px}
+.season-import-status{font-size:11px;font-weight:800;white-space:nowrap}.season-import-status.is-new{color:#4ee69b}.season-import-status.is-duplicate{color:#f0bd63}
+.season-import-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:16px 24px 24px}.season-import-actions>span{margin-right:auto;color:#ff8b8b;font-size:12px}
+@media(max-width:720px){.season-import-modal{width:calc(100vw - 16px)}.season-import-intro{margin:14px 14px 12px}.season-import-source{padding:0 14px 16px}.season-import-table-wrap{margin:0 14px}.season-import-actions{padding:14px;flex-wrap:wrap}}
+
+
+/* R21 — Official Season Calendar source */
+.season-import-official-source{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;
+  margin-bottom:14px;padding:18px;border:1px solid #2d5265;border-radius:16px;background:#0b1e29
+}
+.season-import-official-source div{display:grid;gap:5px;min-width:0}
+.season-import-official-source span{color:#48c7f4;font-size:.68rem;font-weight:900;letter-spacing:.1em}
+.season-import-official-source strong{color:#f2f7fa;font-size:1rem}
+.season-import-official-source p{margin:0;color:#91a8b7;line-height:1.4}
+.season-import-official-source .primary-action{min-height:46px;white-space:nowrap}
+.season-import-preview-warning{
+  display:grid;gap:4px;margin-bottom:12px;padding:11px 13px;border:1px solid #3a5662;
+  border-radius:12px;background:#0d1d25;color:#9db0ba
+}
+.season-import-preview-warning strong{color:#eef5f8}
+@media(max-width:760px){
+  .season-import-official-source{grid-template-columns:1fr}
+  .season-import-official-source .primary-action{width:100%;white-space:normal}
+}
+
+
+/* 0.19.5 — Season import preview column balance */
+.season-import-table{
+  table-layout:fixed;
+  min-width:1160px;
+}
+.season-import-table .season-import-col-day{width:64px}
+.season-import-table .season-import-col-date{width:170px}
+.season-import-table .season-import-col-time{width:112px}
+.season-import-table .season-import-col-opponent{width:auto}
+.season-import-table .season-import-col-home-away{width:164px}
+.season-import-table .season-import-col-competition{width:190px}
+.season-import-table .season-import-col-status{width:86px}
+
+.season-import-table th:first-child,
+.season-import-table td:first-child{
+  padding-left:12px;
+  padding-right:6px;
+}
+.season-import-table td:first-child input{
+  min-width:0;
+  width:100%;
+  padding-left:10px;
+  padding-right:8px;
+  text-align:center;
+}
+.season-import-table td:nth-child(2) input{min-width:0}
+.season-import-table td:nth-child(3) input{min-width:0}
+.season-import-table td:nth-child(4) input{
+  min-width:0;
+  width:100%;
+}
+.season-import-table td:nth-child(5) select{
+  min-width:142px;
+  padding-right:34px;
+  white-space:nowrap;
+}
+.season-import-table td:nth-child(6) select{
+  min-width:168px;
+  padding-right:34px;
+}
+.season-import-table td:nth-child(7){white-space:nowrap}
+
+@media(max-width:720px){
+  .season-import-table{
+    min-width:1040px;
+  }
+  .season-import-table .season-import-col-day{width:58px}
+  .season-import-table .season-import-col-date{width:158px}
+  .season-import-table .season-import-col-time{width:104px}
+  .season-import-table .season-import-col-home-away{width:154px}
+  .season-import-table .season-import-col-competition{width:180px}
+  .season-import-table .season-import-col-status{width:82px}
+}
+
+
+/* R0.19.7 — Season import preview: desktop must fit without horizontal scrollbar */
+@media (min-width: 761px){
+  .season-import-preview-table-wrap{
+    overflow-x: hidden;
+  }
+
+  .season-import-table{
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .season-import-table .season-import-col-round{width:54px}
+  .season-import-table .season-import-col-date{width:178px}
+  .season-import-table .season-import-col-time{width:126px}
+  .season-import-table .season-import-col-homeaway{width:170px}
+  .season-import-table .season-import-col-competition{width:198px}
+  .season-import-table .season-import-col-status{width:92px}
+
+  .season-import-table td:nth-child(4){
+    width:auto;
+  }
+
+  .season-import-table td:nth-child(5) select,
+  .season-import-table td:nth-child(6) select{
+    width:100%;
+    min-width:0;
+  }
+}
+
+
+/* 0.19.8 — Season import preview hierarchy polish */
+.season-import-intro-compact{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  margin:0 24px 10px;
+  padding:10px 0 12px;
+  border:0;
+  border-bottom:1px solid #1d3542;
+  border-radius:0;
+  background:transparent;
+}
+.season-import-intro-compact strong{
+  flex:0 0 auto;
+  margin:0;
+  color:#f2f7fa;
+  font-size:.98rem;
+  line-height:1.25;
+}
+.season-import-intro-compact p{
+  margin:0;
+  min-width:0;
+  color:#8fa5b3;
+  font-size:.82rem;
+  line-height:1.35;
+}
+
+.season-import-preview-warning-compact{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin:0 24px 10px;
+  padding:10px 12px;
+  min-height:0;
+  border:1px solid #294653;
+  border-radius:10px;
+  background:#0a171e;
+}
+.season-import-preview-warning-compact strong{
+  flex:0 0 auto;
+  margin:0;
+  color:#eaf1f4;
+  font-size:.78rem;
+  line-height:1.35;
+  white-space:nowrap;
+}
+.season-import-preview-warning-compact span{
+  min-width:0;
+  color:#8ba1ad;
+  font-size:.78rem;
+  line-height:1.35;
+}
+
+.season-import-preview-warning-compact + .season-import-table-wrap{
+  margin-top:0;
+}
+
+@media(max-width:760px){
+  .season-import-intro-compact{
+    display:grid;
+    gap:3px;
+    margin:0 14px 10px;
+    padding:8px 0 10px;
+  }
+  .season-import-preview-warning-compact{
+    display:grid;
+    gap:3px;
+    margin:0 14px 10px;
+  }
+  .season-import-preview-warning-compact strong{
+    white-space:normal;
+  }
+}

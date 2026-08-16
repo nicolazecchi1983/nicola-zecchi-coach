@@ -1,20 +1,21 @@
 import fs from 'node:fs'
 
-const tokens = fs.readFileSync('src/design-system/responsive.css', 'utf8')
+const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
+const foundation = fs.readFileSync('src/design-system/tokens.css', 'utf8')
 const main = fs.readFileSync('src/main.js', 'utf8')
 const contract = fs.readFileSync('docs/STAFF_MOBILE_RESPONSIVE_CONTRACT.md', 'utf8')
 
 const checks = [
   ['Responsive foundation is loaded', main.includes("./design-system/responsive.css")],
-  ['Canonical tablet breakpoint exists', tokens.includes('@media (max-width: 980px)')],
-  ['Canonical mobile breakpoint exists', tokens.includes('@media (max-width: 760px)')],
-  ['Canonical compact-mobile breakpoint exists', tokens.includes('@media (max-width: 390px)')],
-  ['Canonical touch target is 48px', tokens.includes('--staff-touch-target: 48px')],
-  ['Minimum touch target is documented', tokens.includes('--staff-touch-target-min: 44px')],
-  ['Safe-area variables are centralized', tokens.includes('--staff-safe-bottom: env(safe-area-inset-bottom, 0px)')],
-  ['Dynamic viewport fallback exists', tokens.includes('--staff-viewport-height: 100vh') && tokens.includes('100dvh')],
-  ['Shared responsive actions primitive exists', tokens.includes('.staff-responsive-actions')],
-  ['Shared responsive page primitive exists', tokens.includes('.staff-responsive-page')],
+  ['Canonical tablet breakpoint exists', responsive.includes('@media (max-width: 980px)')],
+  ['Canonical mobile breakpoint exists', responsive.includes('@media (max-width: 760px)')],
+  ['Canonical compact-mobile breakpoint exists', responsive.includes('@media (max-width: 390px)')],
+  ['Canonical touch target is 48px', foundation.includes('--staff-touch-target: 48px')],
+  ['Minimum touch target is documented', foundation.includes('--staff-touch-target-min: 44px')],
+  ['Safe-area variables are centralized', responsive.includes('--staff-safe-bottom: env(safe-area-inset-bottom, 0px)')],
+  ['Dynamic viewport fallback exists', responsive.includes('--staff-viewport-height: 100vh') && responsive.includes('100dvh')],
+  ['Shared responsive actions primitive exists', responsive.includes('.staff-responsive-actions')],
+  ['Shared responsive page primitive exists', responsive.includes('.staff-responsive-page')],
   ['Contract forbids horizontal-scroll-as-default', contract.includes('Horizontal scrolling is an explicit interaction choice')],
   ['Contract protects domain and persistence', contract.includes('must not alter domain logic')],
   ['PWA is gated after mobile readiness', contract.includes('PWA work starts only after')],

@@ -3,6 +3,7 @@ import { classifySeasonImportRows, validateSeasonImportRows } from '../src/modul
 import { parseSeasonCalendarCsv } from '../src/modules/calendar/ui/seasonCalendarImportView.js'
 
 const controller=fs.readFileSync('src/app/appController.js','utf8')
+const calendarRuntime=fs.readFileSync('src/modules/calendar/events/calendarRuntimeActions.js','utf8')
 const calendar=fs.readFileSync('src/modules/calendar/ui/calendarView.js','utf8')
 const service=fs.readFileSync('src/modules/calendar/seasonCalendarImportService.js','utf8')
 
@@ -18,9 +19,10 @@ const checks=[
  ['Seconda gara resta nuova',classified[1].importStatus==='new'],
  ['Service crea solo righe new',service.includes("filter((item) => item.importStatus === 'new')")],
  ['Service salta duplicati',service.includes("importStatus === 'duplicate'")],
- ['Controller usa createMatchCalendarService canonico',controller.includes('createSeasonCalendarImportService')&&controller.includes('matchCalendarService.createMatch(row)')],
- ['Preview modificabile prima import',controller.includes('editedRows')],
- ['Import ricarica Calendario',controller.includes('await importService.commit')],
+ ['Controller delega il runtime Calendario canonico',controller.includes('createCalendarRuntimeActions')],
+ ['Runtime Calendario usa createSeasonCalendarImportService canonico',calendarRuntime.includes('createSeasonCalendarImportService')&&calendarRuntime.includes('matchCalendarService.createMatch(row)')],
+ ['Preview modificabile prima import',calendarRuntime.includes('editedRows')],
+ ['Import ricarica Calendario',calendarRuntime.includes('await importService.commit')],
  ['Nessuna seconda Match Library creata',!service.includes('match_library')],
  ['Import UI usa componenti modal nativi',fs.readFileSync('src/modules/calendar/ui/seasonCalendarImportView.js','utf8').includes('new-event-modal__head')],
  ['File picker dichiara PDF e immagini',fs.readFileSync('src/modules/calendar/ui/seasonCalendarImportView.js','utf8').includes('application/pdf')],
