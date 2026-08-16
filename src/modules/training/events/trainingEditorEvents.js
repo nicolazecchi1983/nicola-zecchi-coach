@@ -150,7 +150,7 @@ export function wireTrainingEditorEvents({
             </div>
             <input type="hidden" name="phase_split_${index}" value="${data.split ? 'true' : 'false'}">
             <details class="ts-phase-advanced" ${(data.variants || data.coaching) ? 'open' : ''}>
-              <summary>＋ Aggiungi varianti o coaching point</summary>
+              <summary>Aggiungi varianti o coaching point</summary>
               <div class="ts-phase-compact two">
                 <label class="ts-field"><span>Varianti</span><textarea name="phase_variants_${index}" rows="2">${escapeHtml(data.variants || '')}</textarea></label>
                 <label class="ts-field"><span>Coaching point</span><textarea name="phase_coaching_${index}" rows="2">${escapeHtml(data.coaching || '')}</textarea></label>

@@ -2545,3 +2545,27 @@
     grid-template-columns: 76px minmax(0, 1fr);
   }
 }
+/* STAFF 0.29.42 — Training details open/closed indicator */
+.ts-phase-advanced > summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 38px;
+}
+
+.ts-phase-advanced > summary::after {
+  content: "\25BE";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  transform-origin: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: currentColor;
+  transition: transform 160ms ease;
+}
+
+.ts-phase-advanced[open] > summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}

@@ -124,13 +124,14 @@ export function createCalendarEventViewBuilders(deps) {
               <div class="drawer-actions">
                 ${can(capabilities.CALENDAR_UPDATE) ? `<button
                   type="button"
+                  class="portal-action-button portal-action-button--secondary"
                   data-edit-event="${event.id}"
                 >
                   Modifica evento
                 </button>` : ''}
 
                 ${can(capabilities.CALENDAR_DELETE) ? `<button
-                  class="drawer-delete-button"
+                  class="danger-button drawer-delete-button"
                   type="button"
                   data-delete-event="${event.id}"
                 >
@@ -205,7 +206,7 @@ export function createCalendarEventViewBuilders(deps) {
 
                 <label>
                   Ora
-                  <input name="time" type="time" value="17:30" required>
+                  <input name="time" type="text" value="17:30" inputmode="numeric" maxlength="5" pattern="(?:[01]\d|2[0-3]):[0-5]\d" placeholder="HH:MM" autocomplete="off" required>
                 </label>
               </div>
 
@@ -357,7 +358,7 @@ export function createCalendarEventViewBuilders(deps) {
 
               <label>
                 Ora
-                <input name="time" type="time" value="${time}" required>
+                <input name="time" type="text" value="${time}" inputmode="numeric" maxlength="5" pattern="(?:[01]\d|2[0-3]):[0-5]\d" placeholder="HH:MM" autocomplete="off" required>
               </label>
             </div>
 

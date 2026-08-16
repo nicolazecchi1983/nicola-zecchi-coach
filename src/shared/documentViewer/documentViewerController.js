@@ -21,6 +21,21 @@ export function createDocumentViewerController(root) {
   function open(documentData) {
     if (!root || !documentData?.url) return false
 
+    const isPdf = documentData?.mimeType === 'application/pdf'
+      || /\.pdf(?:$|[?#])/i.test(documentData.url)
+
+    const isMobilePdf = isPdf
+      && globalThis.matchMedia?.('(max-width: 720px)').matches === true
+
+    if (isMobilePdf) {
+      const link = document.createElement('a')
+      link.href = documentData.downloadUrl || documentData.url
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      link.click()
+      return true
+    }
+
     close({ restoreFocus: false })
     previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     root.innerHTML = documentViewerHtml(documentData)
