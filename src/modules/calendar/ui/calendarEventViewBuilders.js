@@ -206,7 +206,7 @@ export function createCalendarEventViewBuilders(deps) {
 
                 <label>
                   Ora
-                  <input name="time" type="text" value="17:30" inputmode="numeric" maxlength="5" pattern="(?:[01]\d|2[0-3]):[0-5]\d" placeholder="HH:MM" autocomplete="off" required>
+                  <input name="time" type="time" value="17:30" required>
                 </label>
               </div>
 
@@ -358,7 +358,7 @@ export function createCalendarEventViewBuilders(deps) {
 
               <label>
                 Ora
-                <input name="time" type="text" value="${time}" inputmode="numeric" maxlength="5" pattern="(?:[01]\d|2[0-3]):[0-5]\d" placeholder="HH:MM" autocomplete="off" required>
+                <input name="time" type="time" value="${time}" required>
               </label>
             </div>
 
