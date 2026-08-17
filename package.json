@@ -231,7 +231,8 @@
     "check:match-token-canonical-convergence": "node scripts/check-match-token-canonical-convergence.mjs",
     "check:match-pitch-premium-real": "node scripts/check-match-pitch-premium-real.mjs",
     "check:ui-regression-0-29-35": "node scripts/check-ui-regression-0-29-35.mjs",
-    "check:navigation-simplification-0-29-37": "node scripts/check-navigation-simplification-0-29-37.mjs"
+    "check:navigation-simplification-0-29-37": "node scripts/check-navigation-simplification-0-29-37.mjs",
+    "check:training-sheet-css-ownership": "node scripts/check-training-sheet-css-ownership.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -463,6 +464,7 @@
     "check:match-pitch-premium-real",
     "check:match-token-canonical-convergence",
     "check:ui-regression-0-29-35",
-    "check:navigation-simplification-0-29-37"
+    "check:navigation-simplification-0-29-37",
+    "check:training-sheet-css-ownership"
   ]
 }
