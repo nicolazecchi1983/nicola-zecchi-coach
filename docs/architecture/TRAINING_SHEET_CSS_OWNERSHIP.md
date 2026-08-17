@@ -54,3 +54,18 @@ Flusso:
 ## R1.1B
 
 Prossimo step previsto: mappare e migrare in sicurezza le 15 righe `ts-paper` oggi presenti in `matchSheet.css`, iniziando dalle regole che non alterano il layout.
+
+
+## R1.1B — Match ownership migration
+
+R1.1B removes Training Sheet paper/capture ownership from `src/modules/match/ui/matchSheet.css`.
+
+To preserve cascade position without touching the locally modified `training-editor.css`, the migrated rules live temporarily in:
+
+`src/design-system/training-sheet-match-compat.css`
+
+The bridge is loaded immediately after `matchSheet.css` and before `training-editor.css`.
+
+This is a migration bridge, not a new permanent owner. Its ts-paper surface is frozen at the migrated baseline and Match must remain at zero.
+
+Next consolidation step: move the bridge into the final canonical Training Sheet owner only after the local `training-editor.css` working-tree change has been resolved and visual/PDF equivalence can be tested.

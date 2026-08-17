@@ -13,7 +13,7 @@ const canonicalOwners = new Set([
 const transitionalCaps = new Map([
   ['src/design-system/responsive.css', 1],
   ['src/modules/training/trainingPolish.css', 1],
-  ['src/modules/match/ui/matchSheet.css', 15],
+  ['src/design-system/training-sheet-match-compat.css', 18],
 ])
 
 function fail(message) {
@@ -41,6 +41,12 @@ function matchingLines(text) {
     .split(/\r?\n/)
     .map((line, index) => ({ line, lineNumber: index + 1 }))
     .filter(({ line }) => /\.ts-paper(?:[-_A-Za-z0-9]|[\s.:>#,[{])/.test(line))
+}
+
+const matchLegacyPath = resolve(projectRoot, 'src/modules/match/ui/matchSheet.css')
+const matchLegacyText = readFileSync(matchLegacyPath, 'utf8')
+if (/\.ts-paper(?:[-_A-Za-z0-9]|[\s.:>#,[{])/.test(matchLegacyText) || matchLegacyText.includes('.ts-capture-root')) {
+  fail('Match CSS must not own Training Sheet paper/capture selectors after R1.1B')
 }
 
 const cssFiles = walk(srcRoot)
