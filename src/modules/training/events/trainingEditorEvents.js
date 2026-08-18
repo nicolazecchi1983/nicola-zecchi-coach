@@ -511,15 +511,23 @@ export function wireTrainingEditorEvents({
       }
       const confirmPdfPreview = (blob, fileName) => new Promise((resolve) => {
         const objectUrl = URL.createObjectURL(blob)
+        const useExternalMobilePreview = window.matchMedia?.('(max-width: 760px)').matches === true
         const overlay = document.createElement('div')
         overlay.className = 'ts-pdf-confirm-overlay'
+        const previewContent = useExternalMobilePreview
+          ? `<div class="ts-pdf-mobile-preview">
+              <strong>PDF pronto per l’anteprima</strong>
+              <p>Su telefono il visualizzatore PDF incorporato può non essere disponibile. Apri il PDF nel browser, poi torna qui per confermare.</p>
+              <a class="primary ts-pdf-mobile-open" href="${objectUrl}" target="_blank" rel="noopener" data-pdf-open-preview>Apri anteprima PDF</a>
+            </div>`
+          : `<iframe title="Anteprima PDF" src="${objectUrl}#toolbar=1&navpanes=0&view=FitH"></iframe>`
         overlay.innerHTML = `
           <section class="ts-pdf-confirm-dialog" role="dialog" aria-modal="true" aria-label="Anteprima PDF">
             <header>
               <div><span>ANTEPRIMA DI STAMPA</span><strong>${escapeHtml(fileName)}</strong></div>
               <button type="button" data-pdf-cancel aria-label="Chiudi">×</button>
             </header>
-            <iframe title="Anteprima PDF" src="${objectUrl}#toolbar=1&navpanes=0&view=FitH"></iframe>
+            ${previewContent}
             <footer>
               <button type="button" class="secondary" data-pdf-cancel>Annulla</button>
               <button type="button" class="primary" data-pdf-confirm>Conferma e salva PDF</button>
