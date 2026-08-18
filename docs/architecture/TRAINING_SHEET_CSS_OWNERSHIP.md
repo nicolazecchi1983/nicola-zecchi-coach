@@ -87,3 +87,14 @@ After R1.1E:
 - the Match compatibility bridge must not exist;
 - `training-editor.css` is the canonical owner;
 - `responsive.css` and `trainingPolish.css` remain frozen transitional debt until their dedicated migration.
+
+## R1.1F1 — Training Polish migration
+
+`src/modules/training/trainingPolish.css` no longer owns `.ts-paper*` selectors.
+
+Its `.ts-manual-editor .ts-paper-frame` presentation block is moved to the **end** of the canonical owner `src/design-system/training-editor.css`.
+
+R1.1F verified there are no other Training Sheet owners between `training-editor.css` and `trainingPolish.css`. Appending the block to the canonical owner preserves its precedence over the pre-existing Training Sheet rules, while `responsive.css` remains later in the cascade and keeps its mobile override.
+
+Residual transitional debt after R1.1F1:
+- `src/design-system/responsive.css` — 1 selector family.

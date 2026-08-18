@@ -461,12 +461,6 @@
   box-shadow: none;
 }
 
-.ts-manual-editor .ts-paper-frame {
-  padding: var(--staff-space-4);
-  border-color: var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
-  background: var(--staff-color-bg-panel-raised);
-}
 
 .ts-manual-editor .ts-publish-note {
   width: min(100%, var(--staff-content-readable));
