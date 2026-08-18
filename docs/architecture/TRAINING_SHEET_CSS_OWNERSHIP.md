@@ -69,3 +69,21 @@ The bridge is loaded immediately after `matchSheet.css` and before `training-edi
 This is a migration bridge, not a new permanent owner. Its ts-paper surface is frozen at the migrated baseline and Match must remain at zero.
 
 Next consolidation step: move the bridge into the final canonical Training Sheet owner only after the local `training-editor.css` working-tree change has been resolved and visual/PDF equivalence can be tested.
+
+## R1.1E — Canonical consolidation
+
+R1.1D verified that the temporary bridge was loaded before `training-editor.css` and that the stylesheets located between them did not own `.ts-paper*` or `.ts-capture-root` selectors.
+
+R1.1E therefore moves the bridge rules into the **beginning** of the canonical owner:
+
+`src/design-system/training-editor.css`
+
+This preserves their order relative to the existing Training Sheet rules while eliminating the temporary file:
+
+`src/design-system/training-sheet-match-compat.css`
+
+After R1.1E:
+- `matchSheet.css` remains at zero Training Sheet ownership;
+- the Match compatibility bridge must not exist;
+- `training-editor.css` is the canonical owner;
+- `responsive.css` and `trainingPolish.css` remain frozen transitional debt until their dedicated migration.

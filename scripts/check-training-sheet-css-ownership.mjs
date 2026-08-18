@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { resolve, relative, sep } from 'node:path'
 
 const projectRoot = resolve(import.meta.dirname, '..')
@@ -13,7 +13,6 @@ const canonicalOwners = new Set([
 const transitionalCaps = new Map([
   ['src/design-system/responsive.css', 1],
   ['src/modules/training/trainingPolish.css', 1],
-  ['src/design-system/training-sheet-match-compat.css', 18],
 ])
 
 function fail(message) {
@@ -41,6 +40,11 @@ function matchingLines(text) {
     .split(/\r?\n/)
     .map((line, index) => ({ line, lineNumber: index + 1 }))
     .filter(({ line }) => /\.ts-paper(?:[-_A-Za-z0-9]|[\s.:>#,[{])/.test(line))
+}
+
+const retiredBridgePath = resolve(projectRoot, 'src/design-system/training-sheet-match-compat.css')
+if (existsSync(retiredBridgePath)) {
+  fail('retired Training Sheet Match compatibility bridge must not be reintroduced after R1.1E')
 }
 
 const matchLegacyPath = resolve(projectRoot, 'src/modules/match/ui/matchSheet.css')
@@ -98,6 +102,6 @@ console.log('✓ canonical Training Sheet CSS owner exists')
 console.log('✓ no new external ts-paper owner introduced')
 console.log('✓ responsive transitional ownership remains frozen')
 console.log('✓ Training polish transitional ownership remains frozen')
-console.log('✓ Match legacy ts-paper ownership remains frozen at audited baseline')
+console.log('✓ Match legacy ownership is zero and retired bridge is absent')
 console.log('')
 console.log('Training Sheet CSS Ownership R1.1A: 5/5')
