@@ -98,3 +98,15 @@ R1.1F verified there are no other Training Sheet owners between `training-editor
 
 Residual transitional debt after R1.1F1:
 - `src/design-system/responsive.css` — 1 selector family.
+
+## R1.1F2 — Responsive ownership migration
+
+`src/design-system/responsive.css` no longer owns `.ts-paper*` or `.ts-capture-root` selectors.
+
+The final mobile rule `.ts-manual-editor .ts-paper-frame` is moved into the canonical owner `src/design-system/training-editor.css` while preserving its original `@media (max-width: 760px)` scope.
+
+After R1.1F2:
+- `training-editor.css` is the only Training Sheet CSS owner;
+- `responsive.css` has zero Training Sheet ownership;
+- `trainingPolish.css` has zero Training Sheet ownership;
+- the retired Match compatibility bridge remains absent.

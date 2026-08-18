@@ -1597,9 +1597,6 @@
     min-height: var(--staff-touch-target);
   }
 
-  .ts-manual-editor .ts-paper-frame {
-    padding: var(--staff-space-2);
-  }
 
   .ts-manual-editor .ts-step-footer {
     bottom: var(--staff-space-1);

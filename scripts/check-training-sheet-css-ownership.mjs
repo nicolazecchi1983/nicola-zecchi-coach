@@ -11,7 +11,6 @@ const canonicalOwners = new Set([
 // Transitional owners are frozen at the current audited baseline.
 // R1.1A does NOT move visual rules. It only prevents ownership from spreading.
 const transitionalCaps = new Map([
-  ['src/design-system/responsive.css', 1],
 ])
 
 function fail(message) {
@@ -99,7 +98,6 @@ for (const [path, cap] of transitionalCaps) {
 
 console.log('✓ canonical Training Sheet CSS owner exists')
 console.log('✓ no new external ts-paper owner introduced')
-console.log('✓ responsive transitional ownership remains frozen')
 console.log('✓ Match legacy ownership is zero and retired bridge is absent')
 console.log('')
-console.log('Training Sheet CSS Ownership R1.1F1: 4/4')
+console.log('Training Sheet CSS Ownership R1.1F2: 3/3')
