@@ -9,7 +9,7 @@ const commandBar = fs.readFileSync('src/modules/training/trainingCommandBar.css'
 const r6 = css.slice(css.indexOf('R20.2A-R6'))
 
 const checks = [
-  ['Disclosure roster non ha altezza fissa', r6.includes('.ts-multiselect {\n  height: auto;')],
+  ['Disclosure roster non ha altezza fissa', /\.ts-multiselect\s*\{(?=[^}]*\bheight\s*:\s*auto\s*;)[^}]*\}/m.test(r6)],
   ['Disclosure roster può espandersi', r6.includes('.ts-multiselect[open]') && r6.includes('overflow: visible')],
   ['Summary mantiene baseline chiusa', r6.includes('height: 62px') && r6.includes('min-height: 62px')],
   ['Assenti/Infortunati/Differenziato restano details interattivi', trainingPage.includes('data-player-select="') && trainingPage.includes('<details class="ts-multiselect')],

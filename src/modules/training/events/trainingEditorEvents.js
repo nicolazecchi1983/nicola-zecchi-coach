@@ -13,6 +13,7 @@ export function wireTrainingEditorEvents({
   hasTeamLocation,
   resolveTrainingCalendarPublishTarget,
   publishTrainingSheet,
+  createTrainingSheetPdfOutput,
   getUserErrorMessage,
   getDataAccessUserMessage = getUserErrorMessage,
   updateCalendarEvent,
@@ -56,7 +57,7 @@ export function wireTrainingEditorEvents({
       tsStepNext?.addEventListener('click', () => showTsStep(activeTsStep + 1))
       const draftStateRoot = manualEditor.querySelector('[data-ts-draft-state]')
       const draftState = draftStateRoot?.querySelector('span')
-      const publishTrainingSheetButton = manualEditor.querySelector('[data-print-sheet]')
+      const publishTrainingSheetButton = manualEditor.querySelector('[data-publish-training-sheet]')
       const tsLocationSelect = form?.elements.location
       const tsCustomLocationField = manualEditor.querySelector('[data-ts-custom-location]')
       const tsCustomLocationInput = form?.elements.custom_location
@@ -509,51 +510,85 @@ export function wireTrainingEditorEvents({
         const storedNext = Number(localStorage.getItem('nz-training-sheet-next-progressive') || 0)
         return Math.max(1, storedNext, ...fromPaths.map((value) => value + 1))
       }
-      const confirmPdfPreview = (blob, fileName) => new Promise((resolve) => {
-        const objectUrl = URL.createObjectURL(blob)
-        const useExternalMobilePreview = window.matchMedia?.('(max-width: 760px)').matches === true
-        const overlay = document.createElement('div')
-        overlay.className = 'ts-pdf-confirm-overlay'
-        const previewContent = useExternalMobilePreview
-          ? `<div class="ts-pdf-mobile-preview">
-              <strong>PDF pronto per l’anteprima</strong>
-              <p>Su telefono il visualizzatore PDF incorporato può non essere disponibile. Apri il PDF nel browser, poi torna qui per confermare.</p>
-              <a class="primary ts-pdf-mobile-open" href="${objectUrl}" target="_blank" rel="noopener" data-pdf-open-preview>Apri anteprima PDF</a>
-            </div>`
-          : `<iframe title="Anteprima PDF" src="${objectUrl}#toolbar=1&navpanes=0&view=FitH"></iframe>`
-        overlay.innerHTML = `
-          <section class="ts-pdf-confirm-dialog" role="dialog" aria-modal="true" aria-label="Anteprima PDF">
-            <header>
-              <div><span>ANTEPRIMA DI STAMPA</span><strong>${escapeHtml(fileName)}</strong></div>
-              <button type="button" data-pdf-cancel aria-label="Chiudi">×</button>
-            </header>
-            ${previewContent}
-            <footer>
-              <button type="button" class="secondary" data-pdf-cancel>Annulla</button>
-              <button type="button" class="primary" data-pdf-confirm>Conferma e salva PDF</button>
-            </footer>
-          </section>`
-        document.body.appendChild(overlay)
-        const finish = (confirmed) => {
-          URL.revokeObjectURL(objectUrl)
-          overlay.remove()
-          resolve(confirmed)
-        }
-        overlay.querySelectorAll('[data-pdf-cancel]').forEach((button) => button.addEventListener('click', () => finish(false)))
-        overlay.querySelector('[data-pdf-confirm]')?.addEventListener('click', () => finish(true))
-        overlay.addEventListener('click', (event) => { if (event.target === overlay) finish(false) })
-      })
+      const openPdfPreview = async () => {
+        const rawData = collect()
+        const button = manualEditor.querySelector('[data-preview-pdf]')
+        if (!button) return
+        const label = button.querySelector('span')
+        const originalLabel = label?.textContent || 'Anteprima PDF'
+        const isMobile = window.matchMedia?.('(max-width: 760px)').matches === true
+        const mobileWindow = isMobile ? window.open('', '_blank') : null
+        button.disabled = true
+        if (label) label.textContent = 'Apertura…'
+        try {
+          const { blob, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
+          const objectUrl = URL.createObjectURL(blob)
+          if (isMobile) {
+            if (!mobileWindow) throw new Error('Il browser ha bloccato l’apertura dell’anteprima PDF.')
+            mobileWindow.location.href = objectUrl
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000)
+            return
+          }
 
-      const createAndPublishPdf = async () => {
-        const button = manualEditor.querySelector('[data-print-sheet]')
+          const overlay = document.createElement('div')
+          overlay.className = 'ts-pdf-confirm-overlay'
+          overlay.innerHTML = `
+            <section class="ts-pdf-confirm-dialog" role="dialog" aria-modal="true" aria-label="Anteprima PDF">
+              <header>
+                <div><span>ANTEPRIMA DI STAMPA</span><strong>${escapeHtml(fileName)}</strong></div>
+                <button type="button" data-pdf-close aria-label="Chiudi">×</button>
+              </header>
+              <iframe title="Anteprima PDF" src="${objectUrl}#toolbar=1&navpanes=0&view=FitH"></iframe>
+              <footer><button type="button" class="secondary" data-pdf-close>Chiudi</button></footer>
+            </section>`
+          document.body.appendChild(overlay)
+          const close = () => {
+            URL.revokeObjectURL(objectUrl)
+            overlay.remove()
+          }
+          overlay.querySelectorAll('[data-pdf-close]').forEach((item) => item.addEventListener('click', close))
+          overlay.addEventListener('click', (event) => { if (event.target === overlay) close() })
+        } catch (error) {
+          try { mobileWindow?.close() } catch {}
+          console.error('Errore anteprima Training Sheet:', error)
+          const note = manualEditor.querySelector('[data-publish-note]')
+          if (note) note.textContent = getDataAccessUserMessage(error, undefined, { stage: 'training-pdf-preview' })
+        } finally {
+          button.disabled = false
+          if (label) label.textContent = originalLabel
+        }
+      }
+
+      const downloadPdf = async () => {
+        const rawData = collect()
+        const button = manualEditor.querySelector('[data-download-pdf]')
+        if (!button) return
+        const originalLabel = button.textContent || 'Scarica PDF'
+        button.disabled = true
+        button.textContent = 'Download…'
+        try {
+          const { pdf, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
+          pdf.save(fileName)
+        } catch (error) {
+          console.error('Errore download Training Sheet:', error)
+          const note = manualEditor.querySelector('[data-publish-note]')
+          if (note) note.textContent = getDataAccessUserMessage(error, undefined, { stage: 'training-pdf-download' })
+        } finally {
+          button.disabled = false
+          button.textContent = originalLabel
+        }
+      }
+
+      const publishCurrentTrainingSheet = async () => {
+        const button = manualEditor.querySelector('[data-publish-training-sheet]')
         const note = manualEditor.querySelector('[data-publish-note]')
         const rawData = collect()
+        if (!button) return
+        const originalLabel = button.textContent || 'Pubblica Training Sheet'
         button.disabled = true
         button.classList.add('is-loading')
-        const label = button.querySelector('span')
-        const originalLabel = label?.textContent || 'Crea PDF'
-        if (label) label.textContent = 'Creazione…'
-        if (note) note.textContent = 'Creazione e pubblicazione della Training Sheet…'
+        button.textContent = 'Pubblicazione…'
+        if (note) note.textContent = 'Pubblicazione della Training Sheet in STAFF…'
 
         try {
           const publishTarget = resolveTrainingCalendarPublishTarget({
@@ -570,16 +605,12 @@ export function wireTrainingEditorEvents({
             squadTotal,
             existingEvent,
             duplicateEvents: publishTarget.duplicateEvents,
-            confirmPreview: confirmPdfPreview,
             createEvent: createCalendarEvent,
             updateEvent: updateCalendarEvent,
             deleteEvent: deleteCalendarEvent,
           })
 
-          if (result.cancelled) {
-            if (note) note.textContent = 'Creazione PDF annullata. Nessun file è stato salvato.'
-            return
-          }
+          if (result.cancelled) return
 
           localStorage.setItem('nz-training-sheet-next-progressive', String(Number(result.data.progressive || 1) + 1))
           localStorage.setItem(`nz-training-sheet:${result.filePath}`, JSON.stringify(result.data))
@@ -590,8 +621,8 @@ export function wireTrainingEditorEvents({
           setTrainingDocument(result.data, { dirty: false })
           if (note) {
             note.textContent = result.warnings?.length
-              ? `Training Sheet pubblicata nel Calendario. ${result.warnings.map((warning) => warning.message).join(' ')}`
-              : 'PDF creato e Training Sheet pubblicata nel Calendario.'
+              ? `Training Sheet pubblicata. ${result.warnings.map((warning) => warning.message).join(' ')}`
+              : 'Training Sheet pubblicata in STAFF, Calendario e Training Library. Nessun PDF scaricato sul dispositivo.'
           }
         } catch (error) {
           console.error('Errore pubblicazione Training Sheet:', error)
@@ -599,10 +630,9 @@ export function wireTrainingEditorEvents({
         } finally {
           button.disabled = false
           button.classList.remove('is-loading')
-          if (label) label.textContent = originalLabel
+          button.textContent = originalLabel
         }
       }
-
       const resetEditor = () => {
         if (!window.confirm('Vuoi cancellare tutti i campi della Training Sheet Editor?')) return
         localStorage.removeItem(storageKey)
@@ -770,7 +800,9 @@ export function wireTrainingEditorEvents({
       })
       openSheetButton?.addEventListener('click', () => loadTrainingSheetByEventId(openSheetSelect?.value))
 
-      manualEditor.querySelectorAll('[data-print-sheet]').forEach((button) => button.addEventListener('click', createAndPublishPdf))
+      manualEditor.querySelector('[data-preview-pdf]')?.addEventListener('click', openPdfPreview)
+      manualEditor.querySelector('[data-download-pdf]')?.addEventListener('click', downloadPdf)
+      manualEditor.querySelector('[data-publish-training-sheet]')?.addEventListener('click', publishCurrentTrainingSheet)
       showTsStep(1)
       restore()
 

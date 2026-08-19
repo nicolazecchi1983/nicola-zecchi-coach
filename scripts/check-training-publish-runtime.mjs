@@ -8,7 +8,7 @@ const checks = [
   ['Training runtime imports the canonical HTML escape helper', (text) => text.includes("import { escapeHtml } from '../../../shared/html/escapeHtml.js'") && !text.includes("const escape = (value='') => String(value).replace")],
   ['PDF preview escapes the generated filename with the canonical helper', /ANTEPRIMA DI STAMPA<\/span><strong>\$\{escapeHtml\(fileName\)\}<\/strong>/],
   ['Stale tsEscapeHtml reference is absent', (text) => !text.includes('tsEscapeHtml')],
-  ['PDF preview is still wired through publishTrainingSheet', /confirmPreview:\s*confirmPdfPreview/],
+  ['PDF preview uses the dedicated PDF output path', /const \{ blob, fileName \} = await createTrainingSheetPdfOutput\(\{ rawData, previewElement: preview \}\)/],
   ['Publish path still awaits publishTrainingSheet', /const result = await publishTrainingSheet\(/],
   ['Successful publish still persists local Training Sheet state', /localStorage\.setItem\(`nz-training-sheet:\$\{result\.filePath\}`/],
   ['Training runtime declares Calendar reload as an explicit dependency', /export function wireTrainingEditorEvents\(\{[\s\S]*?loadCalendarEvents,[\s\S]*?\}\)/],

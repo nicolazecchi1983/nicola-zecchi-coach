@@ -18,7 +18,8 @@ export async function publishTrainingSheet({
   squadTotal,
   existingEvent,
   duplicateEvents = [],
-  confirmPreview,
+  confirmPreview = null,
+  downloadLocal = false,
   createEvent,
   updateEvent,
   deleteEvent,
@@ -40,8 +41,10 @@ export async function publishTrainingSheet({
   }
 
   const { pdf, blob } = generated
-  const confirmed = await confirmPreview(blob, fileName)
-  if (!confirmed) return { cancelled: true }
+  if (typeof confirmPreview === 'function') {
+    const confirmed = await confirmPreview(blob, fileName)
+    if (!confirmed) return { cancelled: true }
+  }
 
   const filePath = buildTrainingSheetStoragePath({
     teamId: team?.id,
@@ -108,16 +111,16 @@ export async function publishTrainingSheet({
     }
   }
 
-  // Il download locale è un output secondario: un eventuale blocco del browser
-  // non deve trasformare in fallita una pubblicazione già completata su storage+calendario.
-  try {
-    pdf.save(fileName)
-  } catch (error) {
-    console.error('Download locale Training Sheet non riuscito:', error)
-    warnings.push({
-      code: 'TRAINING_LOCAL_DOWNLOAD_FAILED',
-      message: 'Training Sheet pubblicata; download locale non riuscito.',
-    })
+  if (downloadLocal) {
+    try {
+      pdf.save(fileName)
+    } catch (error) {
+      console.error('Download locale Training Sheet non riuscito:', error)
+      warnings.push({
+        code: 'TRAINING_LOCAL_DOWNLOAD_FAILED',
+        message: 'Training Sheet pubblicata; download locale non riuscito.',
+      })
+    }
   }
 
   return {
@@ -130,3 +133,19 @@ export async function publishTrainingSheet({
   }
 }
 
+
+export async function createTrainingSheetPdfOutput({ rawData, previewElement }) {
+  const draftData = normalizeTrainingSheetData(rawData)
+  validateTrainingSheetForPublish(draftData)
+  const fileName = buildTrainingSheetFileName(draftData)
+  try {
+    const generated = await generateTrainingSheetPdf(previewElement)
+    return { ...generated, fileName, data: draftData }
+  } catch (error) {
+    throw toAppError(error, {
+      code: 'TRAINING_PDF_GENERATION_FAILED',
+      stage: 'generation',
+      userMessage: 'Non è stato possibile generare il PDF. Controlla l’anteprima e riprova.',
+    })
+  }
+}
