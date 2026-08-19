@@ -2656,7 +2656,7 @@
 .ts-pdf-mobile-open{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;text-decoration:none;color:#061522;background:#58cdf8;font-weight:800}
 @media(max-width:720px){.ts-pdf-mobile-preview{padding:20px 16px}}
 
-/* R1.4A — Training Summary action hierarchy */
+/* R1.4B — Training Summary action hierarchy refinement */
 .ts-manual-editor .ts-preview-toolbar{
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
@@ -2666,7 +2666,9 @@
 .ts-manual-editor .ts-preview-heading{display:grid;gap:2px;min-width:0}
 .ts-manual-editor .ts-preview-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .ts-manual-editor .ts-preview-actions .staff-button{min-height:44px}
-.ts-manual-editor .ts-preview-actions [data-publish-training-sheet]{min-height:44px}
+.ts-manual-editor .ts-action-preview{display:none}
+.ts-manual-editor .ts-action-download{display:inline-flex}
+.ts-manual-editor .ts-action-publish{display:inline-flex}
 .ts-manual-editor .ts-preview-toolbar .ts-publish-note{
   grid-column:1/-1;
   margin:0;
@@ -2679,7 +2681,7 @@
   }
   .ts-manual-editor .ts-preview-actions{
     display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-columns:1fr;
     gap:8px;
   }
   .ts-manual-editor .ts-preview-actions .staff-button{
@@ -2687,10 +2689,9 @@
     min-width:0;
     justify-content:center;
   }
-  .ts-manual-editor .ts-preview-actions .staff-button span{display:inline}
-  .ts-manual-editor .ts-preview-actions [data-publish-training-sheet]{
-    grid-column:1/-1;
-  }
+  .ts-manual-editor .ts-action-preview{display:inline-flex}
+  .ts-manual-editor .ts-action-download{display:none}
+  .ts-manual-editor .ts-action-publish{display:inline-flex}
 }
 
 /* R1.3J — Mobile Training Sheet preview stays inside STAFF */
