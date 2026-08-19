@@ -2656,18 +2656,41 @@
 .ts-pdf-mobile-open{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;text-decoration:none;color:#061522;background:#58cdf8;font-weight:800}
 @media(max-width:720px){.ts-pdf-mobile-preview{padding:20px 16px}}
 
-/* STAFF R1.3B V3 — Training publish/PDF action separation */
-.ts-preview-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ts-preview-toolbar .ts-preview-actions button{min-height:42px}
-.ts-preview-toolbar .ts-preview-actions button[data-download-pdf]{border:1px solid var(--border);background:#10293a}
-.ts-publish-actions{display:flex;justify-content:flex-end;margin-top:12px}
-.ts-publish-actions [data-publish-training-sheet]{min-height:46px}
-@media(max-width:720px){
-  .ts-preview-toolbar{display:grid;grid-template-columns:1fr}
-  .ts-preview-actions{display:grid;grid-template-columns:1fr 1fr}
-  .ts-preview-toolbar .ts-preview-actions button{justify-content:center}
-  .ts-preview-toolbar .ts-preview-actions button span{display:inline}
-  .ts-publish-actions [data-publish-training-sheet]{width:100%}
+/* R1.4A — Training Summary action hierarchy */
+.ts-manual-editor .ts-preview-toolbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px 16px;
+}
+.ts-manual-editor .ts-preview-heading{display:grid;gap:2px;min-width:0}
+.ts-manual-editor .ts-preview-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.ts-manual-editor .ts-preview-actions .staff-button{min-height:44px}
+.ts-manual-editor .ts-preview-actions [data-publish-training-sheet]{min-height:44px}
+.ts-manual-editor .ts-preview-toolbar .ts-publish-note{
+  grid-column:1/-1;
+  margin:0;
+}
+@media(max-width:760px){
+  .ts-manual-editor .ts-preview-toolbar{
+    grid-template-columns:1fr;
+    align-items:stretch;
+    gap:10px;
+  }
+  .ts-manual-editor .ts-preview-actions{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:8px;
+  }
+  .ts-manual-editor .ts-preview-actions .staff-button{
+    width:100%;
+    min-width:0;
+    justify-content:center;
+  }
+  .ts-manual-editor .ts-preview-actions .staff-button span{display:inline}
+  .ts-manual-editor .ts-preview-actions [data-publish-training-sheet]{
+    grid-column:1/-1;
+  }
 }
 
 /* R1.3J — Mobile Training Sheet preview stays inside STAFF */
