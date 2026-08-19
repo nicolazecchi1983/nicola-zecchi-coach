@@ -517,16 +517,19 @@ export function wireTrainingEditorEvents({
         const label = button.querySelector('span')
         const originalLabel = label?.textContent || 'Anteprima PDF'
         const isMobile = window.matchMedia?.('(max-width: 760px)').matches === true
-        const mobileWindow = isMobile ? window.open('', '_blank') : null
+        const mobileTarget = isMobile
+          ? `staff-training-pdf-${Date.now()}-${Math.random().toString(36).slice(2)}`
+          : ''
+        const mobileWindow = isMobile ? window.open('about:blank', mobileTarget) : null
         button.disabled = true
         if (label) label.textContent = 'Apertura…'
         try {
           const { blob, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
           const objectUrl = URL.createObjectURL(blob)
           if (isMobile) {
-            if (!mobileWindow) throw new Error('Il browser ha bloccato l’apertura dell’anteprima PDF.')
-            mobileWindow.location.href = objectUrl
-            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000)
+            if (!mobileWindow || mobileWindow.closed) throw new Error('Il browser ha bloccato l’apertura dell’anteprima PDF.')
+            mobileWindow.location.replace(objectUrl)
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 120000)
             return
           }
 
