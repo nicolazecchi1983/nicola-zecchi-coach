@@ -510,28 +510,89 @@ export function wireTrainingEditorEvents({
         const storedNext = Number(localStorage.getItem('nz-training-sheet-next-progressive') || 0)
         return Math.max(1, storedNext, ...fromPaths.map((value) => value + 1))
       }
+      const openMobileTrainingPreview = () => {
+        const existing = document.querySelector('[data-mobile-training-preview]')
+        existing?.remove()
+
+        const overlay = document.createElement('div')
+        overlay.className = 'ts-mobile-preview-overlay'
+        overlay.dataset.mobileTrainingPreview = 'true'
+
+        const dialog = document.createElement('section')
+        dialog.className = 'ts-mobile-preview-dialog'
+        dialog.setAttribute('role', 'dialog')
+        dialog.setAttribute('aria-modal', 'true')
+        dialog.setAttribute('aria-label', 'Anteprima Training Sheet')
+
+        const header = document.createElement('header')
+        const heading = document.createElement('div')
+        const eyebrow = document.createElement('span')
+        eyebrow.textContent = 'ANTEPRIMA'
+        const title = document.createElement('strong')
+        title.textContent = 'Training Sheet'
+        heading.append(eyebrow, title)
+
+        const closeButton = document.createElement('button')
+        closeButton.type = 'button'
+        closeButton.dataset.mobilePreviewClose = 'true'
+        closeButton.setAttribute('aria-label', 'Chiudi anteprima')
+        closeButton.textContent = '×'
+
+        header.append(heading, closeButton)
+
+        const body = document.createElement('div')
+        body.className = 'ts-mobile-preview-body'
+        const fit = document.createElement('div')
+        fit.className = 'ts-mobile-preview-fit'
+        body.appendChild(fit)
+
+        dialog.append(header, body)
+        overlay.appendChild(dialog)
+
+        const paper = preview.cloneNode(true)
+        paper.removeAttribute('data-ts-preview')
+        fit.appendChild(paper)
+        document.body.appendChild(overlay)
+        document.body.classList.add('ts-mobile-preview-open')
+
+        const fitPaper = () => {
+          const available = Math.max(280, overlay.clientWidth - 24)
+          const naturalWidth = Math.max(paper.scrollWidth, paper.getBoundingClientRect().width, 1)
+          const scale = Math.min(1, available / naturalWidth)
+          paper.style.transformOrigin = 'top left'
+          paper.style.transform = `scale(${scale})`
+          fit.style.width = `${naturalWidth * scale}px`
+          fit.style.height = `${paper.scrollHeight * scale}px`
+        }
+
+        const close = () => {
+          window.removeEventListener('resize', fitPaper)
+          document.body.classList.remove('ts-mobile-preview-open')
+          overlay.remove()
+        }
+
+        overlay.querySelectorAll('[data-mobile-preview-close]').forEach((item) => item.addEventListener('click', close))
+        window.addEventListener('resize', fitPaper)
+        requestAnimationFrame(fitPaper)
+      }
+
       const openPdfPreview = async () => {
-        const rawData = collect()
         const button = manualEditor.querySelector('[data-preview-pdf]')
         if (!button) return
+        const isMobile = window.matchMedia?.('(max-width: 760px)').matches === true
+        if (isMobile) {
+          openMobileTrainingPreview()
+          return
+        }
+
+        const rawData = collect()
         const label = button.querySelector('span')
         const originalLabel = label?.textContent || 'Anteprima PDF'
-        const isMobile = window.matchMedia?.('(max-width: 760px)').matches === true
-        const mobileTarget = isMobile
-          ? `staff-training-pdf-${Date.now()}-${Math.random().toString(36).slice(2)}`
-          : ''
-        const mobileWindow = isMobile ? window.open('about:blank', mobileTarget) : null
         button.disabled = true
         if (label) label.textContent = 'Apertura…'
         try {
           const { blob, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
           const objectUrl = URL.createObjectURL(blob)
-          if (isMobile) {
-            if (!mobileWindow || mobileWindow.closed) throw new Error('Il browser ha bloccato l’apertura dell’anteprima PDF.')
-            mobileWindow.location.replace(objectUrl)
-            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 120000)
-            return
-          }
 
           const overlay = document.createElement('div')
           overlay.className = 'ts-pdf-confirm-overlay'
@@ -552,7 +613,6 @@ export function wireTrainingEditorEvents({
           overlay.querySelectorAll('[data-pdf-close]').forEach((item) => item.addEventListener('click', close))
           overlay.addEventListener('click', (event) => { if (event.target === overlay) close() })
         } catch (error) {
-          try { mobileWindow?.close() } catch {}
           console.error('Errore anteprima Training Sheet:', error)
           const note = manualEditor.querySelector('[data-publish-note]')
           if (note) note.textContent = getDataAccessUserMessage(error, undefined, { stage: 'training-pdf-preview' })

@@ -2669,3 +2669,19 @@
   .ts-preview-toolbar .ts-preview-actions button span{display:inline}
   .ts-publish-actions [data-publish-training-sheet]{width:100%}
 }
+
+/* R1.3J — Mobile Training Sheet preview stays inside STAFF */
+body.ts-mobile-preview-open{overflow:hidden}
+.ts-mobile-preview-overlay{position:fixed;inset:0;z-index:10020;background:var(--staff-color-bg,#071522);display:none}
+@media (max-width:760px){
+  .ts-mobile-preview-overlay{display:block}
+  .ts-mobile-preview-dialog{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);background:var(--staff-color-bg,#071522)}
+  .ts-mobile-preview-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:8px 12px;border-bottom:1px solid var(--staff-color-border,rgba(255,255,255,.12));background:var(--staff-color-surface,#0a2031)}
+  .ts-mobile-preview-dialog>header>div{display:grid;gap:1px}
+  .ts-mobile-preview-dialog>header span{font-size:.68rem;font-weight:900;letter-spacing:.12em;color:var(--staff-color-primary,#58cdf8)}
+  .ts-mobile-preview-dialog>header strong{font-size:.95rem}
+  .ts-mobile-preview-dialog>header button{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--staff-color-border,rgba(255,255,255,.12));border-radius:10px;background:transparent;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer}
+  .ts-mobile-preview-body{overflow:auto;overscroll-behavior:contain;padding:12px;display:flex;justify-content:center;align-items:flex-start}
+  .ts-mobile-preview-fit{position:relative;flex:none;margin:0 auto}
+  .ts-mobile-preview-fit>.ts-paper{margin:0}
+}
