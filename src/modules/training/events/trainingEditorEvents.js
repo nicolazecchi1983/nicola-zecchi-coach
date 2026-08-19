@@ -622,9 +622,9 @@ export function wireTrainingEditorEvents({
         }
       }
 
-      const downloadPdf = async () => {
+      const downloadPdf = async (event) => {
         const rawData = collect()
-        const button = manualEditor.querySelector('[data-download-pdf]')
+        const button = event?.currentTarget || manualEditor.querySelector('[data-download-pdf]')
         if (!button) return
         const originalLabel = button.textContent || 'Scarica PDF'
         button.disabled = true
@@ -865,6 +865,7 @@ export function wireTrainingEditorEvents({
 
       manualEditor.querySelector('[data-preview-pdf]')?.addEventListener('click', openPdfPreview)
       manualEditor.querySelector('[data-download-pdf]')?.addEventListener('click', downloadPdf)
+      manualEditor.querySelector('[data-download-pdf-menu]')?.addEventListener('click', downloadPdf)
       manualEditor.querySelector('[data-publish-training-sheet]')?.addEventListener('click', publishCurrentTrainingSheet)
       showTsStep(1)
       restore()
