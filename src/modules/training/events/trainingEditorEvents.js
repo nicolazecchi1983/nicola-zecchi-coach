@@ -58,6 +58,7 @@ export function wireTrainingEditorEvents({
       const draftStateRoot = manualEditor.querySelector('[data-ts-draft-state]')
       const draftState = draftStateRoot?.querySelector('span')
       const publishTrainingSheetButton = manualEditor.querySelector('[data-publish-training-sheet]')
+      const publishNote = manualEditor.querySelector('[data-publish-note]')
       const tsLocationSelect = form?.elements.location
       const tsCustomLocationField = manualEditor.querySelector('[data-ts-custom-location]')
       const tsCustomLocationInput = form?.elements.custom_location
@@ -87,6 +88,9 @@ export function wireTrainingEditorEvents({
         }
         if (draftStateRoot) draftStateRoot.dataset.status = status
         if (draftState) draftState.textContent = labels[status] || 'Bozza'
+        if (publishNote && status === TRAINING_SHEET_STATUS.PUBLISHED && hasUnpublishedChanges) {
+          publishNote.textContent = 'Hai modifiche locali non ancora pubblicate. Premi Pubblica TS per aggiornare STAFF, Calendario e Training Library.'
+        }
       }
 
       const setTrainingDocument = (data = {}, options = {}) => {
@@ -647,10 +651,9 @@ export function wireTrainingEditorEvents({
         const note = manualEditor.querySelector('[data-publish-note]')
         const rawData = collect()
         if (!button) return
-        const originalLabel = button.textContent || 'Pubblica Training Sheet'
         button.disabled = true
         button.classList.add('is-loading')
-        button.textContent = 'Pubblicazione…'
+        button.setAttribute('aria-busy', 'true')
         if (note) note.textContent = 'Pubblicazione della Training Sheet in STAFF…'
 
         try {
@@ -675,16 +678,42 @@ export function wireTrainingEditorEvents({
 
           if (result.cancelled) return
 
-          localStorage.setItem('nz-training-sheet-next-progressive', String(Number(result.data.progressive || 1) + 1))
-          localStorage.setItem(`nz-training-sheet:${result.filePath}`, JSON.stringify(result.data))
-          localStorage.setItem(storageKey, JSON.stringify(result.data))
-          await loadCalendarEvents()
+          // COMMIT BOUNDARY: da questo punto la pubblicazione canonica è riuscita.
+          // Cache locale, refresh Calendario e cleanup secondari non devono mai
+          // trasformare un successo server-side in un falso errore di pubblicazione.
+          const postPublishWarnings = [...(result.warnings || [])]
+          const cacheWrite = (key, value, warningMessage) => {
+            try {
+              localStorage.setItem(key, value)
+            } catch (error) {
+              console.error('Cache locale Training Sheet non aggiornata:', error)
+              postPublishWarnings.push({ code: 'TRAINING_LOCAL_CACHE_WRITE_FAILED', message: warningMessage })
+            }
+          }
+
+          cacheWrite('nz-training-sheet-next-progressive', String(Number(result.data.progressive || 1) + 1), 'Pubblicazione riuscita; progressivo locale non aggiornato.')
+          cacheWrite(`nz-training-sheet:${result.filePath}`, JSON.stringify(result.data), 'Pubblicazione riuscita; copia locale della Training Sheet non aggiornata.')
+          cacheWrite(storageKey, JSON.stringify(result.data), 'Pubblicazione riuscita; bozza locale non aggiornata.')
+
           currentEditingEventId = String(result.event?.id || existingEvent?.id || currentEditingEventId || '')
-          if (currentEditingEventId) localStorage.setItem('nz-training-sheet-open-event-id', currentEditingEventId)
+          if (currentEditingEventId) {
+            cacheWrite('nz-training-sheet-open-event-id', currentEditingEventId, 'Pubblicazione riuscita; collegamento locale alla Training Sheet non aggiornato.')
+          }
           setTrainingDocument(result.data, { dirty: false })
+
+          try {
+            await loadCalendarEvents()
+          } catch (error) {
+            console.error('Refresh Calendario dopo pubblicazione Training Sheet non riuscito:', error)
+            postPublishWarnings.push({
+              code: 'TRAINING_POST_PUBLISH_CALENDAR_REFRESH_FAILED',
+              message: 'Training Sheet pubblicata; il Calendario non si è aggiornato subito. Riapri o aggiorna STAFF per riallinearlo.',
+            })
+          }
+
           if (note) {
-            note.textContent = result.warnings?.length
-              ? `Training Sheet pubblicata. ${result.warnings.map((warning) => warning.message).join(' ')}`
+            note.textContent = postPublishWarnings.length
+              ? `Training Sheet pubblicata. ${postPublishWarnings.map((warning) => warning.message).join(' ')}`
               : 'Training Sheet pubblicata in STAFF, Calendario e Training Library. Nessun PDF scaricato sul dispositivo.'
           }
         } catch (error) {
@@ -693,7 +722,7 @@ export function wireTrainingEditorEvents({
         } finally {
           button.disabled = false
           button.classList.remove('is-loading')
-          button.textContent = originalLabel
+          button.removeAttribute('aria-busy')
         }
       }
       const resetEditor = () => {

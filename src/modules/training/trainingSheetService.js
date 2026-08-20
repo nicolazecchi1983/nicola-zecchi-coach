@@ -58,6 +58,7 @@ export async function publishTrainingSheet({
   const data = publishTrainingSheetData(draftData)
   const payload = buildTrainingSheetEventPayload({ data, filePath, squadTotal })
   let savedEvent
+  const warnings = []
   try {
     const pendingDeletionEventIds = duplicateEvents
       .map((event) => event?.id)
@@ -67,7 +68,11 @@ export async function publishTrainingSheet({
       ? await updateEvent(existingEvent.id, payload, { pendingDeletionEventIds })
       : await createEvent(payload)
   } catch (error) {
-    await removeTrainingSheetPdf(filePath)
+    try {
+      await removeTrainingSheetPdf(filePath)
+    } catch (cleanupError) {
+      console.error('Cleanup PDF dopo publish fallita non riuscito:', cleanupError)
+    }
     throw new AppError(`Collegamento al calendario non riuscito: ${error?.message || 'errore sconosciuto'}`, {
       code: 'TRAINING_EVENT_SAVE_FAILED',
       stage: 'calendar',
@@ -78,10 +83,17 @@ export async function publishTrainingSheet({
 
   const previousPath = existingEvent?.trainingSheetPath || null
   if (previousPath && previousPath !== filePath) {
-    await removeTrainingSheetPdf(previousPath)
+    try {
+      await removeTrainingSheetPdf(previousPath)
+    } catch (error) {
+      console.error('Cleanup PDF Training precedente non riuscito:', error)
+      warnings.push({
+        code: 'TRAINING_PREVIOUS_PDF_CLEANUP_FAILED',
+        message: 'Training Sheet pubblicata; non è stato possibile eliminare una versione PDF precedente.',
+      })
+    }
   }
 
-  const warnings = []
 
   if (duplicateEvents.length) {
     if (typeof deleteEvent !== 'function') {
