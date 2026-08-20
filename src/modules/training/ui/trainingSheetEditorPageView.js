@@ -58,7 +58,7 @@ export function renderTrainingSheetEditorPage({
               <details class="ts-more-menu">
                 <summary class="staff-button staff-button--secondary ts-more-button" aria-label="Altre azioni">•••</summary>
                 <div class="ts-more-menu-popover">
-                  <button type="button" data-download-pdf-menu>Scarica PDF</button>
+                  <button class="ts-menu-item" type="button" data-download-pdf-menu>Scarica PDF</button>
                   <button class="ts-menu-danger" type="button" data-reset-training-sheet>Reset editor</button>
                 </div>
               </details>
