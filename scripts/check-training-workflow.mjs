@@ -10,7 +10,7 @@ const model = await readFile(new URL('../src/modules/training/trainingSheetModel
 
 assert.match(trainingPage, /data-status="draft"/)
 assert.doesNotMatch(trainingPage, /data-archive-training-sheet/)
-assert.match(runtime, /setTrainingDocument\(result\.data, \{ dirty: false \}\)/)
+assert.match(runtime, /setTrainingDocument\(result\.data, \{ dirty: changedDuringPublish \}\)/)
 assert.match(runtime, /Pubblicata · modifiche locali/)
 assert.match(service, /publishTrainingSheetData\(draftData\)/)
 assert.match(model, /export function publishTrainingSheetData/)

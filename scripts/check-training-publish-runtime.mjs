@@ -22,6 +22,12 @@ const checks = [
   ['Post-publish local cache writes are isolated from the canonical publish result', /const cacheWrite = \(key, value, warningMessage\) => \{[\s\S]*?try \{[\s\S]*?localStorage\.setItem\(key, value\)[\s\S]*?postPublishWarnings\.push/],
   ['Calendar refresh failure after canonical publish becomes a warning, not publish failure', /try \{\s*await loadCalendarEvents\(\)\s*\} catch \(error\) \{[\s\S]*?TRAINING_POST_PUBLISH_CALENDAR_REFRESH_FAILED/],
   ['Published dirty state explicitly tells the user that local changes are not yet republished', /Hai modifiche locali non ancora pubblicate\. Premi Pubblica TS/],
+  ['Clean published sheets short-circuit before generating or uploading another PDF', /const isPublishedAndClean = currentTrainingDocument\.status === TRAINING_SHEET_STATUS\.PUBLISHED && !hasUnpublishedChanges[\s\S]*?Training Sheet già aggiornata in STAFF, Calendario e Training Library\.[\s\S]*?return/],
+  ['Publish is single-flight guarded in runtime state', /if \(!button \|\| publishInFlight\) return[\s\S]*?publishInFlight = true[\s\S]*?publishInFlight = false/],
+  ['Pending autosave debounce is cancelled before taking the publish snapshot', /clearTimeout\(saveTimer\)\s*saveTimer = null\s*const publishRevision = editRevision\s*const rawData = collect\(\)/],
+  ['Edits made while publish is in flight remain dirty after the canonical commit', /const changedDuringPublish = editRevision !== publishRevision[\s\S]*?setTrainingDocument\(result\.data, \{ dirty: changedDuringPublish \}\)/],
+  ['Local storage preserves the newer form snapshot when edits happen during publish', /const localSnapshot = changedDuringPublish \? collect\(\) : result\.data[\s\S]*?cacheWrite\(storageKey, JSON\.stringify\(localSnapshot\)/],
+  ['Post-publish helper text preserves dirty truth when edits happen during upload', /if \(changedDuringPublish\) \{\s*note\.textContent = 'Training Sheet pubblicata\. Hai modifiche locali successive non ancora pubblicate\.'/],
 ]
 
 let passed = 0

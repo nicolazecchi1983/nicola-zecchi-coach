@@ -78,6 +78,8 @@ export function wireTrainingEditorEvents({
       let currentEditingEventId = localStorage.getItem('nz-training-sheet-open-event-id') || ''
       let currentTrainingDocument = normalizeTrainingSheetData({ status: TRAINING_SHEET_STATUS.DRAFT })
       let hasUnpublishedChanges = false
+      let editRevision = 0
+      let publishInFlight = false
 
       const updateTrainingWorkflowUi = ({ dirty = hasUnpublishedChanges } = {}) => {
         hasUnpublishedChanges = Boolean(dirty)
@@ -254,6 +256,7 @@ export function wireTrainingEditorEvents({
         updateTrainingWorkflowUi({ dirty: true })
       }
       const scheduleSave = () => {
+        editRevision += 1
         hasUnpublishedChanges = true
         if (draftState) draftState.textContent = 'Salvataggio…'
         clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 450)
@@ -649,8 +652,22 @@ export function wireTrainingEditorEvents({
       const publishCurrentTrainingSheet = async () => {
         const button = manualEditor.querySelector('[data-publish-training-sheet]')
         const note = manualEditor.querySelector('[data-publish-note]')
+        if (!button || publishInFlight) return
+
+        const isPublishedAndClean = currentTrainingDocument.status === TRAINING_SHEET_STATUS.PUBLISHED && !hasUnpublishedChanges
+        if (isPublishedAndClean) {
+          if (note) note.textContent = 'Training Sheet già aggiornata in STAFF, Calendario e Training Library.'
+          return
+        }
+
+        // Congela il debounce precedente: lo snapshot pubblicato deve coincidere con
+        // ciò che l'utente vede al momento del tap, senza un autosave tardivo che
+        // riapra falsamente lo stato dirty dopo il commit.
+        clearTimeout(saveTimer)
+        saveTimer = null
+        const publishRevision = editRevision
         const rawData = collect()
-        if (!button) return
+        publishInFlight = true
         button.disabled = true
         button.classList.add('is-loading')
         button.setAttribute('aria-busy', 'true')
@@ -691,15 +708,20 @@ export function wireTrainingEditorEvents({
             }
           }
 
+          const changedDuringPublish = editRevision !== publishRevision
           cacheWrite('nz-training-sheet-next-progressive', String(Number(result.data.progressive || 1) + 1), 'Pubblicazione riuscita; progressivo locale non aggiornato.')
           cacheWrite(`nz-training-sheet:${result.filePath}`, JSON.stringify(result.data), 'Pubblicazione riuscita; copia locale della Training Sheet non aggiornata.')
-          cacheWrite(storageKey, JSON.stringify(result.data), 'Pubblicazione riuscita; bozza locale non aggiornata.')
 
           currentEditingEventId = String(result.event?.id || existingEvent?.id || currentEditingEventId || '')
           if (currentEditingEventId) {
             cacheWrite('nz-training-sheet-open-event-id', currentEditingEventId, 'Pubblicazione riuscita; collegamento locale alla Training Sheet non aggiornato.')
           }
-          setTrainingDocument(result.data, { dirty: false })
+
+          // Il documento canonico ora è pubblicato, ma se l'utente ha continuato a
+          // modificare il form durante l'upload quelle modifiche restano locali/dirty.
+          setTrainingDocument(result.data, { dirty: changedDuringPublish })
+          const localSnapshot = changedDuringPublish ? collect() : result.data
+          cacheWrite(storageKey, JSON.stringify(localSnapshot), 'Pubblicazione riuscita; bozza locale non aggiornata.')
 
           try {
             await loadCalendarEvents()
@@ -712,14 +734,19 @@ export function wireTrainingEditorEvents({
           }
 
           if (note) {
-            note.textContent = postPublishWarnings.length
-              ? `Training Sheet pubblicata. ${postPublishWarnings.map((warning) => warning.message).join(' ')}`
-              : 'Training Sheet pubblicata in STAFF, Calendario e Training Library. Nessun PDF scaricato sul dispositivo.'
+            if (changedDuringPublish) {
+              note.textContent = 'Training Sheet pubblicata. Hai modifiche locali successive non ancora pubblicate.'
+            } else {
+              note.textContent = postPublishWarnings.length
+                ? `Training Sheet pubblicata. ${postPublishWarnings.map((warning) => warning.message).join(' ')}`
+                : 'Training Sheet pubblicata in STAFF, Calendario e Training Library. Nessun PDF scaricato sul dispositivo.'
+            }
           }
         } catch (error) {
           console.error('Errore pubblicazione Training Sheet:', error)
           if (note) note.textContent = getDataAccessUserMessage(error, undefined, { stage: 'training-publish' })
         } finally {
+          publishInFlight = false
           button.disabled = false
           button.classList.remove('is-loading')
           button.removeAttribute('aria-busy')
