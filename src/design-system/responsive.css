@@ -1582,20 +1582,11 @@
   }
 
   .ts-manual-editor .ts-preview-stage,
-  .ts-manual-editor .ts-summary-head,
-  .ts-manual-editor .ts-publish-note {
+  .ts-manual-editor .ts-summary-head {
     width: 100%;
   }
 
-  .ts-manual-editor .ts-preview-toolbar {
-    align-items: center;
-    padding: var(--staff-space-2);
-  }
-
-  .ts-manual-editor .ts-preview-toolbar button {
-    min-width: var(--staff-touch-target);
-    min-height: var(--staff-touch-target);
-  }
+  /* Training Summary toolbar/actions responsive geometry is owned by training-editor.css (R1.4F). */
 
 
   .ts-manual-editor .ts-step-footer {

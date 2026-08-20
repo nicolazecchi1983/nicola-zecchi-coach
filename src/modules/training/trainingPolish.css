@@ -436,39 +436,10 @@
   width: min(100%, var(--staff-content-readable));
 }
 
-.ts-manual-editor .ts-preview-toolbar {
-  padding: var(--staff-space-2) var(--staff-space-3);
-  border-color: var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-medium);
-  background: var(--staff-color-bg-panel);
-}
-
-.ts-manual-editor .ts-preview-toolbar span {
-  color: var(--staff-color-text-faint);
-  font-size: var(--staff-font-label);
-}
-
-.ts-manual-editor .ts-preview-toolbar strong {
-  color: var(--staff-color-text);
-  font-size: var(--staff-font-card-title);
-}
-
-.ts-manual-editor .ts-preview-toolbar button {
-  min-height: var(--staff-control-height);
-  border-radius: var(--staff-radius-medium);
-  background: var(--staff-color-primary);
-  color: var(--staff-color-primary-contrast);
-  box-shadow: none;
-}
+/* Training Summary toolbar/actions are owned exclusively by training-editor.css (R1.4F). */
 
 
-.ts-manual-editor .ts-publish-note {
-  width: min(100%, var(--staff-content-readable));
-  margin: var(--staff-space-2) auto 0;
-  color: var(--staff-color-text-faint);
-  font-size: var(--staff-font-caption);
-  text-align: center;
-}
+/* Training Summary helper text is owned by training-editor.css (R1.4F). */
 
 /* Workflow footer: persistent enough to reduce navigation effort, never floating over content. */
 .ts-manual-editor .ts-step-footer {
