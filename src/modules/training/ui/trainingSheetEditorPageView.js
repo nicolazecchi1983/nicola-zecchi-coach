@@ -160,7 +160,6 @@ export function renderTrainingSheetEditorPage({
               <div class="ts-preview-heading"><span>ANTEPRIMA LIVE</span><strong>Training Sheet</strong></div>
               <div class="ts-preview-actions">
                 <button type="button" class="staff-button staff-button--secondary ts-action-preview" data-preview-pdf>${icon('sheet')}<span>Anteprima PDF</span></button>
-                <button type="button" class="staff-button staff-button--secondary ts-action-download" data-download-pdf><span>Scarica PDF</span></button>
                 <button type="button" class="staff-button staff-button--primary ts-action-publish" data-publish-training-sheet><span class="ts-publish-label-desktop">Pubblica Training Sheet</span><span class="ts-publish-label-mobile">Pubblica</span></button>
               </div>
               <p class="ts-publish-note" data-publish-note>Pubblica in STAFF, Calendario e Training Library. Il download sul dispositivo è facoltativo.</p>
