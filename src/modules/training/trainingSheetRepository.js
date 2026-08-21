@@ -1,4 +1,4 @@
-import { removePrivateDocument, uploadPrivateDocument } from '../../core/storage/teamStorage.js'
+import { downloadPrivateDocument, removePrivateDocument, uploadPrivateDocument } from '../../core/storage/teamStorage.js'
 
 const BUCKET = 'training-sheets'
 
@@ -18,4 +18,8 @@ export async function removeTrainingSheetPdf(path, options = {}) {
     path,
     silent: options.silent !== false,
   })
+}
+
+export async function downloadTrainingSheetPdf(path) {
+  return downloadPrivateDocument({ bucket: BUCKET, path })
 }

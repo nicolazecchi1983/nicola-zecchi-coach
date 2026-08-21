@@ -8,7 +8,7 @@ import {
   validateTrainingSheetForPublish,
 } from './trainingSheetModel.js'
 import { generateTrainingSheetPdf } from './trainingSheetPdf.js'
-import { removeTrainingSheetPdf, uploadTrainingSheetPdf } from './trainingSheetRepository.js'
+import { downloadTrainingSheetPdf, removeTrainingSheetPdf, uploadTrainingSheetPdf } from './trainingSheetRepository.js'
 import { requireTrainingSheetPublishPermission } from './trainingSheetPermissions.js'
 
 export async function publishTrainingSheet({
@@ -78,7 +78,13 @@ export async function publishTrainingSheet({
   const previousPath = existingEvent?.trainingSheetPath || null
   if (previousPath && previousPath !== filePath) {
     try {
-      await removeTrainingSheetPdf(previousPath)
+      const removed = await removeTrainingSheetPdf(previousPath)
+      if (!removed) {
+        warnings.push({
+          code: 'TRAINING_PREVIOUS_PDF_CLEANUP_FAILED',
+          message: 'Training Sheet pubblicata; una versione PDF precedente non è stata eliminata automaticamente.',
+        })
+      }
     } catch (error) {
       console.error('Cleanup PDF Training precedente non riuscito:', error)
       warnings.push({
@@ -126,4 +132,17 @@ export async function createTrainingSheetPdfOutput({ rawData, previewElement }) 
       userMessage: 'Non è stato possibile generare il PDF. Controlla l’anteprima e riprova.',
     })
   }
+}
+
+export async function downloadPublishedTrainingSheetPdf({ filePath, rawData }) {
+  if (!filePath) {
+    throw new AppError('Training Sheet pubblicata senza percorso PDF.', {
+      code: 'TRAINING_PUBLISHED_PDF_PATH_MISSING',
+      stage: 'download',
+      userMessage: 'Il PDF pubblicato non è disponibile. Riapri la Training Sheet dal Calendario e riprova.',
+    })
+  }
+  const blob = await downloadTrainingSheetPdf(filePath)
+  const fileName = rawData ? buildTrainingSheetFileName(normalizeTrainingSheetData(rawData)) : 'training-sheet.pdf'
+  return { blob, fileName }
 }

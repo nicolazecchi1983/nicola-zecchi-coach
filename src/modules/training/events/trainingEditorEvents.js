@@ -15,6 +15,7 @@ export function wireTrainingEditorEvents({
   resolveTrainingCalendarPublishTarget,
   publishTrainingSheet,
   createTrainingSheetPdfOutput,
+  downloadPublishedTrainingSheetPdf,
   getUserErrorMessage,
   getDataAccessUserMessage = getUserErrorMessage,
   updateCalendarEvent,
@@ -659,6 +660,18 @@ export function wireTrainingEditorEvents({
         }
       }
 
+      const saveBlobToDevice = (blob, fileName) => {
+        const objectUrl = URL.createObjectURL(blob)
+        const anchor = document.createElement('a')
+        anchor.href = objectUrl
+        anchor.download = fileName
+        anchor.style.display = 'none'
+        document.body.appendChild(anchor)
+        anchor.click()
+        anchor.remove()
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 0)
+      }
+
       const downloadPdf = async (event) => {
         const rawData = collect()
         const button = event?.currentTarget || manualEditor.querySelector('[data-download-pdf]')
@@ -667,8 +680,27 @@ export function wireTrainingEditorEvents({
         button.disabled = true
         button.textContent = 'Download…'
         try {
-          const { pdf, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
-          pdf.save(fileName)
+          const publishedEvent = currentEditingEventId
+            ? appState.calendarEvents.find((item) => String(item.id) === String(currentEditingEventId))
+            : null
+          const canUseCanonicalPublishedPdf = currentTrainingDocument.status === TRAINING_SHEET_STATUS.PUBLISHED
+            && !hasUnpublishedChanges
+            && Boolean(publishedEvent?.trainingSheetPath)
+
+          if (canUseCanonicalPublishedPdf) {
+            const canonical = await downloadPublishedTrainingSheetPdf({
+              filePath: publishedEvent.trainingSheetPath,
+              rawData,
+            })
+            saveBlobToDevice(canonical.blob, canonical.fileName)
+          } else {
+            const { pdf, fileName } = await createTrainingSheetPdfOutput({ rawData, previewElement: preview })
+            pdf.save(fileName)
+            const note = manualEditor.querySelector('[data-publish-note]')
+            if (note && currentTrainingDocument.status === TRAINING_SHEET_STATUS.PUBLISHED && hasUnpublishedChanges) {
+              note.textContent = 'PDF locale generato dalle modifiche correnti. Per aggiornare il PDF archiviato, premi Pubblica TS.'
+            }
+          }
         } catch (error) {
           console.error('Errore download Training Sheet:', error)
           const note = manualEditor.querySelector('[data-publish-note]')

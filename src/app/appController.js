@@ -59,7 +59,7 @@ import {
   updateCalendarEvent,
 } from '../modules/calendar/calendarService.js'
 import { accessLevelLabel, appRoleOptions, technicalRoleOptions } from '../modules/staff/staffModel.js'
-import { createTrainingSheetPdfOutput, publishTrainingSheet } from '../modules/training/trainingSheetService.js'
+import { createTrainingSheetPdfOutput, downloadPublishedTrainingSheetPdf, publishTrainingSheet } from '../modules/training/trainingSheetService.js'
 import {
   buildTrainingDraftFromCalendarEvent,
   resolveTrainingCalendarPublishTarget,
@@ -817,6 +817,7 @@ export async function attachAppEvents(user) {
       resolveTrainingCalendarPublishTarget,
       publishTrainingSheet,
       createTrainingSheetPdfOutput,
+      downloadPublishedTrainingSheetPdf,
       getUserErrorMessage,
       getDataAccessUserMessage,
       updateCalendarEvent,

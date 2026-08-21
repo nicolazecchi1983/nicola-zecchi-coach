@@ -632,13 +632,22 @@ export function createCalendarRuntimeActions({
 
     drawerRoot
       .querySelector('[data-view-training-sheet]')
-      ?.addEventListener('click', () => {
+      ?.addEventListener('click', async () => {
         try {
           requirePublishedDocumentView()
+          let freshUrl = event.trainingSheetUrl
+          if (event.trainingSheetPath) {
+            const { data: signedData, error: signedError } = await supabase.storage
+              .from('training-sheets')
+              .createSignedUrl(event.trainingSheetPath, 3600)
+            if (signedError || !signedData?.signedUrl) throw signedError || new Error('URL PDF non disponibile')
+            freshUrl = signedData.signedUrl
+            event.trainingSheetUrl = freshUrl
+          }
           documentViewer.open({
             title: trainingSheetName(event),
-            url: event.trainingSheetUrl,
-            downloadUrl: event.trainingSheetUrl,
+            url: freshUrl,
+            downloadUrl: freshUrl,
             mimeType: String(event.trainingSheetPath || '').toLowerCase().endsWith('.pdf') ? 'application/pdf' : '',
           })
         } catch (error) {

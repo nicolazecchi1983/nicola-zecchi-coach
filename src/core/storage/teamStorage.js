@@ -29,6 +29,27 @@ export async function uploadPrivateDocument({ bucket, path, blob, contentType, c
   return path
 }
 
+export async function downloadPrivateDocument({ bucket, path }) {
+  requireStorage()
+  if (!path) {
+    throw new AppError('Percorso documento mancante.', {
+      code: 'STORAGE_DOWNLOAD_PATH_MISSING',
+      stage: 'download',
+      userMessage: 'Documento non disponibile. Riapri STAFF e riprova.',
+    })
+  }
+  const { data, error } = await supabase.storage.from(bucket).download(path)
+  if (error || !data) {
+    throw new AppError(`Download non riuscito: ${error?.message || 'file non disponibile'}`, {
+      code: 'STORAGE_DOWNLOAD_FAILED',
+      stage: 'download',
+      cause: error,
+      userMessage: 'Non è stato possibile scaricare il PDF pubblicato. Riapri STAFF e riprova.',
+    })
+  }
+  return data
+}
+
 export async function removePrivateDocument({ bucket, path, silent = true }) {
   if (!supabase || !path) return false
   const { error } = await supabase.storage.from(bucket).remove([path])
