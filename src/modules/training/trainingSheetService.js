@@ -21,6 +21,7 @@ export async function publishTrainingSheet({
   downloadLocal = false,
   createEvent,
   updateEvent,
+  publishRecovery = null,
 }) {
   requireTrainingSheetPublishPermission()
   const draftData = normalizeTrainingSheetData(rawData)
@@ -51,7 +52,23 @@ export async function publishTrainingSheet({
     date: draftData.date,
     fileName,
   })
-  await uploadTrainingSheetPdf(filePath, blob)
+  try {
+    publishRecovery?.begin?.({ filePath, previousPath: existingEvent?.trainingSheetPath || '', eventId: existingEvent?.id || '' })
+  } catch (error) {
+    throw new AppError('Recovery journal Training Sheet non disponibile.', {
+      code: 'TRAINING_PUBLISH_RECOVERY_UNAVAILABLE',
+      stage: 'recovery',
+      cause: error,
+      userMessage: 'STAFF non può garantire il recupero sicuro della pubblicazione. Ricarica la pagina e riprova.',
+    })
+  }
+
+  try {
+    await uploadTrainingSheetPdf(filePath, blob)
+  } catch (error) {
+    try { publishRecovery?.clear?.() } catch (_) {}
+    throw error
+  }
 
   const data = publishTrainingSheetData(draftData)
   const payload = buildTrainingSheetEventPayload({ data, filePath, squadTotal })
@@ -62,8 +79,12 @@ export async function publishTrainingSheet({
       ? await updateEvent(existingEvent.id, payload)
       : await createEvent(payload)
   } catch (error) {
+    let cleanupConfirmed = false
     try {
-      await removeTrainingSheetPdf(filePath)
+      cleanupConfirmed = await removeTrainingSheetPdf(filePath)
+      if (cleanupConfirmed) {
+        try { publishRecovery?.clear?.() } catch (_) {}
+      }
     } catch (cleanupError) {
       console.error('Cleanup PDF dopo publish fallita non riuscito:', cleanupError)
     }
@@ -71,25 +92,38 @@ export async function publishTrainingSheet({
       code: 'TRAINING_EVENT_SAVE_FAILED',
       stage: 'calendar',
       cause: error,
-      userMessage: 'Il PDF è stato generato, ma non è stato possibile collegarlo al Calendario. Il nuovo file è stato annullato e il documento precedente è rimasto invariato.',
+      userMessage: cleanupConfirmed
+        ? 'Il PDF è stato generato, ma non è stato possibile collegarlo al Calendario. Il nuovo file è stato annullato e il documento precedente è rimasto invariato.'
+        : 'Il collegamento al Calendario non è riuscito. Il documento precedente è rimasto invariato; STAFF riproverà automaticamente a pulire il nuovo PDF non collegato alla prossima apertura.',
     })
   }
-
   const previousPath = existingEvent?.trainingSheetPath || null
+  let previousCleanupPending = false
   if (previousPath && previousPath !== filePath) {
     try {
       const removed = await removeTrainingSheetPdf(previousPath)
       if (!removed) {
+        previousCleanupPending = true
         warnings.push({
           code: 'TRAINING_PREVIOUS_PDF_CLEANUP_FAILED',
-          message: 'Training Sheet pubblicata; una versione PDF precedente non è stata eliminata automaticamente.',
+          message: 'Training Sheet pubblicata; una versione PDF precedente non è stata eliminata automaticamente e verrà ritentata alla prossima apertura.',
         })
       }
     } catch (error) {
+      previousCleanupPending = true
       console.error('Cleanup PDF Training precedente non riuscito:', error)
       warnings.push({
         code: 'TRAINING_PREVIOUS_PDF_CLEANUP_FAILED',
-        message: 'Training Sheet pubblicata; non è stato possibile eliminare una versione PDF precedente.',
+        message: 'Training Sheet pubblicata; non è stato possibile eliminare una versione PDF precedente e STAFF riproverà alla prossima apertura.',
+      })
+    }
+  }
+
+  if (!previousCleanupPending) {
+    try { publishRecovery?.clear?.() } catch (error) {
+      warnings.push({
+        code: 'TRAINING_RECOVERY_JOURNAL_CLEAR_FAILED',
+        message: 'Training Sheet pubblicata; il controllo di recovery verrà riconciliato alla prossima apertura.',
       })
     }
   }
@@ -145,4 +179,8 @@ export async function downloadPublishedTrainingSheetPdf({ filePath, rawData }) {
   const blob = await downloadTrainingSheetPdf(filePath)
   const fileName = rawData ? buildTrainingSheetFileName(normalizeTrainingSheetData(rawData)) : 'training-sheet.pdf'
   return { blob, fileName }
+}
+
+export async function cleanupPublishedTrainingSheetPdf(filePath) {
+  return removeTrainingSheetPdf(filePath)
 }
