@@ -1,4 +1,5 @@
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
+import { buildTrainingDraftMeta, hasTrainingDraftContentChanges, resolveTrainingDraftSource } from '../trainingDraftPersistence.js'
 
 export function wireTrainingEditorEvents({
   root,
@@ -18,7 +19,6 @@ export function wireTrainingEditorEvents({
   getDataAccessUserMessage = getUserErrorMessage,
   updateCalendarEvent,
   createCalendarEvent,
-  deleteCalendarEvent,
   loadCalendarEvents,
   supabase,
   getCalendarEvent,
@@ -73,6 +73,7 @@ export function wireTrainingEditorEvents({
       tsLocationSelect?.addEventListener('change', syncTsLocation)
       syncTsLocation()
       const storageKey = 'nz-training-sheet-editor-v6-2'
+      const draftMetaKey = 'nz-training-sheet-editor-meta-v1'
       let phaseCount = 0
       let saveTimer = null
       let currentEditingEventId = localStorage.getItem('nz-training-sheet-open-event-id') || ''
@@ -80,6 +81,27 @@ export function wireTrainingEditorEvents({
       let hasUnpublishedChanges = false
       let editRevision = 0
       let publishInFlight = false
+
+      const readDraftMeta = () => {
+        try {
+          const raw = localStorage.getItem(draftMetaKey)
+          return raw ? JSON.parse(raw) : null
+        } catch (error) {
+          console.warn('Metadati bozza Training Sheet non leggibili:', error)
+          return null
+        }
+      }
+
+      const persistDraftSnapshot = (data, {
+        dirty = false,
+        eventId = currentEditingEventId,
+        baseUpdatedAt = currentTrainingDocument.updated_at || currentTrainingDocument.updatedAt || null,
+      } = {}) => {
+        const meta = buildTrainingDraftMeta({ eventId, dirty, baseUpdatedAt })
+        localStorage.setItem(storageKey, JSON.stringify(data))
+        localStorage.setItem(draftMetaKey, JSON.stringify(meta))
+        return meta
+      }
 
       const updateTrainingWorkflowUi = ({ dirty = hasUnpublishedChanges } = {}) => {
         hasUnpublishedChanges = Boolean(dirty)
@@ -90,8 +112,14 @@ export function wireTrainingEditorEvents({
         }
         if (draftStateRoot) draftStateRoot.dataset.status = status
         if (draftState) draftState.textContent = labels[status] || 'Bozza'
-        if (publishNote && status === TRAINING_SHEET_STATUS.PUBLISHED && hasUnpublishedChanges) {
-          publishNote.textContent = 'Hai modifiche locali non ancora pubblicate. Premi Pubblica TS per aggiornare STAFF, Calendario e Training Library.'
+        if (publishNote) {
+          if (status === TRAINING_SHEET_STATUS.PUBLISHED && hasUnpublishedChanges) {
+            publishNote.textContent = 'Hai modifiche locali non ancora pubblicate. Premi Pubblica TS per aggiornare STAFF, Calendario e Training Library.'
+          } else if (status === TRAINING_SHEET_STATUS.PUBLISHED) {
+            publishNote.textContent = 'Training Sheet pubblicata in STAFF, Calendario e Training Library.'
+          } else {
+            publishNote.textContent = 'Pubblica in STAFF, Calendario e Training Library. Il PDF resta disponibile da Anteprima e dal menu.'
+          }
         }
       }
 
@@ -251,7 +279,7 @@ export function wireTrainingEditorEvents({
 
       const saveDraft = () => {
         const data = collect()
-        localStorage.setItem(storageKey, JSON.stringify(data))
+        persistDraftSnapshot(data, { dirty: true })
         currentTrainingDocument = data
         updateTrainingWorkflowUi({ dirty: true })
       }
@@ -350,7 +378,7 @@ export function wireTrainingEditorEvents({
         if (selector) selector.open = false
       })
 
-      const applyTrainingSheetData = (data = {}) => {
+      const applyTrainingSheetData = (data = {}, options = {}) => {
         const d = data && typeof data === 'object' ? data : {}
 
         phasesRoot.innerHTML = ''
@@ -447,7 +475,7 @@ export function wireTrainingEditorEvents({
 
         updateCounts()
         updatePreview()
-        setTrainingDocument(d, { dirty: false })
+        setTrainingDocument(d, { dirty: options.dirty === true })
       }
 
       const restore = () => {
@@ -457,10 +485,12 @@ export function wireTrainingEditorEvents({
           return
         }
         try {
-          applyTrainingSheetData(JSON.parse(raw))
+          const meta = readDraftMeta()
+          applyTrainingSheetData(JSON.parse(raw), { dirty: Boolean(meta?.dirty) })
         } catch (error) {
           console.warn('Bozza TS non leggibile:', error)
           localStorage.removeItem(storageKey)
+          localStorage.removeItem(draftMetaKey)
           applyTrainingSheetData({ time: '17:30', location: '' })
         }
       }
@@ -687,10 +717,8 @@ export function wireTrainingEditorEvents({
             team: getTeamProfile(),
             squadTotal,
             existingEvent,
-            duplicateEvents: publishTarget.duplicateEvents,
             createEvent: createCalendarEvent,
             updateEvent: updateCalendarEvent,
-            deleteEvent: deleteCalendarEvent,
           })
 
           if (result.cancelled) return
@@ -721,7 +749,16 @@ export function wireTrainingEditorEvents({
           // modificare il form durante l'upload quelle modifiche restano locali/dirty.
           setTrainingDocument(result.data, { dirty: changedDuringPublish })
           const localSnapshot = changedDuringPublish ? collect() : result.data
-          cacheWrite(storageKey, JSON.stringify(localSnapshot), 'Pubblicazione riuscita; bozza locale non aggiornata.')
+          try {
+            persistDraftSnapshot(localSnapshot, {
+              dirty: changedDuringPublish,
+              eventId: currentEditingEventId,
+              baseUpdatedAt: result.data.updated_at || result.data.updatedAt || null,
+            })
+          } catch (error) {
+            console.error('Bozza locale Training Sheet non aggiornata:', error)
+            postPublishWarnings.push({ code: 'TRAINING_LOCAL_DRAFT_WRITE_FAILED', message: 'Pubblicazione riuscita; bozza locale non aggiornata.' })
+          }
 
           try {
             await loadCalendarEvents()
@@ -755,6 +792,7 @@ export function wireTrainingEditorEvents({
       const resetEditor = () => {
         if (!window.confirm('Vuoi cancellare tutti i campi della Training Sheet Editor?')) return
         localStorage.removeItem(storageKey)
+        localStorage.removeItem(draftMetaKey)
         localStorage.removeItem('nz-training-sheet-open-event-id')
         currentEditingEventId = ''
         setTrainingDocument({ status: TRAINING_SHEET_STATUS.DRAFT }, { dirty: false })
@@ -796,7 +834,7 @@ export function wireTrainingEditorEvents({
 
           // Lettura diretta come fallback: evita che cache o lista eventi non aggiornata
           // impediscano di riaprire una Training Sheet appena pubblicata.
-          if (!selected?.editorData && supabase) {
+          if (supabase) {
             let rawEvent = null
             try { rawEvent = await getCalendarEvent(eventId) } catch (_) {}
 
@@ -820,11 +858,41 @@ export function wireTrainingEditorEvents({
 
           const savedKey = selected.trainingSheetPath ? `nz-training-sheet:${selected.trainingSheetPath}` : ''
           const localSaved = savedKey ? localStorage.getItem(savedKey) : null
-          let parsedLocalData = null
+          let parsedPublishedCache = null
           if (localSaved) {
-            try { parsedLocalData = JSON.parse(localSaved) } catch { parsedLocalData = null }
+            try { parsedPublishedCache = JSON.parse(localSaved) } catch { parsedPublishedCache = null }
           }
-          const rawSourceData = selected.editorData || parsedLocalData
+
+          let parsedEditorDraft = null
+          try {
+            const rawEditorDraft = localStorage.getItem(storageKey)
+            parsedEditorDraft = rawEditorDraft ? JSON.parse(rawEditorDraft) : null
+          } catch {
+            parsedEditorDraft = null
+          }
+          const serverSourceData = selected.editorData || parsedPublishedCache
+          let draftMeta = readDraftMeta()
+          const isCurrentLegacyDraft = !draftMeta
+            && parsedEditorDraft
+            && String(currentEditingEventId || '') === String(selected.id)
+          if (isCurrentLegacyDraft) {
+            const legacyDirty = serverSourceData
+              ? hasTrainingDraftContentChanges(parsedEditorDraft, serverSourceData)
+              : true
+            draftMeta = buildTrainingDraftMeta({
+              eventId: selected.id,
+              dirty: legacyDirty,
+              baseUpdatedAt: serverSourceData?.updated_at || serverSourceData?.updatedAt || parsedEditorDraft?.updated_at || null,
+            })
+          }
+          const resolvedSource = resolveTrainingDraftSource({
+            eventId: selected.id,
+            localData: parsedEditorDraft,
+            localMeta: draftMeta,
+            serverData: serverSourceData,
+            hasPublishedPath: Boolean(selected.trainingSheetPath),
+          })
+          const rawSourceData = resolvedSource.data
           if (!rawSourceData && !selected.trainingSheetPath) {
             const draftData = buildTrainingDraftFromCalendarEvent(selected, {
               progressive: determineNextProgressive(),
@@ -833,7 +901,7 @@ export function wireTrainingEditorEvents({
             })
             currentEditingEventId = String(selected.id)
             applyTrainingSheetData(draftData)
-            localStorage.setItem(storageKey, JSON.stringify(draftData))
+            persistDraftSnapshot(draftData, { dirty: false, eventId: currentEditingEventId, baseUpdatedAt: null })
             localStorage.setItem('nz-training-sheet-open-event-id', currentEditingEventId)
             if (openSheetSelect) openSheetSelect.value = ''
             updateTrainingWorkflowUi({ dirty: false })
@@ -881,8 +949,16 @@ export function wireTrainingEditorEvents({
 
           if (sourceData) {
             currentEditingEventId = String(selected.id)
-            applyTrainingSheetData(sourceData)
-            localStorage.setItem(storageKey, JSON.stringify(collect()))
+            applyTrainingSheetData(sourceData, { dirty: resolvedSource.dirty })
+            const normalizedSnapshot = collect()
+            persistDraftSnapshot(normalizedSnapshot, {
+              dirty: resolvedSource.dirty,
+              eventId: currentEditingEventId,
+              baseUpdatedAt: sourceData.updated_at || sourceData.updatedAt || null,
+            })
+            if (resolvedSource.staleLocal && publishNote) {
+              publishNote.textContent = 'È disponibile una pubblicazione più recente. STAFF ha caricato la versione server per evitare di sovrascriverla con una bozza locale più vecchia.'
+            }
           } else {
             // Compatibilità con PDF storici: ripristina almeno i dati disponibili,
             // senza fingere di poter ricostruire contenuti mai salvati come JSON.
@@ -903,7 +979,6 @@ export function wireTrainingEditorEvents({
           currentEditingEventId = String(selected.id)
           localStorage.setItem('nz-training-sheet-open-event-id', currentEditingEventId)
           if (openSheetSelect) openSheetSelect.value = String(selected.id)
-          updateTrainingWorkflowUi({ dirty: false })
           return true
         } catch (error) {
           console.error('Errore apertura Training Sheet:', error)
@@ -924,11 +999,12 @@ export function wireTrainingEditorEvents({
       manualEditor.querySelector('[data-download-pdf-menu]')?.addEventListener('click', downloadPdf)
       manualEditor.querySelector('[data-publish-training-sheet]')?.addEventListener('click', publishCurrentTrainingSheet)
       showTsStep(1)
-      restore()
 
       const pendingOpenEventId = localStorage.getItem('nz-training-sheet-open-event-id')
       if (pendingOpenEventId && appState.calendarEvents.some((item) => String(item.id) === String(pendingOpenEventId))) {
         loadTrainingSheetByEventId(pendingOpenEventId)
+      } else {
+        restore()
       }
       const nextProgressive = determineNextProgressive()
       if (form.elements.progressive && Number(form.elements.progressive.value || 0) < nextProgressive) {

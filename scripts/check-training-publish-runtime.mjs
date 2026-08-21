@@ -26,7 +26,7 @@ const checks = [
   ['Publish is single-flight guarded in runtime state', /if \(!button \|\| publishInFlight\) return[\s\S]*?publishInFlight = true[\s\S]*?publishInFlight = false/],
   ['Pending autosave debounce is cancelled before taking the publish snapshot', /clearTimeout\(saveTimer\)\s*saveTimer = null\s*const publishRevision = editRevision\s*const rawData = collect\(\)/],
   ['Edits made while publish is in flight remain dirty after the canonical commit', /const changedDuringPublish = editRevision !== publishRevision[\s\S]*?setTrainingDocument\(result\.data, \{ dirty: changedDuringPublish \}\)/],
-  ['Local storage preserves the newer form snapshot when edits happen during publish', /const localSnapshot = changedDuringPublish \? collect\(\) : result\.data[\s\S]*?cacheWrite\(storageKey, JSON\.stringify\(localSnapshot\)/],
+  ['Local storage preserves the newer form snapshot when edits happen during publish', /const localSnapshot = changedDuringPublish \? collect\(\) : result\.data[\s\S]*?persistDraftSnapshot\(localSnapshot,[\s\S]*?dirty: changedDuringPublish/],
   ['Post-publish helper text preserves dirty truth when edits happen during upload', /if \(changedDuringPublish\) \{\s*note\.textContent = 'Training Sheet pubblicata\. Hai modifiche locali successive non ancora pubblicate\.'/],
 ]
 

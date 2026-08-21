@@ -26,10 +26,7 @@ const normalizedEventId = (value) => String(value || '').trim()
 
 async function assertTrainingEventSlotAvailable(
   payload = {},
-  {
-    excludeEventId = null,
-    pendingDeletionEventIds = [],
-  } = {},
+  { excludeEventId = null } = {},
 ) {
   if (!isTrainingPayload(payload) || !payload.start_at) return
 
@@ -37,7 +34,7 @@ async function assertTrainingEventSlotAvailable(
   if (!range) return
 
   const ignoredIds = new Set(
-    [excludeEventId, ...pendingDeletionEventIds]
+    [excludeEventId]
       .map(normalizedEventId)
       .filter(Boolean),
   )
@@ -92,17 +89,12 @@ export async function createCalendarEvent(payload) {
   return data
 }
 
-export async function updateCalendarEvent(
-  eventId,
-  payload,
-  { pendingDeletionEventIds = [] } = {},
-) {
+export async function updateCalendarEvent(eventId, payload) {
   if (!eventId) throw new Error('Evento non valido.')
 
   const cleanedPayload = cleanPayload(payload)
   await assertTrainingEventSlotAvailable(cleanedPayload, {
     excludeEventId: eventId,
-    pendingDeletionEventIds,
   })
 
   const { data, error } = await supabase

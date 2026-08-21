@@ -17,12 +17,10 @@ export async function publishTrainingSheet({
   team,
   squadTotal,
   existingEvent,
-  duplicateEvents = [],
   confirmPreview = null,
   downloadLocal = false,
   createEvent,
   updateEvent,
-  deleteEvent,
 }) {
   requireTrainingSheetPublishPermission()
   const draftData = normalizeTrainingSheetData(rawData)
@@ -60,12 +58,8 @@ export async function publishTrainingSheet({
   let savedEvent
   const warnings = []
   try {
-    const pendingDeletionEventIds = duplicateEvents
-      .map((event) => event?.id)
-      .filter(Boolean)
-
     savedEvent = existingEvent
-      ? await updateEvent(existingEvent.id, payload, { pendingDeletionEventIds })
+      ? await updateEvent(existingEvent.id, payload)
       : await createEvent(payload)
   } catch (error) {
     try {
@@ -94,34 +88,6 @@ export async function publishTrainingSheet({
     }
   }
 
-
-  if (duplicateEvents.length) {
-    if (typeof deleteEvent !== 'function') {
-      warnings.push({
-        code: 'TRAINING_DUPLICATE_CLEANUP_UNAVAILABLE',
-        message: 'La Training Sheet è pubblicata, ma STAFF non ha potuto consolidare un vecchio evento duplicato.',
-      })
-    } else {
-      for (const duplicateEvent of duplicateEvents) {
-        if (!duplicateEvent?.id || String(duplicateEvent.id) === String(existingEvent?.id || savedEvent?.id || '')) continue
-
-        try {
-          await deleteEvent(duplicateEvent.id)
-          const duplicatePath = duplicateEvent.trainingSheetPath || duplicateEvent.training_sheet_path || null
-          if (duplicatePath && duplicatePath !== filePath) {
-            await removeTrainingSheetPdf(duplicatePath)
-          }
-        } catch (error) {
-          console.error('Consolidamento evento Training duplicato non riuscito:', error)
-          warnings.push({
-            code: 'TRAINING_DUPLICATE_CLEANUP_FAILED',
-            eventId: duplicateEvent.id,
-            message: `Training Sheet pubblicata; impossibile consolidare l'evento duplicato ${duplicateEvent.id}.`,
-          })
-        }
-      }
-    }
-  }
 
   if (downloadLocal) {
     try {

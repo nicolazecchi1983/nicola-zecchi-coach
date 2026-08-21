@@ -25,7 +25,7 @@ assert.equal(findTrainingCalendarEvent({
   events,
   eventId: 'evening-empty',
   data: { date: '2026-08-07', time: '17:30' },
-})?.id, 'evening-published')
+})?.id, 'evening-empty')
 assert.equal(findTrainingCalendarEvent({ events, data: { date: '2026-08-07', time: '15:00' } }), null)
 
 const collision = resolveTrainingCalendarPublishTarget({
@@ -33,8 +33,8 @@ const collision = resolveTrainingCalendarPublishTarget({
   eventId: 'evening-empty',
   data: { date: '2026-08-07', time: '17:30' },
 })
-assert.equal(collision.event?.id, 'evening-published')
-assert.deepEqual(collision.duplicateEvents.map((event) => event.id), ['evening-empty'])
+assert.equal(collision.event?.id, 'evening-empty')
+assert.deepEqual(collision.duplicateEvents, [])
 
 const doubleSession = resolveTrainingCalendarPublishTarget({
   events,
@@ -56,7 +56,7 @@ const currentPublished = resolveTrainingCalendarPublishTarget({
   data: { date: '2026-08-07', time: '17:30' },
 })
 assert.equal(currentPublished.event?.id, 'current-published')
-assert.deepEqual(currentPublished.duplicateEvents.map((event) => event.id), ['other-published'])
+assert.deepEqual(currentPublished.duplicateEvents, [])
 
 // Spostare una TS già collegata verso un altro orario non deve silenziosamente
 // adottare un evento differente: il CalendarService deciderà se lo slot è libero.
@@ -69,16 +69,17 @@ const movedPublished = resolveTrainingCalendarPublishTarget({
   data: { date: '2026-08-07', time: '18:00' },
 })
 assert.equal(movedPublished.event?.id, 'current-published')
-assert.ok(movedPublished.duplicateEvents.some((event) => event.id === 'target-slot'))
+assert.deepEqual(movedPublished.duplicateEvents, [])
 
 assert.doesNotMatch(runtime, /name="trainingSheet"/)
 assert.doesNotMatch(runtime, /uploadTrainingSheet\(/)
 assert.match(runtime, /resolveTrainingCalendarPublishTarget\(/)
-assert.match(runtime, /duplicateEvents: publishTarget\.duplicateEvents/)
-assert.match(runtime, /deleteEvent: deleteCalendarEvent/)
-assert.match(service, /duplicateEvents = \[\]/)
-assert.match(service, /pendingDeletionEventIds/)
-assert.match(service, /await deleteEvent\(duplicateEvent\.id\)/)
+assert.doesNotMatch(runtime, /duplicateEvents: publishTarget\.duplicateEvents/)
+assert.doesNotMatch(runtime, /deleteEvent: deleteCalendarEvent/)
+assert.match(runtime, /event_id is the immutable identity|resolveTrainingCalendarPublishTarget/)
+assert.doesNotMatch(service, /duplicateEvents = \[\]/)
+assert.doesNotMatch(service, /pendingDeletionEventIds/)
+assert.doesNotMatch(service, /await deleteEvent\(duplicateEvent\.id\)/)
 assert.match(service, /TRAINING_LOCAL_DOWNLOAD_FAILED/)
 assert.match(runtime, /Si crea dopo aver salvato l’allenamento/)
 assert.match(runtime, /La Training Sheet si modifica dal suo Editor/)

@@ -57,39 +57,28 @@ export function resolveTrainingCalendarPublishTarget({ events = [], eventId = ''
       })
     : []
 
-  // event_id resta il legame principale. Se l'evento corrente ha già una TS
-  // pubblicata, mantiene la propria identità anche quando data/ora vengono modificate:
-  // un'eventuale collisione con un altro evento deve essere bloccata dal CalendarService.
-  // I duplicati legacy senza TS vengono invece consolidati verso la TS pubblicata
-  // già presente nello stesso slot.
-  const byIdInSameSlot = byId
-    && sameSlot.some((event) => String(event.id) === String(byId.id))
-    ? byId
-    : null
-
-  const canonical = (byId?.trainingSheetPath ? byId : null)
-    || sameSlot.find((event) => event?.trainingSheetPath)
-    || byIdInSameSlot
-    || sameSlot[0]
-    || byId
-    || null
-
-  const duplicateMap = new Map()
-  sameSlot.forEach((event) => {
-    if (canonical && String(event.id) !== String(canonical.id)) {
-      duplicateMap.set(String(event.id), event)
+  // R1.4K — event_id is the immutable identity of an already linked Training Sheet.
+  // Never switch identity or silently delete another event just because date/time
+  // collide. CalendarService must surface the collision and preserve both records.
+  if (byId) {
+    return {
+      event: byId,
+      duplicateEvents: [],
     }
-  })
-
-  // Se l'editor proveniva da un altro evento che viene spostato su uno slot già
-  // esistente, quell'evento diventa duplicato e va consolidato nel canonico.
-  if (byId && canonical && String(byId.id) !== String(canonical.id)) {
-    duplicateMap.set(String(byId.id), byId)
   }
+
+  // A brand-new Training Sheet may attach to one event already present in the
+  // requested slot. If legacy data contains multiple events in that slot, choose a
+  // deterministic candidate but DO NOT mark the others for deletion: the strict
+  // CalendarService uniqueness guard will block the publish until the conflict is
+  // explicitly resolved by the user/maintenance flow.
+  const canonical = sameSlot.find((event) => event?.trainingSheetPath)
+    || sameSlot[0]
+    || null
 
   return {
     event: canonical,
-    duplicateEvents: [...duplicateMap.values()],
+    duplicateEvents: [],
   }
 }
 
