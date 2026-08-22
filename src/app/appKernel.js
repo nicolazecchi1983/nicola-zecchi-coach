@@ -10,6 +10,7 @@ import { renderLogin } from '../modules/auth/loginView.js'
 import { renderApp, attachAppEvents, prepareAppData, invalidateVolatileAppData } from './appController.js'
 import { createAppLifecycleController } from './appLifecycleController.js'
 import { createAppSessionResumeGuard } from './appSessionResumeGuard.js'
+import { createAppStartupSessionReconciler } from './appStartupSessionReconciler.js'
 
 function createDomAdapter(rootElement) {
   if (!rootElement) throw new Error('Root applicativo #app non trovato')
@@ -27,11 +28,16 @@ function createDomAdapter(rootElement) {
 export function createAppKernel({ rootElement = document.querySelector('#app') } = {}) {
   const dom = createDomAdapter(rootElement)
   let authSubscription = null
+  let startPromise = null
+  let started = false
+  let disposed = false
   let renderedUserId = null
   let authGeneration = 0
   let viewEpoch = 0
   let dashboardQueue = Promise.resolve()
   let dashboardRenderPromise = null
+  let authTransitionPromise = null
+  let authTransitionVersion = 0
   const sessionResumeGuard = createAppSessionResumeGuard({
     getSession,
     getUser,
@@ -43,6 +49,13 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
     onUserChanged: async ({ user }) => {
       await showDashboard({ force: true, verifiedUser: user })
     },
+  })
+  const startupSessionReconciler = createAppStartupSessionReconciler({
+    getSession,
+    getAuthGeneration: () => authGeneration,
+    isDisposed: () => disposed,
+    showDashboard,
+    showLogin,
   })
 
   function validateSessionAfterLifecycle(reason) {
@@ -168,34 +181,90 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
     }
   }
 
-  async function start() {
-    lifecycleController.start()
-    if (!isSupabaseConfigured || !supabase) {
-      await showLogin()
-      return
+  function trackAuthTransition(transition) {
+    authTransitionVersion += 1
+    const tracked = Promise.resolve(transition).catch((error) => {
+      console.error('Auth transition non completata:', error)
+      return Object.freeze({ status: 'error', error })
+    })
+    authTransitionPromise = tracked
+    void tracked.finally(() => {
+      if (authTransitionPromise === tracked) authTransitionPromise = null
+    })
+    return tracked
+  }
+
+  async function awaitAuthTransitionsSettled(maxPasses = 8) {
+    let observedVersion = -1
+    for (let pass = 0; pass < maxPasses; pass += 1) {
+      const current = authTransitionPromise
+      const currentVersion = authTransitionVersion
+      if (!current || currentVersion === observedVersion) return Object.freeze({ status: 'settled' })
+      observedVersion = currentVersion
+      await current
+      await Promise.resolve()
     }
+    return Object.freeze({ status: 'pending', version: authTransitionVersion })
+  }
 
-    const { data: { session } } = await getSession()
-    if (session) await showDashboard()
-    else await showLogin()
-
+  function bindAuthSubscription() {
+    if (authSubscription || disposed) return
     const subscription = onAuthStateChange((_event, nextSession) => {
+      if (disposed) return
       authGeneration += 1
       const nextUserId = nextSession?.user?.id || null
       if (!nextSession) {
-        if (renderedUserId !== null || !rootElement.querySelector('.login-page')) void showLogin()
+        if (renderedUserId !== null || !rootElement.querySelector('.login-page')) {
+          trackAuthTransition(showLogin())
+        }
         return
       }
 
       // Supabase può emettere SIGNED_IN/TOKEN_REFRESHED anche tornando sulla scheda.
       // Se l'utente è lo stesso e l'app è già montata, non distruggiamo il workspace corrente.
       if (renderedUserId === nextUserId && rootElement.querySelector('.workspace')) return
-      void showDashboard({ force: renderedUserId !== nextUserId, verifiedUser: nextSession.user })
+      trackAuthTransition(showDashboard({ force: renderedUserId !== nextUserId, verifiedUser: nextSession.user }))
     })
     authSubscription = subscription?.data?.subscription ?? subscription ?? null
   }
 
+  async function start() {
+    if (disposed) return Object.freeze({ status: 'disposed' })
+    if (startPromise) return startPromise
+    if (started) return Object.freeze({ status: 'already-started' })
+
+    started = true
+    const run = (async () => {
+      lifecycleController.start()
+      if (!isSupabaseConfigured || !supabase) {
+        await showLogin()
+        return Object.freeze({ status: 'login', reason: 'supabase-unavailable' })
+      }
+
+      // Subscribe before the first asynchronous session reconciliation so that
+      // SIGNED_OUT / user-change events cannot be missed during a slow startup.
+      bindAuthSubscription()
+      const startupResult = await startupSessionReconciler.reconcile()
+      if (startupResult?.status === 'superseded') {
+        await awaitAuthTransitionsSettled()
+      }
+      return startupResult
+    })()
+
+    startPromise = run
+    try {
+      return await run
+    } catch (error) {
+      if (!disposed) started = false
+      throw error
+    } finally {
+      if (startPromise === run) startPromise = null
+    }
+  }
+
   function dispose() {
+    disposed = true
+    viewEpoch += 1
     lifecycleController.dispose()
     sessionResumeGuard.dispose()
     authSubscription?.unsubscribe?.()
