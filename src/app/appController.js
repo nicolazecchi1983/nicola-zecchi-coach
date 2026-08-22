@@ -140,12 +140,10 @@ import { wireMatchWorkspaceEvents } from '../modules/match/events/matchWorkspace
 import { wireMatchLibraryEvents } from '../modules/match/events/matchLibraryEvents.js'
 import { wireStaffEvents } from '../modules/staff/events/staffEvents.js'
 import { wireMatchAnalysisEvents } from '../modules/match/events/matchAnalysisEvents.js'
-import { wireLegacyMatchEditorEvents } from '../modules/match/events/legacyMatchEditorEvents.js'
-import { wireTrainingDraftAndVoiceEvents } from '../modules/training/events/trainingDraftAndVoiceEvents.js'
-import { wireTrainingEditorEvents } from '../modules/training/events/trainingEditorEvents.js'
 import { createTrainingPresentationBuilders } from '../modules/training/ui/trainingPresentationBuilders.js'
 import { wireGlobalShellEvents } from './events/globalShellEvents.js'
 import { createRosterModalViews } from '../modules/roster/ui/rosterModalViews.js'
+import { loadHeavyFeatureEventBinders } from './appHeavyFeatureEvents.js'
 
 function teamLogoHtml(className = 'team-logo') {
   const team = getTeamProfile()
@@ -612,8 +610,8 @@ export async function attachAppEvents(user) {
       document.body.classList.remove('drawer-open', 'new-event-modal-open')
       document.body.style.removeProperty('overflow')
     },
-    afterActivate: async () => {
-      await bindDynamic()
+    afterActivate: async ({ key }) => {
+      await bindDynamic(key)
       applyAccessPolicy(root)
     },
   })
@@ -686,7 +684,11 @@ export async function attachAppEvents(user) {
     document.body.classList.remove('drawer-open')
   }
 
-  async function bindDynamic() {
+  async function bindDynamic(requestedKey = null) {
+    const activeKey = requestedKey || workspaceEngine.getActiveKey?.() || 'dashboard'
+    const heavyBinders = await loadHeavyFeatureEventBinders(activeKey)
+
+    globalThis.performance?.mark?.(`staff:feature-wire:${activeKey}:start`)
 
     wireMatchLibraryEvents({
       root,
@@ -805,7 +807,7 @@ export async function attachAppEvents(user) {
       analysisView,
       bindDynamic,
     })
-    wireLegacyMatchEditorEvents({
+    if (heavyBinders.wireLegacyMatchEditorEvents) heavyBinders.wireLegacyMatchEditorEvents({
       root,
       getActiveMatchContext,
       createMatchDraftService,
@@ -832,7 +834,7 @@ export async function attachAppEvents(user) {
       urlApi: URL,
       requestFrame: requestAnimationFrame,
     })
-    wireTrainingEditorEvents({
+    if (heavyBinders.wireTrainingEditorEvents) heavyBinders.wireTrainingEditorEvents({
       root,
       TRAINING_SHEET_STATUS,
       normalizeTrainingSheetData,
@@ -897,7 +899,7 @@ export async function attachAppEvents(user) {
       supabase,
       confirmUser: window.confirm,
     })
-    await wireTrainingDraftAndVoiceEvents({
+    if (heavyBinders.wireTrainingDraftAndVoiceEvents) await heavyBinders.wireTrainingDraftAndVoiceEvents({
       root,
       getDataAccessUserMessage,
       appState,
@@ -935,7 +937,14 @@ export async function attachAppEvents(user) {
       loadCalendarEvents,
       setView,
     })
-}
+
+    globalThis.performance?.mark?.(`staff:feature-wire:${activeKey}:end`)
+    globalThis.performance?.measure?.(
+      `staff:feature-wire:${activeKey}`,
+      `staff:feature-wire:${activeKey}:start`,
+      `staff:feature-wire:${activeKey}:end`,
+    )
+  }
 
   wireGlobalShellEvents({
     document,

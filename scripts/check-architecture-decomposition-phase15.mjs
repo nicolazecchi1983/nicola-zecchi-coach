@@ -1,12 +1,13 @@
 import fs from 'node:fs'
 
 const app = fs.readFileSync('src/app/appController.js', 'utf8')
+const heavy = fs.readFileSync('src/app/appHeavyFeatureEvents.js', 'utf8')
 const legacy = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
 const docs = fs.readFileSync('docs/ARCHITECTURE_DECOMPOSITION_PHASE_15.md', 'utf8')
 
 const checks = [
-  ['Legacy Match Editor physically extracted', app.includes("import { wireLegacyMatchEditorEvents } from '../modules/match/events/legacyMatchEditorEvents.js'")],
-  ['Controller composes Legacy Match Editor wiring', app.includes('wireLegacyMatchEditorEvents({')],
+  ['Legacy Match Editor physically extracted', heavy.includes("import('../modules/match/events/legacyMatchEditorEvents.js')")],
+  ['Controller composes Legacy Match Editor wiring', app.includes('heavyBinders.wireLegacyMatchEditorEvents({')],
   ['Inline Legacy Match Editor function removed', !app.includes('function wireLegacyMatchEditorEvents()')],
   ['Match module owns legacy editor root', legacy.includes("querySelector('[data-match-editor]')")],
   ['Match module owns formation and pitch behavior', legacy.includes('applyFormation(formationSelect.value)') && legacy.includes('bindTokenDragging()')],

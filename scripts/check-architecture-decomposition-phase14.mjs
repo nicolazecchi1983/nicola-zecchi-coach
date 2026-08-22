@@ -1,12 +1,13 @@
 import fs from 'node:fs'
 
 const app = fs.readFileSync('src/app/appController.js', 'utf8')
+const heavy = fs.readFileSync('src/app/appHeavyFeatureEvents.js', 'utf8')
 const training = fs.readFileSync('src/modules/training/events/trainingEditorEvents.js', 'utf8')
 const docs = fs.readFileSync('docs/ARCHITECTURE_DECOMPOSITION_PHASE_14.md', 'utf8')
 
 const checks = [
-  ['Training Editor physically extracted', app.includes("import { wireTrainingEditorEvents } from '../modules/training/events/trainingEditorEvents.js'")],
-  ['Controller composes Training Editor wiring', app.includes('wireTrainingEditorEvents({')],
+  ['Training Editor physically extracted', heavy.includes("import('../modules/training/events/trainingEditorEvents.js')")],
+  ['Controller composes Training Editor wiring', app.includes('heavyBinders.wireTrainingEditorEvents({')],
   ['Inline Training Editor function removed', !app.includes('function wireTrainingEditorEvents()')],
   ['Training module owns manual editor root', training.includes("querySelector('[data-ts-manual-editor]')")],
   ['Training module owns six-step navigation', training.includes('Sezione ${nextStep} di 6') && training.includes('[data-ts-step-button]')],

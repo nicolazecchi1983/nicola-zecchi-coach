@@ -1,11 +1,12 @@
 import fs from 'node:fs'
 
 const app = fs.readFileSync('src/app/appController.js','utf8')
+const heavy = fs.readFileSync('src/app/appHeavyFeatureEvents.js','utf8')
 const legacy = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js','utf8')
 
 const checks = [
-  ['Legacy Match Editor moved to Match-owned event module', app.includes("import { wireLegacyMatchEditorEvents } from '../modules/match/events/legacyMatchEditorEvents.js'") && legacy.includes('export function wireLegacyMatchEditorEvents({')],
-  ['Legacy Match Editor is orchestrated by bindDynamic', app.includes('wireLegacyMatchEditorEvents({')],
+  ['Legacy Match Editor moved to Match-owned event module', heavy.includes("import('../modules/match/events/legacyMatchEditorEvents.js')") && legacy.includes('export function wireLegacyMatchEditorEvents({')],
+  ['Legacy Match Editor is orchestrated by bindDynamic', app.includes('heavyBinders.wireLegacyMatchEditorEvents({')],
   ['formation change updates positions',
     legacy.includes("formationSelect.addEventListener('change'") && legacy.includes('applyFormation(formationSelect.value)')],
   ['custom formation remains wired',

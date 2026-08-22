@@ -5,6 +5,7 @@ const docs = fs.readFileSync('docs/ARCHITECTURE_DECOMPOSITION_PHASE_2.md', 'utf8
 const staffEvents=fs.readFileSync('src/modules/staff/events/staffEvents.js','utf8')
 const trainingDraftEvents=fs.readFileSync('src/modules/training/events/trainingDraftAndVoiceEvents.js','utf8')
 const globalShellEvents=fs.readFileSync('src/app/events/globalShellEvents.js','utf8')
+const heavy=fs.readFileSync('src/app/appHeavyFeatureEvents.js','utf8')
 
 const dynamicBoundaries = [
   'wireMatchLibraryEvents',
@@ -27,12 +28,12 @@ const dynamicBoundaries = [
 
 const checks = [
   ['all dynamic domains have an explicit wire boundary',
-    dynamicBoundaries.every((name) => app.includes(`function ${name}()`) || app.includes(`import { ${name} }`))],
+    dynamicBoundaries.every((name) => app.includes(`function ${name}()`) || app.includes(`import { ${name} }`) || app.includes(`heavyBinders.${name}(`))],
   ['all dynamic wire functions are orchestrated by bindDynamic',
     dynamicBoundaries.every((name) => app.includes(`${name}()`) || app.includes(`${name}({`))],
   ['Training draft/voice preserves async initialization',
-    (app.includes('async function wireTrainingDraftAndVoiceEvents()') || app.includes('import { wireTrainingDraftAndVoiceEvents }')) &&
-    (app.includes('await wireTrainingDraftAndVoiceEvents()') || app.includes('await wireTrainingDraftAndVoiceEvents({')) &&
+    heavy.includes("import('../modules/training/events/trainingDraftAndVoiceEvents.js')") &&
+    app.includes('await heavyBinders.wireTrainingDraftAndVoiceEvents({') &&
     trainingDraftEvents.includes('await restoreLatestTsDraft()')],
   ['Match Library remains segmented', app.includes('function wireMatchLibraryEvents()') || app.includes('import { wireMatchLibraryEvents }')],
   ['Team and Roster share one ownership boundary',

@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.51",
+  "version": "0.29.52",
   "private": true,
   "type": "module",
   "scripts": {
@@ -238,7 +238,9 @@
     "check:training-publish-failure-recovery": "node scripts/check-training-publish-failure-recovery.mjs",
     "check:performance-bootstrap-foundation": "node scripts/check-performance-bootstrap-foundation.mjs",
     "check:calendar-data-efficiency": "node scripts/check-calendar-data-efficiency.mjs",
-    "check:pdf-lazy-runtime": "node scripts/check-pdf-lazy-runtime.mjs"
+    "check:pdf-lazy-runtime": "node scripts/check-pdf-lazy-runtime.mjs",
+    "check:feature-code-splitting-foundation": "node scripts/check-feature-code-splitting-foundation.mjs",
+    "check:feature-code-splitting-build": "node scripts/check-feature-code-splitting-build.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -477,6 +479,8 @@
     "check:training-sheet-css-ownership",
     "check:performance-bootstrap-foundation",
     "check:calendar-data-efficiency",
-    "check:pdf-lazy-runtime"
+    "check:pdf-lazy-runtime",
+    "check:feature-code-splitting-foundation",
+    "check:feature-code-splitting-build"
   ]
 }
