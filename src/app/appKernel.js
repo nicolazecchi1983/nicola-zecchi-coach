@@ -7,7 +7,8 @@ import {
   onAuthStateChange,
 } from '../services/auth.js'
 import { renderLogin } from '../modules/auth/loginView.js'
-import { renderApp, attachAppEvents, prepareAppData } from './appController.js'
+import { renderApp, attachAppEvents, prepareAppData, invalidateVolatileAppData } from './appController.js'
+import { createAppLifecycleController } from './appLifecycleController.js'
 
 function createDomAdapter(rootElement) {
   if (!rootElement) throw new Error('Root applicativo #app non trovato')
@@ -27,6 +28,10 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
   let authSubscription = null
   let renderedUserId = null
   let dashboardRenderPromise = null
+  const lifecycleController = createAppLifecycleController({
+    onResume: ({ source }) => invalidateVolatileAppData(`resume:${source}`),
+    onOnline: () => invalidateVolatileAppData('network:online'),
+  })
 
   function attachPasswordToggle() {
     dom.query('#togglePassword')?.addEventListener('click', () => {
@@ -117,6 +122,7 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
   }
 
   async function start() {
+    lifecycleController.start()
     if (!isSupabaseConfigured || !supabase) {
       await showLogin()
       return
@@ -142,6 +148,7 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
   }
 
   function dispose() {
+    lifecycleController.dispose()
     authSubscription?.unsubscribe?.()
     authSubscription = null
   }

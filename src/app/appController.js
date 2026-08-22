@@ -281,6 +281,11 @@ async function requireFreshCalendarEvents() {
   return calendarReadCoordinator.refresh()
 }
 
+export function invalidateVolatileAppData(reason = 'app-lifecycle') {
+  calendarReadCoordinator.invalidate()
+  globalThis.performance?.mark?.(`staff:volatile-data-invalidated:${reason}`)
+}
+
 const analysisTemplateService = createAnalysisTemplateService()
 
 function analysisTemplateOptions() {
