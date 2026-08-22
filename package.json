@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.53",
+  "version": "0.29.54",
   "private": true,
   "type": "module",
   "scripts": {
@@ -241,7 +241,8 @@
     "check:pdf-lazy-runtime": "node scripts/check-pdf-lazy-runtime.mjs",
     "check:feature-code-splitting-foundation": "node scripts/check-feature-code-splitting-foundation.mjs",
     "check:feature-code-splitting-build": "node scripts/check-feature-code-splitting-build.mjs",
-    "check:mobile-runtime-lifecycle": "node scripts/check-mobile-runtime-lifecycle.mjs"
+    "check:mobile-runtime-lifecycle": "node scripts/check-mobile-runtime-lifecycle.mjs",
+    "check:mobile-session-resume-integrity": "node scripts/check-mobile-session-resume-integrity.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -483,6 +484,7 @@
     "check:pdf-lazy-runtime",
     "check:feature-code-splitting-foundation",
     "check:feature-code-splitting-build",
-    "check:mobile-runtime-lifecycle"
+    "check:mobile-runtime-lifecycle",
+    "check:mobile-session-resume-integrity"
   ]
 }

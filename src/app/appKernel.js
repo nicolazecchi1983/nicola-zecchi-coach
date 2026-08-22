@@ -9,6 +9,7 @@ import {
 import { renderLogin } from '../modules/auth/loginView.js'
 import { renderApp, attachAppEvents, prepareAppData, invalidateVolatileAppData } from './appController.js'
 import { createAppLifecycleController } from './appLifecycleController.js'
+import { createAppSessionResumeGuard } from './appSessionResumeGuard.js'
 
 function createDomAdapter(rootElement) {
   if (!rootElement) throw new Error('Root applicativo #app non trovato')
@@ -27,10 +28,39 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
   const dom = createDomAdapter(rootElement)
   let authSubscription = null
   let renderedUserId = null
+  let authGeneration = 0
+  let viewEpoch = 0
+  let dashboardQueue = Promise.resolve()
   let dashboardRenderPromise = null
+  const sessionResumeGuard = createAppSessionResumeGuard({
+    getSession,
+    getUser,
+    getRenderedUserId: () => renderedUserId,
+    getAuthGeneration: () => authGeneration,
+    onSessionMissing: async () => {
+      await showLogin()
+    },
+    onUserChanged: async ({ user }) => {
+      await showDashboard({ force: true, verifiedUser: user })
+    },
+  })
+
+  function validateSessionAfterLifecycle(reason) {
+    void sessionResumeGuard.validate(reason).catch(() => {
+      // Mobile resume must fail open on transient validation failures.
+      // Supabase auth state remains authoritative and can recover independently.
+    })
+  }
+
   const lifecycleController = createAppLifecycleController({
-    onResume: ({ source }) => invalidateVolatileAppData(`resume:${source}`),
-    onOnline: () => invalidateVolatileAppData('network:online'),
+    onResume: ({ source }) => {
+      invalidateVolatileAppData(`resume:${source}`)
+      validateSessionAfterLifecycle(`resume:${source}`)
+    },
+    onOnline: () => {
+      invalidateVolatileAppData('network:online')
+      validateSessionAfterLifecycle('network:online')
+    },
   })
 
   function attachPasswordToggle() {
@@ -46,6 +76,7 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
   }
 
   async function showLogin() {
+    viewEpoch += 1
     renderedUserId = null
     dom.render(renderLogin({ configured: isSupabaseConfigured }))
     attachPasswordToggle()
@@ -82,21 +113,30 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
     })
   }
 
-  async function showDashboard({ force = false } = {}) {
-    if (dashboardRenderPromise) return dashboardRenderPromise
+  async function showDashboard({ force = false, verifiedUser = null } = {}) {
+    const transitionEpoch = ++viewEpoch
+    const request = async () => {
+      if (transitionEpoch !== viewEpoch) return Object.freeze({ status: 'superseded' })
 
-    dashboardRenderPromise = (async () => {
-      const { data: { user } } = await getUser()
-      if (!user) return showLogin()
+      const user = verifiedUser ?? (await getUser())?.data?.user ?? null
+      if (transitionEpoch !== viewEpoch) return Object.freeze({ status: 'superseded' })
+      if (!user) {
+        await showLogin()
+        return Object.freeze({ status: 'login' })
+      }
 
       const workspaceAlreadyMounted = Boolean(rootElement.querySelector('.workspace'))
-      if (!force && renderedUserId === user.id && workspaceAlreadyMounted) return
+      if (!force && renderedUserId === user.id && workspaceAlreadyMounted) {
+        return Object.freeze({ status: 'already-mounted', userId: user.id })
+      }
 
       globalThis.performance?.mark?.('staff:dashboard:start')
       globalThis.performance?.mark?.('staff:prepare-data:start')
       await prepareAppData(user)
       globalThis.performance?.mark?.('staff:prepare-data:end')
       globalThis.performance?.measure?.('staff:prepare-data', 'staff:prepare-data:start', 'staff:prepare-data:end')
+
+      if (transitionEpoch !== viewEpoch) return Object.freeze({ status: 'superseded' })
 
       dom.render(renderApp(user))
       globalThis.performance?.mark?.('staff:shell-rendered')
@@ -105,6 +145,9 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
       await attachAppEvents(user)
       globalThis.performance?.mark?.('staff:attach-events:end')
       globalThis.performance?.measure?.('staff:attach-events', 'staff:attach-events:start', 'staff:attach-events:end')
+
+      if (transitionEpoch !== viewEpoch) return Object.freeze({ status: 'superseded' })
+
       globalThis.performance?.mark?.('staff:app-ready')
       globalThis.performance?.measure?.('staff:dashboard-ready', 'staff:dashboard:start', 'staff:app-ready')
       renderedUserId = user.id
@@ -112,12 +155,16 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
       dom.query('#logoutButton')?.addEventListener('click', async () => {
         await signOut()
       })
-    })()
+      return Object.freeze({ status: 'mounted', userId: user.id })
+    }
 
+    const queued = dashboardQueue.catch(() => {}).then(request)
+    dashboardQueue = queued.then(() => {}, () => {})
+    dashboardRenderPromise = queued
     try {
-      return await dashboardRenderPromise
+      return await queued
     } finally {
-      dashboardRenderPromise = null
+      if (dashboardRenderPromise === queued) dashboardRenderPromise = null
     }
   }
 
@@ -133,22 +180,24 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
     else await showLogin()
 
     const subscription = onAuthStateChange((_event, nextSession) => {
+      authGeneration += 1
       const nextUserId = nextSession?.user?.id || null
       if (!nextSession) {
-        if (renderedUserId !== null || !rootElement.querySelector('.login-page')) showLogin()
+        if (renderedUserId !== null || !rootElement.querySelector('.login-page')) void showLogin()
         return
       }
 
       // Supabase può emettere SIGNED_IN/TOKEN_REFRESHED anche tornando sulla scheda.
       // Se l'utente è lo stesso e l'app è già montata, non distruggiamo il workspace corrente.
       if (renderedUserId === nextUserId && rootElement.querySelector('.workspace')) return
-      showDashboard()
+      void showDashboard({ force: renderedUserId !== nextUserId, verifiedUser: nextSession.user })
     })
     authSubscription = subscription?.data?.subscription ?? subscription ?? null
   }
 
   function dispose() {
     lifecycleController.dispose()
+    sessionResumeGuard.dispose()
     authSubscription?.unsubscribe?.()
     authSubscription = null
   }
