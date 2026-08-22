@@ -42,7 +42,7 @@ for (const [label, expectation] of checks) {
 }
 
 const serviceChecks = [
-  ['Failed Calendar commit preserves the original failure even if uploaded-PDF cleanup also fails', /catch \(error\) \{\s*try \{\s*await removeTrainingSheetPdf\(filePath\)[\s\S]*?catch \(cleanupError\)[\s\S]*?throw new AppError/],
+  ['Failed Calendar commit preserves the original failure and tracks uncertain uploaded-PDF cleanup', /catch \(error\) \{[\s\S]*?cleanupConfirmed = await removeTrainingSheetPdf\(filePath\)[\s\S]*?throw new AppError/],
   ['Previous PDF cleanup after a successful Calendar commit is warning-only', /TRAINING_PREVIOUS_PDF_CLEANUP_FAILED/],
 ]
 for (const [label, expectation] of serviceChecks) {

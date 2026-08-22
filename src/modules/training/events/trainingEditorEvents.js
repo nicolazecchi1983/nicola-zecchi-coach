@@ -1,5 +1,6 @@
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import { buildTrainingDraftMeta, hasTrainingDraftContentChanges, resolveTrainingDraftSource } from '../trainingDraftPersistence.js'
+import { createTrainingPublishRecoveryStore, reconcileInterruptedTrainingPublish } from '../trainingPublishRecovery.js'
 
 export function wireTrainingEditorEvents({
   root,
@@ -16,6 +17,7 @@ export function wireTrainingEditorEvents({
   publishTrainingSheet,
   createTrainingSheetPdfOutput,
   downloadPublishedTrainingSheetPdf,
+  cleanupPublishedTrainingSheetPdf,
   getUserErrorMessage,
   getDataAccessUserMessage = getUserErrorMessage,
   updateCalendarEvent,
@@ -82,6 +84,7 @@ export function wireTrainingEditorEvents({
       let hasUnpublishedChanges = false
       let editRevision = 0
       let publishInFlight = false
+      const publishRecoveryStore = createTrainingPublishRecoveryStore(localStorage)
 
       const readDraftMeta = () => {
         try {
@@ -751,6 +754,7 @@ export function wireTrainingEditorEvents({
             existingEvent,
             createEvent: createCalendarEvent,
             updateEvent: updateCalendarEvent,
+            publishRecovery: publishRecoveryStore,
           })
 
           if (result.cancelled) return
@@ -1032,16 +1036,53 @@ export function wireTrainingEditorEvents({
       manualEditor.querySelector('[data-publish-training-sheet]')?.addEventListener('click', publishCurrentTrainingSheet)
       showTsStep(1)
 
-      const pendingOpenEventId = localStorage.getItem('nz-training-sheet-open-event-id')
-      if (pendingOpenEventId && appState.calendarEvents.some((item) => String(item.id) === String(pendingOpenEventId))) {
-        loadTrainingSheetByEventId(pendingOpenEventId)
-      } else {
-        restore()
+      const initializeTrainingEditor = async () => {
+        let recoveryNotice = ''
+        try {
+          const pendingRecovery = publishRecoveryStore.read()
+          if (pendingRecovery?.filePath) {
+            let calendarIsFresh = false
+            try {
+              await loadCalendarEvents()
+              calendarIsFresh = true
+            } catch (error) {
+              console.warn('Recovery Training sospeso: Calendario non disponibile.', error)
+            }
+
+            if (calendarIsFresh) {
+              const recoveryResult = await reconcileInterruptedTrainingPublish({
+                recoveryStore: publishRecoveryStore,
+                calendarEvents: appState.calendarEvents,
+                removePublishedPdf: cleanupPublishedTrainingSheetPdf,
+              })
+              if (recoveryResult.status === 'cleaned') {
+                recoveryNotice = 'STAFF ha recuperato una pubblicazione interrotta e rimosso il PDF non collegato.'
+              } else if (recoveryResult.status === 'cleanup-pending') {
+                recoveryNotice = 'Pubblicazione precedente interrotta: cleanup PDF ancora da completare. STAFF riproverà alla prossima apertura.'
+              } else if (recoveryResult.status === 'cleanup-pending-previous') {
+                recoveryNotice = 'Training Sheet pubblicata correttamente; una vecchia versione PDF è ancora in attesa di cleanup automatico.'
+              }
+            } else {
+              recoveryNotice = 'Recovery pubblicazione in attesa: STAFF deve rileggere il Calendario prima di verificare eventuali PDF non collegati.'
+            }
+          }
+        } catch (error) {
+          console.error('Recovery pubblicazione Training Sheet non riuscito:', error)
+        }
+
+        const pendingOpenEventId = localStorage.getItem('nz-training-sheet-open-event-id')
+        if (pendingOpenEventId && appState.calendarEvents.some((item) => String(item.id) === String(pendingOpenEventId))) {
+          await loadTrainingSheetByEventId(pendingOpenEventId)
+        } else {
+          restore()
+        }
+        const nextProgressive = determineNextProgressive()
+        if (form.elements.progressive && Number(form.elements.progressive.value || 0) < nextProgressive) {
+          form.elements.progressive.value = String(nextProgressive)
+        }
+        updateCounts();updatePreview()
+        if (publishNote && recoveryNotice) publishNote.textContent = recoveryNotice
       }
-      const nextProgressive = determineNextProgressive()
-      if (form.elements.progressive && Number(form.elements.progressive.value || 0) < nextProgressive) {
-        form.elements.progressive.value = String(nextProgressive)
-      }
-      updateCounts();updatePreview()
+      initializeTrainingEditor()
     }
 }
