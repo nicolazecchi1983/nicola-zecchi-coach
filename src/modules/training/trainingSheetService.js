@@ -35,7 +35,7 @@ export async function publishTrainingSheet({
     throw toAppError(error, {
       code: 'TRAINING_PDF_GENERATION_FAILED',
       stage: 'generation',
-      userMessage: 'Non è stato possibile generare il PDF. Controlla l’anteprima e riprova.',
+      userMessage: 'Non è stato possibile generare il PDF. Verifica la connessione e l’anteprima, poi riprova.',
     })
   }
 
@@ -163,7 +163,7 @@ export async function createTrainingSheetPdfOutput({ rawData, previewElement }) 
     throw toAppError(error, {
       code: 'TRAINING_PDF_GENERATION_FAILED',
       stage: 'generation',
-      userMessage: 'Non è stato possibile generare il PDF. Controlla l’anteprima e riprova.',
+      userMessage: 'Non è stato possibile generare il PDF. Verifica la connessione e l’anteprima, poi riprova.',
     })
   }
 }
