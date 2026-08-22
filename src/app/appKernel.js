@@ -87,9 +87,21 @@ export function createAppKernel({ rootElement = document.querySelector('#app') }
       const workspaceAlreadyMounted = Boolean(rootElement.querySelector('.workspace'))
       if (!force && renderedUserId === user.id && workspaceAlreadyMounted) return
 
+      globalThis.performance?.mark?.('staff:dashboard:start')
+      globalThis.performance?.mark?.('staff:prepare-data:start')
       await prepareAppData(user)
+      globalThis.performance?.mark?.('staff:prepare-data:end')
+      globalThis.performance?.measure?.('staff:prepare-data', 'staff:prepare-data:start', 'staff:prepare-data:end')
+
       dom.render(renderApp(user))
+      globalThis.performance?.mark?.('staff:shell-rendered')
+
+      globalThis.performance?.mark?.('staff:attach-events:start')
       await attachAppEvents(user)
+      globalThis.performance?.mark?.('staff:attach-events:end')
+      globalThis.performance?.measure?.('staff:attach-events', 'staff:attach-events:start', 'staff:attach-events:end')
+      globalThis.performance?.mark?.('staff:app-ready')
+      globalThis.performance?.measure?.('staff:dashboard-ready', 'staff:dashboard:start', 'staff:app-ready')
       renderedUserId = user.id
 
       dom.query('#logoutButton')?.addEventListener('click', async () => {

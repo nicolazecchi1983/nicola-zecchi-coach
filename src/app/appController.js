@@ -489,14 +489,18 @@ function parseItalianDate(value) {
 
 export async function attachAppEvents(user) {
   appState.currentUser = user
-  await loadTeamProfile(user)
-  await loadCurrentUserRole(user)
   syncProfileHeader()
   applyAccessPolicy(document)
-  await loadCalendarEvents()
-  await loadFacilities()
-  await loadRosterPlayers()
-  await loadPlayerProfiles()
+
+  globalThis.performance?.mark?.('staff:initial-data:start')
+  await Promise.all([
+    loadCalendarEvents(),
+    loadFacilities(),
+    loadRosterPlayers(),
+    loadPlayerProfiles(),
+  ])
+  globalThis.performance?.mark?.('staff:initial-data:end')
+  globalThis.performance?.measure?.('staff:initial-data', 'staff:initial-data:start', 'staff:initial-data:end')
   
   const root = document.querySelector('#viewRoot')
   const drawerRoot = document.querySelector('#drawerRoot')
