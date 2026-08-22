@@ -129,6 +129,8 @@ import { wireTrainingLibraryEvents } from '../modules/training/events/trainingLi
 import { wireCallupsEvents } from '../modules/match/events/callupsEvents.js'
 import { wireBoardEvents } from '../modules/board/events/boardEvents.js'
 import { wireCalendarEvents } from '../modules/calendar/events/calendarEvents.js'
+import { createCalendarReadCoordinator } from '../modules/calendar/calendarReadCoordinator.js'
+import { createSignedFileUrl } from '../infrastructure/repositories/fileStorageRepository.js'
 import { createCalendarRuntimeActions } from '../modules/calendar/events/calendarRuntimeActions.js'
 import { createCalendarEventViewBuilders } from '../modules/calendar/ui/calendarEventViewBuilders.js'
 import { wireTeamAndRosterEvents } from '../modules/team/events/teamRosterEvents.js'
@@ -251,12 +253,34 @@ function syncProfileHeader() {
     .forEach((node) => { node.textContent = initial })
 }
 
+const calendarReadCoordinator = createCalendarReadCoordinator({
+  load: loadCalendarEventModels,
+  apply: (events) => { appState.calendarEvents = events },
+})
+
 async function loadCalendarEvents() {
   try {
-    appState.calendarEvents = await loadCalendarEventModels()
+    await calendarReadCoordinator.refresh()
   } catch (error) {
     alert(getDataAccessUserMessage(error, undefined, { stage: 'calendar-events-load' }))
   }
+  return appState.calendarEvents
+}
+
+async function ensureCalendarEvents() {
+  try {
+    await calendarReadCoordinator.ensure()
+  } catch (error) {
+    alert(getDataAccessUserMessage(error, undefined, { stage: 'calendar-events-load' }))
+  }
+  return appState.calendarEvents
+}
+
+// Critical flows (Training publish/recovery) need authoritative freshness and
+// must be able to detect a failed Calendar read instead of treating stale data
+// as fresh. This variant deliberately propagates the read error.
+async function requireFreshCalendarEvents() {
+  return calendarReadCoordinator.refresh()
 }
 
 const analysisTemplateService = createAnalysisTemplateService()
@@ -547,18 +571,18 @@ export async function attachAppEvents(user) {
   }
 
   const modulePrepare = {
-    dashboard: loadCalendarEvents,
-    calendar: loadCalendarEvents,
-    'training-sheet': loadCalendarEvents,
-    'match-library': loadCalendarEvents,
-    'match-workspace': loadCalendarEvents,
-    'our-team': loadCalendarEvents,
-    opponent: loadCalendarEvents,
-    'match-statistics': loadCalendarEvents,
-    'opponent-study': loadCalendarEvents,
-    'match-report-workspace': loadCalendarEvents,
-    'post-match': loadCalendarEvents,
-    library: loadCalendarEvents,
+    dashboard: ensureCalendarEvents,
+    calendar: ensureCalendarEvents,
+    'training-sheet': ensureCalendarEvents,
+    'match-library': ensureCalendarEvents,
+    'match-workspace': ensureCalendarEvents,
+    'our-team': ensureCalendarEvents,
+    opponent: ensureCalendarEvents,
+    'match-statistics': ensureCalendarEvents,
+    'opponent-study': ensureCalendarEvents,
+    'match-report-workspace': ensureCalendarEvents,
+    'post-match': ensureCalendarEvents,
+    library: ensureCalendarEvents,
     squad: loadPlayerProfiles,
     callups: loadPlayerProfiles,
     analysis: loadAnalysisEntries,
@@ -615,6 +639,7 @@ export async function attachAppEvents(user) {
     updateCalendarEvent,
     createSeasonCalendarImportService,
     loadCalendarEvents,
+    createSignedFileUrl,
     getTeamProfile,
     findOfficialSeasonCalendar,
     renderSeasonCalendarImportModal,
@@ -828,7 +853,7 @@ export async function attachAppEvents(user) {
       updateCalendarEvent,
       createCalendarEvent,
       deleteCalendarEvent,
-      loadCalendarEvents,
+      loadCalendarEvents: requireFreshCalendarEvents,
       supabase,
       getCalendarEvent,
       buildTrainingDraftFromCalendarEvent,

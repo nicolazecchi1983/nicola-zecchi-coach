@@ -21,6 +21,7 @@ ok('failed cleanup leaves recovery journal pending', service.includes('if (clean
 ok('recovery journal tracks previous canonical PDF for crash-safe cleanup', service.includes("previousPath: existingEvent?.trainingSheetPath || ''") && service.includes('previousCleanupPending'))
 ok('canonical commit clears recovery only after previous-PDF cleanup is settled', service.indexOf('if (!previousCleanupPending)') < service.lastIndexOf('publishRecovery?.clear?.()'))
 ok('runtime owns a persistent recovery store', runtime.includes('createTrainingPublishRecoveryStore(localStorage)'))
+ok('composition root injects a throwing authoritative Calendar refresh into Training runtime', /wireTrainingEditorEvents\(\{[\s\S]*?loadCalendarEvents: requireFreshCalendarEvents,/.test(controller))
 ok('runtime requires a fresh Calendar read before reconciling interrupted publish', /let calendarIsFresh = false[\s\S]*?await loadCalendarEvents\(\)[\s\S]*?calendarIsFresh = true[\s\S]*?if \(calendarIsFresh\) \{[\s\S]*?reconcileInterruptedTrainingPublish/.test(runtime))
 ok('runtime leaves recovery pending when Calendar freshness cannot be established', runtime.includes('Recovery pubblicazione in attesa') && runtime.includes('calendarIsFresh'))
 ok('runtime never removes a PDF that is referenced by Calendar', runtime.includes('reconcileInterruptedTrainingPublish') && runtime.includes('calendarEvents: appState.calendarEvents'))

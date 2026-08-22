@@ -58,17 +58,12 @@ export async function loadMatchAnalysisEntries() {
 export async function loadCalendarEventModels() {
   const events = await listCalendarEvents()
 
-  return Promise.all(events.map(async (event) => {
+  return events.map((event) => {
     const trainingSheetPath = event.training_sheet_path ?? null
-    let trainingSheetUrl = null
-
-    if (trainingSheetPath) {
-      const { data: signedData, error: signedError } = await supabase.storage
-        .from('training-sheets')
-        .createSignedUrl(trainingSheetPath, 3600)
-
-      if (!signedError) trainingSheetUrl = signedData.signedUrl
-    }
+    // Signed URLs are intentionally NOT created while listing Calendar events.
+    // Private document URLs are short-lived capabilities and are resolved only
+    // when the user explicitly opens the published Training Sheet.
+    const trainingSheetUrl = null
 
     let parsedNotes = {}
     try { parsedNotes = JSON.parse(event.notes || '{}') } catch {}
@@ -109,5 +104,5 @@ export async function loadCalendarEventModels() {
       matchReportStatus: parsedNotes?.type === 'match_event' ? parsedNotes.report_status || null : null,
       restNote: parsedNotes?.type === 'rest_event' ? parsedNotes.rest_note || '' : '',
     }
-  }))
+  })
 }

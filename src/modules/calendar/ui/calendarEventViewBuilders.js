@@ -107,7 +107,7 @@ export function createCalendarEventViewBuilders(deps) {
                   ${trainingSheetPreviewHtml(event)}
                 </div>
 
-                ${event.trainingSheetUrl && can(capabilities.TRAINING_SHEET_VIEW_PUBLISHED) ? `
+                ${event.trainingSheetPath && can(capabilities.TRAINING_SHEET_VIEW_PUBLISHED) ? `
                   <div class="drawer-ts-view-actions">
                     <button class="wide-button drawer-sheet-link" type="button" data-view-training-sheet="${event.id}"><span class="drawer-sheet-link__icon">${icon('sheet')}</span><span>Visualizza Training Sheet</span></button>
                   </div>` : ''}

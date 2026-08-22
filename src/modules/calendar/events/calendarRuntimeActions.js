@@ -3,7 +3,7 @@ export function createCalendarRuntimeActions({
   can, capabilities, showAccessNotice, isTrainingEventType,
   teamLocationSelectOptions, isConfiguredTeamFacility,
   createMatchCalendarService, createCalendarEvent, updateCalendarEvent,
-  createSeasonCalendarImportService, loadCalendarEvents, getTeamProfile,
+  createSeasonCalendarImportService, loadCalendarEvents, createSignedFileUrl, getTeamProfile,
   findOfficialSeasonCalendar, renderSeasonCalendarImportModal, escapeHtml,
   parseSeasonCalendarCsv, createCalendarBulkManagementService, deleteCalendarEvents,
   renderCalendarBulkManagementModal, calendarView, bindDynamic,
@@ -635,15 +635,9 @@ export function createCalendarRuntimeActions({
       ?.addEventListener('click', async () => {
         try {
           requirePublishedDocumentView()
-          let freshUrl = event.trainingSheetUrl
-          if (event.trainingSheetPath) {
-            const { data: signedData, error: signedError } = await supabase.storage
-              .from('training-sheets')
-              .createSignedUrl(event.trainingSheetPath, 3600)
-            if (signedError || !signedData?.signedUrl) throw signedError || new Error('URL PDF non disponibile')
-            freshUrl = signedData.signedUrl
-            event.trainingSheetUrl = freshUrl
-          }
+          if (!event.trainingSheetPath) throw new Error('Training Sheet non collegata')
+          const freshUrl = await createSignedFileUrl('training-sheets', event.trainingSheetPath, 3600)
+          if (!freshUrl) throw new Error('URL PDF non disponibile')
           documentViewer.open({
             title: trainingSheetName(event),
             url: freshUrl,

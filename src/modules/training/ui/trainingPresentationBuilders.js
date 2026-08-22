@@ -72,28 +72,14 @@ export function createTrainingPresentationBuilders({ activePlayers }) {
   }
 
   function trainingSheetPreviewHtml(event) {
-    if (!event.trainingSheetUrl) {
+    if (!event.trainingSheetPath) {
       return '<small>Nessuna Training Sheet collegata.</small>'
     }
 
-    const lowerPath = String(event.trainingSheetPath ?? '').toLowerCase()
-
-    if (lowerPath.endsWith('.pdf')) {
-      return `
-        <iframe
-          class="training-sheet-preview training-sheet-preview--pdf"
-          src="${event.trainingSheetUrl}#toolbar=0&navpanes=0&scrollbar=1"
-          title="Anteprima Training Sheet"
-        ></iframe>
-      `
-    }
-
     return `
-      <img
-        class="training-sheet-preview"
-        src="${event.trainingSheetUrl}"
-        alt="Anteprima Training Sheet"
-      >
+      <div class="training-sheet-preview-placeholder">
+        <small>Training Sheet pubblicata. Usa “Visualizza Training Sheet” per aprire il documento.</small>
+      </div>
     `
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.49",
+  "version": "0.29.50",
   "private": true,
   "type": "module",
   "scripts": {
@@ -236,7 +236,8 @@
     "check:training-published-state": "node scripts/check-training-published-state-integrity.mjs",
     "check:training-pdf-lifecycle": "node scripts/check-training-pdf-lifecycle-integrity.mjs",
     "check:training-publish-failure-recovery": "node scripts/check-training-publish-failure-recovery.mjs",
-    "check:performance-bootstrap-foundation": "node scripts/check-performance-bootstrap-foundation.mjs"
+    "check:performance-bootstrap-foundation": "node scripts/check-performance-bootstrap-foundation.mjs",
+    "check:calendar-data-efficiency": "node scripts/check-calendar-data-efficiency.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -473,6 +474,7 @@
     "check:ui-regression-0-29-35",
     "check:navigation-simplification-0-29-37",
     "check:training-sheet-css-ownership",
-    "check:performance-bootstrap-foundation"
+    "check:performance-bootstrap-foundation",
+    "check:calendar-data-efficiency"
   ]
 }

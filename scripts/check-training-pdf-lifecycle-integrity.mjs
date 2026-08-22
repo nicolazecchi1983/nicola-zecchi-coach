@@ -21,7 +21,7 @@ const checks = [
   ['clean published sheet uses canonical stored PDF', events.includes('canUseCanonicalPublishedPdf') && events.includes('publishedEvent.trainingSheetPath')],
   ['dirty published sheet is explicitly local-only', events.includes('PDF locale generato dalle modifiche correnti')],
   ['blob download revokes object URL', events.includes('URL.revokeObjectURL(objectUrl)')],
-  ['calendar viewer refreshes signed URL on demand', calendar.includes("createSignedUrl(event.trainingSheetPath, 3600)")],
+  ['calendar viewer refreshes signed URL on demand', calendar.includes("createSignedFileUrl('training-sheets', event.trainingSheetPath, 3600)")],
   ['fresh signed URL is used for viewer and download', calendar.includes('url: freshUrl') && calendar.includes('downloadUrl: freshUrl')],
 ]
 
