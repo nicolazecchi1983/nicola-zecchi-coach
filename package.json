@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.56",
+  "version": "0.29.57",
   "private": true,
   "type": "module",
   "scripts": {

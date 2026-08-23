@@ -29,8 +29,57 @@ function matchMonthLabel(key) {
   }).format(date).replace(/^./, (char) => char.toLocaleUpperCase('it-IT'))
 }
 
-export function groupMatchesByMonth(matches = []) {
+function dateDayNumber(value) {
+  const raw = String(value || '').slice(0, 10)
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw)
+  if (!match) return null
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const timestamp = Date.UTC(year, month - 1, day)
+  const date = new Date(timestamp)
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null
+  return Math.floor(timestamp / 86400000)
+}
+
+function referenceDayNumber(referenceDate = new Date()) {
+  if (typeof referenceDate === 'string') {
+    const parsed = dateDayNumber(referenceDate)
+    if (parsed != null) return parsed
+  }
+  if (referenceDate instanceof Date && !Number.isNaN(referenceDate.getTime())) {
+    return Math.floor(Date.UTC(
+      referenceDate.getFullYear(),
+      referenceDate.getMonth(),
+      referenceDate.getDate(),
+    ) / 86400000)
+  }
+  return referenceDayNumber(new Date())
+}
+
+function matchProximity(match, referenceDay) {
+  const day = dateDayNumber(match?.date)
+  if (day == null) return { distance: Number.POSITIVE_INFINITY, futureRank: 2, day: Number.POSITIVE_INFINITY }
+  const delta = day - referenceDay
+  return {
+    distance: Math.abs(delta),
+    futureRank: delta >= 0 ? 0 : 1,
+    day,
+  }
+}
+
+function compareMatchesByProximity(a, b, referenceDay) {
+  const left = matchProximity(a, referenceDay)
+  const right = matchProximity(b, referenceDay)
+  if (left.distance !== right.distance) return left.distance - right.distance
+  if (left.futureRank !== right.futureRank) return left.futureRank - right.futureRank
+  if (left.day !== right.day) return left.day - right.day
+  return String(a?.id || '').localeCompare(String(b?.id || ''))
+}
+
+export function groupMatchesByMonth(matches = [], referenceDate = new Date()) {
   const groups = new Map()
+  const referenceDay = referenceDayNumber(referenceDate)
 
   matches.forEach((match) => {
     const key = matchMonthKey(match)
@@ -39,16 +88,25 @@ export function groupMatchesByMonth(matches = []) {
   })
 
   return [...groups.entries()]
-    .map(([key, items]) => ({
-      key,
-      label: matchMonthLabel(key),
-      items,
-    }))
+    .map(([key, items]) => {
+      const sortedItems = items.slice().sort((a, b) => compareMatchesByProximity(a, b, referenceDay))
+      const nearest = sortedItems[0]
+      return {
+        key,
+        label: matchMonthLabel(key),
+        items: sortedItems,
+        proximity: nearest ? matchProximity(nearest, referenceDay) : { distance: Number.POSITIVE_INFINITY, futureRank: 2, day: Number.POSITIVE_INFINITY },
+      }
+    })
     .sort((a, b) => {
       if (a.key === 'undated') return 1
       if (b.key === 'undated') return -1
-      return b.key.localeCompare(a.key)
+      if (a.proximity.distance !== b.proximity.distance) return a.proximity.distance - b.proximity.distance
+      if (a.proximity.futureRank !== b.proximity.futureRank) return a.proximity.futureRank - b.proximity.futureRank
+      if (a.proximity.day !== b.proximity.day) return a.proximity.day - b.proximity.day
+      return a.key.localeCompare(b.key)
     })
+    .map(({ proximity, ...group }) => group)
 }
 
 function calendarMatchOption(event, escapeHtml) {
@@ -100,10 +158,7 @@ export function createMatchLibraryView({
     }
 
     const monthGroups = groupMatchesByMonth(matches)
-    const currentMonthKey = new Date().toISOString().slice(0, 7)
-    const defaultOpenKey = monthGroups.some((group) => group.key === currentMonthKey)
-      ? currentMonthKey
-      : monthGroups[0]?.key
+    const defaultOpenKey = monthGroups[0]?.key
 
     const rows = monthGroups.map((group) => `<details class="match-library-month" data-match-library-month="${escapeHtml(group.key)}" ${group.key === defaultOpenKey ? 'open' : ''}>
       <summary>
