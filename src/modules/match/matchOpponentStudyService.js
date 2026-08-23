@@ -29,9 +29,16 @@ function safeFileName(name) {
 }
 
 function buildAssetPath({ team, matchId, file }) {
-  const teamKey = String(team?.id || toSlugKey(team?.shortName || team?.name || 'team') || 'team')
+  const teamId = String(team?.id || '').trim()
+  if (!teamId) {
+    throw new AppError('Identità squadra mancante per il caricamento Match.', {
+      code: 'MATCH_STUDY_TEAM_REQUIRED',
+      stage: 'validation',
+      userMessage: 'Impossibile caricare il file: squadra non configurata.',
+    })
+  }
   const seasonKey = toSlugKey(team?.season || 'season') || 'season'
-  return `match-study/${teamKey}/${seasonKey}/${String(matchId)}/${randomId('asset')}-${safeFileName(file.name)}`
+  return `${teamId}/${seasonKey}/match-study/${String(matchId)}/${randomId('asset')}-${safeFileName(file.name)}`
 }
 
 function validateFile(file, kind) {
@@ -49,6 +56,17 @@ function validateFile(file, kind) {
       code: 'MATCH_STUDY_FILE_TOO_LARGE',
       stage: 'validation',
       userMessage: `Il file supera ${limitMb} MB. Per video più grandi usa un link esterno.`,
+    })
+  }
+}
+
+function validateOpponentLineupFile(file) {
+  validateFile(file, 'document')
+  if (!String(file.type || '').startsWith('image/')) {
+    throw new AppError('Formato distinta avversaria non valido.', {
+      code: 'MATCH_OPPONENT_LINEUP_FILE_TYPE',
+      stage: 'validation',
+      userMessage: 'Carica una foto o immagine della distinta avversaria.',
     })
   }
 }
@@ -153,6 +171,48 @@ export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadE
         await assets.remove(path).catch(() => {})
         throw error
       }
+    },
+    async uploadOpponentLineup({ matchId, team, file }) {
+      validateOpponentLineupFile(file)
+      const path = buildAssetPath({ team, matchId, file })
+      await assets.upload(path, file)
+      const asset = {
+        id: randomId('asset'),
+        kind: 'document',
+        category: 'general',
+        label: 'Distinta avversaria',
+        fileName: file.name,
+        path,
+        bucket: MATCH_STUDY_BUCKET,
+        mimeType: file.type || 'application/octet-stream',
+        size: file.size,
+        createdAt: new Date().toISOString(),
+      }
+      let previousPath = null
+      try {
+        const saved = await mutate(matchId, (current) => {
+          previousPath = current.opponentLineup?.path || null
+          return { ...current, opponentLineup: asset, updatedAt: new Date().toISOString() }
+        })
+        if (previousPath && previousPath !== path) {
+          assets.remove(previousPath).catch((error) => console.warn('Vecchia distinta avversaria non rimossa:', error))
+        }
+        return saved
+      } catch (error) {
+        await assets.remove(path).catch(() => {})
+        throw error
+      }
+    },
+    async removeOpponentLineup(matchId) {
+      let removedPath = null
+      const saved = await mutate(matchId, (current) => {
+        removedPath = current.opponentLineup?.path || null
+        return { ...current, opponentLineup: null, updatedAt: new Date().toISOString() }
+      })
+      if (removedPath) {
+        assets.remove(removedPath).catch((error) => console.warn('File distinta avversaria orfano non rimosso:', error))
+      }
+      return saved
     },
     async removeAsset(matchId, assetId, { primary = false } = {}) {
       let removedPath = null

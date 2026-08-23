@@ -16,6 +16,8 @@ export function wireLegacyMatchEditorEvents({
   bindMatchAnalysisSchemaEditors,
   analysisTemplateOptions,
   createMatchCalendarService,
+  createMatchOpponentStudyService,
+  getCalendarEvent,
   createCalendarEvent,
   updateCalendarEvent,
   loadCalendarEvents,
@@ -599,7 +601,130 @@ export function wireLegacyMatchEditorEvents({
       form.addEventListener('change', handleMatchFormMutation)
       next.addEventListener('click',()=>showStep(activeStep+1)); prev.addEventListener('click',()=>showStep(activeStep-1)); stepButtons.forEach(b=>b.addEventListener('click',()=>showStep(b.dataset.matchStepButton)))
       matchEditor.querySelector('[data-match-reset]').addEventListener('click',()=>{if(confirm('Cancellare la Match Sheet?')){form.reset();draftService.clear();syncCustomFormation();applyFormation(form.elements.formation.value,false);renderNotes();updateTokens();showStep(1)}})
-      const fileInput=form.elements.opponent_sheet; fileInput?.addEventListener('change',()=>{const file=fileInput.files?.[0]; const img=matchEditor.querySelector('[data-opponent-sheet-preview]'); const empty=matchEditor.querySelector('[data-opponent-sheet-empty]'); if(file&&img){img.src=urlApi.createObjectURL(file);img.hidden=false;if(empty)empty.hidden=true}})
+      const fileInput = form.elements.opponent_sheet
+      const opponentSheetPreview = matchEditor.querySelector('[data-opponent-sheet-preview]')
+      const opponentSheetEmpty = matchEditor.querySelector('[data-opponent-sheet-empty]')
+      const opponentSheetState = matchEditor.querySelector('[data-opponent-sheet-state]')
+      const opponentSheetMessage = matchEditor.querySelector('[data-opponent-sheet-message]')
+      const removeOpponentSheetButton = matchEditor.querySelector('[data-remove-opponent-sheet]')
+      const activeMatchForOpponentSheet = getActiveMatchContext()
+      const opponentStudyService = activeMatchForOpponentSheet?.id && typeof createMatchOpponentStudyService === 'function'
+        ? createMatchOpponentStudyService({
+            getEvent: getCalendarEvent,
+            updateEvent: updateCalendarEvent,
+            reloadEvents: loadCalendarEvents,
+          })
+        : null
+      let opponentSheetObjectUrl = ''
+
+      const setOpponentSheetMessage = (message = '', type = '') => {
+        if (!opponentSheetMessage) return
+        opponentSheetMessage.textContent = message
+        opponentSheetMessage.dataset.type = type
+      }
+      const clearOpponentSheetObjectUrl = () => {
+        if (!opponentSheetObjectUrl) return
+        urlApi.revokeObjectURL?.(opponentSheetObjectUrl)
+        opponentSheetObjectUrl = ''
+      }
+      const renderOpponentSheetAsset = async (asset) => {
+        clearOpponentSheetObjectUrl()
+        if (!asset?.path || !opponentStudyService) {
+          if (opponentSheetPreview) {
+            opponentSheetPreview.removeAttribute('src')
+            opponentSheetPreview.hidden = true
+          }
+          if (opponentSheetEmpty) opponentSheetEmpty.hidden = false
+          if (opponentSheetState) opponentSheetState.textContent = 'Non caricata'
+          if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = true
+          return
+        }
+        const signedUrl = await opponentStudyService.getAssetUrl(asset.path)
+        if (!signedUrl) throw new Error('URL distinta non disponibile.')
+        if (opponentSheetPreview) {
+          opponentSheetPreview.src = signedUrl
+          opponentSheetPreview.hidden = false
+        }
+        if (opponentSheetEmpty) opponentSheetEmpty.hidden = true
+        if (opponentSheetState) opponentSheetState.textContent = 'Salvata'
+        if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = false
+      }
+      const reloadOpponentSheet = async () => {
+        if (!opponentStudyService || !activeMatchForOpponentSheet?.id) return
+        const event = await getCalendarEvent(activeMatchForOpponentSheet.id)
+        const study = opponentStudyService.load(event, activeMatchForOpponentSheet.id)
+        await renderOpponentSheetAsset(study.opponentLineup)
+      }
+
+      fileInput?.addEventListener('change', async () => {
+        const file = fileInput.files?.[0]
+        if (!file || !opponentStudyService || !activeMatchForOpponentSheet?.id) return
+        const previousSrc = opponentSheetPreview?.src || ''
+        const previousHidden = opponentSheetPreview?.hidden ?? true
+        const previousEmptyHidden = opponentSheetEmpty?.hidden ?? false
+        const previousRemoveHidden = removeOpponentSheetButton?.hidden ?? true
+        clearOpponentSheetObjectUrl()
+        opponentSheetObjectUrl = urlApi.createObjectURL(file)
+        if (opponentSheetPreview) {
+          opponentSheetPreview.src = opponentSheetObjectUrl
+          opponentSheetPreview.hidden = false
+        }
+        if (opponentSheetEmpty) opponentSheetEmpty.hidden = true
+        if (opponentSheetState) opponentSheetState.textContent = 'Caricamento…'
+        if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = true
+        setOpponentSheetMessage('Salvataggio distinta in corso…')
+        fileInput.disabled = true
+        try {
+          const saved = await opponentStudyService.uploadOpponentLineup({
+            matchId: activeMatchForOpponentSheet.id,
+            team: getTeamProfile(),
+            file,
+          })
+          await renderOpponentSheetAsset(saved.opponentLineup)
+          setOpponentSheetMessage('Distinta salvata.', 'success')
+        } catch (error) {
+          console.error('Upload distinta avversaria non riuscito:', error)
+          clearOpponentSheetObjectUrl()
+          if (opponentSheetPreview) {
+            if (previousSrc) opponentSheetPreview.src = previousSrc
+            else opponentSheetPreview.removeAttribute('src')
+            opponentSheetPreview.hidden = previousHidden
+          }
+          if (opponentSheetEmpty) opponentSheetEmpty.hidden = previousEmptyHidden
+          if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = previousRemoveHidden
+          if (opponentSheetState) opponentSheetState.textContent = previousHidden ? 'Non caricata' : 'Salvata'
+          setOpponentSheetMessage(getDataAccessUserMessage(error, undefined, { stage: 'match-opponent-lineup-upload' }), 'error')
+        } finally {
+          fileInput.value = ''
+          fileInput.disabled = false
+        }
+      })
+
+      removeOpponentSheetButton?.addEventListener('click', async () => {
+        if (!opponentStudyService || !activeMatchForOpponentSheet?.id) return
+        if (!windowRef.confirm('Rimuovere la distinta avversaria salvata?')) return
+        removeOpponentSheetButton.disabled = true
+        if (fileInput) fileInput.disabled = true
+        if (opponentSheetState) opponentSheetState.textContent = 'Rimozione…'
+        setOpponentSheetMessage('Rimozione distinta in corso…')
+        try {
+          await opponentStudyService.removeOpponentLineup(activeMatchForOpponentSheet.id)
+          await renderOpponentSheetAsset(null)
+          setOpponentSheetMessage('Distinta rimossa.', 'success')
+        } catch (error) {
+          console.error('Rimozione distinta avversaria non riuscita:', error)
+          if (opponentSheetState) opponentSheetState.textContent = 'Salvata'
+          setOpponentSheetMessage(getDataAccessUserMessage(error, undefined, { stage: 'match-opponent-lineup-remove' }), 'error')
+        } finally {
+          removeOpponentSheetButton.disabled = false
+          if (fileInput) fileInput.disabled = false
+        }
+      })
+
+      reloadOpponentSheet().catch((error) => {
+        console.error('Ripristino distinta avversaria non riuscito:', error)
+        setOpponentSheetMessage(getDataAccessUserMessage(error, undefined, { stage: 'match-opponent-lineup-load' }), 'error')
+      })
       const openMatchReportPreview = () => {
         const { paper, validation } = matchReportService.getPrintablePaper()
         if (!paper) {

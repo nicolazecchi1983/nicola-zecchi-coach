@@ -829,6 +829,8 @@ export async function attachAppEvents(user) {
       bindMatchAnalysisSchemaEditors,
       analysisTemplateOptions,
       createMatchCalendarService,
+      createMatchOpponentStudyService,
+      getCalendarEvent,
       createCalendarEvent,
       updateCalendarEvent,
       loadCalendarEvents,

@@ -151,6 +151,9 @@ export function collectMatchFormData(form) {
   syncScoreFields(form, 'half_result')
 
   const data = /** @type {Record<string, any>} */ (Object.fromEntries(new FormData(form).entries()))
+  form.querySelectorAll('input[type="file"]').forEach((/** @type {HTMLInputElement} */ input) => {
+    if (input.name) delete data[input.name]
+  })
   form.querySelectorAll('input[type="checkbox"]').forEach((/** @type {HTMLInputElement} */ input) => {
     data[input.name] = input.checked
   })

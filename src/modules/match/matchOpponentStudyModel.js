@@ -76,6 +76,7 @@ export function normalizeMatchOpponentStudy(input = {}) {
           }),
     ),
     primaryReport: input.primaryReport?.path ? normalizeAsset({ ...input.primaryReport, kind: 'report' }) : null,
+    opponentLineup: input.opponentLineup?.path ? normalizeAsset({ ...input.opponentLineup, kind: 'document', category: 'general' }) : null,
     assets: Array.isArray(input.assets) ? input.assets.map(normalizeAsset).filter((item) => item.path) : [],
     links: Array.isArray(input.links) ? input.links.map(normalizeLink).filter((item) => item.url) : [],
     updatedAt: input.updatedAt || null,

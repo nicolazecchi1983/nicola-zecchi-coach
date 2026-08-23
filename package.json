@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.55",
+  "version": "0.29.56",
   "private": true,
   "type": "module",
   "scripts": {
@@ -243,7 +243,8 @@
     "check:feature-code-splitting-build": "node scripts/check-feature-code-splitting-build.mjs",
     "check:mobile-runtime-lifecycle": "node scripts/check-mobile-runtime-lifecycle.mjs",
     "check:mobile-session-resume-integrity": "node scripts/check-mobile-session-resume-integrity.mjs",
-    "check:mobile-startup-session-integrity": "node scripts/check-mobile-startup-session-integrity.mjs"
+    "check:mobile-startup-session-integrity": "node scripts/check-mobile-startup-session-integrity.mjs",
+    "check:match-opponent-lineup": "node scripts/check-match-opponent-lineup-persistence.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -338,6 +339,7 @@
     "check:match-library-months",
     "check:match-library-statistics-entry",
     "check:match-opponent-study",
+    "check:match-opponent-lineup",
     "check:opponent-study-density-stepper",
     "check:match-workspace-design",
     "check:match-workspace-foundation",

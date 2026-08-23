@@ -57,12 +57,19 @@ export function renderMatchOpponentStep() {
       </section>
 
       <section class="opponent-sheet-panel">
-        <header class="opponent-panel-bar"><div><span class="opponent-kicker">DISTINTA</span><h3>Distinta avversaria</h3></div></header>
+        <header class="opponent-panel-bar">
+          <div><span class="opponent-kicker">DISTINTA</span><h3>Distinta avversaria</h3></div>
+          <span class="opponent-sheet-state" data-opponent-sheet-state>Non caricata</span>
+        </header>
         <label class="opponent-sheet-upload">
           <input type="file" name="opponent_sheet" accept="image/*" capture="environment">
           <span class="opponent-sheet-empty" data-opponent-sheet-empty>＋ Carica distinta</span>
           <img data-opponent-sheet-preview hidden alt="Distinta avversaria caricata">
         </label>
+        <div class="opponent-sheet-actions">
+          <span data-opponent-sheet-message></span>
+          <button type="button" class="staff-button staff-button--ghost" data-remove-opponent-sheet hidden>Rimuovi distinta</button>
+        </div>
       </section>
     </div>
 
