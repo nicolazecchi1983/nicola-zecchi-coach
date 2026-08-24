@@ -9,9 +9,9 @@ const workspace = fs.readFileSync('src/modules/match/workspace/matchWorkspace.cs
 const printEngine = fs.readFileSync('src/shared/print/printEngine.js', 'utf8')
 
 const checks = [
-  ['token text owns geometric center', /\.match-token-toggle > span\s*\{[\s\S]*?justify-content:\s*center[\s\S]*?text-align:\s*center/.test(css)],
-  ['selected check is removed from normal flow', /:has\(input:checked\)::before\s*\{[\s\S]*?position:\s*absolute/.test(css)],
-  ['selected check is vertically centered', /:has\(input:checked\)::before\s*\{[\s\S]*?top:\s*50%[\s\S]*?translateY\(-50%\)/.test(css)],
+  ['token text owns geometric center', /\.match-token-toggle > span\s*\{[\s\S]*?grid-column:\s*2[\s\S]*?text-align:\s*center/.test(css)],
+  ['selected check is isolated from label flow', /\.match-token-toggle::before\s*\{[\s\S]*?grid-column:\s*1/.test(css) && /\.match-token-toggle::after\s*\{[\s\S]*?grid-column:\s*3/.test(css)],
+  ['selected check preserves symmetric visual balance', /grid-template-columns:\s*14px minmax\(0,\s*1fr\) 14px/.test(css) && /:has\(input:checked\)::before\s*\{\s*content:\s*'✓'/.test(css)],
   ['selected check no longer adds right margin', !/:has\(input:checked\)::before\s*\{[\s\S]*?margin-right:\s*7px/.test(css)],
   ['mobile token options remain three equal columns', /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/.test(css)],
   ['mobile toggle still consumes full cell width', /@media \(max-width:\s*760px\)[\s\S]*?\.match-token-toggle\s*\{[\s\S]*?width:\s*100%/.test(css)],

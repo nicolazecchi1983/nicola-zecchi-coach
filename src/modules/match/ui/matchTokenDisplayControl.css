@@ -25,12 +25,14 @@
 
 .match-token-toggle {
   position: relative;
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 14px;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
+  column-gap: 5px;
   min-width: 92px;
   height: 40px;
-  padding: 0 14px;
+  padding: 0 10px;
   box-sizing: border-box;
   border: 1px solid rgba(62, 144, 187, .28);
   border-radius: 11px;
@@ -70,28 +72,34 @@
 }
 
 .match-token-toggle > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  grid-column: 2;
   min-width: 0;
   text-align: center;
 }
 
-.match-token-toggle:has(input:checked)::before {
-  content: '✓';
-  position: absolute;
-  inset-inline-start: 10px;
-  top: 50%;
-  width: 12px;
-  margin: 0;
-  transform: translateY(-50%);
+.match-token-toggle::before,
+.match-token-toggle::after {
+  display: block;
+  width: 14px;
+  content: '';
+  line-height: 1;
+  pointer-events: none;
+}
+
+.match-token-toggle::before {
+  grid-column: 1;
   color: #35caff;
   font-size: .76rem;
   font-weight: 950;
-  line-height: 1;
   text-align: center;
-  pointer-events: none;
+}
+
+.match-token-toggle::after {
+  grid-column: 3;
+}
+
+.match-token-toggle:has(input:checked)::before {
+  content: '✓';
 }
 
 @media (max-width: 760px) {
@@ -103,13 +111,19 @@
   }
 
   .match-token-toggle {
+    grid-template-columns: 12px minmax(0, 1fr) 12px;
+    column-gap: 3px;
     min-width: 0;
     width: 100%;
-    padding-inline: 8px;
+    padding-inline: 6px;
   }
 
-  .match-token-toggle:has(input:checked)::before {
-    inset-inline-start: 7px;
+  .match-token-toggle::before,
+  .match-token-toggle::after {
+    width: 12px;
+  }
+
+  .match-token-toggle::before {
     font-size: .7rem;
   }
 }
