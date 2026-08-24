@@ -511,30 +511,7 @@
   }
 }
 
-@media (max-width: 520px) {
-  .match-squad-step {
-    padding: 8px;
-  }
 
-  .match-squad-step .squad-command-strip,
-  .match-squad-step .pitch-panel,
-  .match-squad-step .lineup-list--selection,
-  .match-squad-step .bench-block--full-width {
-    border-radius: 14px;
-  }
-
-  .match-squad-step .squad-command-strip {
-    padding: 12px;
-  }
-
-  .match-squad-step .token-photo {
-  }
-
-  .match-squad-step .player-token small {
-    max-width: 76px;
-    font-size: .64rem;
-  }
-}
 
 /* 0.29.15 — Match Squad Core Geometry & Soccer Board Premium
    Consolidated visual contract: leadership and core share the same 50/50 page grid.
@@ -670,6 +647,20 @@
 }
 
 @media (max-width: 520px) {
+  .match-squad-step {
+    padding: 8px;
+  }
+
+  .match-squad-step .squad-command-strip,
+  .match-squad-step .pitch-panel,
+  .match-squad-step .lineup-list--selection,
+  .match-squad-step .bench-block--full-width {
+    border-radius: 14px;
+  }
+
+  .match-squad-step .squad-command-strip {
+    padding: 12px;
+  }
   .match-squad-step .lineup-list--selection .lineup-row {
     grid-template-columns: 60px minmax(0, 1fr);
   }
@@ -679,6 +670,7 @@
   }
   .match-squad-step .player-token small { max-width: 76px; font-size: .58rem; }
 }
+
 
 /* 0.29.21 — MATCH section spacing contract.
    External rhythm is shared with Avversario; local components own only their internal gaps. */
