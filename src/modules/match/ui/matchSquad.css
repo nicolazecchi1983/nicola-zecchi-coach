@@ -57,8 +57,7 @@
 }
 
 .match-squad-step .formation-system-control > span,
-.match-squad-step .formation-custom-control > span,
-.match-squad-step .token-display-field > .toolbar-control-label {
+.match-squad-step .formation-custom-control > span {
   color: #b7d5e7;
   font-size: .72rem;
   font-weight: 850;
@@ -331,12 +330,6 @@
   padding: 7px 10px;
 }
 
-.match-squad-step .starter-number-select {
-  text-align: center;
-  text-align-last: center;
-  font-weight: 900;
-}
-
 .match-squad-step .starter-player-select {
   min-width: 0;
   font-weight: 750;
@@ -476,11 +469,6 @@
   color: #061a2b;
   font-size: .56rem;
   font-weight: 950;
-}
-
-.match-squad-step .player-token.is-leadership-target {
-  filter: drop-shadow(0 0 10px rgba(55, 202, 255, .95));
-  transform: translate(-50%, -50%) scale(1.08);
 }
 
 /* ---------- Responsive contract ---------- */
