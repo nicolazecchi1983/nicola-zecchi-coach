@@ -5,8 +5,9 @@ const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
 
 const checks = [
   ['single R3.4C canonical marker exists', (css.match(/R3\.4C Match Squad Cross-Viewport Alignment/g) || []).length === 1],
-  ['desktop pitch and lineup headers share one height contract', /\.pitch-panel-head,\s*\n\.match-squad-step \.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*74px/.test(css)],
-  ['desktop pitch header uses structural title-actions grid', /\.pitch-panel-head\s*\{[\s\S]*?grid-template-columns:\s*minmax\(max-content,\s*1fr\)\s+auto/.test(css)],
+  ['desktop pitch and lineup headers share one height contract', /\.pitch-panel-head,\s*\n\.match-squad-step \.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*116px/.test(css)],
+  ['desktop pitch header stacks title and actions structurally', /\.pitch-panel-head\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)[\s\S]*?grid-template-rows:\s*auto auto/.test(css)],
+  ['desktop pitch actions are bounded by the card width', /\.pitch-panel-actions\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)[\s\S]*?width:\s*100%/.test(css)],
   ['pitch title cannot collapse into accidental two-line geometry', /\.pitch-panel-title\s*\{[\s\S]*?min-width:\s*max-content/.test(css)],
   ['both canonical titles stay single-line where desktop has room', /\.pitch-panel-title h3,[\s\S]*?\.lineup-list--selection \.lineup-list-head h3\s*\{[\s\S]*?white-space:\s*nowrap/.test(css)],
   ['lineup header content explicitly owns full row width', /\.lineup-list--selection \.lineup-list-head > div\s*\{[\s\S]*?width:\s*100%/.test(css)],

@@ -717,10 +717,11 @@
 
 .match-squad-step .pitch-panel-actions {
   display: grid;
-  grid-template-columns: repeat(2, max-content);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
-  justify-content: end;
+  justify-content: stretch;
   gap: 8px;
+  width: 100%;
   min-width: 0;
 }
 
@@ -777,14 +778,20 @@
    then restores a clean left-aligned stacked anatomy on mobile. */
 .match-squad-step .pitch-panel-head,
 .match-squad-step .lineup-list--selection .lineup-list-head {
-  min-height: 74px;
+  min-height: 116px;
   box-sizing: border-box;
 }
 
 .match-squad-step .pitch-panel-head {
   display: grid;
-  grid-template-columns: minmax(max-content, 1fr) auto;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: stretch;
+}
+
+.match-squad-step .pitch-panel-actions {
+  width: 100%;
 }
 
 .match-squad-step .pitch-panel-title {

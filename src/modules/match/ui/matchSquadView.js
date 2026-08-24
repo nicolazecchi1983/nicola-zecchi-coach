@@ -71,7 +71,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
     <div class="match-lineup-layout match-lineup-layout--master">
       <div class="pitch-panel">
         <div class="pitch-panel-head">
-          <div class="pitch-panel-title"><span class="lineup-kicker">CAMPO</span><h3>Campo di gioco</h3></div>
+          <div class="pitch-panel-title"><h3>Campo di gioco</h3></div>
           <div class="pitch-panel-actions">${buttonHtml({ label: 'PDF formazione', variant: 'secondary', className: 'lineup-pdf-button match-squad-field-action', attributes: { 'data-match-lineup-pdf': true }, iconBefore: '<span class="match-squad-field-action__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg></span>' })}${buttonHtml({ label: 'Azzera posizioni', variant: 'secondary', className: 'formation-reset-button formation-reset-button--field match-squad-field-action', attributes: { 'data-reset-formation': true }, iconBefore: '<span class="match-squad-field-action__icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 11a8 8 0 1 0 2.3-5.7L4 8"></path><path d="M4 3v5h5"></path></svg></span>' })}</div>
         </div>
         <div class="staff-match-pitch" data-football-pitch aria-label="Campo formazione">
