@@ -32,7 +32,13 @@ export function renderMatchOpponentStep() {
             <details class="opponent-appearance-disclosure">
               <summary>＋ Cambia colori</summary>
               <div class="opponent-appearance-popover">
-                <div class="opponent-appearance-popover-head"><strong>Aspetto pedine</strong><span>Avversario</span></div>
+                <div class="opponent-appearance-popover-head">
+                  <strong>Aspetto pedine</strong>
+                  <div class="opponent-appearance-popover-head-actions">
+                    <span>Avversario</span>
+                    <button type="button" class="opponent-appearance-close" data-close-opponent-appearance aria-label="Chiudi pannello colori">×</button>
+                  </div>
+                </div>
                 ${colorPickerHtml({ name: 'opponent_token_primary', value: '#9f1239', label: 'Colore principale', fieldKey: 'opponent-primary', className: 'opponent-color-picker' })}
                 ${colorPickerHtml({ name: 'opponent_token_secondary', value: '#f8fafc', label: 'Colore secondario', fieldKey: 'opponent-secondary', className: 'opponent-color-picker' })}
                 <label class="opponent-pattern-control"><span>Stile</span><select name="opponent_token_pattern"><option value="solid">Tinta unita</option><option value="vertical">Strisce verticali</option><option value="horizontal">Strisce orizzontali</option></select></label>

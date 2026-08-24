@@ -142,6 +142,34 @@
 }
 .match-opponent-step .opponent-appearance-popover-head strong { color: #f4f8fa; font-size: .92rem; }
 .match-opponent-step .opponent-appearance-popover-head span { color: #79ccec; font-size: .72rem; font-weight: 800; }
+.match-opponent-step .opponent-appearance-popover-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.match-opponent-step .opponent-appearance-close {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(82,153,190,.32);
+  border-radius: 10px;
+  background: rgba(8, 29, 40, .84);
+  color: #dff4fd;
+  font: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.match-opponent-step .opponent-appearance-close:hover {
+  border-color: rgba(69, 161, 204, .68);
+  background: rgba(13, 43, 58, .92);
+}
+.match-opponent-step .opponent-appearance-close:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
 .match-opponent-step .opponent-color-picker {
   padding: 10px;
   border-radius: 12px;
@@ -300,10 +328,22 @@
   .match-opponent-step .opponent-appearance-disclosure > summary { width: 100%; }
   .match-opponent-step .opponent-appearance-popover {
     position: fixed;
-    left: 12px;
-    right: 12px;
-    top: 18vh;
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    top: max(12px, env(safe-area-inset-top));
+    bottom: max(12px, env(safe-area-inset-bottom));
     width: auto;
+    max-height: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .match-opponent-step .opponent-appearance-popover-head {
+    position: sticky;
+    top: -14px;
+    z-index: 2;
+    margin: -14px -14px 0;
+    padding: 14px 14px 10px;
+    background: #071923;
   }
   .match-opponent-step .opponent-formation-fields { grid-template-columns: 1fr; }
 }

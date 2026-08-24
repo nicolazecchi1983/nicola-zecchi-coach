@@ -574,6 +574,19 @@ export function wireLegacyMatchEditorEvents({
       } catch (error) {
         console.error('Match analysis schema binding failed; core lineup remains active:', error)
       }
+      const opponentAppearanceDisclosure = matchEditor.querySelector('.opponent-appearance-disclosure')
+      const opponentAppearanceSummary = opponentAppearanceDisclosure?.querySelector('summary')
+      const closeOpponentAppearance = () => {
+        if (!opponentAppearanceDisclosure?.open) return
+        opponentAppearanceDisclosure.open = false
+        opponentAppearanceSummary?.focus?.()
+      }
+      matchEditor.querySelector('[data-close-opponent-appearance]')?.addEventListener('click', closeOpponentAppearance)
+      opponentAppearanceDisclosure?.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !opponentAppearanceDisclosure.open) return
+        event.preventDefault()
+        closeOpponentAppearance()
+      })
       const updateOpponentTokenStyle = () => {
         const primary = form.elements.opponent_token_primary?.value || '#9f1239'
         const secondary = form.elements.opponent_token_secondary?.value || '#f8fafc'
