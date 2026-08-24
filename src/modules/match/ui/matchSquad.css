@@ -496,20 +496,11 @@
   .match-squad-step .squad-command-leadership {
     grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
-
-  .match-squad-step .match-lineup-layout--master {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 980px) {
   .match-squad-step {
     padding: 12px;
-  }
-
-  .match-squad-step .match-lineup-layout--master {
-    grid-template-columns: 1fr;
-    max-width: 720px;
   }
 
   .match-squad-step .lineup-list--selection {
@@ -675,8 +666,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .match-squad-step .token-display-field { grid-column: 1 / -1; }
-  .match-squad-step .squad-command-leadership,
-  .match-squad-step .match-lineup-layout--master {
+  .match-squad-step .squad-command-leadership {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .match-squad-step [data-football-pitch] { width: min(92%, 500px); }
