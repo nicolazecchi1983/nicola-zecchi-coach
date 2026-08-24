@@ -8,6 +8,7 @@ const dashboard = fs.readFileSync('src/modules/dashboard/dashboardView.js','utf8
 const pkg = JSON.parse(fs.readFileSync('package.json','utf8'))
 const printPage = fs.readFileSync('public/print.html','utf8')
 const boardEvents = fs.readFileSync('src/modules/board/events/boardEvents.js','utf8')
+const squadCss = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
 
 const r1 = responsive.slice(responsive.indexOf('M1.2-R1 — REAL DEVICE MOBILE CORRECTIVE'))
 const releaseVersion = String(pkg.version || '').replace(/-.+$/, '')
@@ -18,7 +19,7 @@ const checks = [
   ['Match Day senza scroll orizzontale', r1.includes('.ts-md-selector') && r1.includes('grid-template-columns: repeat(3') && r1.includes('overflow: visible !important')],
   ['Match navigation non scrollabile', productUi.includes('.product-section-nav') && productUi.includes('display:grid!important') && productUi.includes('overflow:visible!important')],
   ['counter convocazioni in flow', r1.includes('.callups-counter') && r1.includes('position: static !important')],
-  ['pitch sfrutta tutta larghezza', r1.includes('.pitch-panel [data-football-pitch]') && r1.includes('width: 100% !important')],
+  ['pitch sfrutta tutta larghezza dal domain owner', squadCss.includes('.match-squad-step .pitch-panel [data-football-pitch]') && squadCss.includes('width: 100%;') && !r1.includes('.match-squad-step .pitch-panel [data-football-pitch]')],
   ['pedine campo scalano su mobile', r1.includes('.token-photo') && r1.includes('clamp(30px, 9.4vw, 38px)')],
   ['board pedine scalano', r1.includes('.board-token') && r1.includes('clamp(30px, 9vw, 38px)')],
   ['colore board supporta change Android', boardEvents.includes("input.addEventListener('input', applyBoardColor)") && boardEvents.includes("input.addEventListener('change', applyBoardColor)")],

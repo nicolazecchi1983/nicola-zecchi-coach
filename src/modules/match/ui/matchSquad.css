@@ -757,6 +757,29 @@
 }
 
 @media (max-width: 760px) {
+  /* R3.5A1 — canonical mobile geometry owner.
+     Match Squad owns field/core geometry; global responsive owns shell/navigation. */
+  .match-squad-step .match-lineup-layout--master {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    gap: 12px;
+    box-sizing: border-box;
+  }
+
+  .match-squad-step .pitch-panel {
+    width: 100%;
+    padding: 5px;
+    border-radius: 13px;
+  }
+
+  .match-squad-step .pitch-panel [data-football-pitch] {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
   .match-squad-step .pitch-panel-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;

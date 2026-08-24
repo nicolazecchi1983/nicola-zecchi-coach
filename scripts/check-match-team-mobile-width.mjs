@@ -13,7 +13,7 @@ const checks = [
   ['captain and vice have explicit labels', view.includes('<span>Capitano</span>') && view.includes('<span>Vicecapitano</span>')],
   ['gold captain presentation removed', !squadCss.includes('#4b3b0d') && !squadCss.includes('#9b7b20') && !squadCss.includes('#ffe99a')],
   ['native team work surface reclaims nested mobile padding', layer.includes('--match-mobile-content-bleed') && layer.includes('.match-native-section .match-native-legacy-host')],
-  ['own-team pitch uses full mobile width', layer.includes('.match-squad-step .pitch-panel [data-football-pitch]')],
+  ['own-team pitch uses full mobile width from domain owner', squadCss.includes('@media (max-width: 760px)') && squadCss.includes('.match-squad-step .pitch-panel [data-football-pitch]') && !layer.includes('.match-squad-step .pitch-panel [data-football-pitch]')],
   ['opponent pitch responsive geometry is domain-owned', opponentCss.includes('@media (max-width: 980px)') && opponentCss.includes('.opponent-core-layout { grid-template-columns: 1fr; }')],
   ['own-team marker keeps canonical mobile size variable', layer.includes('--match-mobile-token-size')],
   ['opponent marker mobile sizing is domain-owned', opponentCss.includes('@media (max-width: 760px)') && opponentCss.includes('.match-opponent-step .opponent-token')],

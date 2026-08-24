@@ -622,23 +622,6 @@
   }
 
   /* ---------- SQUAD / OPPONENT PITCH: field first, tokens scale with it ---------- */
-  .match-squad-step .match-lineup-layout--master {
-    width: 100% !important;
-    max-width: none !important;
-    gap: 12px;
-  }
-
-  .match-squad-step .pitch-panel {
-    width: 100%;
-    padding: 6px !important;
-    border-radius: 14px;
-  }
-
-  .match-squad-step .pitch-panel [data-football-pitch] {
-    width: 100% !important;
-    max-width: none !important;
-    margin-inline: 0 !important;
-  }
 
   .match-squad-step .token-photo,
   .match-native-legacy-host .token-photo {
@@ -1408,25 +1391,6 @@
 
   /* Both team pitches own the full content width and share the same visual
      scale. */
-  .match-squad-step .match-lineup-layout--master {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    box-sizing: border-box;
-  }
-
-
-  .match-squad-step .pitch-panel {
-    padding: 5px !important;
-    border-radius: 13px !important;
-  }
-
-  .match-squad-step .pitch-panel [data-football-pitch] {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    box-sizing: border-box;
-  }
 
   .match-squad-step .token-photo {
     width: var(--match-mobile-token-size) !important;
