@@ -18,6 +18,8 @@ import {
   loadMatchAnalysisEntries,
 } from './appDataGateway.js'
 import { renderCallupsView } from '../modules/match/ui/callupsView.js'
+import { createMatchCallupsService } from '../modules/match/matchCallupsService.js'
+import { createActiveMatchRosterSelector, readMatchCallupsFromEventNotes } from '../modules/match/matchCallupsModel.js'
 import { renderMatchAnalysisView } from '../modules/match/ui/matchAnalysisView.js'
 import { renderRosterView } from '../modules/roster/rosterView.js'
 import { loadTeamRoster, removeRosterPlayer, rosterPlayerIdentity, rosterPlayerKey, saveRosterPlayer } from '../modules/roster/rosterService.js'
@@ -344,6 +346,7 @@ const {
   formatDateInputValue,
 })
 
+const getActiveMatchRosterPlayers = createActiveMatchRosterSelector({ getRosterPlayers: getTrainingSheetRosterPlayers, getActiveMatchContext, getCalendarEvents: () => appState.calendarEvents })
 const legacyMatchCompatibilityView = createLegacyMatchCompatibilityView({
   canEditMatch: () => can(ACCESS_CAPABILITIES.MATCH_SHEET_EDIT),
   getTeamProfile,
@@ -352,7 +355,7 @@ const legacyMatchCompatibilityView = createLegacyMatchCompatibilityView({
     name: profileFullName(appState.currentUserProfile, appState.currentUser),
     role: roleLabel(appState.currentUserRole),
   }),
-  getRosterPlayers: getTrainingSheetRosterPlayers,
+  getRosterPlayers: getActiveMatchRosterPlayers,
   escapeHtml,
 })
 
@@ -391,6 +394,7 @@ const {
   getTrainingSheetRosterPlayers,
   teamLocationSelectOptions,
   renderCallupsView,
+  readMatchCallupsFromEventNotes,
   renderRosterView,
   rosterPlayerIdentity,
   renderMatchAnalysisView,
@@ -770,6 +774,11 @@ export async function attachAppEvents(user) {
       escapeHtml,
       printHtmlDocument,
       alertUser: alert,
+      getActiveMatchContext,
+      createMatchCallupsService,
+      getCalendarEvent,
+      updateCalendarEvent,
+      loadCalendarEvents,
     })
     wireBoardEvents({
       root,
@@ -817,7 +826,7 @@ export async function attachAppEvents(user) {
       getActiveMatchContext,
       createMatchDraftService,
       storage: localStorage,
-      getTrainingSheetRosterPlayers,
+      getTrainingSheetRosterPlayers: getActiveMatchRosterPlayers,
       escapeHtml,
       getFormationLayout,
       getCustomFormationLayout,
@@ -836,6 +845,7 @@ export async function attachAppEvents(user) {
       loadCalendarEvents,
       appState,
       printMatchReport,
+      printHtmlDocument,
       windowRef: window,
       documentRef: document,
       urlApi: URL,

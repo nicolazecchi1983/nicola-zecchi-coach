@@ -72,7 +72,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       <div class="pitch-panel">
         <div class="pitch-panel-head">
           <div class="pitch-panel-title"><span class="lineup-kicker">CAMPO</span><h3>Campo di gioco</h3></div>
-          ${buttonHtml({ label: 'Azzera posizioni', variant: 'secondary', className: 'formation-reset-button formation-reset-button--field', attributes: { 'data-reset-formation': true }, iconBefore: '<span aria-hidden="true">↺</span> ' })}
+          <div class="pitch-panel-actions">${buttonHtml({ label: 'PDF formazione', variant: 'secondary', className: 'lineup-pdf-button', attributes: { 'data-match-lineup-pdf': true }, iconBefore: '<span aria-hidden="true">▣</span> ' })}${buttonHtml({ label: 'Azzera posizioni', variant: 'secondary', className: 'formation-reset-button formation-reset-button--field', attributes: { 'data-reset-formation': true }, iconBefore: '<span aria-hidden="true">↺</span> ' })}</div>
         </div>
         <div class="staff-match-pitch" data-football-pitch aria-label="Campo formazione">
           ${matchPitchMarkingsHtml({ idPrefix: 'match-squad-pitch' })}

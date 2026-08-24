@@ -34,6 +34,8 @@ export const DATA_ACCESS_USER_FALLBACKS = Object.freeze({
   'match-analysis-report-generate': 'Generazione report non riuscita.',
   'match-analysis-import': 'Importazione non riuscita.',
   'callups-print': 'Impossibile aprire la stampa.',
+  'callups-save': 'Salvataggio convocati non riuscito.',
+  'match-lineup-print': 'Impossibile creare la stampa formazione.',
   'training-library-feedback-save': 'Salvataggio non riuscito.',
   'training-draft-save': 'Salvataggio bozza non riuscito.',
   'training-publish': 'Pubblicazione non riuscita. Il documento precedente è rimasto invariato.',

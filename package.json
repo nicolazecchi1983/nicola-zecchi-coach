@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.57",
+  "version": "0.29.58",
   "private": true,
   "type": "module",
   "scripts": {
@@ -49,6 +49,7 @@
     "check:team-profile-persistence": "node scripts/check-team-profile-persistence.mjs",
     "check:player-profile-identity": "node scripts/check-player-profile-identity.mjs",
     "check:callups-print": "node scripts/check-callups-print-stability.mjs",
+    "check:match-callups-lineup-flow": "node scripts/check-match-callups-lineup-flow.mjs",
     "check:match-report-workspace": "node scripts/check-match-report-workspace.mjs",
     "check:workspace-session-restore": "node scripts/check-workspace-session-restore.mjs",
     "check:match-post-match": "node scripts/check-match-post-match.mjs",
@@ -321,6 +322,7 @@
     "check:r20-2a-r11",
     "check:print",
     "check:callups-print",
+    "check:match-callups-lineup-flow",
     "check:match-calendar",
     "check:match-workspace",
     "check:match-workspace-single-nav",

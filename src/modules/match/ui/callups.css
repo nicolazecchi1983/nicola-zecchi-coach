@@ -150,3 +150,5 @@
   .callups-head { align-items: center; }
   .callups-toolbar button { width: 100%; }
 }
+
+.callups-toolbar-actions{display:flex;gap:8px;align-items:end}.callups-toolbar-actions button{min-height:50px;white-space:nowrap}@media(max-width:760px){.callups-toolbar-actions{display:grid;grid-template-columns:1fr 1fr}.callups-toolbar-actions button{width:100%}}

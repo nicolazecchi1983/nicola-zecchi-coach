@@ -21,6 +21,7 @@ export function createAppViewAdapters(deps) {
     getTrainingSheetRosterPlayers,
     teamLocationSelectOptions,
     renderCallupsView,
+    readMatchCallupsFromEventNotes,
     renderRosterView,
     rosterPlayerIdentity,
     renderMatchAnalysisView,
@@ -102,10 +103,13 @@ export function createAppViewAdapters(deps) {
   }
 
   function callupsView() {
+    const activeMatch = getActiveMatchContext()
+    const eventModel = appState.calendarEvents.find((item) => String(item.id) === String(activeMatch?.id || '')) || null
     return renderCallupsView({
       teamName: teamName(),
       players: activePlayers(),
-      activeMatch: getActiveMatchContext(),
+      activeMatch,
+      savedCallups: readMatchCallupsFromEventNotes(eventModel?.notes || ''),
       escapeHtml,
     })
   }

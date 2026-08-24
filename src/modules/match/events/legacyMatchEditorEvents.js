@@ -23,6 +23,7 @@ export function wireLegacyMatchEditorEvents({
   loadCalendarEvents,
   appState,
   printMatchReport,
+  printHtmlDocument,
   windowRef = globalThis.window,
   documentRef = globalThis.document,
   urlApi = globalThis.URL,
@@ -600,6 +601,39 @@ export function wireLegacyMatchEditorEvents({
       form.addEventListener('input', handleMatchFormMutation)
       form.addEventListener('change', handleMatchFormMutation)
       next.addEventListener('click',()=>showStep(activeStep+1)); prev.addEventListener('click',()=>showStep(activeStep-1)); stepButtons.forEach(b=>b.addEventListener('click',()=>showStep(b.dataset.matchStepButton)))
+
+      const lineupPdfButton = matchEditor.querySelector('[data-match-lineup-pdf]')
+      lineupPdfButton?.addEventListener('click', async () => {
+        const team = getTeamProfile()
+        const activeMatch = getActiveMatchContext()
+        const starters = Array.from({ length: 11 }, (_, index) => ({
+          number: form.elements[`starter_number_${index}`]?.value || String(index + 1),
+          name: form.elements[`starter_${index}`]?.value || '',
+        })).filter((item) => item.name)
+        const bench = Array.from({ length: 9 }, (_, index) => ({
+          slot: index + 12,
+          name: form.elements[`bench_${index}`]?.value || '',
+        })).filter((item) => item.name)
+        if (!starters.length) {
+          globalThis.alert?.('Inserisci almeno un titolare prima di creare il PDF formazione.')
+          return
+        }
+        const formation = form.elements.formation?.value === 'Personalizzato'
+          ? (form.elements.custom_formation?.value || 'Personalizzato')
+          : (form.elements.formation?.value || 'Da definire')
+        const captain = form.elements.captain?.value || '—'
+        const vice = form.elements.vice_captain?.value || '—'
+        const opponent = activeMatch?.opponent || form.elements.opponent?.value || 'Avversario'
+        const date = activeMatch?.date || form.elements.date?.value || ''
+        const logo = team.logo ? `<img src="${escapeHtml(team.logo)}" alt="Logo ${escapeHtml(team.shortName || team.name)}">` : `<span>${escapeHtml((team.shortName || team.name || 'T').slice(0,2).toUpperCase())}</span>`
+        const html = `<main class="lineup-tm-print"><header>${logo}<div><span class="eyebrow">FORMAZIONE UFFICIALE</span><h1>${escapeHtml(team.name || team.shortName)}</h1><p>vs ${escapeHtml(opponent)}</p></div></header><div class="meta"><b>${date ? new Date(date+'T12:00:00').toLocaleDateString('it-IT') : 'Data da definire'}</b><span>Modulo ${escapeHtml(formation)}</span></div><section><h2>TITOLARI</h2><div class="list">${starters.map((item, index)=>`<div class="player"><b>${escapeHtml(item.number)}</b><span>${escapeHtml(item.name)}</span><small>${index+1}</small></div>`).join('')}</div></section><section><h2>A DISPOSIZIONE</h2><div class="list bench">${bench.map((item)=>`<div class="player"><b>${item.slot}</b><span>${escapeHtml(item.name)}</span></div>`).join('') || '<p>Nessun giocatore inserito.</p>'}</div></section><div class="leaders"><span><small>CAPITANO</small><b>${escapeHtml(captain)}</b></span><span><small>VICECAPITANO</small><b>${escapeHtml(vice)}</b></span></div></main>`
+        const styles = `@page{size:A4;margin:10mm}*{box-sizing:border-box}html,body{background:#fff!important}.lineup-tm-print{font-family:Arial,sans-serif;color:#07194f;width:100%;max-width:190mm;margin:0 auto}.lineup-tm-print header{display:flex;align-items:center;gap:16px;border-bottom:4px solid ${escapeHtml(team.primaryColor || '#07194f')};padding-bottom:14px}.lineup-tm-print header img,.lineup-tm-print header>span{width:64px;height:64px;object-fit:contain;border-radius:12px;display:grid;place-items:center;background:${escapeHtml(team.primaryColor || '#07194f')};color:#fff;font-weight:800;flex:0 0 64px}.lineup-tm-print .eyebrow{display:block;font-size:11px;letter-spacing:.14em;font-weight:800;color:${escapeHtml(team.secondaryColor || '#1f93e5')};margin-bottom:4px}.lineup-tm-print h1{margin:0;font-size:27px}.lineup-tm-print header p{margin:5px 0 0}.lineup-tm-print .meta{display:flex;justify-content:space-between;gap:20px;margin:16px 0;padding:11px 13px;background:#f1f5f9;border-left:4px solid ${escapeHtml(team.secondaryColor || '#1f93e5')}}.lineup-tm-print section{margin-top:15px}.lineup-tm-print h2{font-size:12px;letter-spacing:.12em;color:${escapeHtml(team.secondaryColor || '#1f93e5')};border-bottom:1px solid #d7e0e8;padding-bottom:5px}.lineup-tm-print .list{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}.lineup-tm-print .player{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:8px;padding:8px 10px;border:1px solid #d4dde5;border-radius:7px;font-size:13px}.lineup-tm-print .player>b{font-size:15px;color:${escapeHtml(team.secondaryColor || '#1f93e5')}}.lineup-tm-print .player small{color:#718096}.lineup-tm-print .leaders{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.lineup-tm-print .leaders span{padding:11px;border:1px solid #d4dde5;border-radius:7px}.lineup-tm-print .leaders small{display:block;font-size:10px;color:#718096;margin-bottom:4px}@media print{.lineup-tm-print section,.lineup-tm-print .player{break-inside:avoid}}`
+        lineupPdfButton.disabled = true
+        try { await printHtmlDocument({ title: `Formazione - ${team.shortName || team.name}`, html, styles }) }
+        catch (error) { globalThis.alert?.(getDataAccessUserMessage(error, undefined, { stage: 'match-lineup-print' })) }
+        finally { lineupPdfButton.disabled = false }
+      })
+
       matchEditor.querySelector('[data-match-reset]').addEventListener('click',()=>{if(confirm('Cancellare la Match Sheet?')){form.reset();draftService.clear();syncCustomFormation();applyFormation(form.elements.formation.value,false);renderNotes();updateTokens();showStep(1)}})
       const fileInput = form.elements.opponent_sheet
       const opponentSheetPreview = matchEditor.querySelector('[data-opponent-sheet-preview]')
