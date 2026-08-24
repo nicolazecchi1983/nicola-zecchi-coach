@@ -738,3 +738,63 @@
   .match-squad-step .pitch-panel-actions button { flex: 1 1 auto; }
 }
 
+
+
+/* 0.29.61 — R3.4C Match Squad Cross-Viewport Alignment
+   One domain owner aligns Campo di gioco and Undici iniziale headers on desktop,
+   then restores a clean left-aligned stacked anatomy on mobile. */
+.match-squad-step .pitch-panel-head,
+.match-squad-step .lineup-list--selection .lineup-list-head {
+  min-height: 74px;
+  box-sizing: border-box;
+}
+
+.match-squad-step .pitch-panel-head {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) auto;
+  align-items: center;
+}
+
+.match-squad-step .pitch-panel-title {
+  min-width: max-content;
+}
+
+.match-squad-step .pitch-panel-title h3,
+.match-squad-step .lineup-list--selection .lineup-list-head h3 {
+  white-space: nowrap;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head {
+  align-items: center;
+}
+
+.match-squad-step .lineup-list--selection .lineup-list-head > div {
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+}
+
+@media (max-width: 760px) {
+  .match-squad-step .pitch-panel-head,
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    min-height: 0;
+  }
+
+  .match-squad-step .pitch-panel-head {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .match-squad-step .pitch-panel-title,
+  .match-squad-step .lineup-list--selection .lineup-list-head,
+  .match-squad-step .lineup-list--selection .lineup-list-head > div {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    align-items: flex-start;
+  }
+}
