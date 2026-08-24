@@ -484,19 +484,6 @@
 }
 
 /* ---------- Responsive contract ---------- */
-@media (max-width: 1180px) {
-  .match-squad-step .squad-command-primary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .match-squad-step .token-display-field {
-    grid-column: 1 / -1;
-  }
-
-  .match-squad-step .squad-command-leadership {
-    grid-template-columns: repeat(2, minmax(280px, 1fr));
-  }
-}
 
 @media (max-width: 980px) {
   .match-squad-step {
@@ -517,13 +504,7 @@
 }
 
 @media (max-width: 760px) {
-  .match-squad-step .squad-command-primary,
-  .match-squad-step .squad-command-leadership {
-    grid-template-columns: 1fr;
-  }
-
   .match-squad-step .token-display-field { grid-column: auto; }
-
 
   .match-squad-step .bench-grid--slots {
     grid-template-columns: 1fr;
