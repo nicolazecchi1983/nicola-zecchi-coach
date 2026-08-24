@@ -1,0 +1,17 @@
+export const MATCH_SQUAD_SNAPSHOT_SCHEMA_VERSION = 1
+function cleanText(value){return String(value??'').trim()}
+function cleanNumber(value){const number=Number(value);return Number.isInteger(number)&&number>=1&&number<=99?number:null}
+function cleanCoordinate(value){const number=Number(value);return Number.isFinite(number)&&number>=0&&number<=100?number:null}
+function parseNotes(rawNotes){if(!rawNotes)return{};if(typeof rawNotes==='object'&&!Array.isArray(rawNotes))return{...rawNotes};try{const parsed=JSON.parse(String(rawNotes));return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?parsed:{}}catch{return{}}}
+function normalizePlayerEntry(value={},fallbackSlot=0){return{slot:Number.isInteger(Number(value.slot))?Number(value.slot):fallbackSlot,playerId:cleanText(value.playerId??value.player_id??value.id),name:cleanText(value.name??value.canonicalName),shirtNumber:cleanNumber(value.shirtNumber??value.shirt_number??value.number)}}
+function normalizeStarter(value={},fallbackSlot=0){return{...normalizePlayerEntry(value,fallbackSlot),x:cleanCoordinate(value.x),y:cleanCoordinate(value.y)}}
+export function normalizeMatchSquadSnapshot(value={}, {persisted=false}={}) {
+  const starters=Array.from({length:11},(_,index)=>{const raw=Array.isArray(value.starters)?(value.starters.find((item)=>Number(item?.slot)===index)??value.starters[index]??{}):{};return normalizeStarter(raw,index)})
+  const bench=Array.from({length:9},(_,index)=>{const slot=index+12;const raw=Array.isArray(value.bench)?(value.bench.find((item)=>Number(item?.slot)===slot)??value.bench[index]??{}):{};return normalizePlayerEntry(raw,slot)})
+  const captainSlot=cleanText(value.captainSlot??value.captain_slot);const viceCaptainSlot=cleanText(value.viceCaptainSlot??value.vice_captain_slot)
+  return{formation:cleanText(value.formation||'4-4-2'),customFormation:cleanText(value.customFormation??value.custom_formation),starters,bench,captainSlot,viceCaptainSlot:viceCaptainSlot===captainSlot?'':viceCaptainSlot,updatedAt:cleanText(value.updatedAt??value.updated_at),persisted:Boolean(persisted),_schemaVersion:MATCH_SQUAD_SNAPSHOT_SCHEMA_VERSION}
+}
+export function readMatchSquadSnapshotFromEventNotes(rawNotes){const notes=parseNotes(rawNotes);const exists=Boolean(notes.match_squad_snapshot&&typeof notes.match_squad_snapshot==='object');return normalizeMatchSquadSnapshot(notes.match_squad_snapshot||{},{persisted:exists})}
+export function mergeMatchSquadSnapshotIntoEventNotes(rawNotes,snapshot){const notes=parseNotes(rawNotes);const normalized=normalizeMatchSquadSnapshot(snapshot,{persisted:true});return JSON.stringify({...notes,type:notes.type||'match_event',match_squad_snapshot:{formation:normalized.formation,custom_formation:normalized.customFormation,starters:normalized.starters,bench:normalized.bench,captain_slot:normalized.captainSlot,vice_captain_slot:normalized.viceCaptainSlot,updated_at:normalized.updatedAt,schema_version:MATCH_SQUAD_SNAPSHOT_SCHEMA_VERSION}})}
+export function matchSquadSnapshotFingerprint(value={}){const snapshot=normalizeMatchSquadSnapshot(value);return JSON.stringify({formation:snapshot.formation,customFormation:snapshot.customFormation,starters:snapshot.starters,bench:snapshot.bench,captainSlot:snapshot.captainSlot,viceCaptainSlot:snapshot.viceCaptainSlot})}
+export function hasMeaningfulMatchSquadSnapshot(value={}){const snapshot=normalizeMatchSquadSnapshot(value);return snapshot.starters.some((item)=>item.name||item.playerId)||snapshot.bench.some((item)=>item.name||item.playerId)}

@@ -1,3 +1,4 @@
+import { createMatchSquadSnapshotService } from '../matchSquadSnapshotService.js'
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 export function wireLegacyMatchEditorEvents({
   root,
@@ -49,6 +50,11 @@ export function wireLegacyMatchEditorEvents({
       let hasSavedTokenPositions = false
       let hasSavedOpponentTokenPositions = false
       let restoredLeadership = null
+      let scheduleCanonicalSquadSave = () => {}
+      let canonicalSquadReady = false
+      let canonicalSquadSaveTimer
+      let lastCanonicalSquadFingerprint = ''
+      let hadLocalSquadDraft = false
       const showStep = (value) => {
         activeStep = Math.min(5, Math.max(1, Number(value)))
         steps.forEach((step) => step.classList.toggle('is-active', Number(step.dataset.matchStep) === activeStep))
@@ -89,7 +95,8 @@ export function wireLegacyMatchEditorEvents({
       const collect = () => draftService.collect(form)
       const save = () => {
         draftService.save(form)
-        if (state) state.textContent = 'Bozza salvata'
+        scheduleCanonicalSquadSave()
+        if (state) state.textContent = canonicalSquadReady ? 'Formazione sincronizzata' : 'Bozza salvata'
       }
       const scheduleSave = () => {
         if (state) state.textContent = 'Salvataggio…'
@@ -285,6 +292,63 @@ export function wireLegacyMatchEditorEvents({
         requestFrame(refreshLeadershipSelects)
       }
 
+      const rosterByName = new Map(getTrainingSheetRosterPlayers().map((player) => [String(player.canonicalName || '').trim(), player]))
+      const rosterById = new Map(getTrainingSheetRosterPlayers().map((player) => [String(player.id || player.playerId || '').trim(), player]).filter(([id]) => id))
+      const resolveRosterEntry = (name) => rosterByName.get(String(name || '').trim()) || null
+      const resolveSnapshotPlayerName = (entry = {}) => {
+        const byId = entry.playerId ? rosterById.get(String(entry.playerId)) : null
+        return String(byId?.canonicalName || entry.name || '').trim()
+      }
+      const collectCanonicalSquadSnapshot = () => ({
+        formation: String(form.elements.formation?.value || '4-4-2'),
+        customFormation: String(form.elements.custom_formation?.value || '').trim(),
+        starters: Array.from({ length: 11 }, (_, index) => {
+          const name = String(form.elements[`starter_${index}`]?.value || '').trim()
+          const player = resolveRosterEntry(name)
+          return {slot:index,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:form.elements[`starter_number_${index}`]?.value||null,x:form.elements[`position_x_${index}`]?.value??null,y:form.elements[`position_y_${index}`]?.value??null}
+        }),
+        bench: Array.from({ length: 9 }, (_, index) => {
+          const name = String(form.elements[`bench_${index}`]?.value || '').trim()
+          const player = resolveRosterEntry(name)
+          return {slot:index+12,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:player?.shirtNumber??player?.shirt_number??null}
+        }),
+        captainSlot:String(form.elements.captain?.value||''),viceCaptainSlot:String(form.elements.vice_captain?.value||''),
+      })
+      const squadSnapshotService = activeMatchForDraft?.id && typeof createMatchSquadSnapshotService === 'function'
+        ? createMatchSquadSnapshotService({getEvent:getCalendarEvent,updateEvent:updateCalendarEvent,reloadEvents:loadCalendarEvents})
+        : null
+      const fingerprintCanonicalSquad = (snapshot) => JSON.stringify({formation:snapshot.formation,customFormation:snapshot.customFormation,starters:snapshot.starters,bench:snapshot.bench,captainSlot:snapshot.captainSlot,viceCaptainSlot:snapshot.viceCaptainSlot})
+      const persistCanonicalSquadSnapshot = async ({force=false}={}) => {
+        if(!canonicalSquadReady||!squadSnapshotService||!activeMatchForDraft?.id)return
+        const snapshot=collectCanonicalSquadSnapshot();const fingerprint=fingerprintCanonicalSquad(snapshot)
+        if(!force&&fingerprint===lastCanonicalSquadFingerprint)return
+        try{const saved=await squadSnapshotService.save(activeMatchForDraft.id,snapshot);lastCanonicalSquadFingerprint=fingerprintCanonicalSquad(saved);draftService.save(form);if(state)state.textContent='Formazione sincronizzata'}
+        catch(error){console.error('Sincronizzazione formazione Match non riuscita:',error);if(state)state.textContent=getDataAccessUserMessage(error,undefined,{stage:'match-squad-sync'})}
+      }
+      scheduleCanonicalSquadSave = () => {
+        if(!canonicalSquadReady||!squadSnapshotService)return
+        clearTimeout(canonicalSquadSaveTimer)
+        canonicalSquadSaveTimer=setTimeout(()=>{void persistCanonicalSquadSnapshot()},450)
+      }
+      const applyCanonicalSquadSnapshot = (snapshot) => {
+        if(!snapshot?.persisted)return false
+        const formation=String(snapshot.formation||'4-4-2');if(form.elements.formation)form.elements.formation.value=formation;if(form.elements.custom_formation)form.elements.custom_formation.value=snapshot.customFormation||''
+        syncCustomFormation()
+        snapshot.starters.forEach((entry,index)=>{const playerField=form.elements[`starter_${index}`];const numberField=form.elements[`starter_number_${index}`];if(playerField)playerField.value=resolveSnapshotPlayerName(entry);if(numberField)numberField.value=entry.shirtNumber||String(index+1);if(entry.x!==null&&entry.y!==null)setTokenPosition(index,entry.x,entry.y,false)})
+        updateStarterOptions()
+        snapshot.bench.forEach((entry,index)=>{const field=form.elements[`bench_${index}`];if(field)field.value=resolveSnapshotPlayerName(entry)})
+        updateAutomaticBench();refreshLeadershipSelects();if(form.elements.captain)form.elements.captain.value=snapshot.captainSlot||'';if(form.elements.vice_captain)form.elements.vice_captain.value=snapshot.viceCaptainSlot===snapshot.captainSlot?'':(snapshot.viceCaptainSlot||'');refreshLeadershipSelects();updateTokens();renderReport()
+        hasSavedTokenPositions=snapshot.starters.every((entry)=>entry.x!==null&&entry.y!==null);draftService.save(form);return true
+      }
+      const hydrateCanonicalSquadSnapshot = async () => {
+        if(!squadSnapshotService||!activeMatchForDraft?.id){canonicalSquadReady=true;return}
+        try{
+          const snapshot=await squadSnapshotService.load(activeMatchForDraft.id)
+          if(snapshot.persisted){applyCanonicalSquadSnapshot(snapshot);lastCanonicalSquadFingerprint=fingerprintCanonicalSquad(snapshot);if(state)state.textContent='Formazione sincronizzata'}
+          canonicalSquadReady=true
+          if(!snapshot.persisted&&hadLocalSquadDraft){const localSnapshot=collectCanonicalSquadSnapshot();const completeStartingEleven=localSnapshot.starters.filter((entry)=>entry.name||entry.playerId).length===11;if(completeStartingEleven)await persistCanonicalSquadSnapshot({force:true})}
+        }catch(error){canonicalSquadReady=true;console.error('Caricamento formazione canonica Match non riuscito:',error);if(state)state.textContent=getDataAccessUserMessage(error,undefined,{stage:'match-squad-sync'})}
+      }
       const updateStarterOptions = () => {
         const selected = Array.from({ length: 11 }, (_, index) => form.elements[`starter_${index}`]?.value || '')
         for (let index = 0; index < 11; index += 1) {
@@ -866,6 +930,7 @@ export function wireLegacyMatchEditorEvents({
       try {
         const saved = draftService.load()
         if(saved){
+          hadLocalSquadDraft = Array.from({ length: 11 }, (_, index) => String(saved[`starter_${index}`] || '').trim()).some(Boolean)
           const inferIndexes = (pattern) => Object.keys(saved).filter((key) => pattern.test(key)).map((key) => Number(key.match(/\d+/)?.[0])).filter(Number.isFinite).sort((a,b)=>a-b)
           const subIndexes = inferIndexes(/^sub_minute_\d+$/)
           const goalIndexes = inferIndexes(/^goal_minute_\d+$/)
@@ -923,5 +988,6 @@ export function wireLegacyMatchEditorEvents({
       updateOpponentTokenStyle()
       renderReport()
       showStep(1)
+      void hydrateCanonicalSquadSnapshot()
     }
 }

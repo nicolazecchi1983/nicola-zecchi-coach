@@ -1,0 +1,7 @@
+import { describe, expect, it } from 'vitest'
+import { hasMeaningfulMatchSquadSnapshot, matchSquadSnapshotFingerprint, mergeMatchSquadSnapshotIntoEventNotes, readMatchSquadSnapshotFromEventNotes } from '../../src/modules/match/matchSquadSnapshotModel.js'
+describe('match squad canonical snapshot',()=> {
+ it('round-trips lineup, bench, leadership and positions in event notes',()=>{const notes=mergeMatchSquadSnapshotIntoEventNotes(JSON.stringify({keep:'yes'}),{formation:'4-3-3',starters:[{slot:0,playerId:'p1',name:'Portiere',shirtNumber:1,x:50,y:90}],bench:[{slot:12,playerId:'p12',name:'Riserva',shirtNumber:12}],captainSlot:'0',viceCaptainSlot:'1'});expect(JSON.parse(notes).keep).toBe('yes');const s=readMatchSquadSnapshotFromEventNotes(notes);expect(s.persisted).toBe(true);expect(s.starters[0]).toMatchObject({playerId:'p1',name:'Portiere',shirtNumber:1,x:50,y:90});expect(s.bench[0]).toMatchObject({slot:12,playerId:'p12',name:'Riserva'})})
+ it('keeps exactly eleven starter slots and nine bench slots',()=>{const s=readMatchSquadSnapshotFromEventNotes(JSON.stringify({match_squad_snapshot:{starters:[{slot:5,name:'X'}],bench:[]}}));expect(s.starters).toHaveLength(11);expect(s.starters[5].name).toBe('X');expect(s.bench).toHaveLength(9)})
+ it('detects meaningful lineup data and stable fingerprints',()=>{const a={formation:'4-4-2',starters:[{slot:0,name:'A'}]};const b={formation:'4-4-2',starters:[{slot:0,name:'A'}]};expect(hasMeaningfulMatchSquadSnapshot(a)).toBe(true);expect(matchSquadSnapshotFingerprint(a)).toBe(matchSquadSnapshotFingerprint(b))})
+})
