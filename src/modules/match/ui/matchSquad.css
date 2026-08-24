@@ -724,4 +724,17 @@
   .match-squad-step { gap: var(--match-section-gap-mobile); }
 }
 
-.match-squad-step .pitch-panel-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.match-squad-step .lineup-pdf-button{white-space:nowrap}@media(max-width:760px){.match-squad-step .pitch-panel-actions{width:100%}.match-squad-step .pitch-panel-actions button{flex:1 1 auto}}
+.match-squad-step .pitch-panel-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.match-squad-step .lineup-pdf-button { white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .match-squad-step .pitch-panel-actions { width: 100%; }
+  .match-squad-step .pitch-panel-actions button { flex: 1 1 auto; }
+}
+

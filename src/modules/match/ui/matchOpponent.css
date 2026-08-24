@@ -284,7 +284,19 @@
   .match-opponent-step .opponent-reading-surface { padding: 12px; border-radius: 16px; }
   .match-opponent-step .opponent-panel-bar,
   .match-opponent-step .opponent-reading-header { align-items: flex-start; flex-wrap: wrap; }
-  .match-opponent-step .opponent-token-appearance-row { grid-template-columns: auto 40px minmax(0, 1fr); }
+  .match-opponent-step .opponent-token-appearance-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+    grid-template-areas:
+      "toggle preview"
+      "action action";
+  }
+  .match-opponent-step .opponent-number-toggle { grid-area: toggle; min-width: 0; }
+  .match-opponent-step .opponent-token-mini-preview { grid-area: preview; }
+  .match-opponent-step .opponent-appearance-disclosure {
+    grid-area: action;
+    width: 100%;
+    justify-self: stretch;
+  }
   .match-opponent-step .opponent-appearance-disclosure > summary { width: 100%; }
   .match-opponent-step .opponent-appearance-popover {
     position: fixed;

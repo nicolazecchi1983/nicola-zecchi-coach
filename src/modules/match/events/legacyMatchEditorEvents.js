@@ -673,12 +673,35 @@ export function wireLegacyMatchEditorEvents({
           if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = true
           return
         }
-        const signedUrl = await opponentStudyService.getAssetUrl(asset.path)
-        if (!signedUrl) throw new Error('URL distinta non disponibile.')
-        if (opponentSheetPreview) {
+        const applySignedPreviewUrl = async (allowRetry = true) => {
+          const signedUrl = await opponentStudyService.getAssetUrl(asset.path)
+          if (!signedUrl) throw new Error('URL distinta non disponibile.')
+          if (!opponentSheetPreview) return
+
+          opponentSheetPreview.onerror = async () => {
+            opponentSheetPreview.onerror = null
+            if (allowRetry) {
+              try {
+                await applySignedPreviewUrl(false)
+                return
+              } catch (error) {
+                console.warn('Refresh URL distinta avversaria non riuscito:', error)
+              }
+            }
+            opponentSheetPreview.removeAttribute('src')
+            opponentSheetPreview.hidden = true
+            if (opponentSheetEmpty) opponentSheetEmpty.hidden = false
+            if (opponentSheetState) opponentSheetState.textContent = 'Salvata · anteprima non disponibile'
+            setOpponentSheetMessage(
+              getDataAccessUserMessage(new Error('Opponent lineup preview unavailable.'), undefined, { stage: 'match-opponent-lineup-load' }),
+              'error',
+            )
+          }
           opponentSheetPreview.src = signedUrl
           opponentSheetPreview.hidden = false
         }
+
+        await applySignedPreviewUrl(true)
         if (opponentSheetEmpty) opponentSheetEmpty.hidden = true
         if (opponentSheetState) opponentSheetState.textContent = 'Salvata'
         if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = false

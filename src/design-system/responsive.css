@@ -662,17 +662,8 @@
     padding: 11px !important;
   }
 
-  .match-squad-step .lineup-list--selection .lineup-row {
-    grid-template-columns: 26px 48px minmax(0,1fr) !important;
-    gap: 5px;
-  }
-
-  .match-squad-step .lineup-list--selection .lineup-row input,
-  .match-squad-step .lineup-list--selection .lineup-row select {
-    min-height: 42px;
-    padding: 6px 8px;
-    font-size: .80rem;
-  }
+  /* Match Squad starter-row geometry is domain-owned by matchSquad.css.
+     Do not reintroduce legacy 3-column mobile geometry here. */
 
   /* ---------- BOARD: fit the whole tactical board and reduce collisions ---------- */
   .board-toolbar {

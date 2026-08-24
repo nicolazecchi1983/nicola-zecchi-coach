@@ -29,7 +29,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
         <div class="callups-toolbar">
           <label><span>Partita / avversario</span><input name="callups_match" data-callups-match value="${escapeHtml(matchLabel)}" readonly></label>
           <label><span>Data</span><input name="callups_date" type="date" data-callups-date value="${escapeHtml(matchDate)}" readonly></label>
-          <div class="callups-toolbar-actions"><button class="secondary-action" type="button" data-callups-save>Salva convocati</button><button class="primary-action" type="button" data-callups-pdf>Crea PDF convocazioni</button></div>
+          <div class="callups-toolbar-actions"><button class="staff-button staff-button--secondary" type="button" data-callups-save>Salva convocati</button><button class="primary-action" type="button" data-callups-pdf>Crea PDF convocazioni</button></div>
         </div>
         <div class="callups-alert" data-callups-alert hidden></div>
         <div class="callups-role-groups">
