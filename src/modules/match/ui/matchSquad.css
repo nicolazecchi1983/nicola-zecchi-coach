@@ -818,6 +818,8 @@
     display: flex;
     align-items: stretch;
     flex-direction: column;
+    gap: 10px;
+    padding: 4px 4px 9px;
   }
 
   .match-squad-step .pitch-panel-title,
@@ -828,7 +830,93 @@
     text-align: left;
   }
 
+  .match-squad-step .pitch-panel-title h3 {
+    font-size: 1.02rem;
+  }
+
+  .match-squad-step .lineup-list--selection {
+    padding: 10px;
+  }
+
   .match-squad-step .lineup-list--selection .lineup-list-head {
     align-items: flex-start;
+    margin-bottom: 6px;
+    padding-bottom: 7px;
+  }
+
+  .match-squad-step .squad-command-strip {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .match-squad-step .squad-command-primary {
+    gap: 10px;
+  }
+
+  .match-squad-step .squad-command-leadership {
+    gap: 10px;
+  }
+
+  .match-squad-step .formation-system-control,
+  .match-squad-step .formation-custom-control,
+  .match-squad-step .token-display-field,
+  .match-squad-step .leadership-control {
+    gap: 6px;
+  }
+
+  .match-squad-step .formation-system-control select,
+  .match-squad-step .formation-custom-control input,
+  .match-squad-step .leadership-control select {
+    min-height: 48px;
+    height: 48px;
+    padding-left: 12px;
+    font-size: .92rem;
+  }
+
+  .match-squad-step .formation-system-control > span,
+  .match-squad-step .formation-custom-control > span,
+  .match-squad-step .leadership-control > span {
+    font-size: .76rem;
+  }
+}
+
+/* R3.5B2-R3 — Operational Density & Premium Layout.
+   Latest desktop owner by design: comes after R3.4C so the 72px contract is effective. */
+@media (min-width: 761px) {
+  .match-squad-step .pitch-panel-head,
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    min-height: 72px;
+  }
+
+  .match-squad-step .pitch-panel-head {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) minmax(340px, .95fr);
+    grid-template-rows: 1fr;
+    align-items: center;
+    align-content: center;
+    gap: 16px;
+    padding-block: 8px;
+  }
+
+  .match-squad-step .pitch-panel-actions {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+    justify-self: end;
+    max-width: 430px;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    margin-bottom: 6px;
+    padding-bottom: 7px;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-row {
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  .match-squad-step .starter-number-input,
+  .match-squad-step .starter-player-select {
+    height: 44px;
+    min-height: 44px;
   }
 }

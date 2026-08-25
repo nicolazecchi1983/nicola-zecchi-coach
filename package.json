@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.70",
+  "version": "0.29.71",
   "private": true,
   "type": "module",
   "scripts": {
@@ -257,7 +257,8 @@
     "check:match-squad-command-breakpoint-owner": "node scripts/check-match-squad-command-breakpoint-owner.mjs",
     "check:match-squad-compact-breakpoint-owner": "node scripts/check-match-squad-compact-breakpoint-owner.mjs",
     "check:match-squad-dead-selector-retirement": "node scripts/check-match-squad-dead-selector-retirement.mjs",
-    "check:match-squad-visual-grammar-b1": "node scripts/check-match-squad-visual-grammar-b1.mjs"
+    "check:match-squad-visual-grammar-b1": "node scripts/check-match-squad-visual-grammar-b1.mjs",
+    "check:match-squad-operational-density-b2": "node scripts/check-match-squad-operational-density-b2.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -515,6 +516,7 @@
     "check:match-squad-command-breakpoint-owner",
     "check:match-squad-compact-breakpoint-owner",
     "check:match-squad-dead-selector-retirement",
-    "check:match-squad-visual-grammar-b1"
+    "check:match-squad-visual-grammar-b1",
+    "check:match-squad-operational-density-b2"
   ]
 }
