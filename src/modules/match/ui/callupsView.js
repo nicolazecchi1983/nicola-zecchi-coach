@@ -22,9 +22,12 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
 
   const contentHtml = `
       <section class="workspace-surface product-surface callups-panel callups-panel--standalone" data-callups-panel>
-        <div class="callups-head">
-          <div><span>CONVOCAZIONI</span><h2>Lista convocati</h2><p>Tutta la rosa parte selezionata. Deseleziona soltanto i giocatori non convocati.</p></div>
-          <div class="callups-counter"><strong data-callups-count>${activePlayers.length}</strong><span> selezionati</span></div>
+        <div class="callups-head callups-selection-bar" aria-label="Selezione convocati">
+          <div class="callups-bulk-actions" role="group" aria-label="Azioni selezione convocati">
+            <button class="staff-button staff-button--secondary callups-bulk-button" type="button" data-callups-select-all>Seleziona tutti</button>
+            <button class="staff-button staff-button--secondary callups-bulk-button" type="button" data-callups-clear-all>Deseleziona tutti</button>
+          </div>
+          <div class="callups-counter"><strong data-callups-count>${activePlayers.filter(isSelected).length}</strong><span> selezionati</span></div>
         </div>
         <div class="callups-toolbar">
           <label><span>Partita / avversario</span><input name="callups_match" data-callups-match value="${escapeHtml(matchLabel)}" readonly></label>
@@ -41,7 +44,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
     activeSection: 'callups',
     teamName,
     titleHtml: `Convocazioni · ${escapeHtml(opponent)}`,
-    descriptionHtml: 'Selezione giocatori per questa gara',
+    descriptionHtml: 'Seleziona i giocatori disponibili per questa gara',
     className: 'match-callups-view',
     contentHtml,
   })

@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.72",
+  "version": "0.29.73",
   "private": true,
   "type": "module",
   "scripts": {
@@ -259,7 +259,9 @@
     "check:match-squad-dead-selector-retirement": "node scripts/check-match-squad-dead-selector-retirement.mjs",
     "check:match-squad-visual-grammar-b1": "node scripts/check-match-squad-visual-grammar-b1.mjs",
     "check:match-squad-operational-density-b2": "node scripts/check-match-squad-operational-density-b2.mjs",
-    "check:match-squad-bench-row-anatomy-b3": "node scripts/check-match-squad-bench-row-anatomy-b3.mjs"
+    "check:match-squad-bench-row-anatomy-b3": "node scripts/check-match-squad-bench-row-anatomy-b3.mjs",
+    "check:match-callups-selection-controls-c1": "node scripts/check-match-callups-selection-controls-c1.mjs",
+    "check:match-callups-ds-pass18-compat-c1": "node scripts/check-match-callups-ds-pass18-compat-c1.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -519,6 +521,8 @@
     "check:match-squad-dead-selector-retirement",
     "check:match-squad-visual-grammar-b1",
     "check:match-squad-operational-density-b2",
-    "check:match-squad-bench-row-anatomy-b3"
+    "check:match-squad-bench-row-anatomy-b3",
+    "check:match-callups-selection-controls-c1",
+    "check:match-callups-ds-pass18-compat-c1"
   ]
 }

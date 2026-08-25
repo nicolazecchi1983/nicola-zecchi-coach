@@ -10,34 +10,46 @@
   padding: 24px;
 }
 
-.callups-head {
+
+.callups-head,
+.callups-selection-bar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
-.callups-head span {
-  color: #2dc4ff;
-  font-weight: 900;
-  letter-spacing: .12em;
+.callups-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
-.callups-head h2 { margin: 5px 0; }
-.callups-head p { color: #9fbdd1; }
+.callups-bulk-button {
+  min-height: 40px;
+  padding-inline: 14px;
+  white-space: nowrap;
+}
+
+.callups-bulk-button:disabled {
+  opacity: .48;
+  cursor: default;
+}
 
 .callups-counter {
   display: flex;
   align-items: baseline;
   gap: 5px;
-  padding: 12px 18px;
+  padding: 9px 14px;
   border-radius: 16px;
   background: #07194f;
   white-space: nowrap;
 }
 
 .callups-counter strong {
-  font-size: 32px;
+  font-size: 26px;
   color: #fff;
 }
 
@@ -147,7 +159,6 @@
 @media (max-width: 900px) {
   .callups-list { grid-template-columns: 1fr; }
   .callups-toolbar { grid-template-columns: 1fr; }
-  .callups-head { align-items: center; }
   .callups-toolbar button { width: 100%; }
 }
 
@@ -163,6 +174,24 @@
 }
 
 @media (max-width: 760px) {
+  .callups-head,
+  .callups-selection-bar {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .callups-bulk-actions {
+    flex: 1 1 auto;
+  }
+
+  .callups-bulk-button {
+    flex: 1 1 0;
+  }
+
+  .callups-counter {
+    flex: 0 0 auto;
+  }
+
   .callups-toolbar-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -172,6 +201,21 @@
 }
 
 @media (max-width: 520px) {
+  .callups-head,
+  .callups-selection-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .callups-bulk-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .callups-counter {
+    justify-self: start;
+  }
+
   .callups-toolbar-actions { grid-template-columns: 1fr; }
 }
 

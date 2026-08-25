@@ -20,6 +20,8 @@ export function wireCallupsEvents({
   const alertEl = callupsPanel.querySelector('[data-callups-alert]')
   const pdfButton = callupsPanel.querySelector('[data-callups-pdf]')
   const saveButton = callupsPanel.querySelector('[data-callups-save]')
+  const selectAllButton = callupsPanel.querySelector('[data-callups-select-all]')
+  const clearAllButton = callupsPanel.querySelector('[data-callups-clear-all]')
   const activeMatch = getActiveMatchContext?.()
   const service = createMatchCallupsService?.({ getEvent: getCalendarEvent, updateEvent: updateCalendarEvent, reloadEvents: loadCalendarEvents })
 
@@ -41,7 +43,9 @@ export function wireCallupsEvents({
     })
     countEl.textContent = String(selected.length)
     pdfButton.disabled = selected.length === 0
-    saveButton.disabled = selected.length === 0 || !activeMatch?.id
+    saveButton.disabled = !activeMatch?.id
+    if (selectAllButton) selectAllButton.disabled = checks.length === 0 || selected.length === checks.length
+    if (clearAllButton) clearAllButton.disabled = selected.length === 0
     if (alertEl && dirty) {
       alertEl.hidden = false
       alertEl.textContent = 'Modifiche non salvate.'
@@ -49,6 +53,14 @@ export function wireCallupsEvents({
   }
 
   checks.forEach((check) => check.addEventListener('change', () => updateCallups({ dirty: true })))
+
+  const setAllCallups = (checked) => {
+    checks.forEach((check) => { check.checked = checked })
+    updateCallups({ dirty: true })
+  }
+
+  selectAllButton?.addEventListener('click', () => setAllCallups(true))
+  clearAllButton?.addEventListener('click', () => setAllCallups(false))
 
   saveButton?.addEventListener('click', async () => {
     if (!activeMatch?.id || !service) return
@@ -62,7 +74,7 @@ export function wireCallupsEvents({
     } catch (error) {
       alertUser?.(getDataAccessUserMessage(error, undefined, { stage: 'callups-save' }))
     } finally {
-      saveButton.disabled = selectedPlayers().length === 0
+      saveButton.disabled = !activeMatch?.id
     }
   })
 
