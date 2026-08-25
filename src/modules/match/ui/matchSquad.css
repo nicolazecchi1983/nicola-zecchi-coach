@@ -18,10 +18,31 @@
 .match-squad-step .pitch-panel,
 .match-squad-step .lineup-list--selection,
 .match-squad-step .bench-block--full-width {
-  border: 1px solid rgba(62, 144, 187, .30);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(8, 28, 40, .92), rgba(5, 21, 31, .94));
-  box-shadow: 0 18px 44px rgba(0, 0, 0, .10);
+}
+
+/* R3.5B1 — visual grammar: hierarchy before decoration.
+   Command = primary operational surface; core = working surfaces; bench = quiet support surface. */
+.match-squad-step .squad-command-strip {
+  border: 1px solid color-mix(in srgb, var(--staff-color-primary) 34%, var(--staff-color-border));
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--staff-color-bg-panel-raised) 92%, var(--staff-color-primary) 8%),
+      var(--staff-color-bg-panel-raised));
+  box-shadow: var(--staff-shadow-panel), inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.match-squad-step .pitch-panel,
+.match-squad-step .lineup-list--selection {
+  border: 1px solid var(--staff-color-border-subtle);
+  background: var(--staff-color-bg-panel);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+}
+
+.match-squad-step .bench-block--full-width {
+  border: 1px solid var(--staff-color-border-subtle);
+  background: color-mix(in srgb, var(--staff-color-bg-panel) 86%, transparent);
+  box-shadow: none;
 }
 
 /* ---------- Command area ---------- */
@@ -58,9 +79,9 @@
 
 .match-squad-step .formation-system-control > span,
 .match-squad-step .formation-custom-control > span {
-  color: #b7d5e7;
-  font-size: .72rem;
-  font-weight: 850;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
   line-height: 1;
 }
 
@@ -83,9 +104,9 @@
 }
 
 .match-squad-step .leadership-control > span {
-  color: #b7d5e7;
-  font-size: .72rem;
-  font-weight: 850;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
   line-height: 1;
   text-transform: none;
   letter-spacing: 0;
@@ -102,9 +123,9 @@
   min-height: 54px;
   height: 54px;
   box-sizing: border-box;
-  border: 1px solid rgba(62, 144, 187, .34);
+  border: 1px solid var(--staff-color-border);
   border-radius: 13px;
-  background: rgba(8, 29, 42, .70);
+  background: var(--staff-color-bg-control);
 }
 
 .match-squad-step .formation-system-control select,
@@ -150,7 +171,7 @@
   gap: 14px;
   min-height: 44px;
   padding: 0 2px 10px;
-  border-bottom: 1px solid rgba(62, 144, 187, .22);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
 }
 
 .match-squad-step .pitch-panel-title {
@@ -161,7 +182,7 @@
 .match-squad-step .pitch-panel-title h3,
 .match-squad-step .lineup-list--selection h3 {
   margin: 0;
-  color: #f5f8fb;
+  color: var(--staff-color-text);
 }
 
 .match-squad-step .pitch-panel-title h3 {
@@ -172,10 +193,10 @@
 .match-squad-step .lineup-kicker {
   display: block;
   margin-bottom: 3px;
-  color: #35caff;
-  font-size: .65rem;
-  font-weight: 900;
-  letter-spacing: .14em;
+  color: var(--staff-color-primary);
+  font-size: var(--staff-font-caption);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .12em;
 }
 
 .match-squad-step .formation-reset-button--field {
@@ -303,7 +324,7 @@
   gap: 10px;
   margin: 0 0 8px;
   padding: 0 0 9px;
-  border-bottom: 1px solid rgba(62, 144, 187, .22);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
 }
 
 .match-squad-step .lineup-selection-list {
@@ -353,18 +374,18 @@
 
 .match-squad-step .bench-block-head h3 {
   margin: 0;
-  color: #35caff;
-  font-size: .78rem;
-  font-weight: 950;
-  letter-spacing: .13em;
+  color: var(--staff-color-text-secondary);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+  letter-spacing: .10em;
   text-transform: uppercase;
 }
 
 .match-squad-step .bench-count {
-  border: 1px solid #2f6d8e;
+  border: 1px solid var(--staff-color-border);
   border-radius: 999px;
   padding: 7px 12px;
-  color: #b8d8ea;
+  color: var(--staff-color-text-secondary);
   font-size: .78rem;
   font-weight: 900;
   white-space: nowrap;
@@ -400,10 +421,10 @@
   display: grid;
   place-items: center;
   min-height: 42px;
-  border: 1px solid #24516c;
+  border: 1px solid var(--staff-color-border);
   border-radius: 10px;
-  background: #0d2637;
-  color: #35c2ff;
+  background: var(--staff-color-bg-control);
+  color: var(--staff-color-primary);
   font-size: .76rem;
   font-weight: 900;
 }
@@ -413,10 +434,10 @@
   min-width: 0;
   min-height: 42px;
   padding: 8px 36px 8px 12px;
-  border: 1px solid #24516c;
+  border: 1px solid var(--staff-color-border);
   border-radius: 10px;
-  background: #0b1c28;
-  color: #f5f8fb;
+  background: var(--staff-color-bg-control);
+  color: var(--staff-color-text);
   font: inherit;
   font-size: .82rem;
   font-weight: 750;
@@ -516,8 +537,8 @@
 .match-squad-step .formation-system-control select,
 .match-squad-step .formation-custom-control input,
 .match-squad-step .leadership-control select {
-  border-color: rgba(70, 157, 201, .38);
-  background: linear-gradient(180deg, rgba(10, 31, 44, .96), rgba(7, 24, 35, .96));
+  border-color: var(--staff-color-border);
+  background: var(--staff-color-bg-control);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
 }
 
@@ -568,10 +589,10 @@
   height: 46px;
   min-height: 46px;
   padding: 0 8px;
-  border: 1px solid rgba(62,144,187,.34);
+  border: 1px solid var(--staff-color-border);
   border-radius: 11px;
-  background: rgba(7,24,35,.92);
-  color: #8edcff;
+  background: var(--staff-color-bg-control);
+  color: var(--staff-color-primary);
   font: inherit;
   font-weight: 900;
   text-align: center;

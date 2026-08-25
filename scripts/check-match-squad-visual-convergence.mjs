@@ -11,7 +11,7 @@ const checks = [
   ['token display has a shared compact component anatomy', view.includes('tokenDisplayControlHtml') && tokenComponent.includes('match-token-display__label') && tokenComponent.includes('match-token-display__options')],
   ['primary command gives compact content display its own field column', /grid-template-columns:\s*minmax\(240px, 1fr\) minmax\(240px, 1fr\) minmax\(320px, 1\.08fr\);/.test(css)],
   ['token display keeps canonical field height without a nested full-size surface', tokenCss.includes('min-height: 54px;') && tokenCss.includes('height: 54px;') && tokenCss.includes('.match-token-toggle') && tokenCss.includes('height: 40px;')],
-  ['command controls share one border/background treatment', css.includes('background: linear-gradient(180deg, rgba(10, 31, 44, .96), rgba(7, 24, 35, .96));')],
+  ['command controls share one canonical border/background treatment', css.includes('border-color: var(--staff-color-border);') && css.includes('background: var(--staff-color-bg-control);')],
   ['content display moves as a field at tablet breakpoint', css.includes('.token-display-field { grid-column: 1 / -1; }')],
   ['starter identity receives remaining row width', /grid-template-columns:\s*64px\s+minmax\(0,\s*1fr\);/.test(css)],
   ['starter number remains a compact match input', view.includes('class="starter-number-input"') && css.includes('width: 64px;')],
