@@ -1,6 +1,12 @@
 import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
 
 const ROLE_ORDER = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante']
+const ROLE_LABELS = {
+  Portiere: 'Portieri',
+  Difensore: 'Difensori',
+  Centrocampista: 'Centrocampisti',
+  Attaccante: 'Attaccanti',
+}
 
 export function renderCallupsView({ players, activeMatch, escapeHtml, teamName = '', savedCallups = null }) {
   const activePlayers = players.filter((player) => player.active !== false)
@@ -9,6 +15,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
   const matchDate = activeMatch?.date || ''
   const groups = ROLE_ORDER.map((role) => ({
     role,
+    label: ROLE_LABELS[role] || role,
     players: activePlayers
       .filter((player) => player.role === role)
       .slice()
@@ -36,7 +43,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
         </div>
         <div class="callups-alert" data-callups-alert hidden></div>
         <div class="callups-role-groups">
-          ${groups.map((group) => `<section class="callups-role-group"><header><span>${escapeHtml(group.role.toUpperCase())}</span><small>${group.players.length}</small></header><div class="callups-list">${group.players.map((player) => { order += 1; return `<label class="callup-player"><input name="callup_player" type="checkbox" value="${escapeHtml(player.name)}" data-callup-player data-callup-player-id="${escapeHtml(player.id || '')}" data-callup-role="${escapeHtml(player.role)}" data-callup-shirt-number="${escapeHtml(player.number ?? '')}" ${isSelected(player) ? 'checked' : ''}><b data-callup-order>${String(order).padStart(2, '0')}</b><span>${escapeHtml(player.name)}</span><small>${escapeHtml(player.role)}</small></label>` }).join('')}</div></section>`).join('')}
+          ${groups.map((group) => `<section class="callups-role-group"><header><span>${escapeHtml(group.label.toUpperCase())}</span><small>${group.players.length}</small></header><div class="callups-list">${group.players.map((player) => { order += 1; return `<label class="callup-player"><input name="callup_player" type="checkbox" value="${escapeHtml(player.name)}" data-callup-player data-callup-player-id="${escapeHtml(player.id || '')}" data-callup-role="${escapeHtml(player.role)}" data-callup-shirt-number="${escapeHtml(player.number ?? '')}" ${isSelected(player) ? 'checked' : ''}><b data-callup-order>${String(order).padStart(2, '0')}</b><span>${escapeHtml(player.name)}</span><small>${escapeHtml(player.role)}</small></label>` }).join('')}</div></section>`).join('')}
         </div>
       </section>`
 

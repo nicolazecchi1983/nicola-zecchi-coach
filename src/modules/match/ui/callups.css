@@ -180,6 +180,26 @@
     gap: 10px;
   }
 
+  .callup-player {
+    grid-template-columns: auto 34px minmax(0, 1fr);
+    gap: 8px;
+    min-height: 48px;
+    padding: 9px 10px;
+  }
+
+  .callup-player b { font-size: .72rem; }
+
+  .callup-player > span {
+    min-width: 0;
+    overflow: hidden;
+    font-size: .78rem;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .callup-player small { display: none; }
+
   .callups-bulk-actions {
     flex: 1 1 auto;
   }
