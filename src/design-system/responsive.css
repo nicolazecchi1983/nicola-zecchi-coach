@@ -626,18 +626,24 @@
     line-height: 1;
   }
 
-  .callups-toolbar {
+  .callups-match-context {
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 10px;
-    margin-block: 14px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
   }
 
-  .callups-toolbar label { gap: 5px; }
+  .callups-context-opponent strong {
+    min-width: 0;
+    font-size: .96rem;
+  }
 
-  .callups-toolbar input {
-    width: 100% !important;
-    max-width: none !important;
-    min-height: 44px !important;
-    height: 44px !important;
+  .callups-context-date { align-self: end; }
+
+  .callups-toolbar {
+    justify-content: stretch;
+    gap: 10px;
+    margin-block: 14px;
   }
 
   .callups-toolbar-actions { gap: 8px; }

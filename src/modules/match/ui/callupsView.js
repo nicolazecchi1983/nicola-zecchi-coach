@@ -13,6 +13,9 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
   const opponent = activeMatch?.opponent || 'Partita selezionata'
   const matchLabel = activeMatch?.opponent ? `vs ${activeMatch.opponent}` : ''
   const matchDate = activeMatch?.date || ''
+  const matchDateLabel = matchDate
+    ? new Date(`${matchDate}T12:00:00`).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '').toUpperCase()
+    : 'Data da definire'
   const groups = ROLE_ORDER.map((role) => ({
     role,
     label: ROLE_LABELS[role] || role,
@@ -29,6 +32,18 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
 
   const contentHtml = `
       <section class="workspace-surface product-surface callups-panel callups-panel--standalone" data-callups-panel>
+        <div class="callups-match-context" aria-label="Contesto partita">
+          <div class="callups-context-opponent">
+            <span>AVVERSARIO</span>
+            <strong>${escapeHtml(opponent)}</strong>
+          </div>
+          <div class="callups-context-date">
+            <span>DATA</span>
+            <time datetime="${escapeHtml(matchDate)}">${escapeHtml(matchDateLabel)}</time>
+          </div>
+          <input type="hidden" name="callups_match" data-callups-match value="${escapeHtml(matchLabel)}">
+          <input type="hidden" name="callups_date" data-callups-date value="${escapeHtml(matchDate)}">
+        </div>
         <div class="callups-head callups-selection-bar" aria-label="Selezione convocati">
           <div class="callups-bulk-actions" role="group" aria-label="Azioni selezione convocati">
             <button class="staff-button staff-button--secondary callups-bulk-button" type="button" data-callups-select-all>Seleziona tutti</button>
@@ -36,9 +51,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
           </div>
           <div class="callups-counter"><strong data-callups-count>${activePlayers.filter(isSelected).length}</strong><span> selezionati</span></div>
         </div>
-        <div class="callups-toolbar">
-          <label><span>Partita / avversario</span><input name="callups_match" data-callups-match value="${escapeHtml(matchLabel)}" readonly></label>
-          <label><span>Data</span><input name="callups_date" type="date" data-callups-date value="${escapeHtml(matchDate)}" readonly></label>
+        <div class="callups-toolbar callups-toolbar--actions">
           <div class="callups-toolbar-actions"><button class="staff-button staff-button--secondary" type="button" data-callups-save>Salva convocati</button><button class="primary-action" type="button" data-callups-pdf>Crea PDF convocazioni</button></div>
         </div>
         <div class="callups-alert" data-callups-alert hidden></div>

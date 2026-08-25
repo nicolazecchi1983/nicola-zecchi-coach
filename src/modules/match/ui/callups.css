@@ -11,6 +11,50 @@
 }
 
 
+
+.callups-match-context {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  padding: 2px 2px 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--staff-color-border, #1e455e) 78%, transparent);
+}
+
+.callups-context-opponent,
+.callups-context-date {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.callups-context-opponent span,
+.callups-context-date span {
+  color: var(--staff-color-primary, #2dc4ff);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.callups-context-opponent strong {
+  overflow: hidden;
+  color: var(--staff-color-text, #fff);
+  font-size: 1.08rem;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.callups-context-date { justify-items: end; }
+
+.callups-context-date time {
+  color: var(--staff-color-text-secondary, #9fbdd1);
+  font-size: .84rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .callups-head,
 .callups-selection-bar {
   display: flex;
@@ -59,31 +103,19 @@
 }
 
 .callups-toolbar {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   gap: 12px;
-  align-items: end;
-  margin: 22px 0;
+  margin: 18px 0;
 }
+
+.callups-toolbar--actions { min-height: 50px; }
 
 .callups-toolbar [data-callups-pdf] {
   height: 50px;
   min-height: 50px;
   align-self: end;
-}
-
-.callups-toolbar label {
-  display: grid;
-  gap: 7px;
-}
-
-.callups-toolbar input {
-  height: 50px;
-  border: 1px solid #24506a;
-  border-radius: 13px;
-  background: #061827;
-  color: #fff;
-  padding: 0 14px;
 }
 
 .callups-alert {
@@ -158,7 +190,8 @@
 
 @media (max-width: 900px) {
   .callups-list { grid-template-columns: 1fr; }
-  .callups-toolbar { grid-template-columns: 1fr; }
+  .callups-toolbar { justify-content: stretch; }
+  .callups-toolbar-actions { width: 100%; }
   .callups-toolbar button { width: 100%; }
 }
 
@@ -174,6 +207,16 @@
 }
 
 @media (max-width: 760px) {
+  .callups-match-context {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  .callups-context-opponent strong { font-size: .96rem; }
+  .callups-context-date time { font-size: .76rem; }
+
   .callups-head,
   .callups-selection-bar {
     align-items: stretch;
@@ -221,6 +264,18 @@
 }
 
 @media (max-width: 520px) {
+  .callups-match-context {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .callups-context-opponent strong {
+    display: -webkit-box;
+    overflow: hidden;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .callups-head,
   .callups-selection-bar {
     display: grid;

@@ -1,18 +1,21 @@
 import fs from 'node:fs'
 
-const css = fs.readFileSync(new URL('../src/modules/match/ui/callups.css', import.meta.url), 'utf8')
+const view = fs.readFileSync('src/modules/match/ui/callupsView.js', 'utf8')
+const owner = fs.readFileSync('src/modules/match/ui/callups.css', 'utf8')
+
 const checks = [
-  ['toolbar remains a grid', /\.callups-toolbar\s*\{[^}]*display:\s*grid/s.test(css)],
-  ['toolbar aligns controls to bottom edge', /\.callups-toolbar\s*\{[^}]*align-items:\s*end/s.test(css)],
-  ['PDF button has explicit 50px height', /\[data-callups-pdf\]\s*\{[^}]*height:\s*50px/s.test(css)],
-  ['PDF button min-height matches fields', /\[data-callups-pdf\]\s*\{[^}]*min-height:\s*50px/s.test(css)],
-  ['PDF button bottom aligned', /\[data-callups-pdf\]\s*\{[^}]*align-self:\s*end/s.test(css)],
-  ['callups inputs remain 50px', /\.callups-toolbar input\s*\{[^}]*height:\s*50px/s.test(css)],
+  ['toolbar is action-only after context extraction', view.includes('callups-toolbar callups-toolbar--actions') && !view.includes('<label><span>Partita') && !view.includes('type="date"')],
+  ['match metadata moved above bulk actions', view.indexOf('callups-match-context') >= 0 && view.indexOf('callups-match-context') < view.indexOf('callups-selection-bar')],
+  ['PDF button has explicit 50px height', /\.callups-toolbar \[data-callups-pdf\]\s*\{[\s\S]*?height:\s*50px/.test(owner)],
+  ['PDF button min-height matches actions', /\.callups-toolbar \[data-callups-pdf\]\s*\{[\s\S]*?min-height:\s*50px/.test(owner)],
+  ['action cluster aligns to bottom edge', /\.callups-toolbar-actions\s*\{[\s\S]*?align-items:\s*end/.test(owner)],
+  ['toolbar contains no retired visible match inputs', !owner.includes('.callups-toolbar input') && !owner.includes('.callups-toolbar label') && view.includes('type="hidden" name="callups_match"') && view.includes('type="hidden" name="callups_date"')],
 ]
-let failed = 0
+
+let passed = 0
 for (const [name, ok] of checks) {
-  console.log(`${ok ? '✓' : '✗'} ${name}`)
-  if (!ok) failed++
+  console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`)
+  if (ok) passed += 1
 }
-console.log(`\nCallups Toolbar Alignment: ${checks.length-failed}/${checks.length}`)
-if (failed) process.exit(1)
+console.log(`\nCallups Toolbar Alignment (C3 action-only): ${passed}/${checks.length}`)
+if (passed !== checks.length) process.exit(1)

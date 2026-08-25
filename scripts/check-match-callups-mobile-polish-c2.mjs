@@ -11,7 +11,7 @@ const checks=[
 ['responsive head one column',/CALLUPS: canonical real-device geometry[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s*!important/.test(responsive)],
 ['bulk row 2 columns',/\.callups-bulk-actions\s*\{[\s\S]*?repeat\(2,\s*minmax\(0,\s*1fr\)\)\s*!important/.test(responsive)],
 ['counter second row compact',/\.callups-counter\s*\{[\s\S]*?justify-self:\s*end[\s\S]*?white-space:\s*nowrap\s*!important/.test(responsive)],
-['inputs full width 44',/\.callups-toolbar input\s*\{[\s\S]*?width:\s*100%\s*!important[\s\S]*?height:\s*44px\s*!important/.test(responsive)],
+['match metadata has no fake mobile input geometry',!view.includes('type="date"')&&!responsive.includes('.callups-toolbar input')],
 ['actions 44',/\.callups-toolbar-actions button,[\s\S]*?height:\s*44px\s*!important/.test(responsive)],
 ['alert compact',/\.callups-alert\s*\{[\s\S]*?padding:\s*9px 11px/.test(responsive)],
 ['head contract remains',owner.includes('.callups-head')&&view.includes('callups-head callups-selection-bar')],
@@ -20,5 +20,5 @@ const checks=[
 ['legacy counter max removed',!/CALLUPS: canonical real-device geometry[\s\S]*?max-width:\s*112px/.test(responsive)],
 ]
 let p=0;for(const [l,o] of checks){console.log(`${o?'PASS':'FAIL'}  ${l}`);if(o)p++}
-console.log(`R3.5C2 Callups Mobile Polish: ${p}/${checks.length}`)
+console.log(`R3.5C2 Callups Mobile Polish (C3-compatible): ${p}/${checks.length}`)
 if(p!==checks.length)process.exit(1)
