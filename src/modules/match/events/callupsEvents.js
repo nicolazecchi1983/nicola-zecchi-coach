@@ -1,5 +1,32 @@
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 
+export function createCallupsDirtyState(initialSelectionKey = '') {
+  let cleanSelectionKey = String(initialSelectionKey ?? '')
+  let dirty = false
+
+  return Object.freeze({
+    isDirty: () => dirty,
+    onUserSelection(currentSelectionKey) {
+      dirty = String(currentSelectionKey ?? '') !== cleanSelectionKey
+      return dirty
+    },
+    commit(submittedSelectionKey, currentSelectionKey) {
+      cleanSelectionKey = String(submittedSelectionKey ?? '')
+      dirty = String(currentSelectionKey ?? '') !== cleanSelectionKey
+      return dirty
+    },
+    reset(currentSelectionKey) {
+      cleanSelectionKey = String(currentSelectionKey ?? '')
+      dirty = false
+      return dirty
+    },
+  })
+}
+
+export function shouldTrackCallupsInteraction(event) {
+  return event?.type === 'click' && event?.isTrusted !== false
+}
+
 export function wireCallupsEvents({
   root,
   getTeamProfile,
@@ -14,6 +41,8 @@ export function wireCallupsEvents({
 }) {
   const callupsPanel = root.querySelector('[data-callups-panel]')
   if (!callupsPanel) return
+  if (callupsPanel.dataset.callupsEventsWired === 'true') return
+  callupsPanel.dataset.callupsEventsWired = 'true'
 
   const checks = [...callupsPanel.querySelectorAll('[data-callup-player]')]
   const countEl = callupsPanel.querySelector('[data-callups-count]')
@@ -30,7 +59,11 @@ export function wireCallupsEvents({
     .map((check) => check.dataset.callupPlayerId || check.value)
     .join('\u001f')
 
-  let cleanSelectionKey = selectionKey()
+  const dirtyState = createCallupsDirtyState(selectionKey())
+  if (alertEl) {
+    alertEl.hidden = true
+    alertEl.textContent = ''
+  }
 
   const selectedPlayers = () => checks.filter((check) => check.checked).map((check, index) => ({
     order: index + 1,
@@ -54,21 +87,30 @@ export function wireCallupsEvents({
     if (selectAllButton) selectAllButton.disabled = checks.length === 0 || selected.length === checks.length
     if (clearAllButton) clearAllButton.disabled = selected.length === 0
     if (alertEl) {
-      const dirty = selectionKey() !== cleanSelectionKey
+      const dirty = dirtyState.isDirty()
       alertEl.hidden = !dirty
       alertEl.textContent = dirty ? 'Modifiche non salvate.' : ''
     }
   }
 
-  checks.forEach((check) => check.addEventListener('change', updateCallups))
-
-  const setAllCallups = (checked) => {
-    checks.forEach((check) => { check.checked = checked })
+  const handleUserSelectionActivation = (event) => {
+    if (shouldTrackCallupsInteraction(event)) dirtyState.onUserSelection(selectionKey())
     updateCallups()
   }
 
-  selectAllButton?.addEventListener('click', () => setAllCallups(true))
-  clearAllButton?.addEventListener('click', () => setAllCallups(false))
+  checks.forEach((check) => {
+    check.addEventListener('click', handleUserSelectionActivation)
+    check.addEventListener('change', updateCallups)
+  })
+
+  const setAllCallups = (checked, event) => {
+    checks.forEach((check) => { check.checked = checked })
+    if (shouldTrackCallupsInteraction(event)) dirtyState.onUserSelection(selectionKey())
+    updateCallups()
+  }
+
+  selectAllButton?.addEventListener('click', (event) => setAllCallups(true, event))
+  clearAllButton?.addEventListener('click', (event) => setAllCallups(false, event))
 
   saveButton?.addEventListener('click', async () => {
     if (!activeMatch?.id || !service) return
@@ -77,9 +119,9 @@ export function wireCallupsEvents({
     const selectionKeyToSave = selectionKey()
     try {
       await service.save(activeMatch.id, playersToSave)
-      cleanSelectionKey = selectionKeyToSave
+      dirtyState.commit(selectionKeyToSave, selectionKey())
       updateCallups()
-      if (alertEl && selectionKey() === cleanSelectionKey) {
+      if (alertEl && !dirtyState.isDirty()) {
         alertEl.hidden = false
         alertEl.textContent = 'Convocati salvati. Nostra squadra userà questa selezione.'
       }
