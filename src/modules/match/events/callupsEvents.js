@@ -94,15 +94,21 @@ export function wireCallupsEvents({
     }
   }
 
-  const handleCheckboxChange = (event) => {
-    // Dirty state belongs only to a browser-trusted selection mutation.
-    // Hydration, rerender, synthetic dispatch and direct .checked writes
-    // may refresh presentation but can never arm the unsaved banner.
-    if (isTrustedCallupsUserEvent(event, 'change')) dirtyState.onUserSelection(selectionKey())
+  const handleCheckboxClick = (event) => {
+    // Dirty state belongs only to an explicit trusted activation. Browsers may
+    // emit trusted change events while restoring form state; those lifecycle
+    // events must never be interpreted as a user edit.
+    if (isTrustedCallupsUserEvent(event, 'click')) dirtyState.onUserSelection(selectionKey())
+    updateCallups()
+  }
+  const handleCheckboxChange = () => {
+    // Change remains presentation-only so hydration/restoration can refresh
+    // count/order/PDF state without arming the unsaved banner.
     updateCallups()
   }
 
   checks.forEach((check) => {
+    check.addEventListener('click', handleCheckboxClick)
     check.addEventListener('change', handleCheckboxChange)
   })
 
