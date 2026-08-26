@@ -25,6 +25,13 @@ export function wireCallupsEvents({
   const activeMatch = getActiveMatchContext?.()
   const service = createMatchCallupsService?.({ getEvent: getCalendarEvent, updateEvent: updateCalendarEvent, reloadEvents: loadCalendarEvents })
 
+  const selectionKey = () => checks
+    .filter((check) => check.checked)
+    .map((check) => check.dataset.callupPlayerId || check.value)
+    .join('\u001f')
+
+  let cleanSelectionKey = selectionKey()
+
   const selectedPlayers = () => checks.filter((check) => check.checked).map((check, index) => ({
     order: index + 1,
     playerId: check.dataset.callupPlayerId || '',
@@ -33,7 +40,7 @@ export function wireCallupsEvents({
     shirtNumber: check.dataset.callupShirtNumber || null,
   }))
 
-  const updateCallups = ({ dirty = false } = {}) => {
+  const updateCallups = () => {
     const selected = checks.filter((check) => check.checked)
     selected.forEach((check, index) => {
       check.closest('.callup-player').querySelector('[data-callup-order]').textContent = String(index + 1).padStart(2, '0')
@@ -46,17 +53,18 @@ export function wireCallupsEvents({
     saveButton.disabled = !activeMatch?.id
     if (selectAllButton) selectAllButton.disabled = checks.length === 0 || selected.length === checks.length
     if (clearAllButton) clearAllButton.disabled = selected.length === 0
-    if (alertEl && dirty) {
-      alertEl.hidden = false
-      alertEl.textContent = 'Modifiche non salvate.'
+    if (alertEl) {
+      const dirty = selectionKey() !== cleanSelectionKey
+      alertEl.hidden = !dirty
+      alertEl.textContent = dirty ? 'Modifiche non salvate.' : ''
     }
   }
 
-  checks.forEach((check) => check.addEventListener('change', () => updateCallups({ dirty: true })))
+  checks.forEach((check) => check.addEventListener('change', updateCallups))
 
   const setAllCallups = (checked) => {
     checks.forEach((check) => { check.checked = checked })
-    updateCallups({ dirty: true })
+    updateCallups()
   }
 
   selectAllButton?.addEventListener('click', () => setAllCallups(true))
@@ -65,9 +73,13 @@ export function wireCallupsEvents({
   saveButton?.addEventListener('click', async () => {
     if (!activeMatch?.id || !service) return
     saveButton.disabled = true
+    const playersToSave = selectedPlayers()
+    const selectionKeyToSave = selectionKey()
     try {
-      await service.save(activeMatch.id, selectedPlayers())
-      if (alertEl) {
+      await service.save(activeMatch.id, playersToSave)
+      cleanSelectionKey = selectionKeyToSave
+      updateCallups()
+      if (alertEl && selectionKey() === cleanSelectionKey) {
         alertEl.hidden = false
         alertEl.textContent = 'Convocati salvati. Nostra squadra userà questa selezione.'
       }
