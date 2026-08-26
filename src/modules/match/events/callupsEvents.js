@@ -26,6 +26,23 @@ export function createCallupsDirtyState(initialSelectionKey = '') {
 export function isTrustedCallupsUserEvent(event, expectedType) {
   return event?.type === expectedType && event?.isTrusted === true
 }
+export function createCallupsActivationIntent() {
+  const armedControls = new WeakSet()
+  return Object.freeze({
+    arm(control, event) {
+      const pointer = event?.type === 'pointerdown'
+      const keyboard = event?.type === 'keydown' && (event?.key === ' ' || event?.key === 'Enter')
+      if (!control || event?.isTrusted !== true || (!pointer && !keyboard)) return false
+      armedControls.add(control)
+      return true
+    },
+    consume(control) {
+      if (!control || !armedControls.has(control)) return false
+      armedControls.delete(control)
+      return true
+    },
+  })
+}
 
 export function wireCallupsEvents({
   root,
@@ -80,7 +97,7 @@ export function wireCallupsEvents({
       check.closest('.callup-player').querySelector('[data-callup-order]').textContent = String(index + 1).padStart(2, '0')
     })
     checks.filter((check) => !check.checked).forEach((check) => {
-      check.closest('.callup-player').querySelector('[data-callup-order]').textContent = '—'
+      check.closest('.callup-player').querySelector('[data-callup-order]').textContent = 'â€”'
     })
     countEl.textContent = String(selected.length)
     pdfButton.disabled = selected.length === 0
@@ -94,30 +111,36 @@ export function wireCallupsEvents({
     }
   }
 
+  const activationIntent = createCallupsActivationIntent()
   const handleCheckboxClick = (event) => {
-    // Dirty state belongs only to an explicit trusted activation. Browsers may
-    // emit trusted change events while restoring form state; those lifecycle
-    // events must never be interpreted as a user edit.
-    if (isTrustedCallupsUserEvent(event, 'click')) dirtyState.onUserSelection(selectionKey())
+    const check = event.currentTarget
+    if (activationIntent.consume(check) && isTrustedCallupsUserEvent(event, 'click')) {
+      dirtyState.onUserSelection(selectionKey())
+    }
     updateCallups()
   }
   const handleCheckboxChange = () => {
-    // Change remains presentation-only so hydration/restoration can refresh
-    // count/order/PDF state without arming the unsaved banner.
     updateCallups()
   }
-
   checks.forEach((check) => {
+    const row = check.closest('.callup-player')
+    row?.addEventListener('pointerdown', (event) => activationIntent.arm(check, event))
+    row?.addEventListener('keydown', (event) => activationIntent.arm(check, event))
     check.addEventListener('click', handleCheckboxClick)
     check.addEventListener('change', handleCheckboxChange)
   })
 
   const setAllCallups = (checked, event) => {
     checks.forEach((check) => { check.checked = checked })
-    if (isTrustedCallupsUserEvent(event, 'click')) dirtyState.onUserSelection(selectionKey())
+    if (activationIntent.consume(event.currentTarget) && isTrustedCallupsUserEvent(event, 'click')) {
+      dirtyState.onUserSelection(selectionKey())
+    }
     updateCallups()
   }
-
+  ;[selectAllButton, clearAllButton].forEach((button) => {
+    button?.addEventListener('pointerdown', (event) => activationIntent.arm(button, event))
+    button?.addEventListener('keydown', (event) => activationIntent.arm(button, event))
+  })
   selectAllButton?.addEventListener('click', (event) => setAllCallups(true, event))
   clearAllButton?.addEventListener('click', (event) => setAllCallups(false, event))
 
@@ -132,7 +155,7 @@ export function wireCallupsEvents({
       updateCallups()
       if (alertEl && !dirtyState.isDirty()) {
         alertEl.hidden = false
-        alertEl.textContent = 'Convocati salvati. Nostra squadra userà questa selezione.'
+        alertEl.textContent = 'Convocati salvati. Nostra squadra userÃ  questa selezione.'
       }
     } catch (error) {
       alertUser?.(getDataAccessUserMessage(error, undefined, { stage: 'callups-save' }))

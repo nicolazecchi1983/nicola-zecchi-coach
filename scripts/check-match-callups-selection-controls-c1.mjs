@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { createCallupsDirtyState, isTrustedCallupsUserEvent } from '../src/modules/match/events/callupsEvents.js'
+import { createCallupsDirtyState, createCallupsActivationIntent, isTrustedCallupsUserEvent } from '../src/modules/match/events/callupsEvents.js'
 const view=fs.readFileSync('src/modules/match/ui/callupsView.js','utf8')
 const events=fs.readFileSync('src/modules/match/events/callupsEvents.js','utf8')
 const css=fs.readFileSync('src/modules/match/ui/callups.css','utf8')
@@ -18,6 +18,14 @@ try { assert.equal(isTrustedCallupsUserEvent({ type: 'click', isTrusted: false }
 try { assert.equal(isTrustedCallupsUserEvent({ type: 'click' }, 'click'), false); behavior.push(['behavior event without explicit trust is not a user edit', true]) } catch { behavior.push(['behavior event without explicit trust is not a user edit', false]) }
 try { assert.equal(isTrustedCallupsUserEvent({ type: 'click', isTrusted: true }, 'click'), true); behavior.push(['behavior trusted bulk click is a user edit', true]) } catch { behavior.push(['behavior trusted bulk click is a user edit', false]) }
 try { state.onUserSelection('Z'); assert.equal(state.reset('Q'), false); assert.equal(state.isDirty(), false); behavior.push(['behavior hydration reset establishes clean baseline', true]) } catch { behavior.push(['behavior hydration reset establishes clean baseline', false]) }
+const intent=createCallupsActivationIntent()
+const control={}
+const other={}
+try { assert.equal(intent.arm(control,{type:'pointerdown',isTrusted:true}),true); behavior.push(['behavior trusted pointerdown arms intent',true]) } catch { behavior.push(['behavior trusted pointerdown arms intent',false]) }
+try { assert.equal(intent.consume(other),false); behavior.push(['behavior unrelated control cannot consume intent',true]) } catch { behavior.push(['behavior unrelated control cannot consume intent',false]) }
+try { assert.equal(intent.consume(control),true); assert.equal(intent.consume(control),false); behavior.push(['behavior intent is one shot',true]) } catch { behavior.push(['behavior intent is one shot',false]) }
+try { assert.equal(intent.arm(control,{type:'pointerdown',isTrusted:false}),false); behavior.push(['behavior synthetic pointer cannot arm intent',true]) } catch { behavior.push(['behavior synthetic pointer cannot arm intent',false]) }
+try { assert.equal(intent.arm(control,{type:'keydown',key:' ',isTrusted:true}),true); assert.equal(intent.consume(control),true); behavior.push(['behavior keyboard intent works',true]) } catch { behavior.push(['behavior keyboard intent works',false]) }
 
 const checks=[
  ['redundant Lista convocati retired',!view.includes('Lista convocati')],
@@ -36,7 +44,11 @@ const checks=[
  ['persisted empty snapshot filters Nostra squadra',model.includes('if (!callups?.persisted) return rosterPlayers')&&model.includes('return rosterPlayers.filter')],
  ['dirty state is explicit state controller',events.includes('createCallupsDirtyState')&&events.includes('dirtyState.isDirty()')],
  ['dirty state requires strict browser trust',events.includes('event?.isTrusted === true')&&!events.includes('event?.isTrusted !== false')],
- ['trusted checkbox click is the explicit dirty-state boundary',events.includes("check.addEventListener('click', handleCheckboxClick)")&&events.includes("isTrustedCallupsUserEvent(event, 'click')")],
+ ['trusted click requires explicit provenance',events.includes("activationIntent.consume(check)")&&events.includes("isTrustedCallupsUserEvent(event, 'click')")],
+ ['activation provenance controller exists',events.includes('createCallupsActivationIntent')&&events.includes('new WeakSet()')],
+ ['checkbox pointer and keyboard intent are explicit',events.includes("row?.addEventListener('pointerdown'")&&events.includes("row?.addEventListener('keydown'")],
+ ['bulk actions use same provenance',events.includes("button?.addEventListener('pointerdown'")&&events.includes('activationIntent.consume(event.currentTarget)')],
+ ['change remains presentation only',events.includes("check.addEventListener('change', handleCheckboxChange)")&&!events.includes("isTrustedCallupsUserEvent(event, 'change')")],
  ['checkbox change is presentation-only',events.includes("check.addEventListener('change', handleCheckboxChange)")&&!events.includes("isTrustedCallupsUserEvent(event, 'change')")],
  ['synthetic or incomplete click events cannot arm dirty state',events.includes("isTrustedCallupsUserEvent(event, 'click')")],
  ['callups event wiring is idempotent',events.includes("dataset.callupsEventsWired === 'true'")&&events.includes("dataset.callupsEventsWired = 'true'")],
@@ -47,5 +59,5 @@ const checks=[
  ...behavior,
 ]
 let p=0;for(const [l,o] of checks){console.log(`${o?'PASS':'FAIL'}  ${l}`);if(o)p++}
-console.log(`R3.5C3-R13 Callups Lifecycle Dirty State Integrity: ${p}/${checks.length}`)
+console.log(`R3.5C3-R14 Callups Activation Provenance Integrity: ${p}/${checks.length}`)
 if(p!==checks.length)process.exit(1)
