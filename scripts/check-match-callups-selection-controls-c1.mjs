@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
-import { createCallupsDirtyState, shouldTrackCallupsInteraction } from '../src/modules/match/events/callupsEvents.js'
+import { createCallupsDirtyState, isTrustedCallupsUserEvent } from '../src/modules/match/events/callupsEvents.js'
 const view=fs.readFileSync('src/modules/match/ui/callupsView.js','utf8')
 const events=fs.readFileSync('src/modules/match/events/callupsEvents.js','utf8')
 const css=fs.readFileSync('src/modules/match/ui/callups.css','utf8')
@@ -13,9 +13,10 @@ try { assert.equal(state.onUserSelection('B'), true); behavior.push(['behavior r
 try { assert.equal(state.onUserSelection('A'), false); behavior.push(['behavior reverting to baseline becomes clean', true]) } catch { behavior.push(['behavior reverting to baseline becomes clean', false]) }
 try { state.onUserSelection('B'); assert.equal(state.commit('B', 'B'), false); behavior.push(['behavior successful save rebases submitted selection', true]) } catch { behavior.push(['behavior successful save rebases submitted selection', false]) }
 try { state.onUserSelection('C'); assert.equal(state.commit('B', 'C'), true); behavior.push(['behavior edits during save remain dirty', true]) } catch { behavior.push(['behavior edits during save remain dirty', false]) }
-try { assert.equal(shouldTrackCallupsInteraction({ type: 'change', isTrusted: true }), false); behavior.push(['behavior trusted lifecycle change is not sufficient to mark dirty', true]) } catch { behavior.push(['behavior trusted lifecycle change is not sufficient to mark dirty', false]) }
-try { assert.equal(shouldTrackCallupsInteraction({ type: 'click', isTrusted: false }), false); behavior.push(['behavior synthetic click is not a user edit', true]) } catch { behavior.push(['behavior synthetic click is not a user edit', false]) }
-try { assert.equal(shouldTrackCallupsInteraction({ type: 'click', isTrusted: true }), true); behavior.push(['behavior trusted click is a user edit', true]) } catch { behavior.push(['behavior trusted click is a user edit', false]) }
+try { assert.equal(isTrustedCallupsUserEvent({ type: 'change', isTrusted: true }, 'change'), true); behavior.push(['behavior trusted checkbox change is a user edit', true]) } catch { behavior.push(['behavior trusted checkbox change is a user edit', false]) }
+try { assert.equal(isTrustedCallupsUserEvent({ type: 'change', isTrusted: false }, 'change'), false); behavior.push(['behavior synthetic checkbox change is not a user edit', true]) } catch { behavior.push(['behavior synthetic checkbox change is not a user edit', false]) }
+try { assert.equal(isTrustedCallupsUserEvent({ type: 'change' }, 'change'), false); behavior.push(['behavior event without explicit trust is not a user edit', true]) } catch { behavior.push(['behavior event without explicit trust is not a user edit', false]) }
+try { assert.equal(isTrustedCallupsUserEvent({ type: 'click', isTrusted: true }, 'click'), true); behavior.push(['behavior trusted bulk click is a user edit', true]) } catch { behavior.push(['behavior trusted bulk click is a user edit', false]) }
 try { state.onUserSelection('Z'); assert.equal(state.reset('Q'), false); assert.equal(state.isDirty(), false); behavior.push(['behavior hydration reset establishes clean baseline', true]) } catch { behavior.push(['behavior hydration reset establishes clean baseline', false]) }
 
 const checks=[
@@ -34,16 +35,17 @@ const checks=[
  ['persisted empty snapshot remains valid',model.includes('persisted: Boolean(persisted)')&&model.includes('persisted: exists')],
  ['persisted empty snapshot filters Nostra squadra',model.includes('if (!callups?.persisted) return rosterPlayers')&&model.includes('return rosterPlayers.filter')],
  ['dirty state is explicit state controller',events.includes('createCallupsDirtyState')&&events.includes('dirtyState.isDirty()')],
- ['dirty state only tracks trusted click activation',events.includes('shouldTrackCallupsInteraction(event)')&&events.includes("event?.type === 'click'")&&events.includes('event?.isTrusted !== false')],
- ['checkbox change refreshes UI without arming dirty state',events.includes("check.addEventListener('change', updateCallups)")&&!events.includes("check.addEventListener('change', handleUserSelectionActivation)")],
- ['checkbox click is the explicit dirty-state boundary',events.includes("check.addEventListener('click', handleUserSelectionActivation)")],
+ ['dirty state requires strict browser trust',events.includes('event?.isTrusted === true')&&!events.includes('event?.isTrusted !== false')],
+ ['checkbox change is the explicit dirty-state boundary',events.includes("check.addEventListener('change', handleCheckboxChange)")],
+ ['checkbox click no longer owns dirty state',!events.includes("check.addEventListener('click', handleUserSelectionActivation)")],
+ ['synthetic or incomplete events cannot arm dirty state',events.includes("isTrustedCallupsUserEvent(event, 'change')")],
  ['callups event wiring is idempotent',events.includes("dataset.callupsEventsWired === 'true'")&&events.includes("dataset.callupsEventsWired = 'true'")],
  ['initial render cannot mark dirty by DOM comparison',!events.includes('const dirty = selectionKey() !== cleanSelectionKey')],
- ['alert is explicitly neutralized before event wiring',events.includes('alertEl.hidden = true')&&events.includes("alertEl.textContent = ''")],
+ ['alert is explicitly neutralized before event wiring',events.includes('alertEl.hidden = true')&&events.includes("alertEl.setAttribute('hidden', '')")&&events.includes("alertEl.textContent = ''")],
  ['successful save commits exact submitted selection',events.includes('dirtyState.commit(selectionKeyToSave, selectionKey())')],
  ['compact mobile keeps both bulk actions together',/@media \(max-width: 520px\)[\s\S]*?\.callups-bulk-actions[\s\S]*?grid-template-columns:\s*1fr 1fr/.test(css)],
  ...behavior,
 ]
 let p=0;for(const [l,o] of checks){console.log(`${o?'PASS':'FAIL'}  ${l}`);if(o)p++}
-console.log(`R3.5C3-R8 Callups Dirty State Integrity: ${p}/${checks.length}`)
+console.log(`R3.5C3-R12 Callups Dirty State Runtime Integrity: ${p}/${checks.length}`)
 if(p!==checks.length)process.exit(1)

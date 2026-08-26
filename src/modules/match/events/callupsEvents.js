@@ -23,8 +23,8 @@ export function createCallupsDirtyState(initialSelectionKey = '') {
   })
 }
 
-export function shouldTrackCallupsInteraction(event) {
-  return event?.type === 'click' && event?.isTrusted !== false
+export function isTrustedCallupsUserEvent(event, expectedType) {
+  return event?.type === expectedType && event?.isTrusted === true
 }
 
 export function wireCallupsEvents({
@@ -62,6 +62,7 @@ export function wireCallupsEvents({
   const dirtyState = createCallupsDirtyState(selectionKey())
   if (alertEl) {
     alertEl.hidden = true
+    alertEl.setAttribute('hidden', '')
     alertEl.textContent = ''
   }
 
@@ -93,19 +94,21 @@ export function wireCallupsEvents({
     }
   }
 
-  const handleUserSelectionActivation = (event) => {
-    if (shouldTrackCallupsInteraction(event)) dirtyState.onUserSelection(selectionKey())
+  const handleCheckboxChange = (event) => {
+    // Dirty state belongs only to a browser-trusted selection mutation.
+    // Hydration, rerender, synthetic dispatch and direct .checked writes
+    // may refresh presentation but can never arm the unsaved banner.
+    if (isTrustedCallupsUserEvent(event, 'change')) dirtyState.onUserSelection(selectionKey())
     updateCallups()
   }
 
   checks.forEach((check) => {
-    check.addEventListener('click', handleUserSelectionActivation)
-    check.addEventListener('change', updateCallups)
+    check.addEventListener('change', handleCheckboxChange)
   })
 
   const setAllCallups = (checked, event) => {
     checks.forEach((check) => { check.checked = checked })
-    if (shouldTrackCallupsInteraction(event)) dirtyState.onUserSelection(selectionKey())
+    if (isTrustedCallupsUserEvent(event, 'click')) dirtyState.onUserSelection(selectionKey())
     updateCallups()
   }
 
