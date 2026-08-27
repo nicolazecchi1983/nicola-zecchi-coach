@@ -73,7 +73,7 @@ export function matchContextNavigationHtml(activeSection = '', { teamName = '' }
 
 export function matchContextBackButtonHtml() {
   return buttonHtml({
-    label: 'Torna alla Match Library',
+    label: '<span data-match-context-back-label>Torna alla Match Library</span>',
     variant: 'secondary',
     className: 'match-context-back',
     attributes: { 'data-return-to-match-workspace': true },

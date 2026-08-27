@@ -10,7 +10,7 @@ import { renderAppShell } from './appShellView.js'
 import { renderDashboardView } from '../modules/dashboard/dashboardView.js'
 import { createAppViewRegistry } from './appViewRegistry.js'
 import { createAppWorkspaceEngine } from './appWorkspaceEngine.js'
-import { resolveWorkspaceRestore } from './appSessionRestore.js'
+import { MATCH_CONTEXT_SECTIONS, resolveWorkspaceRestore } from './appSessionRestore.js'
 import { appState } from './appStateStore.js'
 import {
   loadAccessProfile,
@@ -622,9 +622,9 @@ export async function attachAppEvents(user) {
     afterActivate: async ({ key }) => {
       await bindDynamic(key)
       applyAccessPolicy(root)
+      if (!MATCH_CONTEXT_SECTIONS.includes(key)) localStorage.removeItem('staff-match-entry-origin')
     },
   })
-
   async function setView(key, label) {
     return workspaceEngine.open(key, label)
   }

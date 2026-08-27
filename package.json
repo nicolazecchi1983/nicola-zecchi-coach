@@ -1,6 +1,6 @@
 {
   "name": "staff-coach-portal",
-  "version": "0.29.75",
+  "version": "0.29.76",
   "private": true,
   "type": "module",
   "scripts": {
@@ -263,7 +263,9 @@
     "check:match-callups-selection-controls-c1": "node scripts/check-match-callups-selection-controls-c1.mjs",
     "check:match-callups-ds-pass18-compat-c1": "node scripts/check-match-callups-ds-pass18-compat-c1.mjs",
     "check:match-callups-mobile-polish-c2": "node scripts/check-match-callups-mobile-polish-c2.mjs",
-    "check:match-callups-context-premium-c3": "node scripts/check-match-callups-context-premium-c3.mjs"
+    "check:match-callups-context-premium-c3": "node scripts/check-match-callups-context-premium-c3.mjs",
+    "check:dashboard-match-day-quick-access": "node scripts/check-dashboard-match-day-quick-access.mjs",
+    "check:match-contextual-back-origin": "node scripts/check-match-contextual-back-origin.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -319,6 +321,8 @@
     "check:design-system-typography-density",
     "check:design-system-overlays",
     "check:dashboard-polish",
+    "check:dashboard-match-day-quick-access",
+    "check:match-contextual-back-origin",
     "check:calendar-polish",
     "check:training-polish",
     "check:training-command-bar-structure",

@@ -442,3 +442,43 @@
     font-size: var(--staff-font-label);
   }
 }
+
+
+/* Match Day Quick Access R1 - Dashboard owns launcher presentation only. */
+.dashboard-match-item--active {
+  position: relative;
+  padding: var(--staff-space-2);
+  border: 1px solid var(--staff-color-primary);
+  border-radius: var(--staff-radius-large);
+  background: color-mix(in srgb, var(--staff-color-primary) 5%, transparent);
+}
+
+.dashboard-match-active-label {
+  margin: 0 0 var(--staff-space-2);
+  color: var(--staff-color-primary-hover);
+  font-size: var(--staff-font-label);
+  font-weight: var(--staff-font-weight-bold);
+}
+
+.dashboard-match-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--staff-space-2);
+  margin-top: var(--staff-space-2);
+}
+
+.dashboard-match-quick-actions .staff-button {
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .dashboard-match-quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dashboard-match-quick-actions .staff-button:last-child {
+    grid-column: 1 / -1;
+  }
+}

@@ -31,7 +31,7 @@ const checks = [
   ['Legacy editor can remove persisted lineup', events.includes('removeOpponentLineup(activeMatchForOpponentSheet.id)')],
   ['Upload failure restores previous visible state', events.includes('previousSrc') && events.includes("stage: 'match-opponent-lineup-upload'")],
   ['File input is excluded from Match draft/report JSON', model.includes("querySelectorAll('input[type=\"file\"]')") && model.includes('delete data[input.name]')],
-  ['App injects canonical Calendar + study dependencies', app.includes('createMatchOpponentStudyService,\n      getCalendarEvent,\n      createCalendarEvent')],
+  ['App injects canonical Calendar + study dependencies', app.includes('createMatchOpponentStudyService,') && app.includes('getCalendarEvent,') && app.includes('updateCalendarEvent,') && app.includes('loadCalendarEvents,')],
 ]
 
 let passed = 0

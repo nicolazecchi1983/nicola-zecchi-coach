@@ -10,7 +10,7 @@ const checks=[
  ['Report publish via Calendar service preserved',analysis.includes('createMatchCalendarService')&&analysis.includes('calendarService.publish')],
  ['Report print preserved',analysis.includes('printMatchReport(')],
  ['Match section navigation preserved',analysis.includes('data-match-context-section')&&analysis.includes("setView(target[0], target[1])")],
- ['Return to Match Library preserved',analysis.includes('data-return-to-match-workspace')&&analysis.includes("setView('match-library', 'Match Library')")],
+ ['Contextual Match return preserved',analysis.includes('data-return-to-match-workspace')&&analysis.includes('staff-match-entry-origin')&&analysis.includes('destination[0]')&&analysis.includes('destination[1]')],
  ['CSV import preserved',analysis.includes('data-import-analysis')&&analysis.includes("supabase.from('match_analysis').insert(records)")],
  ['Analysis search preserved',analysis.includes('data-analysis-search')&&analysis.includes('.match-analysis-row')],
  ['Controller remains composition root',app.includes('wireMatchAnalysisEvents({')&&app.includes('loadAnalysisEntries,')&&app.includes('supabase,')],

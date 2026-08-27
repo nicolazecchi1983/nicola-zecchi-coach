@@ -21,8 +21,8 @@ const checks = [
   ['card click opens Studio avversario directly', library.includes("await setView('opponent-study', 'Studio avversario')")],
   ['create/open flow also enters Studio avversario', (library.match(/setView\('opponent-study', 'Studio avversario'\)/g) || []).length >= 2],
   ['legacy library binder cannot reintroduce landing page', legacyLibrary.includes("setView('opponent-study', 'Studio avversario')") && !legacyLibrary.includes("setView('match-workspace', 'Match Workspace')")],
-  ['section back action returns to Match Library', analysis.includes("setView('match-library', 'Match Library')")],
-  ['back control copy names Match Library', components.includes("label: 'Torna alla Match Library'")],
+  ['section back action is contextual', analysis.includes("staff-match-entry-origin") && analysis.includes("['dashboard', 'Dashboard']") && analysis.includes("['match-library', 'Match Library']") && analysis.includes('await setView(destination[0], destination[1])')],
+  ['back control exposes contextual copy hook', components.includes('data-match-context-back-label') && components.includes('Torna alla Match Library')],
   ['legacy match-workspace restore redirects to step 1', restore.key === 'opponent-study' && restore.navigationKey === 'match-library'],
   ['compatibility route remains available', available.includes('match-workspace')],
 ]

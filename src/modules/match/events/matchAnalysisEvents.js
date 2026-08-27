@@ -49,10 +49,16 @@ export function wireMatchAnalysisEvents({
     })
 
     root.querySelectorAll('[data-return-to-match-workspace]').forEach((button) => {
+      const origin = storage?.getItem('staff-match-entry-origin') === 'dashboard' ? 'dashboard' : 'match-library'
+      const destination = origin === 'dashboard'
+        ? ['dashboard', 'Dashboard']
+        : ['match-library', 'Match Library']
+      const label = button.querySelector('[data-match-context-back-label]')
+      if (label) label.textContent = `Torna alla ${destination[1]}`
       button.addEventListener('click', async () => {
-        setActiveNavigation('match-library')
-        storage?.setItem('nz-active-section', 'match-library')
-        await setView('match-library', 'Match Library')
+        setActiveNavigation(destination[0])
+        storage?.setItem('nz-active-section', destination[0])
+        await setView(destination[0], destination[1])
       })
     })
 

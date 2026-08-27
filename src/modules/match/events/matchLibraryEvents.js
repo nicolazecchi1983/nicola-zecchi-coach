@@ -24,6 +24,7 @@ export function wireMatchLibraryEvents({
           opponent: match.opponent || 'Da definire',
           date: String(match.date || '').slice(0, 10),
         }))
+        storage?.setItem('staff-match-entry-origin', 'match-library')
         setActiveNavigation('match-library')
         storage?.setItem('nz-active-section', sectionKey)
         return true

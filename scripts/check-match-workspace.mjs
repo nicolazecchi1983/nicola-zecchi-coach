@@ -27,7 +27,7 @@ const checks = [
   ['Sidebar Match mostra solo Match Library', navigation.includes("label: 'Match'") && navigation.includes("['match-library', 'Match Library', 'match-library']") && !navigation.includes("['match-sheet', 'Match Sheet', 'match-sheet']")],
   ['Convocazioni e Analisi non sono nella sidebar', !navigation.includes("['callups', 'Convocazioni', 'squad']") && !navigation.includes("['analysis', 'Analisi gara', 'analysis']")],
   ['Ritorno alla Match Library presente nelle sezioni partita', callupsView.includes('matchWorkspaceShellHtml') && analysisView.includes('matchWorkspaceShellHtml') && shell.includes('matchContextBackButtonHtml()') && uiComponents.includes('data-return-to-match-workspace')],
-  ['Ritorno alla Match Library usa un solo handler condiviso', matchAnalysisEvents.includes("data-return-to-match-workspace") && matchAnalysisEvents.includes("setView('match-library', 'Match Library')")],
+  ['Ritorno contestuale usa un solo handler condiviso', matchAnalysisEvents.includes("data-return-to-match-workspace") && matchAnalysisEvents.includes("staff-match-entry-origin") && matchAnalysisEvents.includes('destination[0]') && matchAnalysisEvents.includes('destination[1]')],
 ]
 
 let failed = 0

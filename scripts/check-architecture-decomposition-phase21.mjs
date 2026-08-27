@@ -11,7 +11,7 @@ const checks = [
   ['Controller imports shared color picker owner', app.includes("import { bindStaffColorPickers } from '../design-system/colorPickerController.js'")],
   ['Team/Roster still receives color picker dependency', app.includes('wireTeamAndRosterEvents({') && teamEvents.includes('bindStaffColorPickers')],
   ['Legacy Match declares color picker as explicit dependency', matchEvents.includes('formationOptionsHtml,\n  bindStaffColorPickers,')],
-  ['Legacy Match receives color picker from composition root', app.includes('wireLegacyMatchEditorEvents({') && app.includes('formationOptionsHtml,\n      bindStaffColorPickers,')],
+  ['Legacy Match receives color picker from composition root', app.includes('wireLegacyMatchEditorEvents({') && /formationOptionsHtml,\r?\n\s+bindStaffColorPickers,/.test(app)],
   ['Legacy Match no longer relies on an undeclared color-picker global', !/export function wireLegacyMatchEditorEvents\([\s\S]*?\) \{[\s\S]*?bindStaffColorPickers\(matchEditor\)/.test(matchEvents) || matchEvents.split('}) {')[0].includes('bindStaffColorPickers')],
   ['Shared color picker remains persistence-neutral', !colorPicker.includes('supabase') && !colorPicker.includes('localStorage')],
   ['Shared color picker remains domain-neutral', !colorPicker.includes('match') && !colorPicker.includes('roster')],
