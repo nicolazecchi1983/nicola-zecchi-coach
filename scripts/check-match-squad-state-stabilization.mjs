@@ -8,7 +8,7 @@ const css = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
 const checks = [
   ['Distinta keeps structural 20-player cap',
     legacy.includes('const benchSelects = Array.from({ length: 9 }') &&
-    legacy.includes('const total = starters.size + selectedBench') &&
+    legacy.includes('const total = currentLineupSelections().starters.filter(Boolean).length + selectedBench') &&
     legacy.includes('Distinta: ${total}/20') &&
     !legacy.includes('finalSave.disabled = total > 20')],
   ['Bench exposes exactly nine fixed slots',
@@ -18,14 +18,16 @@ const checks = [
   ['Fixed slots are numbered 12 through 20',
     view.includes("String(index + 12).padStart(2, '0')") &&
     view.includes('aria-label="Panchina ${index + 12}"')],
-  ['Bench choices exclude starters',
-    legacy.includes('!starters.has(player.canonicalName)')],
-  ['Bench choices exclude duplicates',
-    legacy.includes('usedElsewhere') &&
-    legacy.includes('!usedElsewhere.has(player.canonicalName)')],
+  ['Bench keeps starters visible and marks reuse instead of hiding',
+    !legacy.includes('!starters.has(player.canonicalName)') &&
+    legacy.includes('— già utilizzato')],
+  ['Bench permits temporary duplicates but exposes invalid state',
+    !legacy.includes('!usedElsewhere.has(player.canonicalName)') &&
+    legacy.includes('duplicateLineupPlayers') &&
+    legacy.includes("aria-invalid")],
   ['Bench selection survives refresh when still valid',
     legacy.includes('const currentBench = benchSelects.map') &&
-    legacy.includes('if (ownValue && options.some((player) => player.canonicalName === ownValue)) select.value = ownValue')],
+    legacy.includes('if (ownValue && roster.some((player) => player.canonicalName === ownValue)) select.value = ownValue')],
   ['Bench selection mutations refresh report and persistence',
     legacy.includes("select.addEventListener('change', () => { updateAutomaticBench(); renderReport(); save() })")],
   ['Bench fixed-slot visual contract exists',

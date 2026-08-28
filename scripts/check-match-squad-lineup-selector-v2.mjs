@@ -13,7 +13,7 @@ const checks = [
   ['starter number no longer uses native 1-99 select', !/class="starter-number-select"/.test(view)],
   ['player selector remains separate identity control', /class="starter-player-select"/.test(view)],
   ['runtime binds number inputs', /input\[name\^="starter_number_"\]/.test(events)],
-  ['number-to-player sync remains active', /syncStarterPlayerFromNumber/.test(events)],
+  ['number-to-player sync is retired', !/syncStarterPlayerFromNumber/.test(events)],
   ['player-to-number sync remains active', /syncStarterNumberFromPlayer/.test(events)],
   ['native lineup owns compact-number plus flexible-player geometry', /grid-template-columns:\s*(?:6[0-9]|7[0-2])px\s+minmax\(0,\s*1fr\)/.test(squadCss)],
   ['legacy lineup important rule excludes native squad', /\.match-step:not\(\.match-squad-step\) \.lineup-row\{grid-template-columns:38px 70px minmax\(0,1fr\)!important\}/.test(legacyCss)],

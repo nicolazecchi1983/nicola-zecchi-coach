@@ -14,7 +14,10 @@ const checks = [
   ['token shell remains absolutely positioned on pitch', css.includes('.match-squad-step .player-token {') && css.includes('position: absolute;')],
   ['token shell remains above pitch markings', css.includes('z-index: 4;')],
   ['visibility invariant does not alter drag runtime', events.includes("token.classList.remove('is-dragging')")],
-  ['visibility invariant does not alter player-number synchronization', events.includes('syncStarterNumberFromPlayer') && events.includes('syncStarterPlayerFromNumber')],
+  ['visibility invariant preserves one-way player-number semantics',
+    events.includes('const syncStarterNumberFromPlayer =') &&
+    !events.includes('const syncStarterPlayerFromNumber =') &&
+    !events.includes('syncStarterPlayerFromNumber(Number(numberMatch[1]))')],
 ]
 
 let passed = 0

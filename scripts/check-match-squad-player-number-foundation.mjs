@@ -17,8 +17,8 @@ const checks = [
   ['starter number is a compact 1-99 match input, not a native 99-option dropdown', squadView.includes('class="starter-number-input"') && squadView.includes('inputmode="numeric"') && squadView.includes('maxlength="2"') && !squadView.includes('class="starter-number-select"')],
   ['player options carry optional seasonal shirt number metadata', squadView.includes('data-shirt-number')],
   ['player selection can drive match number', runtime.includes('syncStarterNumberFromPlayer') && runtime.includes('playerAssignedShirtNumber')],
-  ['number selection can drive unique player', runtime.includes('syncStarterPlayerFromNumber') && runtime.includes('uniquePlayerForShirtNumber')],
-  ['unassigned or ambiguous number remains a valid match-only number', runtime.includes('matches.length === 1 ? matches[0] : null') && runtime.includes('if (!player || starterUsesPlayerElsewhere')],
+  ['number selection never changes player identity', !runtime.includes('syncStarterPlayerFromNumber') && !runtime.includes('uniquePlayerForShirtNumber')],
+  ['any normalized 1-99 value remains valid match-only data', runtime.includes('normalizedRosterShirtNumber(control.value)')],
   ['bench number follows seasonal assignment with 12-20 fallback', squadView.includes('data-bench-slot-number') && runtime.includes('assignedNumber ?? (index + 12)')],
 ]
 

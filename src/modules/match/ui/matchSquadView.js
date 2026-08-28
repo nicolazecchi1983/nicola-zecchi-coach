@@ -3,6 +3,7 @@ import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import { tokenDisplayControlHtml } from './matchTokenDisplayControl.js'
 import { matchPitchMarkingsHtml } from './matchPitchMarkup.js'
 import { matchTokenShellHtml } from './matchTokenMarkup.js'
+import { sortMatchLineupPlayers } from '../matchLineupSelectionModel.js'
 
 const STARTER_FALLBACK_NUMBERS = Array.from({ length: 11 }, (_, index) => index + 1)
 
@@ -13,7 +14,8 @@ function normalizedShirtNumber(value) {
 
 function playerOptions(rosterPlayers = [], rosterOptions = '') {
   if (!rosterPlayers.length) return rosterOptions
-  return rosterPlayers.map((player) => {
+  const orderedPlayers = sortMatchLineupPlayers(rosterPlayers)
+  return orderedPlayers.map((player) => {
     const name = player.canonicalName || player.name || ''
     const number = normalizedShirtNumber(player.number)
     const numberAttribute = number == null ? '' : ` data-shirt-number="${number}"`
@@ -83,6 +85,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       <div class="lineup-list lineup-list--selection">
         <div class="lineup-list-head"><div><span class="lineup-kicker">TITOLARI</span><h3>Undici iniziale</h3></div></div>
         <div class="lineup-selection-list">${starterRows(rosterPlayers, rosterOptions)}</div>
+        <p class="form-message lineup-duplicate-warning" data-lineup-duplicate-warning role="alert" hidden></p>
       </div>
     </div>
 

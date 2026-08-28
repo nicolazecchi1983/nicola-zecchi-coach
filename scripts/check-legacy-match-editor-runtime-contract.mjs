@@ -17,13 +17,11 @@ const checks = [
     legacy.includes('const updateTokens = () =>') && legacy.includes("form.elements[`starter_${i}`]?.value") && legacy.includes('label.textContent = showSurname ? surname')],
   ['captain and vice remain linked to starting XI',
     legacy.includes('const refreshLeadershipSelects = () =>') && legacy.includes('const assignLeadershipRole = (role, playerIndex) =>') && legacy.includes('requestFrame(refreshLeadershipSelects)')],
-  ['automatic bench and 20-player cap remain wired',
+  ['automatic bench and structural 20-player cap remain wired',
     legacy.includes('const updateAutomaticBench = () =>') &&
-      legacy.includes('Array.from({ length: 9 }, (_, index) => form.elements[`bench_${index}`])') &&
-      legacy.includes('const total = starters.size + selectedBench') &&
-      legacy.includes('Distinta: ${total}/20') &&
-      legacy.includes("countNode.classList.toggle('is-complete', total === 20)") &&
-      !legacy.includes('finalSave.disabled = total > 20')],
+    legacy.includes('const benchSelects = Array.from({ length: 9 }') &&
+    legacy.includes('const total = currentLineupSelections().starters.filter(Boolean).length + selectedBench') &&
+    legacy.includes('Distinta: ${total}/20')],
   ['opponent system and token dragging remain wired',
     legacy.includes('const bindOpponentTokenDragging = () =>') && legacy.includes('const addOpponentFormation = (data = {}, requestedIndex = null) =>') && legacy.includes('opponentInitialSystemSelect')],
   ['form mutation refreshes dependent UI',

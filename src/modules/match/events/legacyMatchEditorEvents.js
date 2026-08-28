@@ -1,4 +1,5 @@
 import { createMatchSquadSnapshotService } from '../matchSquadSnapshotService.js'
+import { findMatchLineupDuplicatePlayers, sortMatchLineupPlayers } from '../matchLineupSelectionModel.js'
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 export function wireLegacyMatchEditorEvents({
   root,
@@ -95,8 +96,11 @@ export function wireLegacyMatchEditorEvents({
       const collect = () => draftService.collect(form)
       const save = () => {
         draftService.save(form)
-        scheduleCanonicalSquadSave()
-        if (state) state.textContent = canonicalSquadReady ? 'Formazione sincronizzata' : 'Bozza salvata'
+        const hasLineupDuplicates = duplicateLineupPlayers().length > 0
+        if (!hasLineupDuplicates) scheduleCanonicalSquadSave()
+        if (state) state.textContent = hasLineupDuplicates
+          ? 'Correggi i giocatori duplicati prima di sincronizzare la formazione'
+          : (canonicalSquadReady ? 'Formazione sincronizzata' : 'Bozza salvata')
       }
       const scheduleSave = () => {
         if (state) state.textContent = 'Salvataggio…'
@@ -190,30 +194,12 @@ export function wireLegacyMatchEditorEvents({
         const player = getTrainingSheetRosterPlayers().find((item) => item.canonicalName === String(playerName || ''))
         return normalizedRosterShirtNumber(player?.number)
       }
-      const uniquePlayerForShirtNumber = (shirtNumber) => {
-        const number = normalizedRosterShirtNumber(shirtNumber)
-        if (number == null) return null
-        const matches = getTrainingSheetRosterPlayers().filter((item) => normalizedRosterShirtNumber(item.number) === number)
-        return matches.length === 1 ? matches[0] : null
-      }
-      const starterUsesPlayerElsewhere = (playerName, index) => Array.from({ length: 11 }, (_, candidateIndex) =>
-        candidateIndex !== index ? String(form.elements[`starter_${candidateIndex}`]?.value || '') : ''
-      ).some((value) => value === playerName)
       const syncStarterNumberFromPlayer = (index) => {
         const playerName = String(form.elements[`starter_${index}`]?.value || '')
         const assignedNumber = playerAssignedShirtNumber(playerName)
         const numberField = form.elements[`starter_number_${index}`]
         if (assignedNumber != null && numberField) numberField.value = String(assignedNumber)
       }
-      const syncStarterPlayerFromNumber = (index) => {
-        const numberField = form.elements[`starter_number_${index}`]
-        const playerField = form.elements[`starter_${index}`]
-        if (!numberField || !playerField) return
-        const player = uniquePlayerForShirtNumber(numberField.value)
-        if (!player || starterUsesPlayerElsewhere(player.canonicalName, index)) return
-        playerField.value = player.canonicalName
-      }
-
       const leadershipField = (role) => role === 'vice_captain' ? form.elements.vice_captain : form.elements.captain
       const leadershipSelect = (role) => matchEditor.querySelector(`[data-leadership-select="${role}"]`)
       const currentStarterEntries = () => [...matchEditor.querySelectorAll('.lineup-row select[name^="starter_"]')]
@@ -319,7 +305,7 @@ export function wireLegacyMatchEditorEvents({
         : null
       const fingerprintCanonicalSquad = (snapshot) => JSON.stringify({formation:snapshot.formation,customFormation:snapshot.customFormation,starters:snapshot.starters,bench:snapshot.bench,captainSlot:snapshot.captainSlot,viceCaptainSlot:snapshot.viceCaptainSlot})
       const persistCanonicalSquadSnapshot = async ({force=false}={}) => {
-        if(!canonicalSquadReady||!squadSnapshotService||!activeMatchForDraft?.id)return
+        if(!canonicalSquadReady||!squadSnapshotService||!activeMatchForDraft?.id||duplicateLineupPlayers().length)return
         const snapshot=collectCanonicalSquadSnapshot();const fingerprint=fingerprintCanonicalSquad(snapshot)
         if(!force&&fingerprint===lastCanonicalSquadFingerprint)return
         try{const saved=await squadSnapshotService.save(activeMatchForDraft.id,snapshot);lastCanonicalSquadFingerprint=fingerprintCanonicalSquad(saved);draftService.save(form);if(state)state.textContent='Formazione sincronizzata'}
@@ -349,36 +335,58 @@ export function wireLegacyMatchEditorEvents({
           if(!snapshot.persisted&&hadLocalSquadDraft){const localSnapshot=collectCanonicalSquadSnapshot();const completeStartingEleven=localSnapshot.starters.filter((entry)=>entry.name||entry.playerId).length===11;if(completeStartingEleven)await persistCanonicalSquadSnapshot({force:true})}
         }catch(error){canonicalSquadReady=true;console.error('Caricamento formazione canonica Match non riuscito:',error);if(state)state.textContent=getDataAccessUserMessage(error,undefined,{stage:'match-squad-sync'})}
       }
+      const currentLineupSelections = () => ({
+        starters: Array.from({ length: 11 }, (_, index) => String(form.elements[`starter_${index}`]?.value || '').trim()),
+        bench: Array.from({ length: 9 }, (_, index) => String(form.elements[`bench_${index}`]?.value || '').trim()),
+      })
+      const duplicateLineupPlayers = () => findMatchLineupDuplicatePlayers(currentLineupSelections())
       const updateStarterOptions = () => {
-        const selected = Array.from({ length: 11 }, (_, index) => form.elements[`starter_${index}`]?.value || '')
-        for (let index = 0; index < 11; index += 1) {
-          const select = form.elements[`starter_${index}`]
-          if (!select) continue
+        const selections = currentLineupSelections()
+        const usage = new Map()
+        ;[...selections.starters, ...selections.bench].filter(Boolean)
+          .forEach((name) => usage.set(name, (usage.get(name) || 0) + 1))
+        const duplicateNames = duplicateLineupPlayers()
+        const duplicateSet = new Set(duplicateNames)
+        matchEditor.querySelectorAll('.starter-player-select, [data-bench-select]').forEach((select) => {
           Array.from(select.options).forEach((option) => {
             if (!option.value) return
-            option.disabled = selected.some((value, selectedIndex) => selectedIndex !== index && value === option.value)
+            option.disabled = false
+            const baseLabel = option.dataset.playerLabel || String(option.textContent || '').replace(/\s+— già utilizzato$/, '')
+            option.dataset.playerLabel = baseLabel
+            const usedElsewhere = (usage.get(option.value) || 0) - (select.value === option.value ? 1 : 0) > 0
+            option.textContent = `${baseLabel}${usedElsewhere ? ' — già utilizzato' : ''}`
           })
+          select.setAttribute('aria-invalid', String(Boolean(select.value && duplicateSet.has(select.value))))
+        })
+        const warning = matchEditor.querySelector('[data-lineup-duplicate-warning]')
+        if (warning) {
+          warning.hidden = duplicateNames.length === 0
+          warning.textContent = duplicateNames.length
+            ? `Giocatore già utilizzato: ${duplicateNames.join(', ')}. Correggi il doppione prima di finalizzare la formazione.`
+            : ''
         }
+        if (finalSave) finalSave.disabled = duplicateNames.length > 0
+        return duplicateNames
       }
       const updateAutomaticBench = () => {
         const benchRoot = matchEditor.querySelector('[data-bench-slots]')
         const countNode = matchEditor.querySelector('[data-bench-count]')
         if (!benchRoot) return
 
-        const roster = getTrainingSheetRosterPlayers()
-        const starters = new Set(Array.from({ length: 11 }, (_, index) => form.elements[`starter_${index}`]?.value).filter(Boolean))
+        const roster = sortMatchLineupPlayers(getTrainingSheetRosterPlayers())
         const benchSelects = Array.from({ length: 9 }, (_, index) => form.elements[`bench_${index}`]).filter(Boolean)
         const currentBench = benchSelects.map((select) => select.value || '')
 
         benchSelects.forEach((select, index) => {
           const ownValue = currentBench[index]
-          const usedElsewhere = new Set(currentBench.filter((value, usedIndex) => usedIndex !== index && value))
-          const options = roster.filter((player) => !starters.has(player.canonicalName) && !usedElsewhere.has(player.canonicalName))
           select.innerHTML = [
             '<option value="">Seleziona giocatore</option>',
-            ...options.map((player) => `<option value="${escapeHtml(player.canonicalName)}">${escapeHtml(player.displayName || player.canonicalName)}</option>`),
+            ...roster.map((player) => {
+              const label = player.displayName || player.canonicalName
+              return `<option value="${escapeHtml(player.canonicalName)}" data-player-label="${escapeHtml(label)}">${escapeHtml(label)}</option>`
+            }),
           ].join('')
-          if (ownValue && options.some((player) => player.canonicalName === ownValue)) select.value = ownValue
+          if (ownValue && roster.some((player) => player.canonicalName === ownValue)) select.value = ownValue
           else select.value = ''
           const numberNode = benchRoot.querySelector(`[data-bench-slot-number="${index}"]`)
           const selectedPlayer = roster.find((player) => player.canonicalName === select.value)
@@ -391,17 +399,16 @@ export function wireLegacyMatchEditorEvents({
         })
 
         const selectedBench = benchSelects.filter((select) => select.value).length
-        const total = starters.size + selectedBench
+        const total = currentLineupSelections().starters.filter(Boolean).length + selectedBench
         if (countNode) {
           countNode.textContent = `Distinta: ${total}/20`
           countNode.classList.toggle('is-complete', total === 20)
           countNode.classList.remove('is-over-limit')
         }
-        if (finalSave) finalSave.disabled = false
+        updateStarterOptions()
       }
 
       const syncStarterSelectionState = () => {
-        updateStarterOptions()
         updateAutomaticBench()
         refreshLeadershipSelects()
         updateTokens()
@@ -578,7 +585,6 @@ export function wireLegacyMatchEditorEvents({
               const normalized = normalizedRosterShirtNumber(control.value)
               if (normalized == null) return
               control.value = String(normalized)
-              syncStarterPlayerFromNumber(Number(numberMatch[1]))
               syncStarterSelectionState()
             }
             control.addEventListener('change', syncNumberControl)
@@ -691,6 +697,10 @@ export function wireLegacyMatchEditorEvents({
           slot: index + 12,
           name: form.elements[`bench_${index}`]?.value || '',
         })).filter((item) => item.name)
+        if (duplicateLineupPlayers().length) {
+          globalThis.alert?.('Correggi i giocatori duplicati prima di creare il PDF formazione.')
+          return
+        }
         if (!starters.length) {
           globalThis.alert?.('Inserisci almeno un titolare prima di creare il PDF formazione.')
           return
