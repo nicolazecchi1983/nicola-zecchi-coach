@@ -97,7 +97,7 @@ export function wireCallupsEvents({
       check.closest('.callup-player').querySelector('[data-callup-order]').textContent = String(index + 1).padStart(2, '0')
     })
     checks.filter((check) => !check.checked).forEach((check) => {
-      check.closest('.callup-player').querySelector('[data-callup-order]').textContent = 'â€”'
+      check.closest('.callup-player').querySelector('[data-callup-order]').textContent = '—'
     })
     countEl.textContent = String(selected.length)
     pdfButton.disabled = selected.length === 0
@@ -155,7 +155,7 @@ export function wireCallupsEvents({
       updateCallups()
       if (alertEl && !dirtyState.isDirty()) {
         alertEl.hidden = false
-        alertEl.textContent = 'Convocati salvati. Nostra squadra userÃ  questa selezione.'
+        alertEl.textContent = 'Convocati salvati. Nostra squadra userà questa selezione.'
       }
     } catch (error) {
       alertUser?.(getDataAccessUserMessage(error, undefined, { stage: 'callups-save' }))

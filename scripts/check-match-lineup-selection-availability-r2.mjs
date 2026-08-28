@@ -21,7 +21,7 @@ const checks=[
   ['PDF rejects duplicate lineup',runtime.includes('Correggi i giocatori duplicati prima di creare il PDF formazione.')],
   ['npm gate registered',pkg.scripts?.[gate]==='node scripts/check-match-lineup-selection-availability-r2.mjs'],
   ['suite registration unique',pkg.staffCheckSuite?.filter((item)=>item===gate).length===1],
-  ['suite size is 256',pkg.staffCheckSuite?.length===256],
+  ['suite size is 257',pkg.staffCheckSuite?.length===257],
 ]
 let passed=0
 for(const [label,ok] of checks){console.log(`${ok?'PASS':'FAIL'} ${label}`);if(ok)passed++}

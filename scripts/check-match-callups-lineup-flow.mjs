@@ -20,7 +20,7 @@ const checks = [
  ['Nostra squadra exposes Team Manager PDF action', squad.includes('data-match-lineup-pdf')],
  ['formation PDF reads eleven starters', legacy.includes('Array.from({ length: 11 }') && legacy.includes('starter_number_')],
  ['formation PDF reads bench', legacy.includes('Array.from({ length: 9 }') && legacy.includes('bench_')],
- ['formation PDF includes module and leadership', legacy.includes('Modulo ${escapeHtml(formation)}') && legacy.includes('CAPITANO') && legacy.includes('VICECAPITANO')],
+ ['formation PDF omits tactical module and preserves leadership', !legacy.includes('Modulo ${escapeHtml(formation)}') && legacy.includes('CAPITANO') && legacy.includes('VICECAPITANO')],
  ['formation PDF uses shared print engine', legacy.includes('await printHtmlDocument')],
  ['callups adapter reads same Calendar event', adapters.includes('readMatchCallupsFromEventNotes(eventModel?.notes')],
 ]

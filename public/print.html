@@ -16,6 +16,17 @@
         color: #10213a;
       }
       .print-engine-error { color: #9f1239; }
+      @media screen {
+        body.print-engine-preparing #printRoot {
+          position: fixed;
+          left: -10000px;
+          top: 0;
+          width: 190mm;
+          max-width: 190mm;
+          visibility: hidden;
+          pointer-events: none;
+        }
+      }
       @media print {
         .print-engine-status { display: none !important; }
       }
@@ -113,8 +124,9 @@
           const printClass = payload.bodyClass || ''
           document.documentElement.className = printClass
           document.body.className = printClass
+          document.body.classList.add('print-engine-preparing')
           root.innerHTML = payload.content
-          status.remove()
+          status.textContent = 'Preparazione del documento…'
 
           try {
             await document.fonts?.ready
