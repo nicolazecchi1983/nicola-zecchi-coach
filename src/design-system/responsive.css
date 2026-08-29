@@ -1363,11 +1363,6 @@
    stable 48px targets and no horizontal compression.
    ================================================================ */
 @media (max-width: 760px) {
-  .ts-manual-editor .ts-editor-titlebar {
-    gap: var(--staff-space-2);
-    margin-bottom: var(--staff-space-2);
-  }
-
   .ts-manual-editor .ts-session-grid,
   .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
   .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
@@ -1491,17 +1486,6 @@
    Structural contract: elastic select + indivisible action cluster.
    ================================================================ */
 @media (max-width: 760px) {
-  .ts-manual-editor .ts-editor-titlebar {
-    gap: var(--staff-space-2);
-    margin-bottom: var(--staff-space-3);
-  }
-
-  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
-    white-space: nowrap;
-    font-size: .79rem;
-    gap: 6px;
-  }
-
   .ts-manual-editor .ts-editor-actions-wrap {
     width: 100%;
     max-width: none;
@@ -1613,11 +1597,6 @@
 }
 
 @media (max-width: 390px) {
-  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
-    font-size: .73rem;
-    letter-spacing: normal;
-  }
-
   .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
     column-gap: 5px;
   }

@@ -1,9 +1,14 @@
 import fs from 'node:fs'
-const css = fs.readFileSync('src/design-system/responsive.css','utf8')
-const start = css.indexOf('DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER')
-const layer = css.slice(start)
+const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
+const polish = fs.readFileSync('src/modules/training/trainingPolish.css','utf8')
+const start = responsive.indexOf('DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER')
+const layer = responsive.slice(start)
+const headerStart = polish.indexOf('R2.6K — TRAINING MOBILE HEADER OWNERSHIP · CLUSTER 2')
+const header = polish.slice(headerStart)
 const checks = [
   ['canonical mobile command owner exists', start >= 0],
+  ['Training domain owns mobile titlebar spacing', headerStart >= 0 && header.includes('.ts-manual-editor .ts-editor-titlebar') && header.includes('margin-bottom: var(--staff-space-3)')],
+  ['command layer does not re-own Training titlebar', !layer.includes('.ts-editor-titlebar')],
   ['mobile command group uses elastic select + indivisible action cluster', layer.includes('grid-template-columns: minmax(0, 1fr) auto') && layer.includes('.ts-command-actions')],
   ['published TS selector owns first command cell', layer.includes('.ts-open-sheet') && layer.includes('grid-column: 1;') && layer.includes('grid-row: 1;')],
   ['action cluster owns second command cell', layer.includes('.ts-command-actions') && layer.includes('grid-column: 2;') && layer.includes('grid-row: 1;')],

@@ -23,6 +23,7 @@ const checks = [
   ['workflow footer stays reachable without changing step hooks', css.includes('position: sticky') && view.includes('data-ts-step-prev') && view.includes('data-ts-step-next')],
   ['responsive final retains shared Training mobile adaptation', responsive.includes(responsiveMarker) && responsive.includes('.ts-manual-editor .ts-md-selector') && responsive.includes('grid-template-columns: repeat(3, minmax(0, 1fr))')],
   ['domain-specific mobile surfaces may be owned by Training', css.includes('R2.6J — TRAINING MOBILE OWNERSHIP CLEANUP') && css.includes('.ts-manual-editor .ts-parallel-work')],
+  ['mobile Training header is domain-owned rather than globally re-owned', css.includes('R2.6K — TRAINING MOBILE HEADER OWNERSHIP · CLUSTER 2') && css.includes('.ts-manual-editor .ts-editor-titlebar') && !responsive.slice(responsive.indexOf(responsiveMarker)).includes('.ts-manual-editor .ts-editor-titlebar')],
   ['mobile controls preserve canonical touch targets', responsive.includes('var(--staff-touch-target)')],
   ['training polish consumes Design System colors only', !/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/.test(css)],
   ['training polish introduces no important overrides', !css.includes('!important')],

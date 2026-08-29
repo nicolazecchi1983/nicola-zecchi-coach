@@ -498,6 +498,22 @@
    Values migrated unchanged from the former global responsive layer.
    ================================================================ */
 @media (max-width: 760px) {
+  /* ============================================================
+     R2.6K — TRAINING MOBILE HEADER OWNERSHIP · CLUSTER 2
+     Titlebar spacing/copy are domain-owned. Command controls remain
+     with their dedicated command/responsive contract.
+     ============================================================ */
+  .ts-manual-editor .ts-editor-titlebar {
+    gap: var(--staff-space-2);
+    margin-bottom: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
+    white-space: nowrap;
+    font-size: .79rem;
+    gap: 6px;
+  }
+
   .ts-manual-editor .ts-parallel-work {
     margin-top: 12px;
     padding: 12px;
@@ -561,5 +577,12 @@
   .ts-manual-editor .ts-parallel-work-head span {
     max-width: none;
     text-align: left;
+  }
+}
+
+@media (max-width: 390px) {
+  .ts-manual-editor .ts-editor-titlebar > div:first-child > p {
+    font-size: .73rem;
+    letter-spacing: normal;
   }
 }
