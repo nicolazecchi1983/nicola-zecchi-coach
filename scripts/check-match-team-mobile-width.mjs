@@ -11,7 +11,7 @@ const layer = responsive.slice(responsive.indexOf('M1.3F — MATCH TEAM MOBILE W
 
 const checks = [
   ['captain and vice use canonical dropdown hooks', view.includes('data-leadership-select="captain"') && view.includes('data-leadership-select="vice_captain"')],
-  ['captain and vice have explicit labels', view.includes('<span>Capitano</span>') && view.includes('<span>Vicecapitano</span>')],
+  ['captain and vice have explicit premium role labels', view.includes('class="leadership-role-label">Capitano</span>') && view.includes('class="leadership-role-label">Vicecapitano</span>') && view.includes('class="leadership-role-badge" aria-hidden="true">C</span>') && view.includes('class="leadership-role-badge" aria-hidden="true">VC</span>')],
   ['gold captain presentation removed', !squadCss.includes('#4b3b0d') && !squadCss.includes('#9b7b20') && !squadCss.includes('#ffe99a')],
   ['native team compatibility wrapper is geometry-neutral', workspaceCss.includes('R2.6C — runtime compatibility remains; page geometry does not.') && /\.match-native-surface \.match-step\.staff-card\{[\s\S]*?padding:0!important/.test(workspaceCss) && !layer.includes('--match-mobile-content-bleed')],
   ['own-team pitch uses full mobile width from domain owner', squadCss.includes('@media (max-width: 760px)') && squadCss.includes('.match-squad-step .pitch-panel [data-football-pitch]') && !layer.includes('.match-squad-step .pitch-panel [data-football-pitch]')],

@@ -15,7 +15,7 @@ const checks = [
   ['content display moves as a field at tablet breakpoint', css.includes('.token-display-field { grid-column: 1 / -1; }')],
   ['starter identity receives remaining row width', /grid-template-columns:\s*64px\s+minmax\(0,\s*1fr\);/.test(css)],
   ['starter number remains a compact match input', view.includes('class="starter-number-input"') && css.includes('width: 64px;')],
-  ['desktop lineup reserves readable width for player names', css.includes('grid-template-columns: repeat(2, minmax(0, 1fr));') && css.includes('.lineup-list--selection {\n  min-width: 0;')],
+  ['desktop lineup reserves readable width for player names and leadership', css.includes('grid-template-columns: 64px minmax(0, 1fr);') && css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: minmax(0, 1fr);')],
   ['pitch uses approved grass material with canonical vector geometry', pitchCss.includes("url('/assets/match-pitch-premium-real-natural-grass.webp')") && pitchCss.includes('background-size: 100% 100%')],
   ['vector markings are canonical svg geometry', pitchMarkup.includes('class="match-pitch-svg"') && pitchCss.includes('.match-pitch-svg')],
   ['pitch geometry remains canonical', pitchCss.includes('aspect-ratio: 68 / 105')],

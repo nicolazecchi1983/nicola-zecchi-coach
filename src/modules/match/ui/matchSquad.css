@@ -85,30 +85,50 @@
   line-height: 1;
 }
 
-/* Leadership is a normal premium field family, not a badge/pill subsystem. */
+/* R2.6D — Premium leadership anatomy.
+   Captain and vice are lineup roles: one readable row each, with a compact canonical badge. */
 .match-squad-step .leadership-control {
   display: grid;
-  gap: 7px;
+  grid-template-columns: minmax(116px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
   min-width: 0;
 }
 
-.match-squad-step .leadership-control > span {
+.match-squad-step .leadership-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
   color: var(--staff-color-text-secondary);
   font-size: var(--staff-font-label);
   font-weight: var(--staff-font-weight-bold);
   line-height: 1;
-  text-transform: none;
-  letter-spacing: 0;
   white-space: nowrap;
 }
 
-.match-squad-step .leadership-control > span::before {
-  content: none;
+.match-squad-step .leadership-role-badge {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--staff-color-primary);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--staff-color-primary) 14%, var(--staff-color-bg-control));
+  color: var(--staff-color-primary);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(53,202,255,.06);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: -.02em;
+}
+
+.match-squad-step .leadership-role-label {
+  min-width: 0;
 }
 
 .match-squad-step .formation-system-control select,
-.match-squad-step .formation-custom-control input,
-.match-squad-step .leadership-control select {
+.match-squad-step .formation-custom-control input {
   min-height: 54px;
   height: 54px;
   box-sizing: border-box;
@@ -117,9 +137,23 @@
   background: var(--staff-color-bg-control);
 }
 
-.match-squad-step .formation-system-control select,
-.match-squad-step .formation-custom-control input,
 .match-squad-step .leadership-control select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0 42px 0 14px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 12px;
+  background: var(--staff-color-bg-control);
+  color: #f6f9fb;
+  font-size: .94rem;
+  font-weight: 700;
+}
+
+.match-squad-step .formation-system-control select,
+.match-squad-step .formation-custom-control input {
   width: 100%;
   min-width: 0;
   padding: 0 42px 0 16px;
@@ -133,15 +167,15 @@
   outline-offset: 1px;
 }
 
-/* Leadership belongs to the starting XI surface. */
+/* Leadership belongs to the starting XI surface and stays one role per row. */
 .match-squad-step .lineup-list--selection .lineup-leadership {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
   width: 100%;
   min-width: 0;
   margin: 0;
-  align-items: end;
+  align-items: stretch;
 }
 
 .match-squad-step .lineup-list--selection .lineup-leadership > * {
@@ -545,8 +579,7 @@
 }
 
 .match-squad-step .formation-system-control select,
-.match-squad-step .formation-custom-control input,
-.match-squad-step .leadership-control select {
+.match-squad-step .formation-custom-control input {
   border-color: var(--staff-color-border);
   background: var(--staff-color-bg-control);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
@@ -860,14 +893,12 @@
 
   .match-squad-step .formation-system-control,
   .match-squad-step .formation-custom-control,
-  .match-squad-step .token-display-field,
-  .match-squad-step .leadership-control {
+  .match-squad-step .token-display-field {
     gap: 6px;
   }
 
   .match-squad-step .formation-system-control select,
-  .match-squad-step .formation-custom-control input,
-  .match-squad-step .leadership-control select {
+  .match-squad-step .formation-custom-control input {
     min-height: 48px;
     height: 48px;
     padding-left: 12px;
@@ -875,9 +906,32 @@
   }
 
   .match-squad-step .formation-system-control > span,
-  .match-squad-step .formation-custom-control > span,
-  .match-squad-step .leadership-control > span {
+  .match-squad-step .formation-custom-control > span {
     font-size: .76rem;
+  }
+
+  .match-squad-step .leadership-control {
+    grid-template-columns: minmax(108px, auto) minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .match-squad-step .leadership-role {
+    gap: 7px;
+    font-size: .76rem;
+  }
+
+  .match-squad-step .leadership-role-badge {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    font-size: .68rem;
+  }
+
+  .match-squad-step .leadership-control select {
+    min-height: 48px;
+    height: 48px;
+    padding-left: 12px;
+    font-size: .92rem;
   }
 
 
@@ -963,10 +1017,10 @@
 @media (min-width: 1041px) {
   .match-squad-step .pitch-panel-head,
   .match-squad-step .lineup-list--selection .lineup-list-head {
-    min-height: 126px;
+    min-height: 150px;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 24px 76px;
+    grid-template-rows: 24px 104px;
     align-content: start;
     align-items: stretch;
     gap: 8px;

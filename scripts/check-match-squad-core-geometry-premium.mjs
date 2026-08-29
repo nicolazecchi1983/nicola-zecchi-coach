@@ -7,7 +7,7 @@ const pitchCss = fs.readFileSync('src/modules/match/ui/matchPitch.css', 'utf8')
 
 const checks = [
   ['core desktop uses exact equal columns', css.includes('.match-squad-step .match-lineup-layout--master {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}')],
-  ['leadership remains exact two-column grid inside lineup', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: repeat(2, minmax(0, 1fr));')],
+  ['leadership remains lineup-owned as one full-width premium row per role', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: minmax(0, 1fr);') && css.includes('.leadership-role-badge')],
   ['pitch is proportioned inside its half column', css.includes('width: min(92%, 530px);') && pitchCss.includes('aspect-ratio: 68 / 105;')],
   ['desktop player tokens use shared re-proportioned size', tokenCss.includes('--staff-token-size: 36px;') && !css.includes('--staff-token-size:')],
   ['player labels are scaled with tokens', css.includes('max-width: 92px;') && css.includes('font-size: .63rem;')],

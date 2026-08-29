@@ -25,7 +25,7 @@ const checks = [
   ['pitch header owns reset before the football pitch', pitchHead > pitch && reset > pitchHead && reset < view.indexOf('data-football-pitch', pitch)],
   ['pitch panel is explicitly vertical so header sits above field', css.includes('.match-squad-step .pitch-panel {\n  min-width: 0;\n  display: flex;\n  flex-direction: column;')],
   ['desktop command uses three configuration columns with compact token-display allocation', css.includes('minmax(220px, 1fr) minmax(220px, 1fr) minmax(310px, 1.08fr)')],
-  ['lineup leadership owns two equal local fields', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: repeat(2, minmax(0, 1fr));') && css.includes('.leadership-control select')],
+  ['lineup leadership owns one premium role per row', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: minmax(0, 1fr);') && css.includes('.leadership-role-badge') && css.includes('.leadership-control select')],
   ['field retains vertical football aspect ratio via shared pitch foundation', pitchCss.includes('aspect-ratio: 68 / 105')],
   ['bench is full-width and three-column on desktop', css.includes('.bench-block--full-width') && css.includes('grid-template-columns: repeat(3, minmax(0, 1fr))')],
   ['tablet and mobile layouts are explicit', css.includes('@media (max-width: 1180px)') && css.includes('@media (max-width: 980px)') && css.includes('@media (max-width: 760px)')],

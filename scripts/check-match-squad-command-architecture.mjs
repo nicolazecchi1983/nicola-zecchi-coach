@@ -21,8 +21,8 @@ const checks = [
   ['leadership sits inside starters surface before XI rows', view.indexOf('data-lineup-leadership') > lineupStart && view.indexOf('data-lineup-leadership') < view.indexOf('class="lineup-selection-list"')],
   ['command strip no longer contains captain or vice', view.slice(commandStart, pitchStart).indexOf('data-leadership-select') === -1],
   ['bench remains autonomous after master operational row', benchStart > lineupStart],
-  ['lineup leadership uses equal two-column geometry', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: repeat(2, minmax(0, 1fr));')],
-  ['all command fields share the canonical 54px rhythm', css.includes('.formation-system-control select,') && css.includes('.formation-custom-control input,') && css.includes('.leadership-control select') && css.includes('height: 54px;') && tokenCss.includes('height: 54px;')],
+  ['lineup leadership uses one full-width role row at a time', css.includes('.lineup-list--selection .lineup-leadership {') && css.includes('grid-template-columns: minmax(0, 1fr);') && css.includes('.leadership-control--captain') === false],
+  ['primary command fields keep canonical 54px rhythm while lineup leadership owns compact controls', css.includes('.formation-system-control select,') && css.includes('.formation-custom-control input') && css.includes('height: 54px;') && css.includes('.leadership-control select {') && css.includes('height: 44px;') && tokenCss.includes('height: 54px;')],
   ['reset is a compact contextual secondary action', css.includes('.formation-reset-button--field') && css.includes('height: 36px;')],
   ['canonical command block adds no important escalation', !css.includes('!important')],
 ]

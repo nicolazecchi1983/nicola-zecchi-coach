@@ -18,9 +18,9 @@ const checks = [
   ['mobile lineup heading remains left aligned', /@media \(max-width:\s*760px\)[\s\S]*?\.lineup-list--selection \.lineup-list-head[\s\S]*?align-items:\s*flex-start/.test(css)],
   ['R2.5 balance owner exists once', (css.match(/R2\.5 — Formation Header Balance/g) || []).length === 1],
   ['leadership is structurally inside the lineup header', /class="lineup-list-head"[\s\S]*?data-lineup-leadership[\s\S]*?<div class="lineup-selection-list">/.test(view)],
-  ['wide desktop uses one shared 126px header contract', /@media \(min-width:\s*1041px\)[\s\S]*?\.pitch-panel-head,[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*126px[\s\S]*?grid-template-rows:\s*24px 76px/.test(css)],
+  ['wide desktop uses one shared premium-leadership header contract', /@media \(min-width:\s*1041px\)[\s\S]*?\.pitch-panel-head,[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*150px[\s\S]*?grid-template-rows:\s*24px 104px/.test(css)],
   ['stacked tablet releases lineup header to natural height', /@media \(max-width:\s*1040px\)[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*0/.test(css)],
-  ['leadership keeps two columns on mobile without a new compact owner', /\.lineup-list--selection \.lineup-leadership\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/.test(css) && (css.match(/@media \(max-width: 520px\)/g) || []).length === 1],
+  ['leadership keeps one role per row on mobile without a new compact owner', /\.lineup-list--selection \.lineup-leadership\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(css) && /@media \(max-width:\s*760px\)[\s\S]*?\.leadership-control\s*\{[\s\S]*?grid-template-columns:\s*minmax\(108px,\s*auto\) minmax\(0,\s*1fr\)/.test(css) && (css.match(/@media \(max-width: 520px\)/g) || []).length === 1],
   ['R3.4C does not use important escalation', !alignmentHasImportant(css)],
   ['global responsive layer still does not own starter row columns', !/\.match-squad-step\s+\.lineup-row[\s\S]{0,180}grid-template-columns/.test(responsive)],
 ]
