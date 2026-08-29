@@ -1415,21 +1415,7 @@
   /* Training Summary toolbar/actions responsive geometry is owned by training-editor.css (R1.4F). */
 
 
-  .ts-manual-editor .ts-step-footer {
-    bottom: var(--staff-space-1);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-top: var(--staff-space-3);
-    padding: var(--staff-space-2);
-    border-radius: var(--staff-radius-medium);
-  }
-
-  .ts-manual-editor .ts-step-footer > span {
-    display: none;
-  }
-
-  .ts-manual-editor .ts-step-footer button {
-    min-height: var(--staff-touch-target);
-  }
+  /* R2.6M: Training step-footer mobile geometry moved to the Training domain owner. */
 }
 
 /* ================================================================

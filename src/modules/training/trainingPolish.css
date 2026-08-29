@@ -493,6 +493,29 @@
 }
 
 /* ================================================================
+   R2.6M — TRAINING MOBILE FOOTER OWNERSHIP · CLUSTER 4
+   Step navigation is Training-domain UI, not global responsive chrome.
+   Values migrated unchanged from DS2.3 responsive adaptation.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-step-footer {
+    bottom: var(--staff-space-1);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--staff-space-3);
+    padding: var(--staff-space-2);
+    border-radius: var(--staff-radius-medium);
+  }
+
+  .ts-manual-editor .ts-step-footer > span {
+    display: none;
+  }
+
+  .ts-manual-editor .ts-step-footer button {
+    min-height: var(--staff-touch-target);
+  }
+}
+
+/* ================================================================
    R2.6L — TRAINING MOBILE PHASE OWNERSHIP · CLUSTER 3
    Phase-card mobile geometry belongs to the Training domain.
    Values migrated unchanged from the former global M1.3C layer.
