@@ -493,6 +493,58 @@
 }
 
 /* ================================================================
+   R2.6L — TRAINING MOBILE PHASE OWNERSHIP · CLUSTER 3
+   Phase-card mobile geometry belongs to the Training domain.
+   Values migrated unchanged from the former global M1.3C layer.
+   ================================================================ */
+@media (max-width: 760px) {
+  /* Phase cards use the available viewport width instead of a narrow nested column. */
+  .ts-manual-editor .ts-workspace,
+  .ts-manual-editor .ts-manual-form,
+  .ts-manual-editor .ts-step,
+  .ts-manual-editor .ts-form-card,
+  .ts-manual-editor [data-phase] {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .ts-manual-editor .ts-phase-editor {
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+  }
+
+  .ts-manual-editor .ts-phase-editor-head {
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ts-manual-editor .ts-phase-editor-head > div {
+    margin-left: auto;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-split-phase-button {
+    min-width: 0;
+    padding: 9px 12px;
+    white-space: nowrap;
+  }
+
+  .ts-manual-editor .ts-phase-title-field,
+  .ts-manual-editor .ts-phase-title-field input,
+  .ts-manual-editor .ts-field-full,
+  .ts-manual-editor .ts-field-full textarea {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+}
+
+/* ================================================================
    R2.6J — TRAINING MOBILE OWNERSHIP CLEANUP · CLUSTER 1
    Parallel-work mobile presentation belongs to the Training domain.
    Values migrated unchanged from the former global responsive layer.
