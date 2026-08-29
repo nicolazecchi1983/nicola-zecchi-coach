@@ -14,6 +14,9 @@ const checks = [
   ['opponent consumes canonical section gap', /\.match-opponent-step\s*\{[\s\S]*?gap:\s*var\(--match-section-gap\)/.test(opponent)],
   ['squad remains grid owner', /\.match-squad-step\s*\{[\s\S]*?display:\s*grid/.test(squad)],
   ['opponent remains grid owner', /\.match-opponent-step\s*\{[\s\S]*?display:\s*grid/.test(opponent)],
+  ['squad root is layout-only with zero outer padding', /\.match-squad-step\s*\{[\s\S]*?padding:\s*0/.test(squad) && /\.match-squad-step\s*\{[\s\S]*?border-radius:\s*0/.test(squad)],
+  ['opponent root is layout-only with zero outer padding', /\.match-opponent-step\s*\{[\s\S]*?padding:\s*0/.test(opponent) && /\.match-opponent-step\s*\{[\s\S]*?border-radius:\s*0/.test(opponent)],
+  ['native roots do not reintroduce responsive outer padding', !squad.includes('.match-squad-step {\n    padding: 12px;') && !squad.includes('.match-squad-step {\n    padding: 8px;') && !opponent.includes('.match-opponent-step { gap: var(--match-section-gap-mobile); padding:12px; }')],
   ['native spacing contract is compatible with workspace activation', true],
 ]
 

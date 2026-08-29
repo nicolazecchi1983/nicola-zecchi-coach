@@ -9,8 +9,8 @@
   gap: var(--match-section-gap);
   width: 100%;
   min-width: 0;
-  padding: 18px;
-  border-radius: 20px;
+  padding: 0;
+  border-radius: 0;
 }
 
 .match-opponent-step .opponent-command-surface,
@@ -305,7 +305,7 @@
   .match-opponent-step .opponent-sheet-upload { min-height: 360px; }
 }
 @media (max-width: 680px) {
-  .match-opponent-step { gap: var(--match-section-gap-mobile); padding:12px; }
+  .match-opponent-step { gap: var(--match-section-gap-mobile); }
   .match-opponent-step .opponent-command-surface,
   .match-opponent-step .opponent-field-panel,
   .match-opponent-step .opponent-sheet-panel,

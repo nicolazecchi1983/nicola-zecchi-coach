@@ -36,7 +36,7 @@ const compact = b520.join('\n')
 
 const checks = [
   ['520 has one canonical media owner', b520.length === 1],
-  ['compact root padding remains 8px', /\.match-squad-step\s*\{[\s\S]*?padding:\s*8px/.test(compact)],
+  ['compact root adds no page-like padding', !/\.match-squad-step\s*\{[\s\S]*?padding\s*:/.test(compact)],
   ['compact local surfaces keep 14px radius', /squad-command-strip,[\s\S]*?bench-block--full-width\s*\{[\s\S]*?border-radius:\s*14px/.test(compact)],
   ['compact command strip keeps 12px padding', /\.squad-command-strip\s*\{[\s\S]*?padding:\s*12px/.test(compact)],
   ['empty compact token-photo owner is gone', !/\.token-photo\s*\{\s*\}/.test(compact)],

@@ -6,6 +6,7 @@ const analysisView = fs.readFileSync('src/modules/match/ui/matchAnalysisSchemaVi
 
 const checks = [
   ['opponent step owns explicit vertical rhythm', css.includes('.match-opponent-step {') && css.includes('gap: var(--match-section-gap)')],
+  ['opponent root is layout-only, not a second page surface', /\.match-opponent-step\s*\{[\s\S]*?padding:\s*0[\s\S]*?border-radius:\s*0/.test(css) && !/@media \(max-width: 680px\)\s*\{[\s\S]*?\.match-opponent-step\s*\{[^}]*padding\s*:/.test(css)],
   ['command surface shares canonical max width', css.includes('.opponent-command-surface { width:100%; max-width:1420px; margin:0 auto;')],
   ['core shares canonical max width', css.includes('.opponent-core-layout {') && css.includes('max-width:1420px')],
   ['reading shares canonical max width', css.includes('.opponent-reading-surface { width:100%; max-width:1420px; margin:0 auto;')],
