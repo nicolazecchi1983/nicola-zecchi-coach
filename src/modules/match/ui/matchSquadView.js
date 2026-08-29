@@ -76,7 +76,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       <div class="lineup-list lineup-list--selection">
         <div class="lineup-list-head">
           <div class="lineup-list-title"><h3>Undici iniziale</h3></div>
-          <div class="leadership-badges leadership-selectors lineup-leadership" aria-label="Assegna capitano e vicecapitano" data-lineup-leadership>
+          <div class="leadership-badges leadership-selectors lineup-leadership" aria-label="Assegna capitano e vice" data-lineup-leadership>
             <label class="leadership-control leadership-control--captain">
               <span class="leadership-role">
                 <span class="leadership-role-badge" aria-hidden="true">C</span>
@@ -87,9 +87,9 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
             <label class="leadership-control leadership-control--vice">
               <span class="leadership-role">
                 <span class="leadership-role-badge" aria-hidden="true">VC</span>
-                <span class="leadership-role-label">Vicecapitano</span>
+                <span class="leadership-role-label">Vice</span>
               </span>
-              <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vicecapitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
+              <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vice"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
             </label>
           </div>
         </div>

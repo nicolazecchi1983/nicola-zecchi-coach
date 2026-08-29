@@ -85,11 +85,11 @@
   line-height: 1;
 }
 
-/* R2.6D — Premium leadership anatomy.
-   Captain and vice are lineup roles: one readable row each, with a compact canonical badge. */
+/* R2.6G — Match visual convergence.
+   Leadership uses equal role bands; Match native surfaces converge on one visual grammar. */
 .match-squad-step .leadership-control {
   display: grid;
-  grid-template-columns: minmax(116px, auto) minmax(0, 1fr);
+  grid-template-columns: 128px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
   min-width: 0;
@@ -99,7 +99,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-width: 0;
+  width: 128px;
+  min-width: 128px;
   color: var(--staff-color-text-secondary);
   font-size: var(--staff-font-label);
   font-weight: var(--staff-font-weight-bold);

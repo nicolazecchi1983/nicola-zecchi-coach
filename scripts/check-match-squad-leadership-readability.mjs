@@ -5,7 +5,7 @@ const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
 
 const checks = [
   ['captain label remains explicit', view.includes('<span class="leadership-role-label">Capitano</span>')],
-  ['vice captain label is written in full', view.includes('<span class="leadership-role-label">Vicecapitano</span>') && !view.includes('>Vice</span>')],
+  ['vice label is concise', view.includes('<span class="leadership-role-label">Vice</span>') && !view.includes('>Vicecapitano</span>')],
   ['captain select keeps canonical runtime hook', view.includes('name="captain" data-leadership-select="captain"')],
   ['vice captain select keeps canonical runtime hook', view.includes('name="vice_captain" data-leadership-select="vice_captain"')],
   ['leadership appears after Undici iniziale title and before starter rows', view.indexOf('data-lineup-leadership') > view.indexOf('<h3>Undici iniziale</h3>') && view.indexOf('data-lineup-leadership') < view.indexOf('class="lineup-selection-list"')],

@@ -1,8 +1,6 @@
 /* STAFF 0.29.19 — Avversario v2 · command + appearance architecture
    Single owner for opponent command geometry, appearance popover, field, uploaded sheet and reading surface. */
 .match-opponent-step {
-  --opponent-surface: rgba(7, 25, 35, .78);
-  --opponent-border: rgba(60, 133, 173, .38);
   --staff-token-primary: var(--opponent-token-primary, #9f1239);
   --staff-token-secondary: var(--opponent-token-secondary, #f8fafc);
   display: grid;
@@ -13,13 +11,27 @@
   border-radius: 0;
 }
 
-.match-opponent-step .opponent-command-surface,
+/* R2.6G — Match visual convergence. Native Match surfaces share the same hierarchy as Nostra squadra. */
+.match-opponent-step .opponent-command-surface {
+  border: 1px solid color-mix(in srgb, var(--staff-color-primary) 34%, var(--staff-color-border));
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--staff-color-bg-panel-raised) 92%, var(--staff-color-primary) 8%),
+      var(--staff-color-bg-panel-raised));
+  box-shadow: var(--staff-shadow-panel), inset 0 1px 0 rgba(255,255,255,.035);
+}
 .match-opponent-step .opponent-field-panel,
-.match-opponent-step .opponent-sheet-panel,
+.match-opponent-step .opponent-sheet-panel {
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: 18px;
+  background: var(--staff-color-bg-panel);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+}
 .match-opponent-step .opponent-reading-surface {
-  border: 1px solid var(--opponent-border);
-  border-radius: 20px;
-  background: var(--opponent-surface);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--staff-color-bg-panel) 86%, transparent);
   box-shadow: none;
 }
 
@@ -215,10 +227,10 @@
   gap: 12px;
   padding-bottom: 12px;
   margin-bottom: 14px;
-  border-bottom: 1px solid rgba(82, 153, 190, .24);
+  border-bottom: 1px solid var(--staff-color-border-subtle);
 }
-.match-opponent-step .opponent-panel-bar h3 { margin: 2px 0 0; font-size: 1.15rem; color: #f6f9fb; }
-.match-opponent-step .opponent-reading-header h3 { margin:0; font-size:1.2rem; color:#f6f9fb; }
+.match-opponent-step .opponent-panel-bar h3 { margin: 2px 0 0; font-size: 1rem; color: var(--staff-color-text); }
+.match-opponent-step .opponent-reading-header h3 { margin:0; font-size:1rem; color:var(--staff-color-text); }
 .match-opponent-step .opponent-kicker { color: #37c9ff; font-size: .72rem; font-weight: 900; letter-spacing: .12em; }
 
 .match-opponent-step .opponent-football-pitch {
