@@ -83,7 +83,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       </div>
 
       <div class="lineup-list lineup-list--selection">
-        <div class="lineup-list-head"><div><span class="lineup-kicker">TITOLARI</span><h3>Undici iniziale</h3></div></div>
+        <div class="lineup-list-head"><div><h3>Undici iniziale</h3></div></div>
         <div class="lineup-selection-list">${starterRows(rosterPlayers, rosterOptions)}</div>
         <p class="form-message lineup-duplicate-warning" data-lineup-duplicate-warning role="alert" hidden></p>
       </div>

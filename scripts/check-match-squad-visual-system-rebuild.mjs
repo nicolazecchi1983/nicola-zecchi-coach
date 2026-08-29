@@ -11,6 +11,7 @@ const hasUnscopedLegacy = (selector) => new RegExp(`(^|[}\n])\\.${selector.repla
 const checks = [
   ['visual rebuild is the canonical current owner', css.includes('STAFF 0.29.11 — Nostra squadra · player-number + Soccer Board foundation')],
   ['starter progress indices remain removed from markup', !view.includes('lineup-index')],
+  ['starter header has one semantic title only', view.includes('<h3>Undici iniziale</h3>') && !view.includes('lineup-kicker') && !view.includes('>TITOLARI<') && !css.includes('.lineup-kicker')],
   ['starter rows expose compact number input plus player selector only', view.includes('class="starter-number-input"') && view.includes('class="starter-player-select"') && (/grid-template-columns:\s*(?:6[0-9]|7[0-2])px\s+minmax\(0,\s*1fr\);/.test(css))],
   ['bench exposes only A disposizione title plus count', view.includes('<div class="bench-block-head"><h3>A disposizione</h3>') && !view.includes('PANCHINA AUTOMATICA') && !view.includes('bench-help')],
   ['leadership uses the same premium field family as formation controls', css.includes('.formation-system-control select,') && css.includes('.leadership-control select') && css.includes('min-height: 54px;')],

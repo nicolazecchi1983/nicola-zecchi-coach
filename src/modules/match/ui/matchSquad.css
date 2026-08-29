@@ -190,14 +190,6 @@
   line-height: 1.15;
 }
 
-.match-squad-step .lineup-kicker {
-  display: block;
-  margin-bottom: 3px;
-  color: var(--staff-color-primary);
-  font-size: var(--staff-font-caption);
-  font-weight: var(--staff-font-weight-bold);
-  letter-spacing: .12em;
-}
 
 .match-squad-step .formation-reset-button--field {
   min-width: 0;
