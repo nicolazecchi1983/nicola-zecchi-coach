@@ -1,15 +1,15 @@
 import fs from 'node:fs'
 const css=fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
 const r34c=css.indexOf('0.29.61 — R3.4C Match Squad Cross-Viewport Alignment')
-const b2=css.indexOf('R3.5B2-R3 — Operational Density & Premium Layout')
+const b2=css.indexOf('R3.5B2-R4 — Operational Density & Premium Layout')
 const grouped=(css.match(/\.match-squad-step \.squad-command-primary,\s*\n\s*\.match-squad-step \.squad-command-leadership\s*\{/g)||[]).length
 const checks=[
- ['B2-R3 marker exists',b2>=0],
+ ['B2-R4 marker exists',b2>=0],
  ['B2 final desktop owner is after R3.4C',b2>r34c],
- ['72px desktop header declaration wins by source order',css.lastIndexOf('min-height: 72px;')>css.lastIndexOf('min-height: 116px;')],
- ['one-row desktop pitch header wins by source order',css.lastIndexOf('grid-template-rows: 1fr;')>css.lastIndexOf('grid-template-rows: auto auto;')],
- ['desktop actions stay bounded',/R3\.5B2-R3[\s\S]*?pitch-panel-actions[\s\S]*?max-width:\s*430px/.test(css)],
- ['desktop starter controls are 44px',/R3\.5B2-R3[\s\S]*?starter-number-input,[\s\S]*?height:\s*44px/.test(css)],
+ ['92px desktop header declaration wins by source order',css.lastIndexOf('min-height: 92px;')>css.lastIndexOf('min-height: 116px;')],
+ ['two-row desktop pitch header wins by source order',css.lastIndexOf('grid-template-rows: auto auto;')>css.lastIndexOf('grid-template-rows: 1fr;')],
+ ['desktop actions stay bounded without hard minimum',/R3\.5B2-R4[\s\S]*?pitch-panel-actions[\s\S]*?repeat\(2,\s*minmax\(0,\s*1fr\)\)[\s\S]*?max-width:\s*430px/.test(css)],
+ ['desktop starter controls are 44px',/R3\.5B2-R4[\s\S]*?starter-number-input,[\s\S]*?height:\s*44px/.test(css)],
  ['mobile command controls are 48px',/@media \(max-width: 760px\)[\s\S]*?min-height:\s*48px[\s\S]*?height:\s*48px/.test(css)],
  ['mobile pitch header is compacted',/@media \(max-width: 760px\)[\s\S]*?pitch-panel-head[\s\S]*?gap:\s*10px/.test(css)],
  ['mobile lineup surface is compacted',/@media \(max-width: 760px\)[\s\S]*?lineup-list--selection\s*\{[\s\S]*?padding:\s*10px/.test(css)],
@@ -21,5 +21,5 @@ const checks=[
  ['no important escalation',!css.includes('!important')],
 ]
 let p=0;for(const [l,o] of checks){console.log(`${o?'PASS':'FAIL'}  ${l}`);if(o)p++}
-console.log(`R3.5B2-R3 Match Squad Operational Density: ${p}/${checks.length}`)
+console.log(`R3.5B2-R4 Match Squad Operational Density: ${p}/${checks.length}`)
 if(p!==checks.length)process.exit(1)

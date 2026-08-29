@@ -929,30 +929,29 @@
   }
 }
 
-/* R3.5B2-R3 — Operational Density & Premium Layout.
-   Latest desktop owner by design: comes after R3.4C so the 72px contract is effective. */
+/* R3.5B2-R4 — Operational Density & Premium Layout.
+   Final desktop owner: title and actions use separate rows so the 50/50 core can never
+   force field actions into the TITOLARI column. Mobile ownership remains below 760px. */
 @media (min-width: 761px) {
   .match-squad-step .pitch-panel-head,
   .match-squad-step .lineup-list--selection .lineup-list-head {
-    min-height: 72px;
+    min-height: 92px;
   }
-
   .match-squad-step .pitch-panel-head {
     display: grid;
-    grid-template-columns: minmax(max-content, 1fr) minmax(340px, .95fr);
-    grid-template-rows: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
     align-items: center;
     align-content: center;
-    gap: 16px;
+    gap: 8px;
     padding-block: 8px;
   }
 
   .match-squad-step .pitch-panel-actions {
-    grid-template-columns: repeat(2, minmax(150px, 1fr));
-    justify-self: end;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-self: start;
     max-width: 430px;
   }
-
   .match-squad-step .lineup-list--selection .lineup-list-head {
     margin-bottom: 6px;
     padding-bottom: 7px;

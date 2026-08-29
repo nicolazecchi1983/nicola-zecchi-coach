@@ -27,7 +27,7 @@ const c=[
 ['desktop 2-action grid is card-bounded',/\.pitch-panel-actions\s*\{[\s\S]*?repeat\(2,\s*minmax\(0,\s*1fr\)\)[\s\S]*?width:\s*100%/.test(squadCss)],
 ['mobile equal 2-action grid',/@media \(max-width:\s*760px\)[\s\S]*?\.pitch-panel-actions\s*\{[\s\S]*?repeat\(2,\s*minmax\(0,\s*1fr\)\)/.test(squadCss)],
 ['mobile 44px',/@media \(max-width:\s*760px\)[\s\S]*?\.match-squad-field-action\s*\{[\s\S]*?height:\s*44px/.test(squadCss)],
-['desktop pitch title and actions use separate rows',/\.pitch-panel-head\s*\{[\s\S]*?grid-template-rows:\s*auto auto/.test(squadCss)],
+['desktop pitch title and actions use separate rows',squadCss.lastIndexOf('grid-template-rows: auto auto;')>squadCss.lastIndexOf('grid-template-rows: 1fr;')],
 ['R3.4C stack preserved',/@media \(max-width:\s*760px\)[\s\S]*?\.pitch-panel-head\s*\{[\s\S]*?flex-direction:\s*column/.test(squadCss)],
 ['obsolete 520 owner removed',!squadCss.includes(obsolete)],
 ['global button untouched',/\.staff-button,[\s\S]*?justify-content:\s*center/.test(controls)],
