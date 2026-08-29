@@ -1315,8 +1315,6 @@
    ================================================================ */
 @media (max-width: 760px) {
   .ts-manual-editor .ts-session-grid,
-  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
-  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
   .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
   .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
   .ts-manual-editor .ts-phases-editor,
@@ -1333,29 +1331,12 @@
   }
 
   .ts-manual-editor .ts-session-grid,
-  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
-  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid,
   .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
   .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid,
   .ts-manual-editor .ts-phase-editor,
   .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
   .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
     padding-inline: var(--staff-space-3);
-  }
-
-  .ts-manual-editor .ts-present-count {
-    grid-template-columns: minmax(0, 1fr) 76px;
-    max-width: none;
-    width: 100%;
-  }
-
-  .ts-manual-editor .ts-roster-grid--four {
-    grid-template-columns: 1fr;
-  }
-
-  .ts-manual-editor .ts-multiselect summary,
-  .ts-manual-editor .ts-selection-card.ts-aggregated-select {
-    min-height: var(--staff-touch-target);
   }
 
   .ts-manual-editor .ts-md-selector {

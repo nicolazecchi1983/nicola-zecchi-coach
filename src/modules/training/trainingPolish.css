@@ -493,6 +493,35 @@
 }
 
 /* ================================================================
+   R2.6N — TRAINING MOBILE ROSTER OWNERSHIP · CLUSTER 5
+   Roster width, padding and compact interaction belong to Training.
+   Values migrated unchanged from DS2.3 global responsive adaptation.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
+  .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
+    width: 100%;
+    max-width: none;
+    padding-inline: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-present-count {
+    grid-template-columns: minmax(0, 1fr) 76px;
+    max-width: none;
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-roster-grid--four {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-multiselect summary,
+  .ts-manual-editor .ts-selection-card.ts-aggregated-select {
+    min-height: var(--staff-touch-target);
+  }
+}
+
+/* ================================================================
    R2.6M — TRAINING MOBILE FOOTER OWNERSHIP · CLUSTER 4
    Step navigation is Training-domain UI, not global responsive chrome.
    Values migrated unchanged from DS2.3 responsive adaptation.
