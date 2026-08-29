@@ -2,6 +2,7 @@ import fs from 'node:fs'
 
 const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
+const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
 
 const checks = [
   ['single R3.4C canonical marker exists', (css.match(/R3\.4C Match Squad Cross-Viewport Alignment/g) || []).length === 1],
@@ -15,6 +16,11 @@ const checks = [
   ['mobile resets desktop shared header height', /@media \(max-width:\s*760px\)[\s\S]*?\.pitch-panel-head,[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*0/.test(css)],
   ['mobile pitch header stacks structurally', /@media \(max-width:\s*760px\)[\s\S]*?\.pitch-panel-head\s*\{[\s\S]*?flex-direction:\s*column/.test(css)],
   ['mobile lineup heading remains left aligned', /@media \(max-width:\s*760px\)[\s\S]*?\.lineup-list--selection \.lineup-list-head[\s\S]*?align-items:\s*flex-start/.test(css)],
+  ['R2.5 balance owner exists once', (css.match(/R2\.5 — Formation Header Balance/g) || []).length === 1],
+  ['leadership is structurally inside the lineup header', /class="lineup-list-head"[\s\S]*?data-lineup-leadership[\s\S]*?<div class="lineup-selection-list">/.test(view)],
+  ['wide desktop uses one shared 126px header contract', /@media \(min-width:\s*1041px\)[\s\S]*?\.pitch-panel-head,[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*126px[\s\S]*?grid-template-rows:\s*24px 76px/.test(css)],
+  ['stacked tablet releases lineup header to natural height', /@media \(max-width:\s*1040px\)[\s\S]*?\.lineup-list--selection \.lineup-list-head\s*\{[\s\S]*?min-height:\s*0/.test(css)],
+  ['leadership keeps two columns on mobile without a new compact owner', /\.lineup-list--selection \.lineup-leadership\s*\{[\s\S]*?grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/.test(css) && (css.match(/@media \(max-width: 520px\)/g) || []).length === 1],
   ['R3.4C does not use important escalation', !alignmentHasImportant(css)],
   ['global responsive layer still does not own starter row columns', !/\.match-squad-step\s+\.lineup-row[\s\S]{0,180}grid-template-columns/.test(responsive)],
 ]

@@ -1,5 +1,14 @@
 import fs from 'node:fs'
 const css=fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
+function mediaBlocks(width){
+ const marker=`@media (max-width: ${width}px) {`,out=[];let from=0
+ while(true){const start=css.indexOf(marker,from);if(start<0)break;let depth=0,body=-1,closed=false
+  for(let i=start;i<css.length;i++){if(css[i]==='{'){depth++;if(body<0)body=i+1}else if(css[i]==='}'){depth--;if(depth===0){out.push(css.slice(body,i));from=i+1;closed=true;break}}}
+  if(!closed)break
+ }
+ return out
+}
+const mobile760=mediaBlocks(760).join('\n')
 const checks=[
  ['bench header grid owner',/\.bench-block-head\s*\{[\s\S]*?display:\s*grid[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s*auto/.test(css)],
  ['bench title nowrap',/\.bench-block-head h3\s*\{[\s\S]*?white-space:\s*nowrap/.test(css)],
@@ -13,7 +22,7 @@ const checks=[
  ['mobile controls exact 48',/R3\.5B3-R1[\s\S]*?bench-slot-number,[\s\S]*?bench-slot select\s*\{[\s\S]*?height:\s*48px[\s\S]*?max-height:\s*48px/.test(css)],
  ['B2 topology four 760 owners',(css.match(/@media \(max-width: 760px\)/g)||[]).length===4],
  ['A4 topology one 520 owner',(css.match(/@media \(max-width: 520px\)/g)||[]).length===1],
- ['grouped command collapse remains singular',(css.match(/\.match-squad-step \.squad-command-primary,\s*\n\s*\.match-squad-step \.squad-command-leadership\s*\{/g)||[]).length===1],
+ ['primary command one-column collapse remains singular',(mobile760.match(/\.match-squad-step \.squad-command-primary\s*\{\s*grid-template-columns:\s*1fr;\s*\}/g)||[]).length===1],
  ['bench controls border-box',/\.bench-slot-number\s*\{[\s\S]*?box-sizing:\s*border-box/.test(css)&&/\.bench-slot select\s*\{[\s\S]*?box-sizing:\s*border-box/.test(css)],
  ['no important escalation',!css.includes('!important')],
 ]

@@ -2,7 +2,12 @@ import fs from 'node:fs'
 const css=fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
 const r34c=css.indexOf('0.29.61 — R3.4C Match Squad Cross-Viewport Alignment')
 const b2=css.indexOf('R3.5B2-R4 — Operational Density & Premium Layout')
-const grouped=(css.match(/\.match-squad-step \.squad-command-primary,\s*\n\s*\.match-squad-step \.squad-command-leadership\s*\{/g)||[]).length
+function blocks(width){
+ const marker=`@media (max-width: ${width}px) {`,out=[];let from=0
+ while(true){const start=css.indexOf(marker,from);if(start<0)break;let depth=0,body=-1,closed=false
+ for(let i=start;i<css.length;i++){if(css[i]==='{'){depth++;if(body<0)body=i+1}else if(css[i]==='}'){depth--;if(depth===0){out.push(css.slice(body,i));from=i+1;closed=true;break}}}
+ if(!closed)break}return out}
+const grouped=(blocks(760).join('\n').match(/\.match-squad-step \.squad-command-primary\s*\{[\s\S]*?grid-template-columns:\s*1fr;/g)||[]).length
 const checks=[
  ['B2-R4 marker exists',b2>=0],
  ['B2 final desktop owner is after R3.4C',b2>r34c],
@@ -13,7 +18,7 @@ const checks=[
  ['mobile command controls are 48px',/@media \(max-width: 760px\)[\s\S]*?min-height:\s*48px[\s\S]*?height:\s*48px/.test(css)],
  ['mobile pitch header is compacted',/@media \(max-width: 760px\)[\s\S]*?pitch-panel-head[\s\S]*?gap:\s*10px/.test(css)],
  ['mobile lineup surface is compacted',/@media \(max-width: 760px\)[\s\S]*?lineup-list--selection\s*\{[\s\S]*?padding:\s*10px/.test(css)],
- ['canonical grouped mobile command collapse stays singular',grouped===1],
+ ['canonical mobile primary command collapse stays singular',grouped===1],
  ['R3.5A1 geometry remains',css.includes('R3.5A1 — canonical mobile geometry owner.')],
  ['520 owner remains singular',(css.match(/@media \(max-width: 520px\)/g)||[]).length===1],
  ['760 topology remains exactly four owners',(css.match(/@media \(max-width: 760px\)/g)||[]).length===4],

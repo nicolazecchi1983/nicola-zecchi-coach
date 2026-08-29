@@ -85,17 +85,6 @@
   line-height: 1;
 }
 
-/* Dedicated second row: never allowed to share primary-row geometry. */
-.match-squad-step .squad-command-leadership {
-  grid-column: 1;
-  grid-row: 2;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
-  gap: 12px;
-  width: 100%;
-  min-width: 0;
-}
-
 /* Leadership is a normal premium field family, not a badge/pill subsystem. */
 .match-squad-step .leadership-control {
   display: grid;
@@ -142,6 +131,21 @@
 .match-squad-step .leadership-control select:focus {
   outline: 2px solid #35caff;
   outline-offset: 1px;
+}
+
+/* Leadership belongs to the starting XI surface. */
+.match-squad-step .lineup-list--selection .lineup-leadership {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  align-items: end;
+}
+
+.match-squad-step .lineup-list--selection .lineup-leadership > * {
+  min-width: 0;
 }
 
 /* ---------- Core operational row ---------- */
@@ -310,9 +314,10 @@
 
 .match-squad-step .lineup-list--selection .lineup-list-head {
   min-height: 44px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: stretch;
   gap: 10px;
   margin: 0 0 8px;
   padding: 0 0 9px;
@@ -531,8 +536,7 @@
 /* 0.29.15 — Match Squad Core Geometry & Soccer Board Premium
    Consolidated visual contract: leadership and core share the same 50/50 page grid.
    No stacked release overrides beyond this canonical refinement block. */
-.match-squad-step .squad-command-primary > *,
-.match-squad-step .squad-command-leadership > * {
+.match-squad-step .squad-command-primary > * {
   align-self: stretch;
 }
 
@@ -556,8 +560,7 @@
   border-color: #35caff;
 }
 
-/* Leadership establishes the page's two equal visual columns. */
-.match-squad-step .squad-command-leadership,
+/* Operational core establishes the page's two equal visual columns. */
 .match-squad-step .match-lineup-layout--master {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -639,9 +642,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .match-squad-step .token-display-field { grid-column: 1 / -1; }
-  .match-squad-step .squad-command-leadership {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .match-squad-step [data-football-pitch] { width: min(92%, 500px); }
   .match-squad-step .player-token small { max-width: 84px; font-size: .60rem; }
 }
@@ -655,8 +655,7 @@
 }
 
 @media (max-width: 760px) {
-  .match-squad-step .squad-command-primary,
-  .match-squad-step .squad-command-leadership {
+  .match-squad-step .squad-command-primary {
     grid-template-columns: 1fr;
   }
 }
@@ -859,10 +858,6 @@
     gap: 10px;
   }
 
-  .match-squad-step .squad-command-leadership {
-    gap: 10px;
-  }
-
   .match-squad-step .formation-system-control,
   .match-squad-step .formation-custom-control,
   .match-squad-step .token-display-field,
@@ -958,5 +953,38 @@
   .match-squad-step .starter-player-select {
     height: 44px;
     min-height: 44px;
+  }
+}
+
+
+/* R2.5 — Formation Header Balance.
+   Campo di gioco and Undici iniziale share one desktop header anatomy.
+   On stacked tablet/mobile layouts each surface returns to natural height. */
+@media (min-width: 1041px) {
+  .match-squad-step .pitch-panel-head,
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    min-height: 126px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 24px 76px;
+    align-content: start;
+    align-items: stretch;
+    gap: 8px;
+    padding-block: 8px 10px;
+    box-sizing: border-box;
+  }
+
+  .match-squad-step .pitch-panel-actions {
+    align-self: center;
+  }
+
+  .match-squad-step .lineup-list--selection .lineup-leadership {
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 1040px) {
+  .match-squad-step .lineup-list--selection .lineup-list-head {
+    min-height: 0;
   }
 }

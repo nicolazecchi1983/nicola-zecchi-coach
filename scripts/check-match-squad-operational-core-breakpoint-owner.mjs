@@ -69,7 +69,7 @@ const columnOwners = [
  .map(([width]) => width)
 
 const checks = [
-  ['desktop equal-column refinement remains', css.includes('.match-squad-step .squad-command-leadership,\n.match-squad-step .match-lineup-layout--master {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}')],
+  ['desktop equal-column refinement remains', css.includes('.match-squad-step .match-lineup-layout--master {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}')],
   ['1040 is sole responsive column owner', columnOwners.length === 1 && columnOwners[0] === '1040'],
   ['1040 has one master owner', b1040.length === 1],
   ['1040 stacks operational core', b1040[0]?.includes('grid-template-columns: 1fr;')],

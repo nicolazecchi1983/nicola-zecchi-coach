@@ -58,16 +58,7 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
         })}
       </div>
 
-      <div class="leadership-badges leadership-selectors squad-command-leadership" aria-label="Assegna capitano e vicecapitano" data-squad-command-leadership>
-        <label class="leadership-control">
-          <span>Capitano</span>
-          <select name="captain" data-leadership-select="captain" aria-label="Seleziona capitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
-        </label>
-        <label class="leadership-control">
-          <span>Vicecapitano</span>
-          <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vicecapitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
-        </label>
-      </div>
+
     </div>
 
     <div class="match-lineup-layout match-lineup-layout--master">
@@ -83,7 +74,19 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       </div>
 
       <div class="lineup-list lineup-list--selection">
-        <div class="lineup-list-head"><div><h3>Undici iniziale</h3></div></div>
+        <div class="lineup-list-head">
+          <div class="lineup-list-title"><h3>Undici iniziale</h3></div>
+          <div class="leadership-badges leadership-selectors lineup-leadership" aria-label="Assegna capitano e vicecapitano" data-lineup-leadership>
+            <label class="leadership-control">
+              <span>Capitano</span>
+              <select name="captain" data-leadership-select="captain" aria-label="Seleziona capitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
+            </label>
+            <label class="leadership-control">
+              <span>Vicecapitano</span>
+              <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vicecapitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
+            </label>
+          </div>
+        </div>
         <div class="lineup-selection-list">${starterRows(rosterPlayers, rosterOptions)}</div>
         <p class="form-message lineup-duplicate-warning" data-lineup-duplicate-warning role="alert" hidden></p>
       </div>

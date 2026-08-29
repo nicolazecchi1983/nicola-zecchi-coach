@@ -10,9 +10,9 @@ const checks = [
   ['command strip forces row flow', css.includes('grid-auto-flow: row;')],
   ['command strip stretches its rows instead of inheriting legacy end alignment', css.includes('align-items: stretch;')],
   ['configuration group is pinned to row one', css.includes('.match-squad-step .squad-command-primary {') && css.includes('grid-row: 1;') && css.includes('grid-column: 1;')],
-  ['leadership group is pinned to row two', css.includes('.match-squad-step .squad-command-leadership {') && css.includes('grid-row: 2;')],
+  ['leadership is retired from command row two', !css.includes('.squad-command-leadership') && view.includes('data-lineup-leadership')],
   ['configuration group owns full row width', css.includes('.match-squad-step .squad-command-primary {') && css.includes('width: 100%;')],
-  ['leadership group owns full row width', css.includes('.match-squad-step .squad-command-leadership {') && css.indexOf('width: 100%;', css.indexOf('.match-squad-step .squad-command-leadership {')) > css.indexOf('.match-squad-step .squad-command-leadership {')],
+  ['lineup leadership owns its local XI width', css.includes('.lineup-list--selection .lineup-leadership {') && css.indexOf('width: 100%;', css.indexOf('.lineup-list--selection .lineup-leadership {')) > css.indexOf('.lineup-list--selection .lineup-leadership {')],
   ['legacy Match Sheet still exists only as compatibility owner', legacy.includes('.formation-toolbar{') || legacy.includes('.formation-toolbar {')],
   ['field reset remains outside command strip', view.indexOf('data-reset-formation') > view.indexOf('<div class="pitch-panel">')],
 ]
