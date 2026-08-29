@@ -21,11 +21,12 @@ const checks = [
   ['principles use one predictable selected state instead of four decorative colors', css.includes('.ts-pillar input:checked + span') && css.includes('var(--staff-color-primary)')],
   ['preview remains the focal document surface', view.includes('data-ts-preview') && css.includes('var(--staff-content-readable)')],
   ['workflow footer stays reachable without changing step hooks', css.includes('position: sticky') && view.includes('data-ts-step-prev') && view.includes('data-ts-step-next')],
-  ['mobile adaptation is owned by responsive final', responsive.includes(responsiveMarker) && responsive.includes('.ts-manual-editor .ts-md-selector') && responsive.includes('grid-template-columns: repeat(3, minmax(0, 1fr))')],
+  ['responsive final retains shared Training mobile adaptation', responsive.includes(responsiveMarker) && responsive.includes('.ts-manual-editor .ts-md-selector') && responsive.includes('grid-template-columns: repeat(3, minmax(0, 1fr))')],
+  ['domain-specific mobile surfaces may be owned by Training', css.includes('R2.6J — TRAINING MOBILE OWNERSHIP CLEANUP') && css.includes('.ts-manual-editor .ts-parallel-work')],
   ['mobile controls preserve canonical touch targets', responsive.includes('var(--staff-touch-target)')],
   ['training polish consumes Design System colors only', !/#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/.test(css)],
   ['training polish introduces no important overrides', !css.includes('!important')],
-  ['training polish uses only canonical responsive tiers', media.every((bp) => ['980'].includes(bp))],
+  ['training polish uses only canonical responsive tiers', media.every((bp) => ['980', '760', '390'].includes(bp))],
 ]
 
 let passed = 0

@@ -1260,74 +1260,7 @@
     min-height: 44px;
   }
 
-  /* Parallel work is an editor surface, not a white document.
-     The white treatment remains reserved for generated/print content. */
-  .ts-manual-editor .ts-parallel-work {
-    margin-top: 12px;
-    padding: 12px;
-    border-color: var(--staff-color-border);
-    border-radius: 14px;
-    background: var(--staff-color-bg-panel-raised);
-    color: var(--staff-color-text);
-  }
-
-  .ts-manual-editor .ts-parallel-work-head {
-    align-items: flex-start;
-    margin-bottom: 10px;
-    color: var(--staff-color-text);
-  }
-
-  .ts-manual-editor .ts-parallel-work-head strong {
-    font-size: .82rem;
-  }
-
-  .ts-manual-editor .ts-parallel-work-head span {
-    max-width: 55%;
-    color: var(--staff-color-text-muted);
-    font-size: .64rem;
-    line-height: 1.25;
-    text-align: right;
-  }
-
-  .ts-manual-editor .ts-parallel-work-grid {
-    grid-template-columns: 1fr;
-    gap: 9px;
-  }
-
-  .ts-manual-editor .ts-parallel-work-grid section {
-    padding: 10px;
-    border-color: var(--staff-color-border);
-    border-radius: 12px;
-    background: var(--staff-color-bg-control);
-  }
-
-  .ts-manual-editor .ts-parallel-work-grid section > b {
-    margin-bottom: 7px;
-    color: var(--staff-color-primary-hover);
-    font-size: .69rem;
-  }
-
-  .ts-manual-editor .ts-parallel-work-grid .ts-field {
-    gap: 5px;
-  }
-
-  .ts-manual-editor .ts-parallel-work-grid textarea {
-    min-height: 92px;
-  }
 }
-
-@media (max-width: 390px) {
-  .ts-manual-editor .ts-parallel-work-head {
-    display: grid;
-    gap: 3px;
-  }
-
-  .ts-manual-editor .ts-parallel-work-head span {
-    max-width: none;
-    text-align: left;
-  }
-}
-
 
 /* ================================================================
    M1.3C — TRAINING MOBILE COMMAND ROW + PHASE WIDTH
@@ -1379,19 +1312,7 @@
     box-sizing: border-box;
   }
 
-  .ts-manual-editor .ts-phase-meta-fields {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    max-width: none;
-    width: 100%;
-  }
 }
-
-@media (max-width: 430px) {
-  .ts-manual-editor .ts-phase-meta-fields {
-    grid-template-columns: 1fr;
-  }
-}
-
 
 /* ================================================================
    M1.3F — MATCH TEAM MOBILE WIDTH & SHARED TEAM VISUALS
