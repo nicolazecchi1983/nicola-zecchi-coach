@@ -23,7 +23,7 @@ const checks = [
   ['shared Print Engine is not changed by this release', !/R3\.4E/.test(printEngine)],
   ['Page Shell remains canonical outer-gutter owner', /#viewRoot\s*\{[\s\S]*?padding:\s*var\(--staff-page-top\)\s+var\(--staff-page-inline\)/.test(pageShell)],
   ['Product UI still adds no second page gutter', /\.product-page-shell\{[\s\S]*?padding:0/.test(productUi)],
-  ['existing Match mobile bleed remains audit-only and untouched', /--match-mobile-content-bleed/.test(responsive)],
+  ['retired Match mobile bleed cannot return', !/--match-mobile-content-bleed/.test(responsive) && !/match-native-section \.match-native-legacy-host\s*\{[\s\S]*?margin-inline:\s*calc/.test(responsive)],
   ['Match Workspace width ownership remains domain-local', /\.match-workspace-shell/.test(workspace)],
   ['R3.4E introduces no important escalation in token component', !sliceReleaseBlock(css).includes('!important')],
 ]

@@ -26,7 +26,7 @@ const checks = [
   ['canonical leadership fields remain on visible selectors', squad.includes('name="captain" data-leadership-select="captain"') && squad.includes('name="vice_captain" data-leadership-select="vice_captain"')],
   ['workspace own-team label uses configured identity', workspace.includes("section.key === 'our-team' ? ourName : section.label")],
   ['native Match nav receives configured team name through shell', native.includes('teamName: ownTeamName') && native.includes('matchWorkspaceShellHtml')],
-  ['own/opponent surfaces share mobile width contract', responsive.includes('.match-native-legacy-host--our-team') && responsive.includes('.match-native-legacy-host--opponent')],
+  ['own/opponent surfaces no longer depend on compatibility width compensation', !responsive.includes('.match-native-legacy-host--our-team,') && !responsive.includes('--match-mobile-content-bleed')],
   ['token visual language is shared through one canonical Match renderer', sharedTokenCss.includes('.staff-match-token__shell') && tokenMarkup.includes('matchTokenShellHtml') && squad.includes('matchTokenShellHtml') && opponentView.includes('matchTokenShellHtml')],
   ['captain highlight remains cyan rather than gold', squadCss.includes('background: #38bdf8;') && !squadCss.includes('background: #ffd66b;')],
 ]

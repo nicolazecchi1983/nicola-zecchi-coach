@@ -40,7 +40,7 @@ checks.push(['tutte le viste importano lo shell di dominio',views.every((text)=>
 checks.push(['nessuna vista replica direttamente la navigation',views.every((text)=>!text.includes('matchContextNavigationHtml('))])
 checks.push(['nessuna vista replica direttamente il back button',views.every((text)=>!text.includes('matchContextBackButtonHtml('))])
 checks.push(['Mezzolara/Avversario sono avvolte in surface canonica',nativeView.includes('workspace-surface product-surface match-native-surface')])
-checks.push(['legacy host resta solo come compatibility implementation, non geometry owner',css.includes('strip legacy page geometry')&&css.includes('.match-native-surface .match-editor')])
+checks.push(['legacy host resta solo come compatibility implementation, non geometry owner',css.includes('runtime compatibility remains; page geometry does not.')&&/\.match-native-surface \.match-native-legacy-host,[\s\S]*?padding:0!important/.test(css)])
 checks.push(['shell CSS governa desktop/tablet/mobile',productCss.includes('@media(max-width:1180px)')&&productCss.includes('@media(max-width:760px)')])
 
 let passed=0

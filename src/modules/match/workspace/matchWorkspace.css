@@ -3,9 +3,6 @@
 
 :root{
   --match-workspace-max:var(--product-page-max);
-  --match-workspace-inline:var(--product-page-inline);
-  --match-workspace-inline-mobile:var(--product-page-inline-mobile);
-  --match-workspace-bottom:var(--product-page-bottom);
   --match-workspace-header-nav-gap:var(--product-header-nav-gap);
   --match-workspace-nav-content-gap:var(--product-nav-content-gap);
   --match-workspace-surface-gap:var(--product-section-gap);
@@ -40,7 +37,8 @@
   margin-right:0!important;
 }
 
-/* Native our-team/opponent: keep domain logic, strip legacy page geometry. */
+/* R2.6C — runtime compatibility remains; page geometry does not.
+   The native shell owns placement. Legacy host/editor/form are neutral runtime containers. */
 .match-native-surface{
   padding:0;
   overflow:visible;
@@ -48,17 +46,16 @@
 
 .match-native-surface .match-native-legacy-host,
 .match-native-surface .match-editor,
-.match-native-surface .match-editor>form,
-.match-native-surface .match-step.staff-card{
+.match-native-surface .match-editor>form{
   width:100%!important;
   max-width:none!important;
   min-width:0!important;
   margin:0!important;
-}
-
-.match-native-surface .match-editor{
   padding:0!important;
+  border:0!important;
   background:transparent!important;
+  box-shadow:none!important;
+  box-sizing:border-box;
 }
 
 .match-native-surface .match-page-header,
@@ -78,13 +75,18 @@
   display:grid!important;
 }
 
-/* The legacy step is content now, not another page card. */
+/* The active legacy step is a runtime hook only. Domain-native roots own all visual spacing. */
 .match-native-surface .match-step.staff-card{
-  padding:24px!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
   border:0!important;
-  border-radius:var(--match-workspace-radius)!important;
+  border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
+  box-sizing:border-box;
 }
 
 /* Canonical dark surfaces for sections that historically had a second visual theme. */
@@ -169,10 +171,7 @@
   color:var(--match-workspace-text)!important;
 }
 
-@media(max-width:760px){.match-native-surface .match-step.staff-card{
-    padding:16px!important;
-  }
-
+@media(max-width:760px){
   .match-workspace-shell .post-match-status-row{
     grid-template-columns:1fr!important;
   }

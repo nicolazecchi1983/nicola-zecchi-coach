@@ -22,14 +22,7 @@
   :root { --staff-viewport-height: 100dvh; }
 }
 
-/* Shared primitives are opt-in during M1 migration. */
-.staff-responsive-page {
-  width: 100%;
-  min-width: 0;
-  padding-inline: var(--staff-page-gutter);
-  box-sizing: border-box;
-}
-
+/* Shared responsive primitives retained after Page Shell canonicalization. */
 .staff-responsive-actions {
   display: flex;
   align-items: center;
@@ -559,9 +552,6 @@
   }
 
   /* ---------- MATCH SURFACES: use the viewport ---------- */
-  .match-native-legacy-host,
-  .match-native-legacy-host .match-editor,
-  .match-native-legacy-host .match-step,
   .match-squad-step,
   .match-analysis-view,
   .match-opponent-study-view,
@@ -575,7 +565,6 @@
     box-sizing: border-box;
   }
 
-  .match-native-legacy-host .match-step.staff-card,
   .callups-panel {
     padding: 15px !important;
     border-radius: 16px;
@@ -1411,25 +1400,11 @@
 
 @media (max-width: 760px) {
   :root {
-    --match-mobile-content-bleed: 10px;
     --match-mobile-token-size: clamp(30px, 8.6vw, 36px);
   }
 
-  /* Preserve page/header alignment but reclaim nested legacy padding for the
-     actual team work surface. */
-  .match-native-section .match-native-legacy-host {
-    width: calc(100% + (var(--match-mobile-content-bleed) * 2));
-    max-width: none;
-    margin-inline: calc(var(--match-mobile-content-bleed) * -1);
-    box-sizing: border-box;
-  }
-
-  .match-native-legacy-host .match-step.staff-card {
-    width: 100% !important;
-    max-width: none !important;
-    padding: 12px !important;
-    box-sizing: border-box;
-  }
+  /* R2.6C: Match compatibility geometry is neutralized by Match Workspace.
+     Global responsive no longer compensates it with negative page bleed. */
 
   /* Both team pitches own the full content width and share the same visual
      scale. */
@@ -1455,21 +1430,8 @@
 
 }
 
-@media (max-width: 390px) {
-  :root {
-    --match-mobile-content-bleed: 8px;
-  }
-
-}
-
-
-/* M1.3G — equal team surfaces + one-row color contract */
+/* M1.3G — shared team visual controls */
 @media(max-width:760px){
-  .match-native-legacy-host--our-team,
-  .match-native-legacy-host--opponent{
-    width:calc(100% + (var(--match-mobile-content-bleed) * 2));
-    margin-inline:calc(var(--match-mobile-content-bleed) * -1)
-  }
   .staff-color-picker{width:100%;box-sizing:border-box}
   .staff-color-swatches{overflow:visible}
 }

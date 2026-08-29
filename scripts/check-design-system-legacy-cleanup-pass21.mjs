@@ -9,7 +9,7 @@ const checks = [
   ['canonical workspace owner contains legacy workspace header', workspace.includes('.match-workspace-header')],
   ['canonical workspace owner contains workflow tabs', workspace.includes('.match-workspace-tabs')],
   ['canonical workspace owner contains shared match context geometry', workspace.includes('.match-context-page-head') && workspace.includes('.match-context-back')],
-  ['canonical workspace owner contains native compatibility geometry', workspace.includes('.match-native-surface .match-editor')],
+  ['canonical workspace owner neutralizes native compatibility geometry', workspace.includes('runtime compatibility remains; page geometry does not.') && workspace.includes('.match-native-surface .match-editor')],
   ['statistics owner exists', stats.includes('.match-statistics') && stats.includes('.match-stat-summary')],
   ['statistics owner contains sanctions presentation', stats.includes('.match-sanction-totals') && stats.includes('.match-sanction-breakdown')],
   ['legacy style no longer owns Match Workspace presentation', !/\.match-workspace(?:\s|[-:{])/.test(legacy)],

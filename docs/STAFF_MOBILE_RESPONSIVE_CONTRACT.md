@@ -183,3 +183,26 @@ Permanent color contract:
 - own-team and opponent football tokens share a restrained ring, depth and number-legibility language across desktop and mobile;
 - the our-team workflow label resolves dynamically from configured team identity and is never hardcoded to a club;
 - no Match persistence schema, route, formation schema or roster source is changed.
+
+
+## R2.6 — Canonical Mobile Width Ownership
+
+R2.6 consolidates the responsive architecture around one outer-page geometry owner.
+
+- `#viewRoot` in `pageShell.css` is the single owner of page max-width, horizontal gutter and page safe-area adaptation.
+- Product, workspace and domain wrappers inherit the available width and must not create a second page gutter.
+- Layout containers own grid/flex/gap; surfaces own background/border/radius/internal padding; controls own interaction geometry.
+- Compatibility wrappers must progressively become geometry-neutral instead of being corrected by negative bleed or source-order overrides.
+- Domain mobile behavior belongs to the domain owner unless it is genuinely cross-product shell behavior.
+- Dead responsive primitives and obsolete aliases are removed rather than kept as dormant parallel contracts.
+- R2.6 structural cleanup must preserve domain logic, persistence, routes and permissions.
+
+## R2.6C — Match compatibility geometry neutralization
+
+The Match compatibility editor may remain mounted while runtime extraction is still incomplete, but its wrappers are not page/layout owners.
+
+- `match-native-legacy-host`, `.match-editor`, the compatibility form and the active legacy `.match-step.staff-card` are runtime hooks only inside native Match sections.
+- Their outer width/margin/padding/border/background/shadow geometry is neutralized by the Match Workspace owner.
+- Native domain roots (`.match-squad-step`, `.match-opponent-step`) own section layout and real surfaces own internal padding.
+- The final global responsive layer must not compensate Match with negative inline bleed or a second compatibility-step padding owner.
+- Runtime hooks, hidden legacy steps/footer controls, persistence, formation state and report behavior remain unchanged until a dedicated runtime extraction release.

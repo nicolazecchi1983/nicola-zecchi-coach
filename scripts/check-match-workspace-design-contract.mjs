@@ -14,7 +14,7 @@ const checks=[
  ['one shared max-width token governs workspace',css.includes('--match-workspace-max:var(--product-page-max)')&&product.includes('--product-page-max:var(--staff-product-content-max)')],
  ['desktop navigation uses seven equal columns',css.includes('--product-nav-columns:7')&&product.includes('grid-template-columns:repeat(var(--product-nav-columns, 6),minmax(0,1fr))!important')],
  ['labels remain inside their own tabs',product.includes('overflow:hidden!important')&&product.includes('white-space:normal!important')],
- ['native legacy geometry is neutralized inside shell',css.includes('.match-native-surface .match-step.staff-card')&&css.includes('margin:0!important')],
+ ['native legacy geometry is neutralized inside shell',css.includes('R2.6C — runtime compatibility remains; page geometry does not.')&&/\.match-native-surface \.match-step\.staff-card\{[\s\S]*?padding:0!important[\s\S]*?border-radius:0!important/.test(css)],
  ['post-match workspace keeps canonical status surface while section owner is domain-local',css.includes('.match-workspace-shell .post-match-status-row')],
  ['report empty state uses canonical surface geometry',css.includes('.match-workspace-shell .match-report-workspace-empty')],
  ['medium navigation uses 4-column fallback',css.includes('--product-nav-tablet-columns:4')&&product.includes('var(--product-nav-tablet-columns, 4)')],

@@ -3,6 +3,7 @@ import fs from 'node:fs'
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
 const foundation = fs.readFileSync('src/design-system/tokens.css', 'utf8')
 const main = fs.readFileSync('src/main.js', 'utf8')
+const pageShell = fs.readFileSync('src/design-system/pageShell.css', 'utf8')
 const contract = fs.readFileSync('docs/STAFF_MOBILE_RESPONSIVE_CONTRACT.md', 'utf8')
 
 const checks = [
@@ -15,7 +16,8 @@ const checks = [
   ['Safe-area variables are centralized', responsive.includes('--staff-safe-bottom: env(safe-area-inset-bottom, 0px)')],
   ['Dynamic viewport fallback exists', responsive.includes('--staff-viewport-height: 100vh') && responsive.includes('100dvh')],
   ['Shared responsive actions primitive exists', responsive.includes('.staff-responsive-actions')],
-  ['Shared responsive page primitive exists', responsive.includes('.staff-responsive-page')],
+  ['Page Shell owns canonical outer page geometry', pageShell.includes('#viewRoot') && pageShell.includes('padding: var(--staff-page-top) var(--staff-page-inline) var(--staff-page-bottom)')],
+  ['Dead responsive page primitive is retired', !responsive.includes('.staff-responsive-page')],
   ['Contract forbids horizontal-scroll-as-default', contract.includes('Horizontal scrolling is an explicit interaction choice')],
   ['Contract protects domain and persistence', contract.includes('must not alter domain logic')],
   ['PWA is gated after mobile readiness', contract.includes('PWA work starts only after')],
@@ -35,5 +37,5 @@ for (const file of cssFiles) {
   for (const match of css.matchAll(/@media\s*\((?:max|min)-width:\s*([0-9]+)px\)/g)) legacyBreakpoints.add(Number(match[1]))
 }
 console.log(`\nLegacy breakpoint inventory: ${[...legacyBreakpoints].sort((a,b)=>a-b).join(', ')}`)
-console.log(`M1.1 Mobile Responsive Foundation: ${passed}/${checks.length}`)
+console.log(`R2.6A Mobile Responsive Foundation: ${passed}/${checks.length}`)
 if (passed !== checks.length) process.exit(1)

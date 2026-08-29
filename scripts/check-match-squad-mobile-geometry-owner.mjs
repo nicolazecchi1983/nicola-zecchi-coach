@@ -23,7 +23,7 @@ const checks = [
   ['pitch element margin preserved', /\[data-football-pitch\]\s*\{[\s\S]*?margin:\s*0/.test(slice)],
   ['pitch element border-box preserved', /\[data-football-pitch\]\s*\{[\s\S]*?box-sizing:\s*border-box/.test(slice)],
   ['R3.4F actions remain local', slice.includes('.match-squad-step .pitch-panel-actions')],
-  ['global responsive keeps Match shell bleed', responsive.includes('--match-mobile-content-bleed')],
+  ['global responsive no longer owns Match shell bleed', !responsive.includes('--match-mobile-content-bleed') && !responsive.includes('.match-native-legacy-host--our-team,')],
   ['Match Squad has no important escalation', !squadCss.includes('!important')],
 ]
 let passed=0
