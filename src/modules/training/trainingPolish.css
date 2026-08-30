@@ -758,3 +758,39 @@
     letter-spacing: normal;
   }
 }
+
+/* ================================================================
+   R2.6W — TRAINING MOBILE PHASE SINGLE OWNER · CLUSTER 9
+   Final Step 4 mobile geometry migrated unchanged from responsive.css.
+   This block intentionally follows R2.6L so current cascade is preserved.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-phases-editor {
+    width: 100%;
+    max-width: none;
+  }
+
+  .ts-manual-editor .ts-phase-editor {
+    padding-inline: var(--staff-space-3);
+    padding-block: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-add-phase,
+  .ts-manual-editor .ts-split-phase-button,
+  .ts-manual-editor .ts-remove-phase-button {
+    min-height: var(--staff-touch-target);
+  }
+
+  .ts-manual-editor .ts-phase-editor-head {
+    align-items: center;
+    gap: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-phase-editor-actions {
+    margin-left: auto;
+  }
+
+  .ts-manual-editor .ts-phase-meta-fields {
+    grid-template-columns: 1fr;
+  }
+}

@@ -15,7 +15,7 @@ const checks = [
  ['Training domain owns compact parallel heading', domain.includes('@media (max-width: 390px)') && domain.includes('.ts-parallel-work-head')],
  ['superseded M1.3C phase geometry owner is fully retired from global responsive', !beforeMatchTeam.includes('M1.3C — TRAINING MOBILE COMMAND ROW + PHASE WIDTH') && !beforeMatchTeam.includes('.ts-manual-editor .ts-phase-editor')],
  ['redundant 430px Training phase-meta media block is retired', !responsive.includes('@media (max-width: 430px) {\n  .ts-manual-editor .ts-phase-meta-fields')],
- ['DS2.3 remains canonical mobile phase-meta owner', responsive.includes('DS2.3 — TRAINING POLISH MOBILE ADAPTATION') && responsive.includes('.ts-manual-editor .ts-phase-meta-fields {\n    grid-template-columns: 1fr;')],
+ ['Training domain is canonical mobile phase-meta owner', domain.includes('R2.6W — TRAINING MOBILE PHASE SINGLE OWNER · CLUSTER 9') && domain.includes('.ts-manual-editor .ts-phase-meta-fields') && domain.includes('grid-template-columns: 1fr;') && !responsive.includes('.ts-manual-editor .ts-phase-meta-fields')],
  ['no important escalation in migrated domain layer', !domain.includes('!important')],
 ]
 let passed=0
