@@ -23,7 +23,8 @@ const forbidden = [
 const checks = [
   ['legacy layers no longer own Training command selectors', forbidden.every((s) => !legacy.includes(s))],
   ['canonical desktop owner exists', owner.includes('.ts-manual-editor .ts-editor-actions-wrap') && owner.includes('.ts-manual-editor .ts-command-actions')],
-  ['canonical mobile owner exists', responsive.includes('.ts-manual-editor .ts-command-actions') && responsive.includes('grid-template-columns: minmax(0, 1fr) auto')],
+  ['canonical mobile owner exists', owner.includes('R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8') && owner.includes('.ts-manual-editor .ts-command-actions') && owner.includes('grid-template-columns: minmax(0, 1fr) auto')],
+  ['global responsive no longer owns Training command geometry', !responsive.includes('.ts-manual-editor .ts-command-actions') && !responsive.includes('.ts-manual-editor .ts-editor-actions-wrap')],
   ['command owner loads after Training polish', main.indexOf("./modules/training/trainingCommandBar.css") > main.indexOf("./modules/training/trainingPolish.css")],
   ['responsive final loads after command owner', main.indexOf("./design-system/responsive.css") > main.indexOf("./modules/training/trainingCommandBar.css")],
   ['canonical owner has no important overrides', !owner.includes('!important')],

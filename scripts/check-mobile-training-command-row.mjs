@@ -1,6 +1,6 @@
 import fs from 'node:fs'
-const css = fs.readFileSync('src/design-system/responsive.css','utf8')
-const start = css.indexOf('DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER')
+const css = fs.readFileSync('src/modules/training/trainingCommandBar.css','utf8')
+const start = css.indexOf('R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8')
 const command = css.slice(start)
 const checks = [
   ['canonical command row exists', start >= 0],

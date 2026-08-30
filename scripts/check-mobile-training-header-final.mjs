@@ -1,8 +1,9 @@
 import fs from 'node:fs'
 const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
 const polish = fs.readFileSync('src/modules/training/trainingPolish.css','utf8')
-const start = responsive.indexOf('DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER')
-const layer = responsive.slice(start)
+const commandBar = fs.readFileSync('src/modules/training/trainingCommandBar.css','utf8')
+const start = commandBar.indexOf('R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8')
+const layer = commandBar.slice(start)
 const headerStart = polish.indexOf('R2.6K — TRAINING MOBILE HEADER OWNERSHIP · CLUSTER 2')
 const header = polish.slice(headerStart)
 const checks = [

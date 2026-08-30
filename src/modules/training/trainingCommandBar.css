@@ -1,6 +1,6 @@
 /* STAFF DS2.3 — Training Command Bar structural owner
    Canonical DOM: elastic select + indivisible action cluster.
-   Mobile geometry is finalized by responsive.css. Scope: presentation only. */
+   Desktop and mobile geometry are owned here. Scope: presentation only. */
 
 .ts-manual-editor .ts-editor-actions-wrap {
   display: grid;
@@ -98,4 +98,131 @@
 
 @media (max-width: 1260px) {
   .ts-manual-editor .ts-editor-actions-wrap { justify-self: start; }
+}
+/* ================================================================
+   R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8
+   Mobile geometry migrated unchanged from responsive.css.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-editor-actions-wrap {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    justify-self: stretch;
+  }
+
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 44px 24px;
+    align-items: center;
+    column-gap: 6px;
+    row-gap: 4px;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-open-sheet {
+    grid-column: 1;
+    grid-row: 1;
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .ts-manual-editor .ts-open-sheet select {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 27px 0 10px;
+    font-size: .80rem;
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ts-manual-editor .ts-command-actions {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    width: max-content;
+    min-width: 0;
+  }
+
+  .ts-manual-editor .ts-open-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .ts-manual-editor .ts-open-button-label { display: none; }
+
+  .ts-manual-editor .ts-open-button-icon {
+    display: inline-flex;
+    width: 19px;
+    height: 19px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ts-manual-editor .ts-open-button-icon svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ts-manual-editor .ts-more-menu,
+  .ts-manual-editor .ts-more-button {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ts-manual-editor .ts-draft-state--compact {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+    align-self: start;
+    width: auto;
+    max-width: 100%;
+    min-height: 20px;
+    margin: 0;
+    padding: 2px 7px;
+    font-size: .64rem;
+    line-height: 1.2;
+    transform: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .ts-manual-editor .ts-editor-actions-wrap .ts-editor-actions {
+    column-gap: 5px;
+  }
+
+  .ts-manual-editor .ts-open-sheet select {
+    padding-inline: 9px 25px;
+    font-size: .77rem;
+  }
 }

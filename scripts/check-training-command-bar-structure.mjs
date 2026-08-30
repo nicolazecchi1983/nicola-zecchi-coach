@@ -7,10 +7,10 @@ const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
 const legacyEditor = fs.readFileSync('src/design-system/training-editor.css','utf8')
 const pkg = JSON.parse(fs.readFileSync('package.json','utf8'))
 
-const marker = 'DS2.3 — TRAINING COMMAND BAR · CANONICAL MOBILE OWNER'
-const mobile = responsive.slice(responsive.indexOf(marker))
-const canonicalIndex = responsive.indexOf(marker)
-const responsiveBeforeCanonical = responsive.slice(0, canonicalIndex)
+const marker = 'R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8'
+const mobile = base.slice(base.indexOf(marker))
+const canonicalIndex = responsive.length
+const responsiveBeforeCanonical = responsive
 const forbiddenLegacyGeometry = [
   'grid-template-columns: 1fr 48px',
   'grid-template-columns: 1fr 44px',
@@ -31,7 +31,8 @@ const checks = [
   ['desktop command row has one elastic selector plus indivisible action cluster', base.includes('grid-template-columns: minmax(0, 1fr) auto') && base.includes('.ts-command-actions')],
   ['desktop selector can shrink without overflow', base.includes('.ts-open-sheet') && base.includes('min-width: 0')],
   ['desktop draft is a separate status row', base.includes('grid-column: 1 / -1') && base.includes('grid-row: 2')],
-  ['one canonical mobile owner exists exactly once', responsive.split(marker).length - 1 === 1],
+  ['one canonical mobile owner exists exactly once', base.split(marker).length - 1 === 1],
+  ['global responsive no longer owns command selectors', !responsive.includes('.ts-manual-editor .ts-editor-actions-wrap') && !responsive.includes('.ts-manual-editor .ts-command-actions') && !responsive.includes('.ts-manual-editor .ts-open-sheet')],
   ['legacy mobile command owners were removed', legacyMarkers.every((item) => !responsive.includes(item))],
   ['pre-canonical responsive layer no longer owns command geometry', forbiddenLegacyGeometry.every((item) => !responsiveBeforeCanonical.includes(item))],
   ['legacy Training editor no longer owns command grid geometry', !legacyEditor.includes('grid-template-columns: 1fr 48px') && !legacyEditor.includes('grid-template-columns: 1fr 44px') && !legacyEditor.includes('grid-template-columns: minmax(300px, 1fr) 96px 44px')],
