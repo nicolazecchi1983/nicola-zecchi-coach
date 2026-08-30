@@ -14,7 +14,7 @@ const checks = [
   ['mobile titlebar spacing is Training-domain owned', owner.includes('.ts-manual-editor .ts-editor-titlebar') && owner.includes('margin-bottom: var(--staff-space-3)')],
   ['mobile subtitle typography is Training-domain owned', owner.includes('.ts-editor-titlebar > div:first-child > p') && owner.includes('font-size: .79rem')],
   ['compact subtitle tier is Training-domain owned', owner.includes('@media (max-width: 390px)') && owner.includes('font-size: .73rem')],
-  ['global DS2.3 adaptation no longer owns titlebar geometry', !responsive.slice(responsive.indexOf('DS2.3 — TRAINING POLISH MOBILE ADAPTATION')).includes('.ts-editor-titlebar')],
+  ['global responsive no longer owns titlebar geometry', !responsive.includes('.ts-manual-editor .ts-editor-titlebar')],
   ['command layer no longer owns titlebar or subtitle', !command.includes('.ts-editor-titlebar')],
   ['command layer still owns mobile command geometry', command.includes('.ts-editor-actions-wrap') && command.includes('.ts-command-actions')],
   ['no important escalation in Training polish', !polish.includes('!important')],

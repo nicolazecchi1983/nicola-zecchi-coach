@@ -20,7 +20,7 @@ add('global responsive no longer owns phases editor',!responsive.includes('.ts-m
 add('global responsive no longer owns phase editor',!responsive.includes('.ts-manual-editor .ts-phase-editor'));
 add('global responsive no longer owns phase actions',!responsive.includes('.ts-manual-editor .ts-add-phase')&&!responsive.includes('.ts-manual-editor .ts-split-phase-button')&&!responsive.includes('.ts-manual-editor .ts-remove-phase-button'));
 add('global responsive no longer owns phase metadata',!responsive.includes('.ts-manual-editor .ts-phase-meta-fields'));
-add('global responsive still preserves session-grid mobile adaptation',responsive.includes('.ts-manual-editor .ts-session-grid')&&responsive.includes('grid-template-columns: 1fr;')&&responsive.includes('padding-inline: var(--staff-space-3);'));
+add('global responsive no longer owns session-grid mobile adaptation',!responsive.includes('.ts-manual-editor .ts-session-grid'));
 add('phase owner introduces no important escalation',!owner.includes('!important'));
 add('phase owner does not absorb session-grid ownership',!owner.includes('.ts-session-grid'));
 add('phase owner does not absorb preview-summary ownership',!owner.includes('.ts-preview-stage')&&!owner.includes('.ts-summary-head'));

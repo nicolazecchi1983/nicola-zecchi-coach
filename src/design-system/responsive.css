@@ -1307,27 +1307,3 @@
   .staff-color-picker{width:100%;box-sizing:border-box}
   .staff-color-swatches{overflow:visible}
 }
-
-/* ================================================================
-   DS2.3 — TRAINING POLISH MOBILE ADAPTATION
-   Mobile is a field-side workflow: full-width controls, progressive disclosure,
-   stable 48px targets and no horizontal compression.
-   ================================================================ */
-@media (max-width: 760px) {
-  .ts-manual-editor .ts-session-grid {
-    width: 100%;
-    max-width: none;
-    grid-template-columns: 1fr;
-    padding-inline: var(--staff-space-3);
-  }
-
-  .ts-manual-editor .ts-preview-stage,
-  .ts-manual-editor .ts-summary-head {
-    width: 100%;
-  }
-
-  /* Training Summary toolbar/actions responsive geometry is owned by training-editor.css (R1.4F). */
-
-
-  /* R2.6M: Training step-footer mobile geometry moved to the Training domain owner. */
-}

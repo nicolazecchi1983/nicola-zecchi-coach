@@ -760,6 +760,25 @@
 }
 
 /* ================================================================
+   R2.6Z — TRAINING MOBILE SESSION + PREVIEW OWNERSHIP · CLUSTER 10
+   Final mobile geometry migrated unchanged from responsive.css.
+   Session and Step 06 preview remain domain-owned; Match Day is excluded.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-session-grid {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: 1fr;
+    padding-inline: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-preview-stage,
+  .ts-manual-editor .ts-summary-head {
+    width: 100%;
+  }
+}
+
+/* ================================================================
    R2.6W — TRAINING MOBILE PHASE SINGLE OWNER · CLUSTER 9
    Final Step 4 mobile geometry migrated unchanged from responsive.css.
    This block intentionally follows R2.6L so current cascade is preserved.

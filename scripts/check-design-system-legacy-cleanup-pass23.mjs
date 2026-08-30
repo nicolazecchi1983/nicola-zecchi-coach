@@ -6,6 +6,7 @@ const editor = fs.readFileSync('src/design-system/training-editor.css', 'utf8')
 const polish = fs.readFileSync('src/modules/training/trainingPolish.css', 'utf8')
 const command = fs.readFileSync('src/modules/training/trainingCommandBar.css', 'utf8')
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
+const main = fs.readFileSync('src/main.js', 'utf8')
 
 const checks = [
   ['legacy V6.1 marker removed', !style.includes('/* TRAINING SHEET EDITOR V6.1 */')],
@@ -19,7 +20,7 @@ const checks = [
   ['canonical editor owner exists', editor.includes('.ts-workspace--steps') && editor.includes('.ts-phases-editor')],
   ['training polish owner exists', polish.includes('.ts-manual-editor')],
   ['command bar owner exists', command.includes('.ts-command-actions')],
-  ['responsive remains final adaptive owner', responsive.includes('.ts-manual-editor') || responsive.includes('.ts-editor-actions')],
+  ['responsive remains final adaptive layer', main.indexOf("./modules/training/trainingCommandBar.css") < main.indexOf("./design-system/responsive.css") && main.indexOf("./modules/training/trainingPolish.css") < main.indexOf("./design-system/responsive.css")],
 ]
 
 let passed = 0
