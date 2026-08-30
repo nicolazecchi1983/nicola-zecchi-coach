@@ -1315,29 +1315,23 @@
    ================================================================ */
 @media (max-width: 760px) {
   .ts-manual-editor .ts-session-grid,
-  .ts-manual-editor .ts-phases-editor,
-  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
-  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  .ts-manual-editor .ts-phases-editor {
     width: 100%;
     max-width: none;
   }
 
-  .ts-manual-editor .ts-session-grid,
-  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  .ts-manual-editor .ts-session-grid {
     grid-template-columns: 1fr;
   }
 
   .ts-manual-editor .ts-session-grid,
-  .ts-manual-editor .ts-phase-editor,
-  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
-  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+  .ts-manual-editor .ts-phase-editor {
     padding-inline: var(--staff-space-3);
   }
 
   .ts-manual-editor .ts-add-phase,
   .ts-manual-editor .ts-split-phase-button,
-  .ts-manual-editor .ts-remove-phase-button,
-  .ts-manual-editor .ts-pillar span {
+  .ts-manual-editor .ts-remove-phase-button {
     min-height: var(--staff-touch-target);
   }
 
@@ -1356,18 +1350,6 @@
 
   .ts-manual-editor .ts-phase-meta-fields {
     grid-template-columns: 1fr;
-  }
-
-  .ts-manual-editor .ts-pillars {
-    grid-template-columns: 1fr;
-  }
-
-  .ts-manual-editor .ts-ai-button {
-    width: 100%;
-  }
-
-  .ts-manual-editor .ts-ai-note {
-    margin-top: calc(var(--staff-space-2) * -1);
   }
 
   .ts-manual-editor .ts-preview-stage,

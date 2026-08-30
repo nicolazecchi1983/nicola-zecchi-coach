@@ -493,6 +493,40 @@
 }
 
 /* ================================================================
+   R2.6P — TRAINING MOBILE STEP 5 OWNERSHIP · CLUSTER 7
+   Principles + analysis mobile geometry belongs to the Training domain.
+   Values migrated unchanged from DS2.3 global responsive adaptation.
+   ================================================================ */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+    width: 100%;
+    max-width: none;
+    padding-inline: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-pillars {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-pillar span {
+    min-height: var(--staff-touch-target);
+  }
+
+  .ts-manual-editor .ts-ai-button {
+    width: 100%;
+  }
+
+  .ts-manual-editor .ts-ai-note {
+    margin-top: calc(var(--staff-space-2) * -1);
+  }
+}
+
+/* ================================================================
    R2.6O — TRAINING MOBILE STEP 3 OWNERSHIP · CLUSTER 6
    Match Day + Load mobile geometry belongs to the Training domain.
    Values migrated unchanged from DS2.3 global responsive adaptation.
