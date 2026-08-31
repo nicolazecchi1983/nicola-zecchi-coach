@@ -2,7 +2,7 @@ import fs from 'node:fs'
 
 const main = fs.readFileSync('src/main.js', 'utf8')
 const appShell = fs.readFileSync('src/design-system/appShell.css', 'utf8')
-const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
+const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8').replace(/\r\n/g, '\n')
 const legacy = fs.readFileSync('src/style.css', 'utf8')
 const polish = fs.readFileSync('src/design-system/polish.css', 'utf8')
 
