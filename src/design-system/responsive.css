@@ -496,27 +496,6 @@
     white-space: normal !important;
   }
 
-  /* ---------- TRAINING: Match Day wraps, never horizontal scroll ---------- */
-  .ts-match-day-block {
-    padding: 14px !important;
-  }
-
-  .ts-md-selector {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 7px !important;
-    overflow: visible !important;
-    width: 100%;
-  }
-
-  .ts-md-selector button {
-    width: 100%;
-    min-width: 0;
-    min-height: 44px;
-    padding-inline: 5px;
-    font-size: .66rem;
-  }
-
   /* ---------- MATCH WORKSPACE: all steps readable, no clipped horizontal strip ---------- */
   .match-workspace-tabs {
     display: grid !important;
@@ -853,9 +832,6 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  .ts-md-selector {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  }
 }
 
 

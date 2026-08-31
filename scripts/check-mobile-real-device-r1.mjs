@@ -9,6 +9,7 @@ const pkg = JSON.parse(fs.readFileSync('package.json','utf8'))
 const printPage = fs.readFileSync('public/print.html','utf8')
 const boardEvents = fs.readFileSync('src/modules/board/events/boardEvents.js','utf8')
 const squadCss = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
+const trainingPolish = fs.readFileSync('src/modules/training/trainingPolish.css','utf8')
 
 const r1 = responsive.slice(responsive.indexOf('M1.2-R1 — REAL DEVICE MOBILE CORRECTIVE'))
 const releaseVersion = String(pkg.version || '').replace(/-.+$/, '')
@@ -16,7 +17,7 @@ const checks = [
   ['versione R1 o successiva', /^0\.(?:18\.(?:4[0-9]|[5-9][0-9])|(?:19|[2-9][0-9])\.\d+)$/.test(releaseVersion)],
   ['dashboard mostra identità squadra', dashboard.includes("team.name || 'Squadra'")],
   ['Altro forza label visibili', r1.includes('.mobile-more-grid .mobile-more-item .mobile-nav-label') && r1.includes('visibility: visible !important')],
-  ['Match Day senza scroll orizzontale', r1.includes('.ts-md-selector') && r1.includes('grid-template-columns: repeat(3') && r1.includes('overflow: visible !important')],
+  ['Match Day senza scroll orizzontale dal domain owner', trainingPolish.includes('R2.7C — MATCH DAY SINGLE OWNER · CLUSTER 11') && trainingPolish.includes('.ts-manual-editor .ts-md-selector') && trainingPolish.includes('grid-template-columns: repeat(3') && trainingPolish.includes('overflow: visible;') && !r1.includes('.ts-md-selector')],
   ['Match navigation non scrollabile', productUi.includes('.product-section-nav') && productUi.includes('display:grid!important') && productUi.includes('overflow:visible!important')],
   ['counter convocazioni in flow', r1.includes('.callups-counter') && r1.includes('position: static !important')],
   ['pitch sfrutta tutta larghezza dal domain owner', squadCss.includes('.match-squad-step .pitch-panel [data-football-pitch]') && squadCss.includes('width: 100%;') && !r1.includes('.match-squad-step .pitch-panel [data-football-pitch]')],

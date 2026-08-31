@@ -22,8 +22,8 @@ add('retired DS2.3 Training mobile marker is gone',!responsive.includes('DS2.3 �
 add('owner introduces no important escalation',!owner.includes('!important'));
 add('owner does not absorb Match Day',!owner.includes('.ts-match-day-block')&&!owner.includes('.ts-md-selector'));
 add('owner does not absorb phase geometry',!owner.includes('.ts-phase-editor')&&!owner.includes('.ts-phases-editor'));
-add('global legacy Match Day remains intentionally untouched',responsive.includes('.ts-match-day-block')&&responsive.includes('.ts-md-selector'));
-add('global Match Day important contract remains untouched',responsive.includes('.ts-md-selector')&&responsive.includes('grid-template-columns: repeat(3, minmax(0, 1fr)) !important;'));
+add('global legacy Match Day owner is retired',!responsive.includes('.ts-match-day-block')&&!responsive.includes('.ts-md-selector'));
+add('Match Day ownership moved forward to R2.7C domain owner',polish.includes('R2.7C — MATCH DAY SINGLE OWNER · CLUSTER 11'));
 add('R2.6W phase marker remains after Cluster 10',polish.indexOf('R2.6W — TRAINING MOBILE PHASE SINGLE OWNER · CLUSTER 9')>s);
 add('Pass23 no longer requires Training selectors in responsive',!pass23.includes("responsive.includes('.ts-manual-editor') || responsive.includes('.ts-editor-actions')"));
 add('Pass23 now verifies real final responsive load order',pass23.includes('responsive remains final adaptive layer')&&pass23.includes('trainingCommandBar.css')&&pass23.includes('responsive.css'));
