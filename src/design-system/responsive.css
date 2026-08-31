@@ -836,6 +836,87 @@
 
 
 /* ================================================================
+   R2.7G — TABLET NAVIGATION SHELL CONTRACT
+   761–1100 uses the existing STAFF drawer DOM/events.
+   Content/domain breakpoints remain unchanged.
+   No overflow masking. No runtime changes.
+   ================================================================ */
+@media (max-width: 1100px) and (min-width: 761px) {
+  .app-shell {
+    display: block;
+    min-height: var(--staff-viewport-height);
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .workspace {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--staff-viewport-height);
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: var(--staff-touch-target) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mobile-menu-trigger {
+    display: grid;
+    width: var(--staff-touch-target);
+    height: var(--staff-touch-target);
+    min-width: var(--staff-touch-target);
+    min-height: var(--staff-touch-target);
+    place-items: center;
+    padding: 0;
+  }
+
+  .mobile-drawer-shell {
+    position: fixed;
+    z-index: 120;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .mobile-drawer-shell.is-open {
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mobile-drawer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: min(42vw, 360px);
+    max-width: calc(100vw - 44px);
+    box-sizing: border-box;
+  }
+
+  .mobile-drawer-shell.is-open .mobile-drawer {
+    transform: translateX(0);
+  }
+
+  .mobile-drawer .mobile-drawer-item.nav-item .mobile-drawer-item__label {
+    display: block;
+  }
+}
+
+/* ================================================================
    M1.3A — MOBILE NAVIGATION DRAWER
    Permanent mobile contract:
    desktop = persistent sidebar

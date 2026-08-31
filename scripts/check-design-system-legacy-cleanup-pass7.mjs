@@ -20,7 +20,7 @@ const checks = [
   ['Polish no longer owns app chrome', !forbidden.test(polish)],
   ['Training domain no longer owns app chrome', !forbidden.test(training)],
   ['Canonical app shell has no important escalation', !appShell.includes('!important')],
-  ['Canonical app shell uses only the documented legacy compact-desktop breakpoint', [...appShell.matchAll(/@media\s*\(([^)]*)\)(?:\s*and\s*\(([^)]*)\))?/g)].every(([, a, b]) => `${a} ${b || ''}`.includes('1100px') && `${a} ${b || ''}`.includes('761px'))],
+  ['Canonical app shell has no intermediate compact-sidebar breakpoint', !appShell.includes('@media (max-width: 1100px) and (min-width: 761px)')],
   ['Canonical app shell consumes DS tokens', appShell.includes('var(--staff-color-bg-header)') && appShell.includes('var(--staff-color-border-subtle)')],
 ]
 
