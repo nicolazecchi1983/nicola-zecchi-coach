@@ -438,17 +438,12 @@
   }
 
   /* Mobile page hierarchy: no desktop-sized hero typography. */
-  .page-head,
-  .match-context-page-head,
-  .match-workspace-title-row {
+  .page-head {
     gap: 12px;
     margin-top: 0;
   }
 
-  .page-head h1,
-  .match-context-page-head h1,
-  .match-workspace-title-row h1,
-  .content-section > header.page-head h1 {
+  .page-head h1, .content-section > header.page-head h1 {
     margin-top: 0;
     font-size: var(--staff-mobile-page-title-size, clamp(1.82rem, 8.8vw, 2.35rem)) !important;
     line-height: .98 !important;
@@ -457,10 +452,7 @@
     word-break: normal;
   }
 
-  .page-head p,
-  .match-context-page-head p,
-  .match-workspace-title-row p,
-  .section-title p {
+  .page-head p, .section-title p {
     display: -webkit-box;
     overflow: hidden;
     margin-top: 7px;
@@ -471,9 +463,7 @@
     -webkit-line-clamp: 2;
   }
 
-  .page-head p span,
-  .match-context-page-head p span,
-  .match-workspace-title-row .eyebrow {
+  .page-head p span {
     font-size: .68rem !important;
     letter-spacing: .11em;
   }
@@ -497,38 +487,7 @@
   }
 
   /* ---------- MATCH WORKSPACE: all steps readable, no clipped horizontal strip ---------- */
-  .match-workspace-tabs {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    width: 100%;
-    overflow: visible !important;
-    padding-bottom: 0;
-    scrollbar-width: none;
-  }
 
-  .match-workspace-tabs button {
-    justify-content: flex-start;
-    width: 100%;
-    min-width: 0;
-    min-height: 48px;
-    padding: 8px 10px;
-    border-radius: 12px;
-    font-size: .72rem;
-    line-height: 1.12;
-    white-space: normal;
-    text-align: left;
-  }
-
-  .match-workspace-tabs button b {
-    flex: 0 0 auto;
-  }
-
-  .match-context-back,
-  .match-head-tools .match-context-back {
-    min-height: 46px;
-    font-size: .78rem;
-  }
 
   /* ---------- MATCH SURFACES: use the viewport ---------- */
   .match-squad-step,
@@ -821,16 +780,10 @@
 }
 
 @media (max-width: 390px) {
-  .page-head h1,
-  .match-context-page-head h1,
-  .match-workspace-title-row h1,
-  .content-section > header.page-head h1 {
+  .page-head h1, .content-section > header.page-head h1 {
     font-size: clamp(1.65rem, 8.4vw, 2.08rem) !important;
   }
 
-  .match-workspace-tabs {
-    grid-template-columns: 1fr 1fr;
-  }
 
 }
 
@@ -1213,12 +1166,10 @@
    ================================================================ */
 
 
-
 @media (max-width: 760px) {
     :root {
     --staff-mobile-topbar-height: 56px;
   }
-
 
 
   .topbar {
@@ -1235,11 +1186,6 @@
       max(var(--staff-page-gutter), var(--staff-safe-left));
     background: var(--staff-color-bg-header);
   }
-
-
-
-
-
 
 
   .topbar-context {
