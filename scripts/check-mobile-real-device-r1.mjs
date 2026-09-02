@@ -2,6 +2,7 @@ import fs from 'node:fs'
 const productUi=fs.readFileSync('src/design-system/productUi.css','utf8')
 
 const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
+const callupsOwner = fs.readFileSync('src/modules/match/ui/callups.css','utf8')
 const shell = fs.readFileSync('src/app/appShellView.js','utf8')
 const controller = fs.readFileSync('src/app/appController.js','utf8')
 const dashboard = fs.readFileSync('src/modules/dashboard/dashboardView.js','utf8')
@@ -19,7 +20,7 @@ const checks = [
   ['Altro forza label visibili', r1.includes('.mobile-more-grid .mobile-more-item .mobile-nav-label') && r1.includes('visibility: visible !important')],
   ['Match Day senza scroll orizzontale dal domain owner', trainingPolish.includes('R2.7C — MATCH DAY SINGLE OWNER · CLUSTER 11') && trainingPolish.includes('.ts-manual-editor .ts-md-selector') && trainingPolish.includes('grid-template-columns: repeat(3') && trainingPolish.includes('overflow: visible;') && !r1.includes('.ts-md-selector')],
   ['Match navigation non scrollabile', productUi.includes('.product-section-nav') && productUi.includes('display:grid!important') && productUi.includes('overflow:visible!important')],
-  ['counter convocazioni in flow', r1.includes('.callups-counter') && r1.includes('position: static !important')],
+  ['counter convocazioni in flow', /@media \(max-width: 760px\)[\s\S]*?\.callups-counter\s*\{[\s\S]*?position:\s*static\s*!important[\s\S]*?justify-self:\s*end[\s\S]*?white-space:\s*nowrap\s*!important/.test(callupsOwner)],
   ['pitch sfrutta tutta larghezza dal domain owner', squadCss.includes('.match-squad-step .pitch-panel [data-football-pitch]') && squadCss.includes('width: 100%;') && !r1.includes('.match-squad-step .pitch-panel [data-football-pitch]')],
   ['pedine campo scalano su mobile', r1.includes('.token-photo') && r1.includes('clamp(30px, 9.4vw, 38px)')],
   ['board pedine scalano', r1.includes('.board-token') && r1.includes('clamp(30px, 9vw, 38px)')],

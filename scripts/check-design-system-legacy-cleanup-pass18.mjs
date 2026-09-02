@@ -20,7 +20,15 @@ const checks = [
   ['Legacy style no longer owns Convocazioni selectors', !legacyCallupsOwner.test(legacy)],
   ['Shared surface layer still owns neutral panel convergence', surfaces.includes('.callups-panel')],
   ['Shared controls layer still owns callups field labels', controls.includes('.callups-toolbar label')],
-  ['Final responsive layer still owns real-device Callups geometry', responsive.includes('.callups-head') && responsive.includes('.callups-counter')],
+  ['Callups mobile geometry converges to owner with only approved late overrides',
+    owner.includes('@media (max-width: 760px)') &&
+    owner.includes('.callups-head') &&
+    owner.includes('.callups-counter') &&
+    !responsive.includes('.callups-counter {') &&
+    !responsive.includes('.callups-toolbar-actions button') &&
+    responsive.includes('.callups-head > div') &&
+    /\.callups-bulk-button\s*\{[^}]*min-height:\s*44px;[^}]*font-size:\s*\.72rem;[^}]*\}/s.test(responsive)
+  ],
   ['Owner does not absorb Board or Match Sheet responsibilities', !owner.includes('.board-') && !owner.includes('.match-score') && !owner.includes('.opponent-')],
 ]
 
