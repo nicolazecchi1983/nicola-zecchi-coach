@@ -490,7 +490,7 @@
 
 
   /* ---------- MATCH SURFACES: use the viewport ---------- */
-  .match-squad-step, .match-analysis-view, .match-opponent-study-view, .match-statistics, .match-report-workspace-preview {
+  .match-analysis-view, .match-opponent-study-view, .match-statistics, .match-report-workspace-preview {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -509,7 +509,6 @@
 
   /* ---------- SQUAD / OPPONENT PITCH: field first, tokens scale with it ---------- */
 
-  .match-squad-step .token-photo,
   .match-native-legacy-host .token-photo {
     width: clamp(30px, 9.4vw, 38px) !important;
     height: clamp(30px, 9.4vw, 38px) !important;
@@ -517,18 +516,12 @@
     font-size: clamp(.62rem, 3vw, .82rem) !important;
   }
 
-  .match-squad-step .player-token small,
   .match-native-legacy-host .player-token small {
     top: auto;
     max-width: 72px !important;
     padding: 2px 4px !important;
     font-size: clamp(.49rem, 2.3vw, .62rem) !important;
     line-height: 1.05;
-  }
-
-  .match-squad-step .lineup-list--selection,
-  .match-squad-step .bench-block--automatic {
-    padding: 11px !important;
   }
 
   /* Match Squad starter-row geometry is domain-owned by matchSquad.css.
@@ -1178,22 +1171,6 @@
 
   /* Both team pitches own the full content width and share the same visual
      scale. */
-
-  .match-squad-step .token-photo {
-    width: var(--match-mobile-token-size) !important;
-    height: var(--match-mobile-token-size) !important;
-    min-width: var(--match-mobile-token-size);
-    min-height: var(--match-mobile-token-size);
-    border-width: 2px !important;
-    font-size: clamp(.62rem, 2.8vw, .78rem) !important;
-  }
-
-  .match-squad-step .player-token small {
-    max-width: 64px !important;
-    padding: 2px 4px !important;
-    font-size: clamp(.47rem, 2.15vw, .59rem) !important;
-    line-height: 1.05;
-  }
 
   /* Nostra squadra leadership geometry is canonically owned by matchSquad.css (0.29.8). */
 
