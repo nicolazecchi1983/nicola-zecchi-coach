@@ -489,8 +489,8 @@
   /* ---------- MATCH WORKSPACE: all steps readable, no clipped horizontal strip ---------- */
 
 
-  /* ---------- MATCH SURFACES: use the viewport ---------- */
-  .match-analysis-view, .match-opponent-study-view, .match-statistics, .match-report-workspace-preview {
+  /* ---------- MATCH REPORT: late real-device viewport contract retained ---------- */
+  .match-report-workspace-preview {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
