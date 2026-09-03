@@ -2,6 +2,7 @@ import fs from 'node:fs'
 const productUi=fs.readFileSync('src/design-system/productUi.css','utf8')
 
 const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
+const staffCss = fs.readFileSync('src/modules/staff/staffManagement.css','utf8')
 const callupsOwner = fs.readFileSync('src/modules/match/ui/callups.css','utf8')
 const shell = fs.readFileSync('src/app/appShellView.js','utf8')
 const controller = fs.readFileSync('src/app/appController.js','utf8')
@@ -13,6 +14,20 @@ const squadCss = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
 const trainingPolish = fs.readFileSync('src/modules/training/trainingPolish.css','utf8')
 
 const r1 = responsive.slice(responsive.indexOf('M1.2-R1 — REAL DEVICE MOBILE CORRECTIVE'))
+const compactDecls = (value) => String(value || '').replace(/\s+/g, '')
+const staffMobile760Match = staffCss.match(/@media\s*\(max-width:\s*760px\)\s*\{([\s\S]*)\}\s*$/)
+const staffMobile760 = staffMobile760Match?.[1] || ''
+const staffActionRowMatch = staffMobile760.match(/\.staff-member-action-row\s*\{([^}]*)\}/)
+const staffActionRowCss = compactDecls(staffActionRowMatch?.[1] || '')
+const staffActionButtonsMatch = staffMobile760.match(/\.staff-member-action-row\s+\.primary-action\s*,\s*\.staff-member-action-row\s+\.danger-button\s*\{([^}]*)\}/)
+const staffActionButtonsCss = compactDecls(staffActionButtonsMatch?.[1] || '')
+const staffActionsCompact =
+  staffActionRowCss.includes('display:flex;') &&
+  staffActionRowCss.includes('flex-wrap:nowrap;') &&
+  staffActionButtonsCss.includes('min-width:0;') &&
+  staffActionButtonsCss.includes('min-height:44px;') &&
+  !staffCss.includes('!important') &&
+  !r1.includes('.staff-member-action-row')
 const releaseVersion = String(pkg.version || '').replace(/-.+$/, '')
 const checks = [
   ['versione R1 o successiva', /^0\.(?:18\.(?:4[0-9]|[5-9][0-9])|(?:19|[2-9][0-9])\.\d+)$/.test(releaseVersion)],
@@ -26,7 +41,7 @@ const checks = [
   ['board pedine scalano', r1.includes('.board-token') && r1.includes('clamp(30px, 9vw, 38px)')],
   ['colore board supporta change Android', boardEvents.includes("input.addEventListener('input', applyBoardColor)") && boardEvents.includes("input.addEventListener('change', applyBoardColor)")],
   ['minuti leggibili senza barre compresse', r1.includes('.match-minutes-row > div') && r1.includes('display: none !important')],
-  ['staff actions compatte', r1.includes('.staff-member-action-row') && r1.includes('flex-wrap: nowrap !important')],
+  ['staff actions compatte', staffActionsCompact],
   ['report bench mobile una colonna', r1.includes('.report-bench-strip ol') && r1.includes('grid-template-columns: 1fr !important')],
   ['stampa mobile attende layout stabile', printPage.includes('mobilePrintSettleDelay') && printPage.includes('Android|iPhone|iPad|iPod')],
 ]

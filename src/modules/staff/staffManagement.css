@@ -106,3 +106,41 @@
   .staff-member-action-row { display: grid; grid-template-columns: 1fr; }
   .staff-member-action-row .primary-action, .staff-member-action-row .danger-button { width: 100%; min-width: 0; }
 }
+@media (max-width: 760px) {/* R2.9S — Staff Management mobile responsive owner */
+
+  .staff-member-card {
+    grid-template-columns: 34px minmax(0,1fr);
+    gap: 10px;
+    padding: 13px;
+  }
+
+  .staff-member-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: .75rem;
+  }
+
+  .staff-member-fields {
+    gap: 10px;
+  }
+
+  .staff-member-action-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .staff-member-action-row .primary-action, .staff-member-action-row .danger-button {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    min-height: 44px;
+    padding-inline: 10px;
+    font-size: .76rem;
+  }
+
+  .staff-access-badge {
+    justify-self: start;
+    font-size: .68rem;
+  }
+}

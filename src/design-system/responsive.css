@@ -615,42 +615,6 @@
   }
 
   /* ---------- STAFF MANAGEMENT: compact identity and actions ---------- */
-  .staff-member-card {
-    grid-template-columns: 34px minmax(0,1fr) !important;
-    gap: 10px !important;
-    padding: 13px !important;
-  }
-
-  .staff-member-avatar {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: .75rem;
-  }
-
-  .staff-member-fields {
-    gap: 10px;
-  }
-
-  .staff-member-action-row {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-  }
-
-  .staff-member-action-row .primary-action,
-  .staff-member-action-row .danger-button {
-    flex: 1 1 0;
-    width: auto !important;
-    min-width: 0 !important;
-    min-height: 44px;
-    padding-inline: 10px;
-    font-size: .76rem;
-  }
-
-  .staff-access-badge {
-    justify-self: start;
-    font-size: .68rem;
-  }
 
   /* ---------- MATCH REPORT PREVIEW ---------- */
   .match-report-dialog-body,
