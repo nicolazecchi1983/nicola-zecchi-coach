@@ -489,14 +489,6 @@
   /* ---------- MATCH WORKSPACE: all steps readable, no clipped horizontal strip ---------- */
 
 
-  /* ---------- MATCH REPORT: late real-device viewport contract retained ---------- */
-  .match-report-workspace-preview {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    margin-inline: 0 !important;
-    box-sizing: border-box;
-  }
 
   /* ---------- CALLUPS: canonical real-device geometry ---------- */
 
@@ -617,13 +609,11 @@
   /* ---------- STAFF MANAGEMENT: compact identity and actions ---------- */
 
   /* ---------- MATCH REPORT PREVIEW ---------- */
-  .match-report-dialog-body,
-  .match-report-workspace-preview {
+  .match-report-dialog-body {
     padding-inline: 0 !important;
   }
 
-  .match-report-dialog-body .match-report-paper,
-  .match-report-workspace-preview .match-report-paper {
+  .match-report-dialog-body .match-report-paper {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;

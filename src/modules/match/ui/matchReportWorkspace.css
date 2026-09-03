@@ -11,8 +11,24 @@
 .match-report-workspace-preview{background:linear-gradient(135deg,#cfd7df,#eef2f5);border-radius:20px;padding:28px;overflow:auto}
 .match-report-workspace-preview .match-report-paper{width:min(920px,100%);margin:0 auto;background:#fff;color:#10213a;box-shadow:0 18px 50px rgba(0,0,0,.28)}
 .match-report-workspace-empty .primary-action{margin-top:10px}
+/* Post-R2.9S — Match Report mobile workspace geometry is domain-owned. */
 @media(max-width:760px){
   .match-report-workspace-toolbar{align-items:stretch;flex-direction:column}
   .match-report-workspace-toolbar .primary-action{width:100%}
-  .match-report-workspace-preview{padding:12px}
+  .match-report-workspace-preview{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    margin-inline:0 !important;
+    box-sizing:border-box;
+    padding:12px;
+    padding-inline:0 !important;
+  }
+  .match-report-workspace-preview .match-report-paper{
+    width:100% !important;
+    max-width:none !important;
+    min-width:0 !important;
+    padding:20px 16px !important;
+    box-shadow:none !important;
+  }
 }
