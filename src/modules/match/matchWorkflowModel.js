@@ -1,5 +1,44 @@
 export const MATCH_WORKFLOW_SCHEMA_VERSION = 1
 
+/*
+ * Temporal Match Workspace foundation.
+ * This is navigation/presentation semantics only: current route keys, persistence
+ * and the single Calendar-event Match identity remain unchanged.
+ */
+export const MATCH_TEMPORAL_MOMENTS = Object.freeze([
+  Object.freeze({
+    key: 'pre-match',
+    label: 'PRE-PARTITA',
+    description: 'Prepara',
+  }),
+  Object.freeze({
+    key: 'match-day',
+    label: 'PARTITA',
+    description: 'Match Center',
+  }),
+  Object.freeze({
+    key: 'post-match',
+    label: 'POST-PARTITA',
+    description: 'Analizza',
+  }),
+])
+
+const MATCH_TEMPORAL_SECTION_MAP = Object.freeze({
+  'opponent-study': 'pre-match',
+  callups: 'pre-match',
+  'our-team': 'pre-match',
+  opponent: 'pre-match',
+  analysis: 'post-match',
+  report: 'post-match',
+  'match-report-workspace': 'post-match',
+  'match-statistics': 'post-match',
+  'post-match': 'post-match',
+})
+
+export function getMatchTemporalMomentForSection(sectionKey = '') {
+  return MATCH_TEMPORAL_SECTION_MAP[String(sectionKey || '').trim()] || 'pre-match'
+}
+
 export const MATCH_WORKFLOW_SECTIONS = Object.freeze([
   Object.freeze({
     key: 'opponent-study',

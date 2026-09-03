@@ -19,8 +19,16 @@ const labels = [
   'Post gara',
 ]
 
+const temporalLabels = [
+  'PRE-PARTITA',
+  'PARTITA',
+  'POST-PARTITA',
+]
+
 const checks = [
   ['Workflow canonico contiene sette sezioni', labels.every((label) => workflow.includes(label))],
+  ['Workflow espone i tre momenti temporali canonici', temporalLabels.every((label) => workflow.includes(label)) && workflow.includes('MATCH_TEMPORAL_MOMENTS')],
+  ['Mappa temporale mantiene le route esistenti senza nuova identità Match', workflow.includes('MATCH_TEMPORAL_SECTION_MAP') && workflow.includes("'match-statistics': 'post-match'") && workflow.includes("'match-report-workspace': 'post-match'")],
   ['Fase Match derivata automaticamente dal tempo', workflow.includes('getMatchWorkflowPhase') && workflow.includes("'pre-match'") && workflow.includes("'match-day'") && workflow.includes("'post-match'")],
   ['Crea partita supporta origine Calendario', libraryView.includes('Dal Calendario') && libraryView.includes('data-match-calendar-event')],
   ['Crea partita supporta nuova gara', libraryView.includes('Nuova partita') && libraryView.includes('data-match-new-fields')],

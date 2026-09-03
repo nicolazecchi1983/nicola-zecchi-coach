@@ -8,6 +8,9 @@ const main=fs.readFileSync('src/main.js','utf8')
 const checks=[
  ['workspace has a dedicated domain shell',shell.includes('matchWorkspaceShellHtml')],
  ['shell owns header',shell.includes('match-workspace-shell__header')],
+ ['shell owns temporal navigation',shell.includes('matchTemporalNavigationHtml(activeSection)')&&shell.includes('data-match-temporal-navigation')],
+ ['temporal navigation has three domain-owned moments',css.includes('grid-template-columns:repeat(3,minmax(0,1fr))')&&css.includes('.match-temporal-navigation__item.is-active')],
+ ['temporal mobile geometry stays domain-owned without horizontal overflow',css.includes('@media(max-width:760px)')&&css.includes('.match-temporal-navigation__copy')&&!css.includes('.match-temporal-navigation{overflow-x:auto')],
  ['shell owns navigation',shell.includes('matchContextNavigationHtml(activeSection')],
  ['shell owns content root',shell.includes('match-workspace-shell__content')],
  ['workspace CSS participates before canonical responsive layer',main.indexOf('matchWorkspace.css') < main.indexOf('responsive.css')],

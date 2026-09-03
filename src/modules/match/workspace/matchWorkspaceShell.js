@@ -2,12 +2,29 @@ import {
   matchContextBackButtonHtml,
   matchContextNavigationHtml,
 } from '../../../design-system/uiComponents.js'
+import {
+  MATCH_TEMPORAL_MOMENTS,
+  getMatchTemporalMomentForSection,
+} from '../matchWorkflowModel.js'
 
 function attributesHtml(attributes = {}) {
   return Object.entries(attributes)
     .filter(([, value]) => value !== false && value != null)
     .map(([name, value]) => value === true ? name : `${name}="${String(value).replaceAll('"', '&quot;')}"`)
     .join(' ')
+}
+
+function matchTemporalNavigationHtml(activeSection = '') {
+  const activeMoment = getMatchTemporalMomentForSection(activeSection)
+  return `<nav class="match-temporal-navigation" aria-label="Momenti della partita" data-match-temporal-navigation>
+    ${MATCH_TEMPORAL_MOMENTS.map((moment, index) => `<div class="match-temporal-navigation__item ${moment.key === activeMoment ? 'is-active' : ''}" data-match-temporal-moment="${moment.key}" ${moment.key === activeMoment ? 'aria-current="step"' : ''}>
+      <span class="match-temporal-navigation__index">${String(index + 1).padStart(2, '0')}</span>
+      <span class="match-temporal-navigation__copy">
+        <strong>${moment.label}</strong>
+        <small>${moment.description}</small>
+      </span>
+    </div>`).join('')}
+  </nav>`
 }
 
 /**
@@ -34,6 +51,7 @@ export function matchWorkspaceShellHtml({
       </div>
       ${matchContextBackButtonHtml()}
     </div>
+    ${matchTemporalNavigationHtml(activeSection)}
     ${matchContextNavigationHtml(activeSection, { teamName })}
     <main class="match-workspace-shell__content product-content-stack" data-match-workspace-content>
       ${contentHtml}

@@ -28,6 +28,115 @@
 
 /* Page geometry, header rhythm, content stack and base surfaces belong to Product UI Foundation. */
 
+/* Temporal Match shell foundation.
+   PRE / PARTITA / POST is Match-domain navigation semantics.
+   Existing operational section routes remain unchanged underneath this layer. */
+.match-temporal-navigation{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  width:100%;
+  margin:0 0 var(--staff-space-3);
+}
+
+.match-temporal-navigation__item{
+  position:relative;
+  min-width:0;
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 15px;
+  overflow:hidden;
+  border:1px solid var(--match-workspace-border);
+  border-radius:var(--staff-radius-control);
+  background:var(--staff-color-bg-panel);
+  color:var(--match-workspace-muted);
+}
+
+.match-temporal-navigation__item::after{
+  content:"";
+  position:absolute;
+  right:12px;
+  bottom:8px;
+  left:12px;
+  height:2px;
+  border-radius:999px;
+  background:transparent;
+}
+
+.match-temporal-navigation__item.is-active{
+  border-color:var(--staff-color-border-strong);
+  background:var(--staff-color-bg-panel-raised);
+  color:var(--match-workspace-text);
+}
+
+.match-temporal-navigation__item.is-active::after{
+  background:var(--match-workspace-accent);
+}
+
+.match-temporal-navigation__index{
+  flex:0 0 auto;
+  color:var(--staff-color-text-faint);
+  font-size:.66rem;
+  font-weight:var(--staff-font-weight-bold);
+  letter-spacing:.06em;
+}
+
+.match-temporal-navigation__item.is-active .match-temporal-navigation__index{
+  color:var(--match-workspace-accent);
+}
+
+.match-temporal-navigation__copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+
+.match-temporal-navigation__copy strong{
+  overflow-wrap:anywhere;
+  color:inherit;
+  font-size:.82rem;
+  font-weight:var(--staff-font-weight-bold);
+  letter-spacing:.045em;
+}
+
+.match-temporal-navigation__copy small{
+  color:var(--match-workspace-muted);
+  font-size:.69rem;
+  font-weight:var(--staff-font-weight-semibold);
+}
+
+@media(max-width:760px){
+  .match-temporal-navigation{
+    gap:6px;
+  }
+
+  .match-temporal-navigation__item{
+    min-height:64px;
+    gap:7px;
+    padding:10px 9px;
+  }
+
+  .match-temporal-navigation__index{
+    display:none;
+  }
+
+  .match-temporal-navigation__copy{
+    width:100%;
+    text-align:center;
+  }
+
+  .match-temporal-navigation__copy strong{
+    font-size:clamp(.62rem,2.6vw,.72rem);
+    letter-spacing:.02em;
+  }
+
+  .match-temporal-navigation__copy small{
+    font-size:.62rem;
+  }
+}
+
 /* Navigation geometry and active state are owned by Product UI Foundation. */
 
 /* Every first-level content surface starts at the exact same x-axis. */
