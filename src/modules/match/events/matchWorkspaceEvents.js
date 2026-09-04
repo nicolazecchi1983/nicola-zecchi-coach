@@ -1,5 +1,6 @@
 import { collectPostMatchSections, wirePostMatchSectionsEvents } from './matchPostMatchSectionsEvents.js'
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
+import { wireMatchCenterEvents } from './matchCenterEvents.js'
 export function wireMatchWorkspaceEvents({
   root,
   setActiveNavigation,
@@ -13,6 +14,7 @@ export function wireMatchWorkspaceEvents({
   updateCalendarEvent,
   loadCalendarEvents,
 }) {
+    wireMatchCenterEvents({ root, getActiveMatchContext, getCalendarEvent, updateCalendarEvent, loadCalendarEvents, setView })
     const matchWorkspace = root.querySelector('[data-match-workspace], .match-workspace--empty')
     matchWorkspace?.addEventListener('click', async (event) => {
       const actionButton = event.target.closest('[data-workspace-action]')
@@ -40,6 +42,12 @@ export function wireMatchWorkspaceEvents({
         setActiveNavigation('match-library')
         storage?.setItem('nz-active-section', 'opponent-study')
         await setView('opponent-study', 'Studio avversario')
+        return
+      }
+      if (action === 'match-center') {
+        setActiveNavigation('match-library')
+        storage?.setItem('nz-active-section', 'match-center')
+        await setView('match-center', 'Match Center')
         return
       }
       if (action === 'analysis') {

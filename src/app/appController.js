@@ -94,6 +94,7 @@ import { createMatchOpponentStudyService } from '../modules/match/matchOpponentS
 import { createMatchPostMatchService } from '../modules/match/matchPostMatchService.js'
 import { renderMatchPostMatchView } from '../modules/match/ui/matchPostMatchView.js'
 import { createMatchStatisticsView } from '../modules/match/ui/matchStatisticsView.js'
+import { createMatchCenterView } from '../modules/match/ui/matchCenterView.js'
 import { bindMatchAnalysisSchemaEditors } from '../modules/match/ui/matchAnalysisSchemaView.js'
 import { createAnalysisTemplateService } from '../modules/match/analysisTemplateService.js'
 import { renderNativeMatchSectionView } from '../modules/match/ui/matchNativeSectionView.js'
@@ -435,6 +436,8 @@ const matchWorkspaceView = createMatchWorkspaceView({
   escapeHtml,
 })
 
+const matchCenterView = createMatchCenterView({ storage: localStorage, getCalendarEvents: () => appState.calendarEvents, getTeamProfile, canEdit: () => can(ACCESS_CAPABILITIES.MATCH_SHEET_EDIT), escapeHtml })
+
 const matchStatisticsView = createMatchStatisticsView({
   storage: localStorage,
   createMatchLibraryService,
@@ -462,8 +465,6 @@ const {
   escapeHtml,
   icon,
 })
-
-
 export async function prepareAppData(user) {
   appState.currentUser = user
   await Promise.all([
@@ -562,6 +563,7 @@ export async function attachAppEvents(user) {
     'match-workspace': matchWorkspaceView,
     'our-team': nativeOurTeamView,
     opponent: nativeOpponentView,
+    'match-center': matchCenterView,
     'match-statistics': matchStatisticsView,
     'opponent-study': opponentStudyView,
     'match-report-workspace': matchReportWorkspaceView,
@@ -585,6 +587,7 @@ export async function attachAppEvents(user) {
     'match-workspace': ensureCalendarEvents,
     'our-team': ensureCalendarEvents,
     opponent: ensureCalendarEvents,
+    'match-center': ensureCalendarEvents,
     'match-statistics': ensureCalendarEvents,
     'opponent-study': ensureCalendarEvents,
     'match-report-workspace': ensureCalendarEvents,
@@ -740,10 +743,6 @@ export async function attachAppEvents(user) {
       updateCalendarEvent,
       loadCalendarEvents,
     })
-
-
-
-
     wireTeamAndRosterEvents({
       root,
       setView,

@@ -694,3 +694,13 @@
 }
 
 }
+
+/* Match temporal navigation becomes actionable when a moment owns a native workspace route. */
+.match-temporal-navigation button.match-temporal-navigation__item{
+  appearance:none;
+  width:100%;
+  font:inherit;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+}

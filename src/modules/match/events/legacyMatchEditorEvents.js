@@ -296,7 +296,7 @@ export function wireLegacyMatchEditorEvents({
         bench: Array.from({ length: 9 }, (_, index) => {
           const name = String(form.elements[`bench_${index}`]?.value || '').trim()
           const player = resolveRosterEntry(name)
-          return {slot:index+12,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:player?.shirtNumber??player?.shirt_number??null}
+          return {slot:index+12,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:player?.shirtNumber??player?.shirt_number??player?.number??(index+12)}
         }),
         captainSlot:String(form.elements.captain?.value||''),viceCaptainSlot:String(form.elements.vice_captain?.value||''),
       })
@@ -388,7 +388,7 @@ export function wireLegacyMatchEditorEvents({
           ].join('')
           if (ownValue && roster.some((player) => player.canonicalName === ownValue)) select.value = ownValue
           else select.value = ''
-          const numberNode = benchRoot.querySelector(`[data-bench-slot-number="${index}"]`)
+          const numberNode = benchRoot.querySelector(`[data-bench-shirt-number="${index}"]`)
           const selectedPlayer = roster.find((player) => player.canonicalName === select.value)
           const assignedNumber = normalizedRosterShirtNumber(selectedPlayer?.number)
           if (numberNode) numberNode.textContent = String(assignedNumber ?? (index + 12))

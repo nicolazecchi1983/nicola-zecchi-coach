@@ -103,8 +103,8 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
       <div class="bench-grid bench-grid--slots" data-bench-grid data-bench-slots>
         ${Array.from({ length: 9 }, (_, index) => `
           <label class="bench-slot" data-bench-slot="${index}">
-            <span class="bench-slot-number" data-bench-slot-number="${index}">${String(index + 12).padStart(2, '0')}</span>
-            <select name="bench_${index}" data-bench-select="${index}" aria-label="Panchina ${index + 12}">
+            <span class="bench-slot-number" data-bench-slot-number="${index}"><span class="bench-slot-order">P${index + 1}</span><b data-bench-shirt-number="${index}">${index + 12}</b></span>
+            <select name="bench_${index}" data-bench-select="${index}" aria-label="Panchina P${index + 1}">
               <option value="">Seleziona giocatore</option>
             </select>
           </label>`).join('')}

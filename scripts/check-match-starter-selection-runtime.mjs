@@ -12,7 +12,7 @@ const checks = [
   ['starter sync refreshes leadership', /const syncStarterSelectionState = \(\) => \{[\s\S]*?refreshLeadershipSelects\(\)/.test(runtime)],
   ['starter sync refreshes pitch tokens', /const syncStarterSelectionState = \(\) => \{[\s\S]*?updateTokens\(\)/.test(runtime)],
   ['starter sync refreshes report and persists draft', /const syncStarterSelectionState = \(\) => \{[\s\S]*?renderReport\(\)[\s\S]*?scheduleSave\(\)/.test(runtime)],
-  ['bench displays seasonal number when available', runtime.includes('data-bench-slot-number') && runtime.includes('assignedNumber ?? (index + 12)')],
+  ['bench displays seasonal number when available, otherwise slot 12-20', runtime.includes('const assignedNumber = normalizedRosterShirtNumber(selectedPlayer?.number)') && runtime.includes('assignedNumber ?? (index + 12)')],
   ['core lineup controls bind before optional analysis widgets', runtime.indexOf('bindCoreSquadControls()') < runtime.indexOf('bindMatchAnalysisSchemaEditors(matchEditor')],
 ]
 let passed = 0

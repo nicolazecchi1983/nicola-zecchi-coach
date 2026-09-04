@@ -19,7 +19,7 @@ const checks = [
   ['player selection can drive match number', runtime.includes('syncStarterNumberFromPlayer') && runtime.includes('playerAssignedShirtNumber')],
   ['number selection never changes player identity', !runtime.includes('syncStarterPlayerFromNumber') && !runtime.includes('uniquePlayerForShirtNumber')],
   ['any normalized 1-99 value remains valid match-only data', runtime.includes('normalizedRosterShirtNumber(control.value)')],
-  ['bench number follows seasonal assignment with 12-20 fallback', squadView.includes('data-bench-slot-number') && runtime.includes('assignedNumber ?? (index + 12)')],
+  ['bench match number uses seasonal assignment or 12-20 fallback', squadView.includes('>P${index + 1}</span>') && runtime.includes('assignedNumber ?? (index + 12)') && runtime.includes('shirtNumber:player?.shirtNumber??player?.shirt_number??player?.number??(index+12)')],
 ]
 
 let passed = 0

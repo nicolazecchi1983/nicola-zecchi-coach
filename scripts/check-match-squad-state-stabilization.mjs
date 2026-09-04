@@ -15,9 +15,11 @@ const checks = [
     view.includes('Array.from({ length: 9 }') &&
     view.includes('name="bench_${index}"') &&
     view.includes('data-bench-select="${index}"')],
-  ['Fixed slots are numbered 12 through 20',
-    view.includes("String(index + 12).padStart(2, '0')") &&
-    view.includes('aria-label="Panchina ${index + 12}"')],
+  ['Fixed bench positions are labelled P1 through P9',
+    view.includes('>P${index + 1}</span>') &&
+    view.includes('aria-label="Panchina P${index + 1}"')],
+  ['Bench match-number defaults are 12 through 20',
+    view.includes('<b data-bench-shirt-number="${index}">${index + 12}</b>')],
   ['Bench keeps starters visible and marks reuse instead of hiding',
     !legacy.includes('!starters.has(player.canonicalName)') &&
     legacy.includes('— già utilizzato')],

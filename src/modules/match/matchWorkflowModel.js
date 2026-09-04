@@ -28,6 +28,7 @@ const MATCH_TEMPORAL_SECTION_MAP = Object.freeze({
   callups: 'pre-match',
   'our-team': 'pre-match',
   opponent: 'pre-match',
+  'match-center': 'match-day',
   analysis: 'post-match',
   report: 'post-match',
   'match-report-workspace': 'post-match',

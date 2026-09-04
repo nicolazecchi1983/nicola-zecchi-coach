@@ -14,16 +14,22 @@ function attributesHtml(attributes = {}) {
     .join(' ')
 }
 
+const MATCH_TEMPORAL_MOMENT_ACTIONS = Object.freeze({
+  'pre-match': 'opponent-study',
+  'match-day': 'match-center',
+  'post-match': 'analysis',
+})
+
 function matchTemporalNavigationHtml(activeSection = '') {
   const activeMoment = getMatchTemporalMomentForSection(activeSection)
   return `<nav class="match-temporal-navigation" aria-label="Momenti della partita" data-match-temporal-navigation>
-    ${MATCH_TEMPORAL_MOMENTS.map((moment, index) => `<div class="match-temporal-navigation__item ${moment.key === activeMoment ? 'is-active' : ''}" data-match-temporal-moment="${moment.key}" ${moment.key === activeMoment ? 'aria-current="step"' : ''}>
+    ${MATCH_TEMPORAL_MOMENTS.map((moment, index) => `<button type="button" class="match-temporal-navigation__item ${moment.key === activeMoment ? 'is-active' : ''}" data-match-temporal-moment="${moment.key}" data-workspace-action="${MATCH_TEMPORAL_MOMENT_ACTIONS[moment.key]}" ${moment.key === activeMoment ? 'aria-current="step"' : ''}>
       <span class="match-temporal-navigation__index">${String(index + 1).padStart(2, '0')}</span>
       <span class="match-temporal-navigation__copy">
         <strong>${moment.label}</strong>
         <small>${moment.description}</small>
       </span>
-    </div>`).join('')}
+    </button>`).join('')}
   </nav>`
 }
 
@@ -41,7 +47,7 @@ export function matchWorkspaceShellHtml({
   attributes = {},
 } = {}) {
   const classes = ['view', 'page-view', 'product-page-shell', 'match-workspace-shell', className].filter(Boolean).join(' ')
-  const attrs = attributesHtml({ class: classes, ...attributes })
+  const attrs = attributesHtml({ class: classes, 'data-match-workspace': true, ...attributes })
 
   return `<section ${attrs}>
     <div class="page-head product-page-header match-context-page-head match-workspace-shell__header">
