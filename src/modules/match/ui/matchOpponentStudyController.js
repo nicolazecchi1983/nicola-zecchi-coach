@@ -20,7 +20,19 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
   const matchId = String(activeMatch.id)
   bindMatchAnalysisSchemaEditors(section, analysisTemplateOptions)
 
+  const closeOtherStudyForms = (activeKey) => {
+    section.querySelectorAll('[data-study-collapsible]').forEach((node) => {
+      if (node.dataset.studyCollapsible === activeKey) return
+      node.hidden = true
+    })
+    section.querySelectorAll('[data-study-toggle-form]').forEach((node) => {
+      if (node.dataset.studyToggleForm === activeKey) return
+      node.setAttribute('aria-expanded', 'false')
+    })
+  }
+
   const setFormOpen = (key, open) => {
+    if (open) closeOtherStudyForms(key)
     const form = section.querySelector(`[data-study-collapsible="${key}"]`)
     const toggle = section.querySelector(`[data-study-toggle-form="${key}"]`)
     if (!form) return
@@ -54,10 +66,10 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
   section.querySelector('[data-study-notes-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault()
     const form = event.currentTarget
+    const data = Object.fromEntries(new FormData(form).entries())
     setBusy(form, true)
     setMessage(section, 'notes', '')
     try {
-      const data = Object.fromEntries(new FormData(form).entries())
       let technicalAnalysis = {}
       try { technicalAnalysis = JSON.parse(String(data.technical_analysis || '{}')) } catch { technicalAnalysis = {} }
       await service.saveTechnicalAnalysis(matchId, technicalAnalysis)
@@ -73,16 +85,27 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
   section.querySelector('[data-study-link-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault()
     const form = event.currentTarget
+    const data = Object.fromEntries(new FormData(form).entries())
     setBusy(form, true)
     setMessage(section, 'link', '')
+
     try {
-      const data = Object.fromEntries(new FormData(form).entries())
-      service.addLink(matchId, data)
-      await refresh()
+      await service.addLink(matchId, data)
     } catch (error) {
       console.error('Salvataggio link studio avversario non riuscito:', error)
       setMessage(section, 'link', getUserErrorMessage(error, 'Link non salvato.'), 'error')
       setBusy(form, false)
+      return
+    }
+
+    form.reset()
+    try {
+      await refresh()
+    } catch (error) {
+      console.error('Refresh Studio avversario dopo salvataggio link non riuscito:', error)
+      setMessage(section, 'link', 'Link salvato. Aggiorna la pagina per visualizzarlo.', 'success')
+    } finally {
+      if (form.isConnected) setBusy(form, false)
     }
   })
 
@@ -91,13 +114,14 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
       event.preventDefault()
       const mode = form.dataset.studyUploadForm
       const file = form.elements.file?.files?.[0]
+      const data = Object.fromEntries(new FormData(form).entries())
       setBusy(form, true)
       setMessage(section, mode, '')
+
       try {
         if (mode === 'report') {
           await service.uploadAsset({ matchId, team, file, kind: 'report', category: 'general' })
         } else {
-          const data = Object.fromEntries(new FormData(form).entries())
           await service.uploadAsset({
             matchId,
             team,
@@ -106,11 +130,21 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
             category: data.category || 'general',
           })
         }
-        await refresh()
       } catch (error) {
         console.error('Upload studio avversario non riuscito:', error)
         setMessage(section, mode, getUserErrorMessage(error, 'Caricamento non riuscito.'), 'error')
         setBusy(form, false)
+        return
+      }
+
+      form.reset()
+      try {
+        await refresh()
+      } catch (error) {
+        console.error('Refresh Studio avversario dopo upload non riuscito:', error)
+        setMessage(section, mode, 'Materiale salvato. Aggiorna la pagina per visualizzarlo.', 'success')
+      } finally {
+        if (form.isConnected) setBusy(form, false)
       }
     })
   })

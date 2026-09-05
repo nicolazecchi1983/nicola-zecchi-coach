@@ -1,3 +1,5 @@
+import { icon } from './iconRegistry.js'
+
 const BUTTON_VARIANTS = new Set(['primary', 'secondary', 'danger', 'ghost'])
 
 function attributesHtml(attributes = {}) {
@@ -110,4 +112,81 @@ export function editorFooterHtml({
       attributes: { [saveAttribute]: true, hidden: true },
     })}
   </footer>`
+}
+export function compactResourceActionHtml({
+  label,
+  iconName = '',
+  variant = 'secondary',
+  href = '',
+  className = '',
+  attributes = {},
+} = {}) {
+  const safeVariant = BUTTON_VARIANTS.has(variant) ? variant : 'secondary'
+  const iconHtml = iconName ? `<span class="staff-resource-action__icon" aria-hidden="true">${icon(iconName)}</span>` : ''
+  const labelHtml = `<span>${label ?? ''}</span>`
+  const classes = ['staff-resource-action', className].filter(Boolean).join(' ')
+
+  if (href) {
+    const attrs = attributesHtml({
+      href,
+      class: ['staff-button', `staff-button--${safeVariant}`, classes].filter(Boolean).join(' '),
+      ...attributes,
+    })
+    return `<a ${attrs}>${iconHtml}${labelHtml}</a>`
+  }
+
+  return buttonHtml({
+    label: labelHtml,
+    variant: safeVariant,
+    className: classes,
+    attributes,
+    iconBefore: iconHtml,
+  })
+}
+
+export function resourceSectionHeaderHtml({
+  index = '',
+  titleHtml = '',
+  countHtml = '',
+  actionsHtml = '',
+} = {}) {
+  return `<header class="staff-resource-section__header">
+    <div class="staff-resource-section__identity">
+      ${index ? `<span class="staff-resource-index">${index}</span>` : ''}
+      <h2 class="staff-resource-section__title">${titleHtml}</h2>
+      ${countHtml ? `<span class="staff-resource-section__count">${countHtml}</span>` : ''}
+    </div>
+    ${actionsHtml ? `<div class="staff-resource-section__actions">${actionsHtml}</div>` : ''}
+  </header>`
+}
+
+export function resourceRowHtml({
+  iconName = 'document',
+  eyebrowHtml = '',
+  titleHtml = '',
+  metaHtml = '',
+  actionsHtml = '',
+  attributes = {},
+} = {}) {
+  const attrs = attributesHtml({ class: 'staff-resource-row', ...attributes })
+  return `<article ${attrs}>
+    <span class="staff-resource-row__icon" aria-hidden="true">${icon(iconName)}</span>
+    <div class="staff-resource-row__content">
+      ${eyebrowHtml ? `<span class="staff-resource-row__eyebrow">${eyebrowHtml}</span>` : ''}
+      <strong class="staff-resource-row__title">${titleHtml}</strong>
+      ${metaHtml ? `<small class="staff-resource-row__meta">${metaHtml}</small>` : ''}
+    </div>
+    ${actionsHtml ? `<div class="staff-resource-row__actions">${actionsHtml}</div>` : ''}
+  </article>`
+}
+
+export function overflowActionMenuHtml({
+  label = 'Altre azioni',
+  itemsHtml = '',
+  className = '',
+} = {}) {
+  return `<details class="${['staff-overflow-menu', className].filter(Boolean).join(' ')}">
+    <summary class="staff-overflow-menu__trigger" aria-label="${String(label).replaceAll('"', '&quot;')}">${icon('more')}</summary>
+    <div class="staff-overflow-menu__popover">${itemsHtml}</div>
+  </details>`
 }

@@ -15,7 +15,7 @@ function safeText(value) {
 }
 
 function safeUrl(value) {
-  const raw = safeText(value)
+  const raw = safeText(value).replace(/[\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]/g, '')
   if (!raw) return ''
   try {
     const url = new URL(raw)
