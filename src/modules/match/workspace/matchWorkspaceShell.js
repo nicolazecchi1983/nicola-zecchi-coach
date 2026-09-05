@@ -38,6 +38,15 @@ function matchTemporalNavigationHtml(activeSection = '') {
  * Page views provide content only; width, header, navigation and vertical rhythm live here.
  * Descriptive subtitles are intentionally not part of the canonical Match header: the title + stepper own context.
  */
+function matchPostUtilityNavigationHtml(activeSection = '') {
+  if (getMatchTemporalMomentForSection(activeSection) !== 'post-match') return ''
+  const active = activeSection === 'match-statistics'
+  return `<aside class="match-post-utility-bar" aria-label="Strumenti post-partita" data-match-post-utility-bar>
+    <span class="match-post-utility-bar__label">STRUMENTI POST-PARTITA</span>
+    <button type="button" class="button button--secondary match-post-utility-bar__action ${active ? 'is-active' : ''}" data-workspace-action="statistics" ${active ? 'aria-current="page"' : ''}>Statistiche</button>
+  </aside>`
+}
+
 export function matchWorkspaceShellHtml({
   activeSection = '',
   teamName = '',
@@ -59,6 +68,7 @@ export function matchWorkspaceShellHtml({
     </div>
     ${matchTemporalNavigationHtml(activeSection)}
     ${matchContextNavigationHtml(activeSection, { teamName })}
+    ${matchPostUtilityNavigationHtml(activeSection)}
     <main class="match-workspace-shell__content product-content-stack" data-match-workspace-content>
       ${contentHtml}
     </main>

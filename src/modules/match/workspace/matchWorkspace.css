@@ -704,3 +704,45 @@
   text-align:left;
   cursor:pointer;
 }
+
+/* R2 POST Statistics Utility */
+.match-post-utility-bar{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  min-width:0;
+  margin:0 0 var(--staff-space-3);
+}
+.match-post-utility-bar__label{
+  min-width:0;
+  color:var(--match-workspace-muted);
+  font-size:.72rem;
+  font-weight:850;
+  letter-spacing:.10em;
+  white-space:nowrap;
+}
+.match-post-utility-bar__action{
+  flex:0 0 auto;
+}
+
+.match-post-utility-bar__action.is-active{
+  border-color:var(--match-workspace-accent);
+  color:var(--match-workspace-accent);
+  box-shadow:inset 0 -2px 0 var(--match-workspace-accent);
+}
+
+@media(max-width:760px){
+  .match-post-utility-bar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:10px;
+    width:100%;
+  }
+  .match-post-utility-bar__label{
+    white-space:normal;
+  }
+  .match-post-utility-bar__action{
+    min-height:44px;
+  }
+}

@@ -1,6 +1,6 @@
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
-import { matchContextBackButtonHtml, matchContextNavigationHtml } from '../../../design-system/uiComponents.js'
-import { buildMatchDataSnapshot } from '../matchStatisticsModel.js'
+import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
+import { buildCanonicalMatchDataSnapshot, buildMatchDataSnapshot } from '../matchStatisticsModel.js'
 
 
 function readJson(storage, key) {
@@ -18,9 +18,15 @@ function rankedRows(entries = {}, emptyText) {
   return rows.map(([name, value]) => `<div class="match-stat-rank"><span>${escapeHtml(name)}</span><div><i style="--stat-value:${(value / max) * 100}%"></i></div><strong>${value}</strong></div>`).join('')
 }
 
-function minutesRows(items = []) {
-  if (!items.length) return '<p class="match-stat-empty">Completa formazione e sostituzioni nel Match Sheet.</p>'
-  return items.map((item) => `<div class="match-minutes-row"><span>${escapeHtml(item.player)}</span><div><i style="--stat-value:${Math.min(100, (item.minutes / 90) * 100)}%"></i></div><strong>${item.minutes}'</strong></div>`).join('')
+function minutesRows(items = [], { duration = 90, finalized = true, canonical = false } = {}) {
+  if (canonical && !finalized) {
+    return '<p class="match-stat-empty">Finalizza la partita nel Match Center per calcolare il minutaggio definitivo.</p>'
+  }
+  if (!items.length) {
+    return `<p class="match-stat-empty">${canonical ? 'Formazione PRE non disponibile per il calcolo del minutaggio.' : 'Dati di minutaggio non disponibili.'}</p>`
+  }
+  const safeDuration = Math.max(1, Number(duration) || 90)
+  return items.map((item) => `<div class="match-minutes-row"><span>${escapeHtml(item.player)}</span><div><i style="--stat-value:${Math.min(100, (item.minutes / safeDuration) * 100)}%"></i></div><strong>${item.minutes}'</strong></div>`).join('')
 }
 
 export function createMatchStatisticsView({ storage, createMatchLibraryService, getCalendarEvents, getTeamProfile }) {
@@ -29,19 +35,22 @@ export function createMatchStatisticsView({ storage, createMatchLibraryService, 
     if (!active?.id) {
       return '<section class="content-section"><div class="empty-state"><h1>Nessuna partita selezionata</h1><p>Apri una partita dalla Match Library.</p></div></section>'
     }
+
+    const calendarEvents = getCalendarEvents()
+    const teamProfile = getTeamProfile()
     const service = createMatchLibraryService({ storage })
-    const match = service.list(getCalendarEvents(), getTeamProfile().season || '').find((item) => String(item.id) === String(active.id)) || active
-    const draft = readJson(storage, `nz-match-sheet-editor-v2:${active.id}`) || {}
-    const snapshot = buildMatchDataSnapshot(draft, match)
+    const match = service.list(calendarEvents, teamProfile?.season || '').find((item) => String(item.id) === String(active.id)) || active
+    const eventModel = calendarEvents.find((item) => String(item.id) === String(active.id)) || null
+    const canonicalSnapshot = buildCanonicalMatchDataSnapshot(eventModel, match)
+    const snapshot = canonicalSnapshot || buildMatchDataSnapshot(readJson(storage, `nz-match-sheet-editor-v2:${active.id}`) || {}, match)
+    const canonical = snapshot.source === 'calendar-match-center'
     const score = snapshot.goalsFor == null || snapshot.goalsAgainst == null ? '–' : `${snapshot.goalsFor}–${snapshot.goalsAgainst}`
     const outcomeLabel = { win: 'Vittoria', draw: 'Pareggio', loss: 'Sconfitta', pending: 'Da completare' }[snapshot.outcome]
+    const sourceNote = canonical
+      ? 'I numeri sono derivati dallo stesso evento Calendario: formazione PRE + eventi Match Center. Il minutaggio non viene salvato in una seconda copia.'
+      : 'Questa partita usa ancora il percorso dati storico. Le nuove partite usano PRE + Match Center come fonte canonica.'
 
-    return `<section class="content-section match-statistics" data-match-statistics>
-      <header class="page-head match-context-page-head">
-        <div><h1>Statistiche · ${escapeHtml(snapshot.opponent)}</h1><p><span>MATCH WORKSPACE</span><b>•</b> Numeri generati dal Match Sheet</p></div>
-        ${matchContextBackButtonHtml()}
-      </header>
-
+    const contentHtml = `<section class="content-section match-statistics" data-match-statistics>
       <div class="match-stat-summary">
         ${metricCard('Risultato', score, outcomeLabel)}
         ${metricCard('Giocatori utilizzati', snapshot.usedPlayers, `${snapshot.totals.starters} titolari`)}
@@ -52,7 +61,7 @@ export function createMatchStatisticsView({ storage, createMatchLibraryService, 
       </div>
 
       <div class="match-stat-grid">
-        <article class="match-stat-panel match-stat-panel--wide"><header><span>MINUTAGGIO</span><h2>Minuti giocati</h2><p>Barre rapportate ai 90 minuti regolamentari.</p></header><div class="match-minutes-chart">${minutesRows(snapshot.playerMinutes)}</div></article>
+        <article class="match-stat-panel match-stat-panel--wide"><header><span>MINUTAGGIO</span><h2>Minuti giocati</h2><p>Barre rapportate alla durata regolamentare della gara.</p></header><div class="match-minutes-chart">${minutesRows(snapshot.playerMinutes, { duration: snapshot.matchDuration, finalized: snapshot.minutesFinalized, canonical })}</div></article>
         <article class="match-stat-panel"><header><span>PRODUZIONE</span><h2>Marcatori</h2></header>${rankedRows(snapshot.leaders.scorers, 'Nessun marcatore registrato.')}</article>
         <article class="match-stat-panel"><header><span>PRODUZIONE</span><h2>Assist</h2></header>${rankedRows(snapshot.leaders.assists, 'Nessun assist registrato.')}</article>
         <article class="match-stat-panel match-stat-panel--sanctions">
@@ -68,7 +77,16 @@ export function createMatchStatisticsView({ storage, createMatchLibraryService, 
         </article>
       </div>
 
-      <p class="match-stat-note">I numeri vengono ricalcolati automaticamente dai dati della partita. Le statistiche stagionali saranno costruite sopra questa stessa struttura.</p>
+      <p class="match-stat-note">${escapeHtml(sourceNote)}</p>
     </section>`
+
+    return matchWorkspaceShellHtml({
+      activeSection: 'match-statistics',
+      teamName: teamProfile?.name || '',
+      titleHtml: `Statistiche · ${escapeHtml(snapshot.opponent)}`,
+      contentHtml,
+      className: 'match-statistics-workspace',
+      attributes: { 'data-match-statistics-workspace': true },
+    })
   }
 }

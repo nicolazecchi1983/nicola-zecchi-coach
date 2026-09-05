@@ -27,7 +27,8 @@ for (const [name, source] of [['Convocazioni', callups], ['Analisi gara', analys
   if (source.includes('class="ghost-button match-context-back"')) failures.push(`${name}: markup legacy del ritorno ancora presente`)
 }
 if (!matchWorkspaceShell.includes('matchContextBackButtonHtml()')) failures.push('Match Workspace Shell: ritorno al workspace mancante')
-if (!statistics.includes('matchContextBackButtonHtml()')) failures.push('Statistiche: ritorno al workspace non condiviso')
+if (!statistics.includes('matchWorkspaceShellHtml')) failures.push('Statistiche: Match Workspace Shell non condiviso')
+if (statistics.includes('matchContextBackButtonHtml()')) failures.push('Statistiche: ritorno duplicato fuori dal Match Workspace Shell')
 if (statistics.includes('class="ghost-button match-context-back"')) failures.push('Statistiche: markup legacy del ritorno ancora presente')
 
 if (failures.length) {

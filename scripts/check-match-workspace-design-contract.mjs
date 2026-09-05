@@ -3,6 +3,7 @@ import fs from 'node:fs'
 const css=fs.readFileSync('src/modules/match/workspace/matchWorkspace.css','utf8')
 const product=fs.readFileSync('src/design-system/productUi.css','utf8')
 const shell=fs.readFileSync('src/modules/match/workspace/matchWorkspaceShell.js','utf8')
+const statsView=fs.readFileSync('src/modules/match/ui/matchStatisticsView.js','utf8')
 const main=fs.readFileSync('src/main.js','utf8')
 
 const checks=[
@@ -22,6 +23,25 @@ const checks=[
  ['report empty state uses canonical surface geometry',css.includes('.match-workspace-shell .match-report-workspace-empty')],
  ['medium navigation uses 4-column fallback',css.includes('--product-nav-tablet-columns:4')&&product.includes('var(--product-nav-tablet-columns, 4)')],
  ['mobile navigation uses 2-column fallback',css.includes('--product-nav-mobile-columns:2')&&product.includes('var(--product-nav-mobile-columns,2)')],
+ ['post-match exposes statistics as a utility without creating an eighth workflow step',
+   shell.includes('matchPostUtilityNavigationHtml(activeSection)')&&
+   shell.includes('data-workspace-action="statistics"')&&
+   shell.includes('STRUMENTI POST-PARTITA')],
+ ['statistics utility is post-only and preserves the seven-step navigation owner',
+   shell.includes("getMatchTemporalMomentForSection(activeSection) !== 'post-match'")&&
+   css.includes('.match-post-utility-bar')&&
+   css.includes('@media(max-width:760px)')],
+
+ ['statistics renders through the canonical Match Workspace shell',
+   statsView.includes("import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'")&&
+   statsView.includes("activeSection: 'match-statistics'")&&
+   statsView.includes("className: 'match-statistics-workspace'")&&
+   !statsView.includes('matchContextBackButtonHtml')],
+ ['statistics utility exposes an active post-match state without step 08',
+   shell.includes("const active = activeSection === 'match-statistics'")&&
+   shell.includes("aria-current=\"page\"")&&
+   css.includes('.match-post-utility-bar__action.is-active')],
+
 ]
 let passed=0
 for(const [label,ok] of checks){console.log(`${ok?'✓':'✗'} ${label}`);if(ok)passed++}
