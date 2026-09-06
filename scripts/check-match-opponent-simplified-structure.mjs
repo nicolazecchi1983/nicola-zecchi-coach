@@ -14,7 +14,7 @@ const checks = [
   ['appearance action is aligned to the far edge', css.includes('.opponent-appearance-disclosure { position: relative; min-width: 0; justify-self:end; }')],
   ['reading has one canonical visible title', view.includes('<h3>Lettura avversario</h3>') && !view.includes('Variazioni sistema') && !view.includes('<span class="opponent-kicker">LETTURA</span>')],
   ['system-change action remains in reading header', view.includes('opponent-reading-header') && view.includes('data-add-opponent-formation')],
-  ['analysis editor supports intro suppression structurally', analysisView.includes('showIntro = true') && analysisView.includes('showIntro ? `<div class="analysis-schema-intro">')],
+  ['analysis editor supports intro suppression structurally', analysisView.includes('showIntro = true') && analysisView.includes('const introHtml = showIntro') && analysisView.includes('${introHtml}')],
   ['opponent disables duplicate analysis intro without css hiding', view.includes('showIntro: false') && !css.includes('.analysis-schema-intro{display:none') && !css.includes('.analysis-schema-intro { display: none')],
 ]
 

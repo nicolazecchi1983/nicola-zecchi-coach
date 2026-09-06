@@ -13,7 +13,7 @@ const checks = [
   ['desktop hover is domain-scoped to macroarea cards', style.includes('.analysis-schema-phase:hover')],
   ['mobile collapses macroareas to one column', style.includes('@media(max-width:760px)') && style.includes('grid-template-columns:1fr!important')],
   ['mobile open macroarea does not force desktop column span', style.includes('grid-column:auto')],
-  ['existing subsection count remains visible', view.includes('${phase.subsections.length} sottofasi')],
+  ['existing subsection count remains visible with semantic label', view.includes("const countLabel = phase.key === SET_PIECES_KEY ? 'situazioni' : 'sottofasi'") && view.includes('${phase.subsections.length} ${countLabel}')],
   ['existing disclosure remains available', view.includes('analysis-schema-phase-meta')],
   ['macroarea add action remains unchanged', view.includes('data-add-analysis-phase')],
 ]

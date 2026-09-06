@@ -1,10 +1,24 @@
-export const MATCH_ANALYSIS_SCHEMA_VERSION = 2
+export const MATCH_ANALYSIS_SCHEMA_VERSION = 3
 
 export const MATCH_ANALYSIS_PHASES = Object.freeze([
   { key: 'possession', title: 'Fase di possesso' },
   { key: 'non-possession', title: 'Fase di non possesso' },
   { key: 'transitions', title: 'Transizioni' },
   { key: 'set-pieces', title: 'Palle inattive' },
+])
+
+export const MATCH_ANALYSIS_SET_PIECE_DIRECTIONS = Object.freeze([
+  { key: 'for', title: 'A favore' },
+  { key: 'against', title: 'Contro' },
+])
+
+export const MATCH_ANALYSIS_SET_PIECE_SITUATIONS = Object.freeze([
+  "Calci d'angolo",
+  'Punizioni laterali',
+  'Punizioni centrali',
+  'Rigori',
+  'Rimesse laterali',
+  "Calcio d'inizio",
 ])
 
 export const MATCH_ANALYSIS_SUGGESTIONS = Object.freeze({
@@ -29,14 +43,7 @@ export const MATCH_ANALYSIS_SUGGESTIONS = Object.freeze({
     'Riaggressione',
     'Attacco spazio',
   ],
-  'set-pieces': [
-    "Calci d'angolo",
-    'Punizioni laterali',
-    'Punizioni centrali',
-    'Rigori',
-    'Rimesse laterali',
-    "Calcio d'inizio",
-  ],
+  'set-pieces': MATCH_ANALYSIS_SET_PIECE_SITUATIONS,
 })
 
 function safeText(value) {
@@ -53,7 +60,23 @@ function safeId(value, fallback = '') {
     .toLocaleLowerCase('it-IT') || fallback
 }
 
+function normalizeSetPieceDirection(value) {
+  const direction = safeText(value)
+  return MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.some((item) => item.key === direction) ? direction : ''
+}
+
 function defaultSubsections(phaseKey) {
+  if (phaseKey === 'set-pieces') {
+    return MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.flatMap((direction) => (
+      MATCH_ANALYSIS_SET_PIECE_SITUATIONS.map((title, index) => ({
+        id: `set-pieces-${direction.key}-${index + 1}`,
+        title,
+        note: '',
+        direction: direction.key,
+      }))
+    ))
+  }
+
   return (MATCH_ANALYSIS_SUGGESTIONS[phaseKey] || []).map((title, index) => ({
     id: `${phaseKey}-${index + 1}`,
     title,
@@ -62,11 +85,18 @@ function defaultSubsections(phaseKey) {
 }
 
 function normalizeSubsection(input = {}, phaseKey = '', index = 0) {
-  return {
+  const normalized = {
     id: safeId(input.id, `${phaseKey}-${index + 1}`),
     title: safeText(input.title || 'Nuova sottofase'),
     note: safeText(input.note),
   }
+
+  if (phaseKey === 'set-pieces') {
+    const direction = normalizeSetPieceDirection(input.direction)
+    if (direction) normalized.direction = direction
+  }
+
+  return normalized
 }
 
 function normalizePhase(input = {}, definition = {}, index = 0, { useDefaults = false } = {}) {
@@ -91,6 +121,35 @@ export function createStaffAnalysisTemplateSchema() {
       definition,
       index,
     )),
+  }
+}
+
+function legacySetPieceDefaultsAreEmptyAndCanonical(phase = {}) {
+  const subsections = Array.isArray(phase.subsections) ? phase.subsections : []
+  if (subsections.length !== MATCH_ANALYSIS_SET_PIECE_SITUATIONS.length) return false
+
+  return subsections.every((item, index) => (
+    safeId(item.id) === `set-pieces-${index + 1}`
+    && safeText(item.title) === MATCH_ANALYSIS_SET_PIECE_SITUATIONS[index]
+    && !safeText(item.note)
+    && !normalizeSetPieceDirection(item.direction)
+  ))
+}
+
+function migrateV2Schema(parsed = {}) {
+  const phases = Array.isArray(parsed?.phases) ? parsed.phases : []
+  return {
+    version: MATCH_ANALYSIS_SCHEMA_VERSION,
+    phases: phases.map((phase, index) => {
+      const key = safeId(phase?.key, `custom-phase-${index + 1}`)
+      if (key !== 'set-pieces') return normalizePhase(phase, {}, index)
+
+      const subsections = legacySetPieceDefaultsAreEmptyAndCanonical(phase)
+        ? defaultSubsections('set-pieces')
+        : (Array.isArray(phase?.subsections) ? phase.subsections : [])
+
+      return normalizePhase({ ...phase, key, subsections }, {}, index)
+    }),
   }
 }
 
@@ -124,17 +183,17 @@ export function createMatchAnalysisSchema(input = {}) {
 
   const hasExplicitPhases = Array.isArray(parsed?.phases)
   const phases = hasExplicitPhases ? parsed.phases : []
+  const version = Number(parsed?.version || 1)
 
-  if (hasExplicitPhases && Number(parsed?.version || 1) >= MATCH_ANALYSIS_SCHEMA_VERSION) {
+  if (hasExplicitPhases && version >= MATCH_ANALYSIS_SCHEMA_VERSION) {
     return {
       version: MATCH_ANALYSIS_SCHEMA_VERSION,
       phases: phases.map((phase, index) => normalizePhase(phase, {}, index)),
     }
   }
 
-  if (hasExplicitPhases && Number(parsed?.version || 1) < MATCH_ANALYSIS_SCHEMA_VERSION) {
-    return migrateLegacySchema(parsed)
-  }
+  if (hasExplicitPhases && version === 2) return migrateV2Schema(parsed)
+  if (hasExplicitPhases && version < 2) return migrateLegacySchema(parsed)
 
   return createStaffAnalysisTemplateSchema()
 }
@@ -161,13 +220,11 @@ export function parseMatchAnalysisSchema(value, legacy = {}) {
   if (typeof value === 'string') {
     try { raw = JSON.parse(value || '{}') } catch { raw = {} }
   }
-  const hasExplicitSchema = Array.isArray(raw?.phases)
-    && Number(raw?.version || 1) >= MATCH_ANALYSIS_SCHEMA_VERSION
-  const hasLegacyPhases = Array.isArray(raw?.phases) && raw.phases.length > 0
+
+  const hasExplicitPhases = Array.isArray(raw?.phases)
   const hasLegacy = Object.values(legacy || {}).some((item) => safeText(item))
 
-  if (hasExplicitSchema) return createMatchAnalysisSchema(raw)
-  if (hasLegacyPhases) return createMatchAnalysisSchema(raw)
+  if (hasExplicitPhases) return createMatchAnalysisSchema(raw)
   if (hasLegacy) return createMatchAnalysisSchemaFromLegacy(legacy)
   return createStaffAnalysisTemplateSchema()
 }
@@ -194,6 +251,7 @@ export function createAnalysisTemplateDefinition(schema) {
         id: item.id,
         title: item.title,
         note: '',
+        ...(item.direction ? { direction: item.direction } : {}),
       })),
     })),
   }

@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import {
   MATCH_ANALYSIS_SCHEMA_VERSION,
+  MATCH_ANALYSIS_SET_PIECE_SITUATIONS,
   createAnalysisTemplateDefinition,
   createMatchAnalysisSchema,
   createStaffAnalysisTemplateSchema,
@@ -18,6 +19,10 @@ const possession=staff.phases.find((phase)=>phase.key==='possession')
 const nonPossession=staff.phases.find((phase)=>phase.key==='non-possession')
 const transitions=staff.phases.find((phase)=>phase.key==='transitions')
 const setPieces=staff.phases.find((phase)=>phase.key==='set-pieces')
+const setPiecesFor=setPieces.subsections.filter((item)=>item.direction==='for')
+const setPiecesAgainst=setPieces.subsections.filter((item)=>item.direction==='against')
+const staffTemplate=createAnalysisTemplateDefinition(staff)
+const staffTemplateSetPieces=staffTemplate.phases.find((phase)=>phase.key==='set-pieces')
 
 const withNotes=createMatchAnalysisSchema({
   version:MATCH_ANALYSIS_SCHEMA_VERSION,
@@ -29,12 +34,15 @@ const withNotes=createMatchAnalysisSchema({
 const template=createAnalysisTemplateDefinition(withNotes)
 
 const checks=[
- ['schema v2 is active',MATCH_ANALYSIS_SCHEMA_VERSION===2],
+ ['schema v3 is active',MATCH_ANALYSIS_SCHEMA_VERSION===3],
  ['STAFF template has four macro areas',staff.phases.length===4],
  ['possession defaults are complete',possession.subsections.map(x=>x.title).join('|').includes('Costruzione da rimessa del portiere|Costruzione bassa|Costruzione alta|Sviluppo|Rifinitura|Finalizzazione')],
  ['non-possession defaults are complete',nonPossession.subsections.map(x=>x.title).join('|').includes('Prima pressione|Blocco medio|Blocco basso|Difesa area di rigore|Difesa uomo a uomo')],
  ['transitions remain configurable defaults',transitions.subsections.length>=2],
- ['set pieces defaults include requested situations',setPieces.subsections.map(x=>x.title).join('|').includes("Calci d'angolo|Punizioni laterali|Punizioni centrali|Rigori|Rimesse laterali|Calcio d'inizio")],
+ ['set pieces have six situations for and six against',setPiecesFor.length===6&&setPiecesAgainst.length===6],
+ ['set pieces directions share the same canonical situations',JSON.stringify(setPiecesFor.map(x=>x.title))===JSON.stringify(MATCH_ANALYSIS_SET_PIECE_SITUATIONS)&&JSON.stringify(setPiecesAgainst.map(x=>x.title))===JSON.stringify(MATCH_ANALYSIS_SET_PIECE_SITUATIONS)],
+ ['template preserves set-piece direction metadata',staffTemplateSetPieces.subsections.every((item)=>item.direction==='for'||item.direction==='against')],
+ ['editor groups set pieces without domain forks',editor.includes('analysis-set-piece-groups')&&editor.includes('INATTIVE')&&editor.includes('MATCH_ANALYSIS_SET_PIECE_DIRECTIONS')],
  ['custom macro areas survive normalization',withNotes.phases[0].key==='custom-test'&&withNotes.phases[0].title==='Mio blocco'],
  ['template strips match-specific notes',template.phases[0].note===''&&template.phases[0].subsections[0].note===''],
  ['editor uses nested details accordions',editor.includes('<details class="analysis-schema-phase"')&&editor.includes('<details class="analysis-schema-subsection"')],

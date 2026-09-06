@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import {
   MATCH_ANALYSIS_SCHEMA_VERSION,
+  MATCH_ANALYSIS_SET_PIECE_SITUATIONS,
   createMatchAnalysisSchema,
   parseMatchAnalysisSchema,
   serializeMatchAnalysisSchema,
@@ -21,11 +22,25 @@ const reduced=createMatchAnalysisSchema({
 const reparsed=parseMatchAnalysisSchema(serializeMatchAnalysisSchema(reduced))
 const empty=createMatchAnalysisSchema({version:MATCH_ANALYSIS_SCHEMA_VERSION,phases:[]})
 const emptyReparsed=parseMatchAnalysisSchema(serializeMatchAnalysisSchema(empty))
+const legacyV2Reduced=parseMatchAnalysisSchema({version:2,phases:[
+  {key:'possession',title:'Possesso',note:'',subsections:[]},
+]})
+const legacyV2EmptySetPieces=createMatchAnalysisSchema({version:2,phases:[{
+  key:'set-pieces',title:'Palle inattive',note:'',
+  subsections:MATCH_ANALYSIS_SET_PIECE_SITUATIONS.map((title,index)=>({id:`set-pieces-${index+1}`,title,note:''})),
+}]})
+const legacyV2PopulatedSetPieces=createMatchAnalysisSchema({version:2,phases:[{
+  key:'set-pieces',title:'Palle inattive',note:'',
+  subsections:MATCH_ANALYSIS_SET_PIECE_SITUATIONS.map((title,index)=>({id:`set-pieces-${index+1}`,title,note:index===0?'nota storica':''})),
+}]})
 
 const checks=[
  ['reduced v2 schema stays reduced',reparsed.phases.length===2],
  ['deleted canonical phase is not silently recreated',!reparsed.phases.some(p=>p.key==='non-possession')],
- ['explicit empty v2 schema remains empty',empty.phases.length===0&&emptyReparsed.phases.length===0],
+ ['explicit empty current schema remains empty',empty.phases.length===0&&emptyReparsed.phases.length===0],
+ ['legacy v2 reduced schema remains reduced',legacyV2Reduced.phases.length===1&&legacyV2Reduced.phases[0].key==='possession'],
+ ['legacy v2 empty canonical set pieces upgrade safely',legacyV2EmptySetPieces.phases[0].subsections.length===12&&legacyV2EmptySetPieces.phases[0].subsections.filter(x=>x.direction==='for').length===6&&legacyV2EmptySetPieces.phases[0].subsections.filter(x=>x.direction==='against').length===6],
+ ['legacy v2 populated set pieces remain unclassified',legacyV2PopulatedSetPieces.phases[0].subsections.length===6&&legacyV2PopulatedSetPieces.phases[0].subsections[0].note==='nota storica'&&legacyV2PopulatedSetPieces.phases[0].subsections.every(x=>!x.direction)],
  ['structural mutations emit explicit snapshot event',editor.includes('analysis-schema-structure-change')&&editor.includes("reason: 'remove-phase'")],
  ['template application emits structural snapshot event',editor.includes("reason: 'apply-template'")],
  ['structure renames are structural changes',editor.includes("reason: 'rename-structure'")],

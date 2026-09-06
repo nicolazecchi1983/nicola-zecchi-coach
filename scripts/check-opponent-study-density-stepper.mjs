@@ -3,6 +3,7 @@ import fs from 'node:fs'
 const view=fs.readFileSync('src/modules/match/ui/matchOpponentStudyView.js','utf8')
 const studyCss=fs.readFileSync('src/modules/match/ui/matchOpponentStudy.css','utf8')
 const resourceCss=fs.readFileSync('src/design-system/resourceComponents.css','utf8')
+const pageShellCss=fs.readFileSync('src/design-system/pageShell.css','utf8')
 const sharedCss=fs.readFileSync('src/style.css','utf8')
 const productCss=fs.readFileSync('src/design-system/productUi.css','utf8')
 const matchCss=fs.readFileSync('src/modules/match/workspace/matchWorkspace.css','utf8')
@@ -18,6 +19,9 @@ const checks=[
  ['technical reading outer surface is neutral',studyCss.includes('STAFF R2.2 — Technical Reading Density canonical owner')&&studyCss.includes('.match-opponent-study .match-study-analysis-panel{')&&studyCss.includes('background:transparent')],
  ['template toolbar is a compact command row',studyCss.includes('grid-template-columns:minmax(260px,1fr) auto auto')&&studyCss.includes('[data-analysis-template-select]')&&studyCss.includes('min-height:44px')],
  ['technical helper noise is visually retired',studyCss.includes('.analysis-template-toolbar>p:not(.form-message)')&&studyCss.includes('.analysis-template-toolbar>small')&&studyCss.includes('display:none')],
+ ['peer macrosection titles share canonical typography',pageShellCss.includes('.staff-section-heading__title')&&pageShellCss.includes('font-size:var(--staff-font-section-title)')&&view.includes('sectionHeadingHtml({')],
+ ['peer macrosections have semantic visual anchors',view.includes("iconName: 'document'")&&view.includes("headingIconName: 'analysis'")&&pageShellCss.includes('.staff-section-heading__icon')],
+ ['peer macrosections breathe more than their internal heading gap',studyCss.includes('gap:var(--staff-space-3)')&&studyCss.includes('calc(var(--staff-space-4) + var(--staff-space-2))')],
  ['technical density remains domain-local and avoids important escalation',!studyCss.includes('R2.2 — Technical Reading Density canonical owner')?false:!studyCss.substring(studyCss.indexOf('R2.2 — Technical Reading Density canonical owner')).includes('!important')],
  ['link source is human-readable while href stays canonical',view.includes('linkSourceLabel')&&view.includes('metaHtml: `<span title="${escapeHtml(link.url)}">')&&view.includes('href: escapeHtml(link.url)')],
  ['material actions keep compact accessible floor',resourceCss.includes('min-height:44px')&&resourceCss.includes('.staff-resource-action')],

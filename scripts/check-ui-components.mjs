@@ -10,6 +10,7 @@ const icons = await readFile('src/design-system/iconRegistry.js', 'utf8')
 const resourceCss = await readFile('src/design-system/resourceComponents.css', 'utf8')
 const main = await readFile('src/main.js', 'utf8')
 const opponentStudy = await readFile('src/modules/match/ui/matchOpponentStudyView.js', 'utf8')
+const pageShellCss = await readFile('src/design-system/pageShell.css', 'utf8')
 const legacyCompatibility = await readFile('src/modules/match/ui/legacyMatchCompatibilityView.js', 'utf8')
 const squad = await readFile('src/modules/match/ui/matchSquadView.js', 'utf8')
 const callups = await readFile('src/modules/match/ui/callupsView.js', 'utf8')
@@ -17,7 +18,7 @@ const analysis = await readFile('src/modules/match/ui/matchAnalysisView.js', 'ut
 const statistics = await readFile('src/modules/match/ui/matchStatisticsView.js', 'utf8')
 const matchWorkspaceShell = await readFile('src/modules/match/workspace/matchWorkspaceShell.js', 'utf8')
 
-for (const contract of ['buttonHtml', 'matchContextBackButtonHtml', 'editorFooterHtml', 'compactResourceActionHtml', 'resourceSectionHeaderHtml', 'resourceRowHtml', 'overflowActionMenuHtml']) {
+for (const contract of ['buttonHtml', 'matchContextBackButtonHtml', 'editorFooterHtml', 'compactResourceActionHtml', 'resourceSectionHeaderHtml', 'resourceRowHtml', 'overflowActionMenuHtml', 'sectionHeadingHtml']) {
   if (!components.includes(`export function ${contract}`)) failures.push(`Contratto UI mancante: ${contract}`)
 }
 
@@ -32,7 +33,7 @@ for (const [name, source] of [['Convocazioni', callups], ['Analisi gara', analys
 }
 if (!matchWorkspaceShell.includes('matchContextBackButtonHtml()')) failures.push('Match Workspace Shell: ritorno al workspace mancante')
 if (!statistics.includes('matchWorkspaceShellHtml')) failures.push('Statistiche: Match Workspace Shell non condiviso')
-for (const iconName of ['document', 'link', 'external-link', 'replace', 'more', 'trash', 'plus']) {
+for (const iconName of ['document', 'link', 'external-link', 'replace', 'more', 'trash', 'plus', 'analysis']) {
   const iconPattern = new RegExp(`['"]?${iconName}['"]?\\s*:`)
   if (!iconPattern.test(icons)) failures.push(`Icona condivisa mancante: ${iconName}`)
 }
@@ -45,6 +46,8 @@ if (resourceCss.includes('!important')) failures.push('Compact Resource non deve
 if (!resourceCss.includes('@media(max-width:760px)')) failures.push('Compact Resource non usa breakpoint canonico 760px')
 if (!opponentStudy.includes("from '../../../design-system/uiComponents.js'")) failures.push('Studio avversario non consuma primitive condivise')
 if (!opponentStudy.includes('resourceSectionHeaderHtml({') || !opponentStudy.includes('resourceRowHtml({')) failures.push('Studio avversario non è pilot Compact Resource')
+if (!pageShellCss.includes('STAFF Section Heading semantic extension') || !pageShellCss.includes('.staff-section-heading__title')) failures.push('SectionHeading condiviso non è owned da Page Shell')
+if (!opponentStudy.includes('sectionHeadingHtml({') || !opponentStudy.includes("headingIconName: 'analysis'")) failures.push('Studio avversario non usa SectionHeading condiviso per le macrosezioni')
 if (statistics.includes('matchContextBackButtonHtml()')) failures.push('Statistiche: ritorno duplicato fuori dal Match Workspace Shell')
 if (statistics.includes('class="ghost-button match-context-back"')) failures.push('Statistiche: markup legacy del ritorno ancora presente')
 

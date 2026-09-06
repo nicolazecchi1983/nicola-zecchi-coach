@@ -15,6 +15,8 @@ const template=createAnalysisTemplateDefinition(reduced)
 
 const checks=[
  ['opponent-study preserves reduced snapshot',study.technicalAnalysis.phases.length===2],
+ ['opponent-study migrates technical snapshot to schema v3',study.technicalAnalysis.version===3],
+ ['template definition migrates to schema v3',template.version===3],
  ['deleted canonical area is not recreated by model',!study.technicalAnalysis.phases.some(p=>p.key==='non-possession')],
  ['model uses nullish presence rather than truthy fallback',model.includes('input.technicalAnalysis != null')],
  ['apply and template management are separate actions',view.includes('data-apply-analysis-template')&&view.includes('data-open-analysis-template-manager')],

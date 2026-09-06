@@ -11,6 +11,7 @@ const adapters = fs.readFileSync('src/app/appViewAdapters.js', 'utf8')
 const css = fs.readFileSync('src/modules/match/ui/matchOpponentStudy.css', 'utf8')
 const resourceCss = fs.readFileSync('src/design-system/resourceComponents.css', 'utf8')
 const components = fs.readFileSync('src/design-system/uiComponents.js', 'utf8')
+const pageShellCss = fs.readFileSync('src/design-system/pageShell.css', 'utf8')
 
 const checks = [
   ['Studio avversario ha modello dedicato', model.includes('normalizeMatchOpponentStudy') && model.includes('MATCH_OPPONENT_STUDY_SCHEMA_VERSION')],
@@ -29,6 +30,9 @@ const checks = [
   ['R2.2 toolbar template e una command row senza box annidato', css.includes('.match-study-analysis-panel .analysis-template-toolbar{') && css.includes('border:0') && css.includes('box-shadow:none')],
   ['R2.2 label Template di partenza resta accessibile ma non visibile', css.includes('.analysis-template-apply label>span') && css.includes('clip:rect(0,0,0,0)')],
   ['R2.2 helper statico toolbar e soppresso senza nascondere form-message', css.includes('.analysis-template-toolbar>p:not(.form-message)') && css.includes('.analysis-template-toolbar>small')],
+  ['R2.3B titoli macrosezione condividono lo stesso SectionHeading', components.includes('sectionHeadingHtml') && pageShellCss.includes('.staff-section-heading__title') && view.includes('sectionHeadingHtml({')],
+  ['R2.3B Materiali e Lettura tecnica hanno icone semantiche', view.includes("iconName: 'document'") && view.includes("headingIconName: 'analysis'")],
+  ['R2.3B separazione macrosezioni aumenta senza box o divider', css.includes('calc(var(--staff-space-4) + var(--staff-space-2))') && !pageShellCss.includes('!important')],
   ['Premium UI mostra sorgente link leggibile senza perdere URL reale', view.includes('linkSourceLabel') && view.includes('metaHtml: `<span title="${escapeHtml(link.url)}">') && view.includes('href: escapeHtml(link.url)')],
   ['R2.1 Compact Resource condiviso è il physical owner', resourceCss.includes('.staff-resource-section') && resourceCss.includes('.staff-resource-row') && !css.includes('.match-study-resource{')],
   ['R2.1 simmetria header azioni senza footer isolati', view.includes('reportHeaderAction') && view.includes('materialsHeaderActions') && !view.includes('match-study-card-footer')],

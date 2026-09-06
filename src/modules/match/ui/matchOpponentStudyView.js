@@ -1,5 +1,5 @@
 import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
-import { compactResourceActionHtml, resourceSectionHeaderHtml, resourceRowHtml, overflowActionMenuHtml } from '../../../design-system/uiComponents.js'
+import { compactResourceActionHtml, resourceSectionHeaderHtml, resourceRowHtml, overflowActionMenuHtml, sectionHeadingHtml } from '../../../design-system/uiComponents.js'
 import { categoryLabel } from '../matchOpponentStudyModel.js'
 import { renderMatchAnalysisSchemaEditor } from './matchAnalysisSchemaView.js'
 
@@ -127,9 +127,12 @@ export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml, t
   ].join('')
 
   const contentHtml = `<section class="match-study-materials" aria-labelledby="match-study-materials-title">
-      <div class="match-study-materials-head">
-        <h2 id="match-study-materials-title">Materiali pre-partita</h2>
-      </div>
+      ${sectionHeadingHtml({
+        titleHtml: 'Materiali pre-partita',
+        iconName: 'document',
+        titleId: 'match-study-materials-title',
+        className: 'match-study-section-heading',
+      })}
 
       <div class="match-study-materials-grid match-study-materials-grid--two">
         <article class="staff-resource-section match-study-material-card">
@@ -186,6 +189,7 @@ export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml, t
             schema: study?.technicalAnalysis,
             title: 'Lettura tecnica',
             description: '',
+            headingIconName: 'analysis',
           })}
           <div class="match-study-save-row"><button class="primary-button" type="submit">Salva studio</button><p class="form-message" data-study-message="notes"></p></div>
         </form>

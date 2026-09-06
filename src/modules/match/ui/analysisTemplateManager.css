@@ -254,3 +254,27 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* R2.3 — Set Pieces Direction manager owner */
+.analysis-template-manager-subsection--set-piece{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(140px,180px) 44px;
+  gap:var(--staff-space-2);
+  align-items:center;
+}
+.analysis-template-manager-add-subsection--set-piece{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(140px,180px) auto;
+  gap:var(--staff-space-2);
+  align-items:center;
+}
+@media(max-width:760px){
+  .analysis-template-manager-subsection--set-piece,
+  .analysis-template-manager-add-subsection--set-piece{
+    grid-template-columns:minmax(0,1fr);
+  }
+  .analysis-template-manager-subsection--set-piece [data-template-manager-remove-subsection],
+  .analysis-template-manager-add-subsection--set-piece [data-template-manager-add-subsection]{
+    width:100%;
+  }
+}

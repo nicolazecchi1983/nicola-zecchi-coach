@@ -1,6 +1,9 @@
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
+import { sectionHeadingHtml } from '../../../design-system/uiComponents.js'
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import {
+  MATCH_ANALYSIS_SCHEMA_VERSION,
+  MATCH_ANALYSIS_SET_PIECE_DIRECTIONS,
   MATCH_ANALYSIS_SUGGESTIONS,
   analysisSchemaHasNotes,
   createAnalysisTemplateDefinition,
@@ -11,14 +14,26 @@ import {
 } from '../matchAnalysisSchema.js'
 
 
-function subsectionHtml(item) {
-  return `<details class="analysis-schema-subsection" data-analysis-subsection="${escapeHtml(item.id)}">
+const SET_PIECES_KEY = 'set-pieces'
+
+function setPieceDirectionOptionsHtml(value = '') {
+  const current = String(value || '')
+  return `${current ? '' : '<option value="">Da classificare</option>'}${MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.map((direction) => (
+    `<option value="${escapeHtml(direction.key)}" ${direction.key === current ? 'selected' : ''}>${escapeHtml(direction.title)}</option>`
+  )).join('')}`
+}
+
+function subsectionHtml(item, { phaseKey = '' } = {}) {
+  const isSetPiece = phaseKey === SET_PIECES_KEY
+  const direction = isSetPiece ? String(item.direction || '') : ''
+  return `<details class="analysis-schema-subsection" data-analysis-subsection="${escapeHtml(item.id)}" ${isSetPiece ? `data-analysis-direction="${escapeHtml(direction)}"` : ''}>
     <summary>
       <span data-analysis-subsection-label>${escapeHtml(item.title)}</span>
       <span class="analysis-schema-disclosure" aria-hidden="true">⌄</span>
     </summary>
     <div class="analysis-schema-subsection-body">
       <label><span>Titolo sottofase</span><input name="analysis_subsection_title" type="text" value="${escapeHtml(item.title)}" data-analysis-subsection-title aria-label="Titolo sottofase"></label>
+      ${isSetPiece ? `<label class="analysis-set-piece-direction-field"><span>Direzione</span><select name="analysis_subsection_direction" data-analysis-subsection-direction>${setPieceDirectionOptionsHtml(direction)}</select></label>` : ''}
       <label><span>Contenuto</span><textarea name="analysis_subsection_note" rows="5" data-analysis-subsection-note placeholder="Scrivi osservazioni, principi, comportamenti, riferimenti video...">${escapeHtml(item.note)}</textarea></label>
       <div class="analysis-schema-item-actions">
         <button type="button" class="ghost-button" data-remove-analysis-subsection>Elimina sottofase</button>
@@ -27,12 +42,69 @@ function subsectionHtml(item) {
   </details>`
 }
 
-function phaseHtml(phase) {
+function addSubsectionHtml(suggestions, { direction = '' } = {}) {
+  return `<div class="analysis-schema-add">
+    <select name="analysis_subsection_template" data-analysis-subsection-template aria-label="Scegli una sottofase">
+      <option value="">Aggiungi una sottofase…</option>
+      ${suggestions.map((label) => `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`).join('')}
+      <option value="__custom__">Personalizzata…</option>
+    </select>
+    <button type="button" class="secondary-button" data-add-analysis-subsection ${direction ? `data-analysis-direction="${escapeHtml(direction)}"` : ''}>＋ Aggiungi</button>
+  </div>`
+}
+
+function setPieceGroupHtml(items, direction) {
+  return `<section class="analysis-set-piece-group" data-analysis-set-piece-group="${escapeHtml(direction.key)}">
+    <header class="analysis-set-piece-group__head">
+      <strong>INATTIVE ${escapeHtml(direction.title.toLocaleUpperCase('it-IT'))}</strong>
+      <small><span data-analysis-set-piece-count>${items.length}</span> situazioni</small>
+    </header>
+    <div class="analysis-schema-subsections" data-analysis-subsections data-analysis-direction="${escapeHtml(direction.key)}">
+      ${items.map((item) => subsectionHtml(item, { phaseKey: SET_PIECES_KEY })).join('')}
+    </div>
+    ${addSubsectionHtml(MATCH_ANALYSIS_SUGGESTIONS[SET_PIECES_KEY] || [], { direction: direction.key })}
+  </section>`
+}
+
+function setPieceUnclassifiedGroupHtml(items) {
+  if (!items.length) return ''
+  return `<section class="analysis-set-piece-group analysis-set-piece-group--unclassified" data-analysis-set-piece-group="unclassified">
+    <header class="analysis-set-piece-group__head">
+      <strong>DA CLASSIFICARE</strong>
+      <small><span data-analysis-set-piece-count>${items.length}</span> situazioni storiche</small>
+    </header>
+    <div class="analysis-schema-subsections" data-analysis-subsections data-analysis-direction="">
+      ${items.map((item) => subsectionHtml(item, { phaseKey: SET_PIECES_KEY })).join('')}
+    </div>
+  </section>`
+}
+
+function phaseSubsectionsHtml(phase) {
   const suggestions = MATCH_ANALYSIS_SUGGESTIONS[phase.key] || []
+  if (phase.key !== SET_PIECES_KEY) {
+    return `<div class="analysis-schema-subsections" data-analysis-subsections>
+      ${phase.subsections.map((item) => subsectionHtml(item, { phaseKey: phase.key })).join('')}
+    </div>
+    ${addSubsectionHtml(suggestions)}`
+  }
+
+  const groups = MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.map((direction) => (
+    setPieceGroupHtml(phase.subsections.filter((item) => item.direction === direction.key), direction)
+  )).join('')
+  const unclassified = phase.subsections.filter((item) => !item.direction)
+
+  return `<div class="analysis-set-piece-groups">
+    ${groups}
+    ${setPieceUnclassifiedGroupHtml(unclassified)}
+  </div>`
+}
+
+function phaseHtml(phase) {
+  const countLabel = phase.key === SET_PIECES_KEY ? 'situazioni' : 'sottofasi'
   return `<details class="analysis-schema-phase" data-analysis-phase="${escapeHtml(phase.key)}">
     <summary class="analysis-schema-phase-summary">
       <div><span>MACROAREA</span><strong data-analysis-phase-label>${escapeHtml(phase.title)}</strong></div>
-      <div class="analysis-schema-phase-meta"><small>${phase.subsections.length} sottofasi</small><span aria-hidden="true">⌄</span></div>
+      <div class="analysis-schema-phase-meta"><small>${phase.subsections.length} ${countLabel}</small><span aria-hidden="true">⌄</span></div>
     </summary>
     <div class="analysis-schema-phase-body">
       <div class="analysis-schema-phase-tools">
@@ -40,17 +112,7 @@ function phaseHtml(phase) {
         <button type="button" class="ghost-button analysis-schema-delete-phase" data-remove-analysis-phase>Elimina macroarea</button>
       </div>
       <label class="analysis-schema-general"><span>Nota generale della macroarea</span><textarea name="analysis_phase_note" rows="4" data-analysis-phase-note placeholder="Nota generale facoltativa...">${escapeHtml(phase.note)}</textarea></label>
-      <div class="analysis-schema-subsections" data-analysis-subsections>
-        ${phase.subsections.map(subsectionHtml).join('')}
-      </div>
-      <div class="analysis-schema-add">
-        <select name="analysis_subsection_template" data-analysis-subsection-template aria-label="Scegli una sottofase">
-          <option value="">Aggiungi una sottofase…</option>
-          ${suggestions.map((label) => `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`).join('')}
-          <option value="__custom__">Personalizzata…</option>
-        </select>
-        <button type="button" class="secondary-button" data-add-analysis-subsection>＋ Aggiungi</button>
-      </div>
+      ${phaseSubsectionsHtml(phase)}
     </div>
   </details>`
 }
@@ -75,13 +137,25 @@ export function renderMatchAnalysisSchemaEditor({
   title = 'Lettura per fasi',
   description = 'Apri una macroarea, poi la sottofase su cui vuoi lavorare.',
   showIntro = true,
+  headingIconName = '',
 } = {}) {
   const normalized = parseMatchAnalysisSchema(schema)
+  const introHtml = showIntro
+    ? (headingIconName
+      ? sectionHeadingHtml({
+          titleHtml: escapeHtml(title),
+          iconName: headingIconName,
+          metaHtml: '<span class="staff-section-heading__badge">PERSONALIZZABILE</span>',
+          className: 'analysis-schema-section-heading',
+        })
+      : `<div class="analysis-schema-intro">
+        <div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(description)}</p></div>
+        <span>PERSONALIZZABILE</span>
+      </div>`)
+    : ''
+
   return `<section class="analysis-schema-editor" data-analysis-schema-editor>
-    ${showIntro ? `<div class="analysis-schema-intro">
-      <div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(description)}</p></div>
-      <span>PERSONALIZZABILE</span>
-    </div>` : ''}
+    ${introHtml}
     ${templateToolbarHtml()}
     <input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(serializeMatchAnalysisSchema(normalized))}" data-analysis-schema-value>
     <div class="analysis-schema-phases" data-analysis-schema-phases>${normalized.phases.map(phaseHtml).join('')}</div>
@@ -89,10 +163,15 @@ export function renderMatchAnalysisSchemaEditor({
   </section>`
 }
 
-function createSubsectionNode(title = 'Nuova sottofase') {
+function createSubsectionNode(title = 'Nuova sottofase', { phaseKey = '', direction = '' } = {}) {
   const holder = document.createElement('div')
   const id = `custom-${Date.now()}-${Math.random().toString(16).slice(2)}`
-  holder.innerHTML = subsectionHtml({ id, title, note: '' })
+  holder.innerHTML = subsectionHtml({
+    id,
+    title,
+    note: '',
+    ...(direction ? { direction } : {}),
+  }, { phaseKey })
   return holder.firstElementChild
 }
 
@@ -105,16 +184,20 @@ function createPhaseNode(title = 'Nuova macroarea') {
 
 function collectEditor(editor) {
   return createMatchAnalysisSchema({
-    version: 2,
+    version: MATCH_ANALYSIS_SCHEMA_VERSION,
     phases: [...editor.querySelectorAll('[data-analysis-phase]')].map((phase) => ({
       key: phase.dataset.analysisPhase,
       title: phase.querySelector('[data-analysis-phase-title]')?.value || phase.querySelector('[data-analysis-phase-label]')?.textContent || '',
       note: phase.querySelector('[data-analysis-phase-note]')?.value || '',
-      subsections: [...phase.querySelectorAll('[data-analysis-subsection]')].map((item) => ({
-        id: item.dataset.analysisSubsection,
-        title: item.querySelector('[data-analysis-subsection-title]')?.value || '',
-        note: item.querySelector('[data-analysis-subsection-note]')?.value || '',
-      })),
+      subsections: [...phase.querySelectorAll('[data-analysis-subsection]')].map((item) => {
+        const direction = item.querySelector('[data-analysis-subsection-direction]')?.value || item.dataset.analysisDirection || ''
+        return {
+          id: item.dataset.analysisSubsection,
+          title: item.querySelector('[data-analysis-subsection-title]')?.value || '',
+          note: item.querySelector('[data-analysis-subsection-note]')?.value || '',
+          ...(direction ? { direction } : {}),
+        }
+      }),
     })),
   })
 }
@@ -134,7 +217,13 @@ function syncLabels(editor) {
     if (input && label) label.textContent = input.value.trim() || 'Nuova macroarea'
     const count = phase.querySelectorAll('[data-analysis-subsection]').length
     const small = phase.querySelector('.analysis-schema-phase-meta small')
-    if (small) small.textContent = `${count} sottofasi`
+    const unit = phase.dataset.analysisPhase === SET_PIECES_KEY ? 'situazioni' : 'sottofasi'
+    if (small) small.textContent = `${count} ${unit}`
+    phase.querySelectorAll('[data-analysis-set-piece-group]').forEach((group) => {
+      const groupCount = group.querySelectorAll('[data-analysis-subsection]').length
+      const node = group.querySelector('[data-analysis-set-piece-count]')
+      if (node) node.textContent = String(groupCount)
+    })
   })
   editor.querySelectorAll('[data-analysis-subsection]').forEach((item) => {
     const input = item.querySelector('[data-analysis-subsection-title]')
@@ -177,22 +266,32 @@ async function loadTemplateOptions(editor, options, preferredId = '') {
   return templates
 }
 
-function managerSubsectionHtml(item) {
-  return `<div class="analysis-template-manager-subsection" data-template-manager-subsection="${escapeHtml(item.id)}">
+function managerDirectionOptionsHtml(value = '') {
+  const current = String(value || '')
+  return `${current ? '' : '<option value="">Da classificare</option>'}${MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.map((direction) => (
+    `<option value="${escapeHtml(direction.key)}" ${direction.key === current ? 'selected' : ''}>${escapeHtml(direction.title)}</option>`
+  )).join('')}`
+}
+
+function managerSubsectionHtml(item, { phaseKey = '' } = {}) {
+  const isSetPiece = phaseKey === SET_PIECES_KEY
+  return `<div class="analysis-template-manager-subsection ${isSetPiece ? 'analysis-template-manager-subsection--set-piece' : ''}" data-template-manager-subsection="${escapeHtml(item.id)}">
     <input name="template_manager_subsection_title" type="text" value="${escapeHtml(item.title)}" data-template-manager-subsection-title aria-label="Nome sottofase">
+    ${isSetPiece ? `<select name="template_manager_subsection_direction" data-template-manager-subsection-direction aria-label="Direzione palla inattiva">${managerDirectionOptionsHtml(item.direction || '')}</select>` : ''}
     <button type="button" class="ghost-button" data-template-manager-remove-subsection aria-label="Elimina sottofase">×</button>
   </div>`
 }
 
 function managerPhaseHtml(phase) {
   const suggestions = MATCH_ANALYSIS_SUGGESTIONS[phase.key] || []
+  const isSetPiece = phase.key === SET_PIECES_KEY
   return `<section class="analysis-template-manager-phase" data-template-manager-phase="${escapeHtml(phase.key)}">
     <div class="analysis-template-manager-phase-card-head">
       <div>
         <span>MACROAREA</span>
         <strong data-template-manager-phase-label>${escapeHtml(phase.title)}</strong>
       </div>
-      <small><span data-template-manager-phase-count>${phase.subsections.length}</span> sottofasi</small>
+      <small><span data-template-manager-phase-count>${phase.subsections.length}</span> ${isSetPiece ? 'situazioni' : 'sottofasi'}</small>
     </div>
     <div class="analysis-template-manager-phase-body">
       <div class="analysis-template-manager-phase-head">
@@ -200,14 +299,17 @@ function managerPhaseHtml(phase) {
         <button type="button" class="ghost-button" data-template-manager-remove-phase>Elimina macroarea</button>
       </div>
       <div class="analysis-template-manager-subsections" data-template-manager-subsections>
-        ${phase.subsections.map(managerSubsectionHtml).join('')}
+        ${phase.subsections.map((item) => managerSubsectionHtml(item, { phaseKey: phase.key })).join('')}
       </div>
-      <div class="analysis-template-manager-add-subsection">
+      <div class="analysis-template-manager-add-subsection ${isSetPiece ? 'analysis-template-manager-add-subsection--set-piece' : ''}">
         <select name="template_manager_subsection_template" data-template-manager-subsection-template>
           <option value="">Aggiungi una sottofase…</option>
           ${suggestions.map((label) => `<option value="${escapeHtml(label)}">${escapeHtml(label)}</option>`).join('')}
           <option value="__custom__">Personalizzata…</option>
         </select>
+        ${isSetPiece ? `<select name="template_manager_new_direction" data-template-manager-new-direction aria-label="Direzione nuova palla inattiva">
+          ${MATCH_ANALYSIS_SET_PIECE_DIRECTIONS.map((direction) => `<option value="${escapeHtml(direction.key)}">${escapeHtml(direction.title)}</option>`).join('')}
+        </select>` : ''}
         <button type="button" class="secondary-button" data-template-manager-add-subsection>＋ Aggiungi sottofase</button>
       </div>
     </div>
@@ -272,16 +374,20 @@ function uniqueCopyName(baseName, templates) {
 
 function collectTemplateManager(modal) {
   return createAnalysisTemplateDefinition({
-    version: 2,
+    version: MATCH_ANALYSIS_SCHEMA_VERSION,
     phases: [...modal.querySelectorAll('[data-template-manager-phase]')].map((phase) => ({
       key: phase.dataset.templateManagerPhase,
       title: phase.querySelector('[data-template-manager-phase-title]')?.value || '',
       note: '',
-      subsections: [...phase.querySelectorAll('[data-template-manager-subsection]')].map((item) => ({
-        id: item.dataset.templateManagerSubsection,
-        title: item.querySelector('[data-template-manager-subsection-title]')?.value || '',
-        note: '',
-      })),
+      subsections: [...phase.querySelectorAll('[data-template-manager-subsection]')].map((item) => {
+        const direction = item.querySelector('[data-template-manager-subsection-direction]')?.value || ''
+        return {
+          id: item.dataset.templateManagerSubsection,
+          title: item.querySelector('[data-template-manager-subsection-title]')?.value || '',
+          note: '',
+          ...(direction ? { direction } : {}),
+        }
+      }),
     })),
   })
 }
@@ -410,12 +516,15 @@ async function openTemplateManager(editor, options, initialTemplates = [], onTem
     if (addSubsection) {
       const phase = addSubsection.closest('[data-template-manager-phase]')
       const selectField = phase?.querySelector('[data-template-manager-subsection-template]')
+      const directionField = phase?.querySelector('[data-template-manager-new-direction]')
       const list = phase?.querySelector('[data-template-manager-subsections]')
       if (!phase || !selectField || !list || !selectField.value) return
+      const phaseKey = phase.dataset.templateManagerPhase || ''
       const title = selectField.value === '__custom__' ? 'Nuova sottofase' : selectField.value
-      const id = managerCustomId(phase.dataset.templateManagerPhase || 'subsection')
+      const direction = phaseKey === SET_PIECES_KEY ? (directionField?.value || 'for') : ''
+      const id = managerCustomId(phaseKey || 'subsection')
       const holder = document.createElement('div')
-      holder.innerHTML = managerSubsectionHtml({ id, title })
+      holder.innerHTML = managerSubsectionHtml({ id, title, ...(direction ? { direction } : {}) }, { phaseKey })
       list.appendChild(holder.firstElementChild)
       selectField.value = ''
       refreshTemplateManagerPhaseCount(phase)
@@ -538,6 +647,24 @@ export async function bindMatchAnalysisSchemaEditors(root, options = {}) {
       }
     })
 
+    editor.addEventListener('change', (event) => {
+      if (!event.target.matches('[data-analysis-subsection-direction]')) return
+      const subsection = event.target.closest('[data-analysis-subsection]')
+      const phase = subsection?.closest('[data-analysis-phase]')
+      const direction = event.target.value
+      if (!subsection || !phase || !direction) return
+
+      subsection.dataset.analysisDirection = direction
+      const targetList = phase.querySelector(`[data-analysis-subsections][data-analysis-direction="${direction}"]`)
+      if (targetList) targetList.appendChild(subsection)
+      event.target.querySelector('option[value=""]')?.remove()
+
+      const legacyGroup = phase.querySelector('[data-analysis-set-piece-group="unclassified"]')
+      if (legacyGroup && !legacyGroup.querySelector('[data-analysis-subsection]')) legacyGroup.remove()
+
+      syncEditor(editor, { structural: true, reason: 'set-piece-direction' })
+    })
+
     editor.addEventListener('click', async (event) => {
       const remove = event.target.closest('[data-remove-analysis-subsection]')
       if (remove) {
@@ -559,11 +686,15 @@ export async function bindMatchAnalysisSchemaEditors(root, options = {}) {
       const add = event.target.closest('[data-add-analysis-subsection]')
       if (add) {
         const phase = add.closest('[data-analysis-phase]')
-        const select = phase?.querySelector('[data-analysis-subsection-template]')
-        const list = phase?.querySelector('[data-analysis-subsections]')
+        const group = add.closest('[data-analysis-set-piece-group]')
+        const select = group?.querySelector('[data-analysis-subsection-template]') || phase?.querySelector('[data-analysis-subsection-template]')
+        const direction = add.dataset.analysisDirection || ''
+        const list = direction
+          ? phase?.querySelector(`[data-analysis-subsections][data-analysis-direction="${direction}"]`)
+          : phase?.querySelector('[data-analysis-subsections]')
         if (!phase || !select || !list || !select.value) return
         const title = select.value === '__custom__' ? 'Nuova sottofase' : select.value
-        const node = createSubsectionNode(title)
+        const node = createSubsectionNode(title, { phaseKey: phase.dataset.analysisPhase || '', direction })
         list.appendChild(node)
         phase.open = true
         node.open = true

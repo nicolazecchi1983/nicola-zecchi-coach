@@ -21,9 +21,7 @@
 }
 
 /* R2.1 — Compact Resource pilot: domain adapter only */
-.match-study-materials{margin:0 0 var(--staff-space-4);padding:0;border:0;border-radius:0;background:transparent}
-.match-study-materials-head{display:block;margin:0 0 var(--staff-space-3)}
-.match-study-materials-head h2{margin:0;color:var(--staff-color-text);font-size:var(--staff-font-section-title);font-weight:var(--staff-font-weight-semibold)}
+.match-study-materials{display:grid;gap:var(--staff-space-3);margin:0 0 calc(var(--staff-space-4) + var(--staff-space-2));padding:0;border:0;border-radius:0;background:transparent}
 .match-study-materials-grid,.match-study-materials-grid--two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--staff-space-3);align-items:start}
 .match-study-material-card{min-width:0}
 .match-study-material-stream{display:contents}
@@ -56,16 +54,6 @@
   background:transparent;
   box-shadow:none;
   gap:var(--staff-space-3);
-}
-
-.match-opponent-study .match-study-analysis-panel .analysis-schema-intro{
-  margin:0;
-  padding:0 2px;
-  align-items:center;
-}
-
-.match-opponent-study .match-study-analysis-panel .analysis-schema-intro p{
-  display:none;
 }
 
 .match-opponent-study .match-study-analysis-panel .analysis-template-toolbar{
@@ -135,4 +123,12 @@
   .match-opponent-study .match-study-analysis-panel [data-open-analysis-template-manager]{
     width:100%;
   }
+}
+
+/* R2.3B — Opponent Study section hierarchy adapter
+   Shared SectionHeading owns typography/icon anatomy.
+   Domain owns only separation between peer macrosections. */
+.match-opponent-study .match-study-section-heading,
+.match-opponent-study .analysis-schema-section-heading{
+  min-width:0;
 }

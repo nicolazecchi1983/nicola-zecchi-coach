@@ -190,3 +190,29 @@ export function overflowActionMenuHtml({
     <div class="staff-overflow-menu__popover">${itemsHtml}</div>
   </details>`
 }
+
+export function sectionHeadingHtml({
+  titleHtml = '',
+  iconName = '',
+  titleId = '',
+  metaHtml = '',
+  className = '',
+  attributes = {},
+} = {}) {
+  const attrs = attributesHtml({
+    class: ['staff-section-heading', className].filter(Boolean).join(' '),
+    ...attributes,
+  })
+  const iconHtml = iconName
+    ? `<span class="staff-section-heading__icon" aria-hidden="true">${icon(iconName)}</span>`
+    : ''
+  const idHtml = titleId ? ` id="${String(titleId).replaceAll('"', '&quot;')}"` : ''
+
+  return `<header ${attrs}>
+    <div class="staff-section-heading__identity">
+      ${iconHtml}
+      <h2${idHtml} class="staff-section-heading__title">${titleHtml}</h2>
+    </div>
+    ${metaHtml ? `<div class="staff-section-heading__meta">${metaHtml}</div>` : ''}
+  </header>`
+}

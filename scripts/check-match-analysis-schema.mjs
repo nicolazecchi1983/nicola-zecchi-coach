@@ -18,6 +18,8 @@ const matchLibraryCss = fs.readFileSync('src/modules/match/ui/matchLibrary.css',
 const checks = [
   ['schema has four STAFF default macro areas', model.includes("key: 'possession'") && model.includes("key: 'non-possession'") && model.includes("key: 'transitions'") && model.includes("key: 'set-pieces'")],
   ['STAFF template provides editable starting subphases', model.includes('MATCH_ANALYSIS_SUGGESTIONS') && model.includes('createStaffAnalysisTemplateSchema') && editor.includes('Aggiungi una sottofase')],
+  ['schema v3 owns directional set pieces', model.includes('MATCH_ANALYSIS_SCHEMA_VERSION = 3') && model.includes('MATCH_ANALYSIS_SET_PIECE_DIRECTIONS') && model.includes("key: 'for'") && model.includes("key: 'against'")],
+  ['shared editor renders set pieces a favore and contro', editor.includes('INATTIVE') && editor.includes('analysis-set-piece-groups') && editor.includes('data-analysis-direction')],
   ['subphases can be custom, renamed and removed', editor.includes('Personalizzata') && editor.includes('data-analysis-subsection-title') && editor.includes('data-remove-analysis-subsection')],
   ['same schema editor is used by Analisi gara', analysis.includes('renderMatchAnalysisSchemaEditor')],
   ['same schema editor is used by Studio avversario', study.includes('renderMatchAnalysisSchemaEditor')],
