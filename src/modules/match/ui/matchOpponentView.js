@@ -63,18 +63,44 @@ export function renderMatchOpponentStep() {
       </section>
 
       <section class="opponent-sheet-panel">
-        <header class="opponent-panel-bar">
+        <header class="opponent-panel-bar opponent-sheet-panel__header">
           <div><span class="opponent-kicker">DISTINTA</span><h3>Distinta avversaria</h3></div>
-          <span class="opponent-sheet-state" data-opponent-sheet-state>Non caricata</span>
+          <div class="opponent-sheet-panel__header-actions">
+            <span class="opponent-sheet-state" data-opponent-sheet-state>Non caricata</span>
+            <button type="button" class="staff-button staff-button--ghost opponent-sheet-remove" data-remove-opponent-sheet hidden>Rimuovi</button>
+          </div>
         </header>
-        <label class="opponent-sheet-upload">
-          <input type="file" name="opponent_sheet" accept="image/*" capture="environment">
-          <span class="opponent-sheet-empty" data-opponent-sheet-empty>＋ Carica distinta</span>
+        <div class="opponent-sheet-upload" data-opponent-sheet-upload>
+          <div class="opponent-sheet-acquisition" data-opponent-sheet-empty>
+            <span class="opponent-sheet-acquisition__glyph" aria-hidden="true"></span>
+            <div class="opponent-sheet-acquisition__copy">
+              <strong>Carica la distinta avversaria</strong>
+              <span>Fotografa il foglio oppure scegli un documento dal dispositivo.</span>
+            </div>
+            <div class="opponent-sheet-acquisition__actions">
+              <label class="staff-button opponent-sheet-acquisition__action opponent-sheet-acquisition__action--primary">
+                <input type="file" name="opponent_sheet_camera" accept="image/*" capture="environment">
+                <span>Scatta foto</span>
+              </label>
+              <label class="staff-button staff-button--secondary opponent-sheet-acquisition__action">
+                <input type="file" name="opponent_sheet_file" accept="image/*,application/pdf">
+                <span>Scegli file</span>
+              </label>
+            </div>
+            <small class="opponent-sheet-acquisition__formats">JPG · PNG · PDF</small>
+          </div>
           <img data-opponent-sheet-preview hidden alt="Distinta avversaria caricata">
-        </label>
-        <div class="opponent-sheet-actions">
+          <a class="opponent-sheet-document" data-opponent-sheet-document hidden target="_blank" rel="noopener noreferrer">
+            <span class="opponent-sheet-document__type">PDF</span>
+            <span class="opponent-sheet-document__copy">
+              <strong class="opponent-sheet-document__name" data-opponent-sheet-document-name>Distinta avversaria.pdf</strong>
+              <small>Documento gara</small>
+            </span>
+            <span class="opponent-sheet-document__action">Apri distinta</span>
+          </a>
+        </div>
+        <div class="opponent-sheet-actions" aria-live="polite">
           <span data-opponent-sheet-message></span>
-          <button type="button" class="staff-button staff-button--ghost" data-remove-opponent-sheet hidden>Rimuovi distinta</button>
         </div>
       </section>
     </div>

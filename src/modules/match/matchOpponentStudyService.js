@@ -89,11 +89,14 @@ function validateFile(file, kind) {
 
 function validateOpponentLineupFile(file) {
   validateFile(file, 'document')
-  if (!String(file.type || '').startsWith('image/')) {
+  const mimeType = String(file.type || '').toLowerCase()
+  const isImage = mimeType.startsWith('image/')
+  const isPdf = mimeType === 'application/pdf'
+  if (!isImage && !isPdf) {
     throw new AppError('Formato distinta avversaria non valido.', {
       code: 'MATCH_OPPONENT_LINEUP_FILE_TYPE',
       stage: 'validation',
-      userMessage: 'Carica una foto o immagine della distinta avversaria.',
+      userMessage: 'Carica una foto, un’immagine o un PDF della distinta avversaria.',
     })
   }
 }

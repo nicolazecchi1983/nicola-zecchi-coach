@@ -720,8 +720,13 @@ export function wireLegacyMatchEditorEvents({
       })
 
       matchEditor.querySelector('[data-match-reset]').addEventListener('click',()=>{if(confirm('Cancellare la Match Sheet?')){form.reset();draftService.clear();syncCustomFormation();applyFormation(form.elements.formation.value,false);renderNotes();updateTokens();showStep(1)}})
-      const fileInput = form.elements.opponent_sheet
+      const opponentSheetInputs = [
+        form.elements.opponent_sheet_camera,
+        form.elements.opponent_sheet_file,
+      ].filter(Boolean)
       const opponentSheetPreview = matchEditor.querySelector('[data-opponent-sheet-preview]')
+      const opponentSheetDocument = matchEditor.querySelector('[data-opponent-sheet-document]')
+      const opponentSheetDocumentName = matchEditor.querySelector('[data-opponent-sheet-document-name]')
       const opponentSheetEmpty = matchEditor.querySelector('[data-opponent-sheet-empty]')
       const opponentSheetState = matchEditor.querySelector('[data-opponent-sheet-state]')
       const opponentSheetMessage = matchEditor.querySelector('[data-opponent-sheet-message]')
@@ -746,49 +751,97 @@ export function wireLegacyMatchEditorEvents({
         urlApi.revokeObjectURL?.(opponentSheetObjectUrl)
         opponentSheetObjectUrl = ''
       }
+      const setOpponentSheetInputsDisabled = (disabled) => {
+        opponentSheetInputs.forEach((input) => { input.disabled = Boolean(disabled) })
+      }
+      const resetOpponentSheetPresentation = () => {
+        if (opponentSheetPreview) {
+          opponentSheetPreview.onerror = null
+          opponentSheetPreview.removeAttribute('src')
+          opponentSheetPreview.hidden = true
+        }
+        if (opponentSheetDocument) {
+          opponentSheetDocument.removeAttribute('href')
+          opponentSheetDocument.hidden = true
+        }
+      }
+      const captureOpponentSheetPresentation = () => ({
+        previewSrc: opponentSheetPreview?.getAttribute('src') || '',
+        previewHidden: opponentSheetPreview?.hidden ?? true,
+        documentHref: opponentSheetDocument?.getAttribute('href') || '',
+        documentHidden: opponentSheetDocument?.hidden ?? true,
+        documentName: opponentSheetDocumentName?.textContent || '',
+        emptyHidden: opponentSheetEmpty?.hidden ?? false,
+        stateText: opponentSheetState?.textContent || '',
+        removeHidden: removeOpponentSheetButton?.hidden ?? true,
+      })
+      const restoreOpponentSheetPresentation = (snapshot = {}) => {
+        resetOpponentSheetPresentation()
+        if (opponentSheetPreview) {
+          if (snapshot.previewSrc) opponentSheetPreview.setAttribute('src', snapshot.previewSrc)
+          opponentSheetPreview.hidden = snapshot.previewHidden ?? true
+        }
+        if (opponentSheetDocument) {
+          if (snapshot.documentHref) opponentSheetDocument.setAttribute('href', snapshot.documentHref)
+          opponentSheetDocument.hidden = snapshot.documentHidden ?? true
+        }
+        if (opponentSheetDocumentName) opponentSheetDocumentName.textContent = snapshot.documentName || 'Distinta avversaria.pdf'
+        if (opponentSheetEmpty) opponentSheetEmpty.hidden = snapshot.emptyHidden ?? false
+        if (opponentSheetState) opponentSheetState.textContent = snapshot.stateText || 'Non caricata'
+        if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = snapshot.removeHidden ?? true
+      }
       const renderOpponentSheetAsset = async (asset) => {
         clearOpponentSheetObjectUrl()
+        resetOpponentSheetPresentation()
         if (!asset?.path || !opponentStudyService) {
-          if (opponentSheetPreview) {
-            opponentSheetPreview.removeAttribute('src')
-            opponentSheetPreview.hidden = true
-          }
           if (opponentSheetEmpty) opponentSheetEmpty.hidden = false
           if (opponentSheetState) opponentSheetState.textContent = 'Non caricata'
           if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = true
           return
         }
-        const applySignedPreviewUrl = async (allowRetry = true) => {
-          const signedUrl = await opponentStudyService.getAssetUrl(asset.path, asset.bucket)
-          if (!signedUrl) throw new Error('URL distinta non disponibile.')
-          if (!opponentSheetPreview) return
 
-          opponentSheetPreview.onerror = async () => {
-            opponentSheetPreview.onerror = null
-            if (allowRetry) {
-              try {
-                await applySignedPreviewUrl(false)
-                return
-              } catch (error) {
-                console.warn('Refresh URL distinta avversaria non riuscito:', error)
-              }
-            }
-            opponentSheetPreview.removeAttribute('src')
-            opponentSheetPreview.hidden = true
-            if (opponentSheetEmpty) opponentSheetEmpty.hidden = false
-            if (opponentSheetState) opponentSheetState.textContent = 'Salvata · anteprima non disponibile'
-            setOpponentSheetMessage(
-              getDataAccessUserMessage(new Error('Opponent lineup preview unavailable.'), undefined, { stage: 'match-opponent-lineup-load' }),
-              'error',
-            )
+        const mimeType = String(asset.mimeType || '').toLowerCase()
+        const isPdf = mimeType === 'application/pdf'
+        const signedUrl = await opponentStudyService.getAssetUrl(asset.path, asset.bucket)
+        if (!signedUrl) throw new Error('URL distinta non disponibile.')
+
+        if (isPdf) {
+          if (opponentSheetDocument) {
+            opponentSheetDocument.href = signedUrl
+            opponentSheetDocument.hidden = false
           }
-          opponentSheetPreview.src = signedUrl
-          opponentSheetPreview.hidden = false
+          if (opponentSheetDocumentName) opponentSheetDocumentName.textContent = asset.fileName || 'Distinta avversaria.pdf'
+        } else if (opponentSheetPreview) {
+          const applySignedPreviewUrl = async (allowRetry = true) => {
+            const previewUrl = allowRetry ? signedUrl : await opponentStudyService.getAssetUrl(asset.path, asset.bucket)
+            if (!previewUrl) throw new Error('URL distinta non disponibile.')
+            opponentSheetPreview.onerror = async () => {
+              opponentSheetPreview.onerror = null
+              if (allowRetry) {
+                try {
+                  await applySignedPreviewUrl(false)
+                  return
+                } catch (error) {
+                  console.warn('Refresh URL distinta avversaria non riuscito:', error)
+                }
+              }
+              opponentSheetPreview.removeAttribute('src')
+              opponentSheetPreview.hidden = true
+              if (opponentSheetEmpty) opponentSheetEmpty.hidden = false
+              if (opponentSheetState) opponentSheetState.textContent = 'Salvata · anteprima non disponibile'
+              setOpponentSheetMessage(
+                getDataAccessUserMessage(new Error('Opponent lineup preview unavailable.'), undefined, { stage: 'match-opponent-lineup-load' }),
+                'error',
+              )
+            }
+            opponentSheetPreview.src = previewUrl
+            opponentSheetPreview.hidden = false
+          }
+          await applySignedPreviewUrl(true)
         }
 
-        await applySignedPreviewUrl(true)
         if (opponentSheetEmpty) opponentSheetEmpty.hidden = true
-        if (opponentSheetState) opponentSheetState.textContent = 'Salvata'
+        if (opponentSheetState) opponentSheetState.textContent = isPdf ? 'PDF salvato' : 'Immagine salvata'
         if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = false
       }
       const reloadOpponentSheet = async () => {
@@ -799,24 +852,34 @@ export function wireLegacyMatchEditorEvents({
         await renderOpponentSheetAsset(study.opponentLineup)
       }
 
-      fileInput?.addEventListener('change', async () => {
-        const file = fileInput.files?.[0]
+      const uploadOpponentSheetFile = async (input) => {
+        const file = input?.files?.[0]
         if (!file || !opponentStudyService || !activeMatchForOpponentSheet?.id) return
-        const previousSrc = opponentSheetPreview?.src || ''
-        const previousHidden = opponentSheetPreview?.hidden ?? true
-        const previousEmptyHidden = opponentSheetEmpty?.hidden ?? false
-        const previousRemoveHidden = removeOpponentSheetButton?.hidden ?? true
+
+        const previousPresentation = captureOpponentSheetPresentation()
         clearOpponentSheetObjectUrl()
-        opponentSheetObjectUrl = urlApi.createObjectURL(file)
-        if (opponentSheetPreview) {
-          opponentSheetPreview.src = opponentSheetObjectUrl
-          opponentSheetPreview.hidden = false
+        resetOpponentSheetPresentation()
+        const isPdf = String(file.type || '').toLowerCase() === 'application/pdf'
+        if (isPdf) {
+          if (opponentSheetDocumentName) opponentSheetDocumentName.textContent = file.name || 'Distinta avversaria.pdf'
+          if (opponentSheetDocument) {
+            opponentSheetDocument.removeAttribute('href')
+            opponentSheetDocument.hidden = false
+          }
+        } else {
+          opponentSheetObjectUrl = urlApi.createObjectURL(file)
+          if (opponentSheetPreview) {
+            opponentSheetPreview.src = opponentSheetObjectUrl
+            opponentSheetPreview.hidden = false
+          }
         }
+
         if (opponentSheetEmpty) opponentSheetEmpty.hidden = true
         if (opponentSheetState) opponentSheetState.textContent = 'Caricamento…'
         if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = true
         setOpponentSheetMessage('Salvataggio distinta in corso…')
-        fileInput.disabled = true
+        setOpponentSheetInputsDisabled(true)
+
         try {
           const saved = await opponentStudyService.uploadOpponentLineup({
             matchId: activeMatchForOpponentSheet.id,
@@ -828,26 +891,30 @@ export function wireLegacyMatchEditorEvents({
         } catch (error) {
           console.error('Upload distinta avversaria non riuscito:', error)
           clearOpponentSheetObjectUrl()
-          if (opponentSheetPreview) {
-            if (previousSrc) opponentSheetPreview.src = previousSrc
-            else opponentSheetPreview.removeAttribute('src')
-            opponentSheetPreview.hidden = previousHidden
+          let restoredFromCanonical = false
+          try {
+            await reloadOpponentSheet()
+            restoredFromCanonical = true
+          } catch (restoreError) {
+            console.warn('Ripristino canonico distinta dopo upload fallito non riuscito:', restoreError)
           }
-          if (opponentSheetEmpty) opponentSheetEmpty.hidden = previousEmptyHidden
-          if (removeOpponentSheetButton) removeOpponentSheetButton.hidden = previousRemoveHidden
-          if (opponentSheetState) opponentSheetState.textContent = previousHidden ? 'Non caricata' : 'Salvata'
+          if (!restoredFromCanonical) restoreOpponentSheetPresentation(previousPresentation)
           setOpponentSheetMessage(getDataAccessUserMessage(error, undefined, { stage: 'match-opponent-lineup-upload' }), 'error')
         } finally {
-          fileInput.value = ''
-          fileInput.disabled = false
+          input.value = ''
+          setOpponentSheetInputsDisabled(false)
         }
+      }
+
+      opponentSheetInputs.forEach((input) => {
+        input.addEventListener('change', () => uploadOpponentSheetFile(input))
       })
 
       removeOpponentSheetButton?.addEventListener('click', async () => {
         if (!opponentStudyService || !activeMatchForOpponentSheet?.id) return
         if (!windowRef.confirm('Rimuovere la distinta avversaria salvata?')) return
         removeOpponentSheetButton.disabled = true
-        if (fileInput) fileInput.disabled = true
+        setOpponentSheetInputsDisabled(true)
         if (opponentSheetState) opponentSheetState.textContent = 'Rimozione…'
         setOpponentSheetMessage('Rimozione distinta in corso…')
         try {
@@ -860,7 +927,7 @@ export function wireLegacyMatchEditorEvents({
           setOpponentSheetMessage(getDataAccessUserMessage(error, undefined, { stage: 'match-opponent-lineup-remove' }), 'error')
         } finally {
           removeOpponentSheetButton.disabled = false
-          if (fileInput) fileInput.disabled = false
+          setOpponentSheetInputsDisabled(false)
         }
       })
 

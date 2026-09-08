@@ -29,12 +29,14 @@ const checks = [
       && service.includes("return { ...current, opponentLineup: null, updatedAt: new Date().toISOString() }")
       && service.includes("settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione distinta rimasta pendente:')")
       && service.includes("console.warn('Recovery rimozione distinta in attesa:', recoveryError)")],
-  ['Opponent lineup accepts image only', service.includes("startsWith('image/')") && service.includes('MATCH_OPPONENT_LINEUP_FILE_TYPE')],
+
+  ['Opponent lineup accepts images or PDF through one canonical asset validator', service.includes("mimeType.startsWith('image/')") && service.includes("mimeType === 'application/pdf'") && service.includes('MATCH_OPPONENT_LINEUP_FILE_TYPE')],
+  ['Opponent lineup exposes camera and file acquisition without a second asset owner', view.includes('name="opponent_sheet_camera"') && view.includes('capture="environment"') && view.includes('name="opponent_sheet_file"') && view.includes('accept="image/*,application/pdf"') && view.includes('data-opponent-sheet-document')],
   ['UI exposes persisted state and explicit remove action', view.includes('data-opponent-sheet-state') && view.includes('data-remove-opponent-sheet') && view.includes('data-opponent-sheet-message')],
   ['Legacy editor restores from fresh Calendar event', events.includes('const reloadOpponentSheet = async () =>') && events.includes('await getCalendarEvent(activeMatchForOpponentSheet.id)')],
   ['Legacy editor uploads through canonical service', events.includes('uploadOpponentLineup({') && events.includes("setOpponentSheetMessage('Distinta salvata.'")],
   ['Legacy editor can remove persisted lineup', events.includes('removeOpponentLineup(activeMatchForOpponentSheet.id)')],
-  ['Upload failure preserves prior visible state while storage recovery stays journaled', events.includes('previousSrc') && events.includes("stage: 'match-opponent-lineup-upload'") && service.includes("console.warn('Recovery distinta avversaria in attesa:'") && !service.includes('await assets.remove(path).catch(() => {})')],
+  ['Upload failure restores canonical prior asset with visual fallback', events.includes('const previousPresentation = captureOpponentSheetPresentation()') && events.includes('await reloadOpponentSheet()') && events.includes('restoreOpponentSheetPresentation(previousPresentation)') && events.includes("stage: 'match-opponent-lineup-upload'") && service.includes("console.warn('Recovery distinta avversaria in attesa:'") && !service.includes('await assets.remove(path).catch(() => {})')],
   ['File input is excluded from Match draft/report JSON', model.includes("querySelectorAll('input[type=\"file\"]')") && model.includes('delete data[input.name]')],
   ['App injects canonical Calendar + study dependencies', app.includes('createMatchOpponentStudyService,') && app.includes('getCalendarEvent,') && app.includes('updateCalendarEvent,') && app.includes('loadCalendarEvents,')],
 ]
