@@ -30,7 +30,7 @@ function assetCard(asset, { escapeHtml, primary = false } = {}) {
     label: 'Apri',
     iconName: 'external-link',
     variant: 'secondary',
-    attributes: { 'data-open-study-asset': escapeHtml(asset.path) },
+    attributes: { 'data-open-study-asset': escapeHtml(asset.path), 'data-open-study-bucket': escapeHtml(asset.bucket || '') },
   })
   const removeAction = removalMenuHtml({
     label: 'Rimuovi',

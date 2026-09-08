@@ -8,8 +8,14 @@ import {
 } from './matchOpponentStudyModel.js'
 import {
   createMatchOpponentStudyAssetRepository,
-  MATCH_STUDY_BUCKET,
+  MATCH_STUDY_DOCUMENT_BUCKET,
+  MATCH_STUDY_LEGACY_BUCKET,
+  resolveMatchStudyBucket,
 } from './matchOpponentStudyRepository.js'
+import {
+  createMatchOpponentStudyRecoveryStore,
+  reconcileInterruptedMatchOpponentStudy,
+} from './matchOpponentStudyRecovery.js'
 
 const MAX_REPORT_BYTES = 25 * 1024 * 1024
 const MAX_VIDEO_BYTES = 250 * 1024 * 1024
@@ -58,6 +64,27 @@ function validateFile(file, kind) {
       userMessage: `Il file supera ${limitMb} MB. Per video più grandi usa un link esterno.`,
     })
   }
+
+  const mimeType = String(file.type || '').toLowerCase()
+  const validVideo = mimeType.startsWith('video/')
+  const validDocument = mimeType.startsWith('application/')
+    || mimeType.startsWith('image/')
+    || mimeType.startsWith('text/')
+
+  if (kind === 'video' && !validVideo) {
+    throw new AppError('Formato video non valido.', {
+      code: 'MATCH_STUDY_VIDEO_FILE_TYPE',
+      stage: 'validation',
+      userMessage: 'Per un materiale Video seleziona un file video.',
+    })
+  }
+  if (kind !== 'video' && !validDocument) {
+    throw new AppError('Formato documento non valido.', {
+      code: 'MATCH_STUDY_DOCUMENT_FILE_TYPE',
+      stage: 'validation',
+      userMessage: 'Per un documento usa PDF, immagini, file Office o file di testo.',
+    })
+  }
 }
 
 function validateOpponentLineupFile(file) {
@@ -71,11 +98,89 @@ function validateOpponentLineupFile(file) {
   }
 }
 
-export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadEvents } = {}) {
+export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadEvents, recoveryStorage = globalThis.localStorage } = {}) {
   if (typeof getEvent !== 'function' || typeof updateEvent !== 'function') {
     throw new Error('Studio avversario non configurato: accesso evento mancante.')
   }
   const assets = createMatchOpponentStudyAssetRepository()
+  const recoveryStore = createMatchOpponentStudyRecoveryStore(recoveryStorage, {
+    defaultBucket: MATCH_STUDY_LEGACY_BUCKET,
+  })
+  const recoveryFlights = new Map()
+
+  const beginRecovery = (matchId, paths) => {
+    try {
+      return recoveryStore.begin({ matchId, locations: paths })
+    } catch (error) {
+      throw new AppError('Recovery journal Match non disponibile.', {
+        code: 'MATCH_STUDY_RECOVERY_UNAVAILABLE',
+        stage: 'recovery',
+        cause: error,
+        userMessage: 'STAFF non può garantire il cleanup sicuro dei file Match. Ricarica la pagina e riprova.',
+      })
+    }
+  }
+
+  const trackRecovery = (matchId, paths) => {
+    try {
+      return recoveryStore.track(matchId, paths)
+    } catch (error) {
+      throw new AppError('Recovery journal Match non aggiornabile.', {
+        code: 'MATCH_STUDY_RECOVERY_UNAVAILABLE',
+        stage: 'recovery',
+        cause: error,
+        userMessage: 'STAFF non può garantire il cleanup sicuro dei file Match. Ricarica la pagina e riprova.',
+      })
+    }
+  }
+
+  const removeRecoveryPath = async (path, bucket = MATCH_STUDY_LEGACY_BUCKET) => {
+    await assets.remove(bucket || MATCH_STUDY_LEGACY_BUCKET, path)
+    return true
+  }
+
+  const runStorageRecovery = async (matchId) => {
+    const pending = recoveryStore.read(matchId)
+    if (!pending?.paths?.length) return { status: 'none', cleaned: [], preserved: [], pending: [] }
+    const event = await getEvent(matchId)
+    if (!event?.id) throw new AppError('Partita non trovata nel Calendario.', {
+      code: 'MATCH_STUDY_EVENT_NOT_FOUND',
+      stage: 'read',
+      userMessage: 'La partita non è più disponibile. Torna alla Match Library e riaprila.',
+    })
+    const study = load(event, matchId)
+    return reconcileInterruptedMatchOpponentStudy({
+      recoveryStore,
+      matchId,
+      study,
+      removeAsset: removeRecoveryPath,
+      defaultBucket: MATCH_STUDY_LEGACY_BUCKET,
+    })
+  }
+
+  const reconcileStorageRecovery = (matchId) => {
+    const id = String(matchId || '').trim()
+    if (!id) return Promise.resolve({ status: 'none', cleaned: [], preserved: [], pending: [] })
+    if (recoveryFlights.has(id)) return recoveryFlights.get(id)
+    const flight = runStorageRecovery(id)
+      .finally(() => recoveryFlights.delete(id))
+    recoveryFlights.set(id, flight)
+    return flight
+  }
+
+  const settleStorageRecoveryAfterCommit = async (matchId, label) => {
+    try {
+      return await reconcileStorageRecovery(matchId)
+    } catch (error) {
+      console.warn(label, error)
+      return {
+        status: 'cleanup-pending',
+        cleaned: [],
+        preserved: [],
+        pending: recoveryStore.read(matchId)?.paths || [],
+      }
+    }
+  }
 
   const load = (eventOrNotes, matchId = '') => {
     if (!eventOrNotes && !matchId) return createMatchOpponentStudy('')
@@ -104,6 +209,7 @@ export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadE
 
   return {
     load,
+    reconcileStorageRecovery,
     saveNotes(matchId, notes) {
       return mutate(matchId, (current) => ({
         ...current,
@@ -146,91 +252,121 @@ export function createMatchOpponentStudyService({ getEvent, updateEvent, reloadE
     },
     async uploadAsset({ matchId, team, file, kind = 'document', category = 'general', label = '' }) {
       validateFile(file, kind)
+      await reconcileStorageRecovery(matchId)
       const path = buildAssetPath({ team, matchId, file })
-      await assets.upload(path, file)
-      const asset = {
-        id: randomId('asset'), kind, category,
-        label: String(label || file.name).trim(), fileName: file.name,
-        path, bucket: MATCH_STUDY_BUCKET, mimeType: file.type || 'application/octet-stream',
-        size: file.size, createdAt: new Date().toISOString(),
-      }
-      let previousPath = null
+      const bucket = resolveMatchStudyBucket(kind)
+      beginRecovery(matchId, [{ bucket, path }])
       try {
+        await assets.upload(bucket, path, file)
+        const asset = {
+          id: randomId('asset'), kind, category,
+          label: String(label || file.name).trim(), fileName: file.name,
+          path, bucket, mimeType: file.type || 'application/octet-stream',
+          size: file.size, createdAt: new Date().toISOString(),
+        }
+        let previousPath = null
+        let previousBucket = MATCH_STUDY_LEGACY_BUCKET
         const saved = await mutate(matchId, (current) => {
           if (kind === 'report') {
             previousPath = current.primaryReport?.path || null
+            previousBucket = current.primaryReport?.bucket || MATCH_STUDY_LEGACY_BUCKET
+            if (previousPath && previousPath !== path) {
+              trackRecovery(matchId, [{ bucket: previousBucket, path: previousPath }])
+            }
             return { ...current, primaryReport: asset, updatedAt: new Date().toISOString() }
           }
           return { ...current, assets: [...current.assets, asset], updatedAt: new Date().toISOString() }
         })
-        if (previousPath && previousPath !== path) {
-          assets.remove(previousPath).catch((error) => console.warn('Vecchio report non rimosso:', error))
-        }
+        await settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage Match rimasta pendente:')
         return saved
       } catch (error) {
-        await assets.remove(path).catch(() => {})
+        await reconcileStorageRecovery(matchId)
+          .catch((recoveryError) => console.warn('Recovery Match asset in attesa:', recoveryError))
         throw error
       }
     },
     async uploadOpponentLineup({ matchId, team, file }) {
       validateOpponentLineupFile(file)
+      await reconcileStorageRecovery(matchId)
       const path = buildAssetPath({ team, matchId, file })
-      await assets.upload(path, file)
-      const asset = {
-        id: randomId('asset'),
-        kind: 'document',
-        category: 'general',
-        label: 'Distinta avversaria',
-        fileName: file.name,
-        path,
-        bucket: MATCH_STUDY_BUCKET,
-        mimeType: file.type || 'application/octet-stream',
-        size: file.size,
-        createdAt: new Date().toISOString(),
-      }
-      let previousPath = null
+      const bucket = MATCH_STUDY_DOCUMENT_BUCKET
+      beginRecovery(matchId, [{ bucket, path }])
       try {
+        await assets.upload(bucket, path, file)
+        const asset = {
+          id: randomId('asset'),
+          kind: 'document',
+          category: 'general',
+          label: 'Distinta avversaria',
+          fileName: file.name,
+          path,
+          bucket,
+          mimeType: file.type || 'application/octet-stream',
+          size: file.size,
+          createdAt: new Date().toISOString(),
+        }
+        let previousPath = null
+        let previousBucket = MATCH_STUDY_LEGACY_BUCKET
         const saved = await mutate(matchId, (current) => {
           previousPath = current.opponentLineup?.path || null
+          previousBucket = current.opponentLineup?.bucket || MATCH_STUDY_LEGACY_BUCKET
+          if (previousPath && previousPath !== path) {
+            trackRecovery(matchId, [{ bucket: previousBucket, path: previousPath }])
+          }
           return { ...current, opponentLineup: asset, updatedAt: new Date().toISOString() }
         })
-        if (previousPath && previousPath !== path) {
-          assets.remove(previousPath).catch((error) => console.warn('Vecchia distinta avversaria non rimossa:', error))
-        }
+        await settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage distinta rimasta pendente:')
         return saved
       } catch (error) {
-        await assets.remove(path).catch(() => {})
+        await reconcileStorageRecovery(matchId)
+          .catch((recoveryError) => console.warn('Recovery distinta avversaria in attesa:', recoveryError))
         throw error
       }
     },
     async removeOpponentLineup(matchId) {
+      await reconcileStorageRecovery(matchId)
       let removedPath = null
-      const saved = await mutate(matchId, (current) => {
-        removedPath = current.opponentLineup?.path || null
-        return { ...current, opponentLineup: null, updatedAt: new Date().toISOString() }
-      })
-      if (removedPath) {
-        assets.remove(removedPath).catch((error) => console.warn('File distinta avversaria orfano non rimosso:', error))
+      let removedBucket = MATCH_STUDY_LEGACY_BUCKET
+      try {
+        const saved = await mutate(matchId, (current) => {
+          removedPath = current.opponentLineup?.path || null
+          removedBucket = current.opponentLineup?.bucket || MATCH_STUDY_LEGACY_BUCKET
+          if (removedPath) beginRecovery(matchId, [{ bucket: removedBucket, path: removedPath }])
+          return { ...current, opponentLineup: null, updatedAt: new Date().toISOString() }
+        })
+        await settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione distinta rimasta pendente:')
+        return saved
+      } catch (error) {
+        await reconcileStorageRecovery(matchId)
+          .catch((recoveryError) => console.warn('Recovery rimozione distinta in attesa:', recoveryError))
+        throw error
       }
-      return saved
     },
     async removeAsset(matchId, assetId, { primary = false } = {}) {
+      await reconcileStorageRecovery(matchId)
       let removedPath = null
-      const saved = await mutate(matchId, (current) => {
-        const target = primary ? current.primaryReport : current.assets.find((item) => item.id === assetId)
-        removedPath = target?.path || null
-        return primary
-          ? { ...current, primaryReport: null, updatedAt: new Date().toISOString() }
-          : { ...current, assets: current.assets.filter((item) => item.id !== assetId), updatedAt: new Date().toISOString() }
-      })
-      if (removedPath) {
-        assets.remove(removedPath).catch((error) => console.warn('File Match orfano non rimosso:', error))
+      let removedBucket = MATCH_STUDY_LEGACY_BUCKET
+      try {
+        const saved = await mutate(matchId, (current) => {
+          const target = primary ? current.primaryReport : current.assets.find((item) => item.id === assetId)
+          removedPath = target?.path || null
+          removedBucket = target?.bucket || MATCH_STUDY_LEGACY_BUCKET
+          if (removedPath) beginRecovery(matchId, [{ bucket: removedBucket, path: removedPath }])
+          return primary
+            ? { ...current, primaryReport: null, updatedAt: new Date().toISOString() }
+            : { ...current, assets: current.assets.filter((item) => item.id !== assetId), updatedAt: new Date().toISOString() }
+        })
+        await settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione asset rimasta pendente:')
+        return saved
+      } catch (error) {
+        await reconcileStorageRecovery(matchId)
+          .catch((recoveryError) => console.warn('Recovery rimozione asset Match in attesa:', recoveryError))
+        throw error
       }
-      return saved
     },
-    async getAssetUrl(path) {
+    async getAssetUrl(path, bucket = MATCH_STUDY_LEGACY_BUCKET) {
       if (!path) return null
-      return assets.signedUrl(path)
+      return assets.signedUrl(bucket || MATCH_STUDY_LEGACY_BUCKET, path)
     },
   }
 }

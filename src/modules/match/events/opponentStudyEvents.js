@@ -18,6 +18,10 @@ export function wireOpponentStudyEvents({
         updateEvent: updateCalendarEvent,
         reloadEvents: loadCalendarEvents,
       })
+      if (activeMatch?.id) {
+        service.reconcileStorageRecovery(activeMatch.id)
+          .catch((error) => console.warn('Recovery asset Studio avversario in attesa:', error))
+      }
       bindMatchOpponentStudy({
         root,
         service,

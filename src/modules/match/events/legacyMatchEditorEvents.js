@@ -759,7 +759,7 @@ export function wireLegacyMatchEditorEvents({
           return
         }
         const applySignedPreviewUrl = async (allowRetry = true) => {
-          const signedUrl = await opponentStudyService.getAssetUrl(asset.path)
+          const signedUrl = await opponentStudyService.getAssetUrl(asset.path, asset.bucket)
           if (!signedUrl) throw new Error('URL distinta non disponibile.')
           if (!opponentSheetPreview) return
 
@@ -793,6 +793,7 @@ export function wireLegacyMatchEditorEvents({
       }
       const reloadOpponentSheet = async () => {
         if (!opponentStudyService || !activeMatchForOpponentSheet?.id) return
+        await opponentStudyService.reconcileStorageRecovery(activeMatchForOpponentSheet.id)
         const event = await getCalendarEvent(activeMatchForOpponentSheet.id)
         const study = opponentStudyService.load(event, activeMatchForOpponentSheet.id)
         await renderOpponentSheetAsset(study.opponentLineup)

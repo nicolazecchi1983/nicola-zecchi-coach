@@ -154,7 +154,7 @@ export function bindMatchOpponentStudy({ root, service, activeMatch, team, analy
     if (open) {
       open.disabled = true
       try {
-        const url = await service.getAssetUrl(open.dataset.openStudyAsset)
+        const url = await service.getAssetUrl(open.dataset.openStudyAsset, open.dataset.openStudyBucket)
         if (!url) throw new Error('URL documento non disponibile.')
         window.open(url, '_blank', 'noopener,noreferrer')
       } catch (error) {

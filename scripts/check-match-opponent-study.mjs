@@ -21,8 +21,18 @@ const checks = [
   ['Link esterni validati come http/https', model.includes("['http:', 'https:']") && model.includes('validateExternalStudyLink')],
   ['Repository gestisce solo asset privati, non una seconda fonte dati', repository.includes('createMatchOpponentStudyAssetRepository') && !repository.includes('localStorage')],
   ['Service rilegge evento fresco prima di mutare', service.includes('await getEvent(matchId)') && service.includes('mergeMatchOpponentStudyIntoEventNotes(event.notes, next)')],
-  ['Service gestisce upload, replace report e cleanup', service.includes('uploadAsset') && service.includes("kind === 'report'") && service.includes('previousPath')],
-  ['Rimozione aggiorna prima i metadati e poi pulisce storage', service.includes('const saved = await mutate') && service.includes('File Match orfano non rimosso')],
+  ['Service gestisce upload, replace report e crash-safe cleanup', service.includes('uploadAsset') && service.includes("kind === 'report'") && service.includes('previousPath') && service.includes('reconcileStorageRecovery') && service.includes('trackRecovery(matchId, [{ bucket: previousBucket, path: previousPath }])')],
+  ['Canonical Match success is not downgraded by post-commit cleanup failure',
+    service.includes('settleStorageRecoveryAfterCommit')
+      && service.includes('console.warn(label, error)')
+      && service.includes("status: 'cleanup-pending'")
+      && (service.split('await settleStorageRecoveryAfterCommit(matchId').length - 1) === 4],
+  ['Rimozione aggiorna prima i metadati e journalizza il cleanup',
+    service.includes("removedBucket = current.opponentLineup?.bucket || MATCH_STUDY_LEGACY_BUCKET")
+      && service.includes("removedBucket = target?.bucket || MATCH_STUDY_LEGACY_BUCKET")
+      && service.includes("beginRecovery(matchId, [{ bucket: removedBucket, path: removedPath }])")
+      && service.includes("settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione distinta rimasta pendente:')")
+      && service.includes("settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione asset rimasta pendente:')")],
   ['Video grandi indirizzati verso link esterni', service.includes('MAX_VIDEO_BYTES') && service.includes('Per video più grandi usa un link esterno')],
   ['UI converge report e materiali senza perdere file/link', view.includes("titleHtml: 'Report'") && view.includes("titleHtml: 'Materiali'") && view.includes("'data-study-toggle-form': 'asset'") && view.includes("'data-study-toggle-form': 'link'") && view.includes('Lettura tecnica')],
   ['Premium UI rimuove il subtitle ridondante di Lettura tecnica', !view.includes('Quattro macroaree di partenza. Apri, modifica o salva il tuo template personale.')],
