@@ -427,6 +427,7 @@
   background: #061620;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
 }
+.match-opponent-step .opponent-sheet-upload img[hidden] { display: none; }
 .match-opponent-step .opponent-sheet-document {
   width:100%;
   min-height:124px;
