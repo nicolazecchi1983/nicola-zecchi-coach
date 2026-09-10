@@ -69,7 +69,7 @@ export function renderTrainingSheetEditorPage({
       </div>
 
       <nav class="ts-step-nav product-section-nav" aria-label="Sezioni Training Sheet">
-        ${['Informazioni seduta','Rosa e presenze','Carico e focus fisico','Fasi allenamento','Obiettivo e principi','Riepilogo'].map((label,index)=>`<button type="button" class="${index===0?'is-active':''}" data-ts-step-button="${index+1}"><b>${String(index+1).padStart(2,'0')}</b><span>${label}</span></button>`).join('')}
+        ${['Informazioni seduta','Rosa e presenze','Carico e focus fisico','Fasi allenamento','Obiettivo','Riepilogo'].map((label,index)=>`<button type="button" class="${index===0?'is-active':''}" data-ts-step-button="${index+1}"><b>${String(index+1).padStart(2,'0')}</b><span>${label}</span></button>`).join('')}
       </nav>
 
       <div class="ts-workspace ts-workspace--steps">
@@ -138,16 +138,17 @@ export function renderTrainingSheetEditorPage({
           </section>
           <section class="ts-form-card ts-step" data-ts-step="5">
             
-            <div class="ts-pillars" data-ts-pillars>
+            <div class="ts-pillars ts-pillars--compact" data-ts-pillars aria-label="Architettura del vantaggio">
               ${[
-                ['create','Creare il vantaggio'],['keep','Conservare il vantaggio'],['exploit','Sfruttare il vantaggio'],['defend','Difendere il vantaggio']
-              ].map(([key,label])=>`<label class="ts-pillar ts-pillar--${key}"><input type="checkbox" name="pillars" value="${label}"><span>${label}</span></label>`).join('')}
+                ['create','Creare il vantaggio','Creare','&#9678;'],
+                ['keep','Conservare il vantaggio','Conservare','&#9671;'],
+                ['exploit','Sfruttare il vantaggio','Sfruttare','&#8599;'],
+                ['defend','Difendere il vantaggio','Difendere','&#9670;']
+              ].map(([key,value,label,symbol])=>`<label class="ts-pillar ts-pillar--${key}" title="${value}"><input type="checkbox" name="pillars" value="${value}"><span><i class="ts-pillar-symbol" aria-hidden="true">${symbol}</i><b class="ts-pillar-label">${label}</b></span></label>`).join('')}
             </div>
-            <div class="ts-analysis-fields">
-              <button class="staff-button staff-button--secondary ts-ai-button" type="button" data-analyze-exercises>✦ Analizza esercitazioni</button>
-              <p class="ts-ai-note" data-ai-note>Nessuna modifica viene pubblicata automaticamente.</p>
-              <label class="ts-field ts-field-full"><span>Obiettivo della seduta</span><textarea name="objective" rows="3" placeholder="Puoi scriverlo manualmente o generarlo dopo aver compilato i contenitori."></textarea></label>
-              <label class="ts-field ts-field-full"><span>Principi di gioco</span><textarea name="principles" rows="4" placeholder="Puoi scriverli manualmente o generarli dopo aver compilato i contenitori."></textarea></label>
+            <div class="ts-analysis-fields ts-analysis-fields--manual">
+              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i aria-hidden="true">&#9678;</i>Obiettivo</span><textarea name="objective" rows="3" placeholder="Scrivi l'obiettivo della seduta"></textarea></label>
+              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i aria-hidden="true">&#8801;</i>Principi</span><textarea name="principles" rows="4" placeholder="Scrivi i principi da allenare"></textarea></label>
             </div>
           </section>
 

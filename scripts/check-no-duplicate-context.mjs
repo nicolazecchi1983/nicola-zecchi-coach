@@ -10,7 +10,7 @@ const labels=[
  ['02','Rosa e presenze'],
  ['03','Carico e focus fisico'],
  ['04','Fasi allenamento'],
- ['05','Obiettivo e principi'],
+ ['05','Obiettivo'],
  ['06','Riepilogo'],
 ]
 

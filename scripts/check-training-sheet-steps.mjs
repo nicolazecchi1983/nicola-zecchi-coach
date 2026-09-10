@@ -10,7 +10,7 @@ const required = [
   'Rosa e presenze',
   'Carico e focus fisico',
   'Fasi allenamento',
-  'Obiettivo e principi',
+  'Obiettivo',
   'Riepilogo',
   'data-toggle-phase-split',
   'data-player-search',
@@ -23,7 +23,7 @@ if (missing.length) {
   process.exit(1)
 }
 
-const order = ['Informazioni seduta','Rosa e presenze','Carico e focus fisico','Fasi allenamento','Obiettivo e principi','Riepilogo']
+const order = ['Informazioni seduta','Rosa e presenze','Carico e focus fisico','Fasi allenamento','Obiettivo','Riepilogo']
 const navStart = page.indexOf("${['Informazioni seduta'")
 const navChunk = page.slice(navStart, navStart + 900)
 let previous = -1

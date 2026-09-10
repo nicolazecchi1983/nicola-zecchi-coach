@@ -531,19 +531,6 @@ export function wireTrainingEditorEvents({
       })
       form.addEventListener('input',()=>{updateCounts();updatePreview();scheduleSave()})
       form.addEventListener('change',()=>{updateCounts();updatePreview();scheduleSave()})
-      manualEditor.querySelector('[data-analyze-exercises]')?.addEventListener('click',()=>{
-        const d=collect(); const text=d.phases.map(p=>`${p.title} ${p.description}`).join(' ').toLowerCase(); const pillars=d.pillars
-        const objectiveBits=[]; const principles=[]
-        if(/costru|uscita|portiere|prima pressione/.test(text)){objectiveBits.push('creare vantaggio nella costruzione sotto pressione');principles.push('occupazione razionale degli spazi','ricerca dell’uomo libero','sostegno al possessore')}
-        if(/possesso|rondo|jolly|conserv/.test(text)){objectiveBits.push('conservare il possesso con continuità');principles.push('smarcamento in appoggio','mobilità','qualità del primo controllo')}
-        if(/final|porta|attacco|invasione|profond/.test(text)){objectiveBits.push('sfruttare il vantaggio per arrivare alla finalizzazione');principles.push('attacco della profondità','occupazione dell’area','tempi di inserimento')}
-        if(/press|riaggress|transizione|riconquista/.test(text)){objectiveBits.push('proteggere il vantaggio attraverso pressione e riaggressione');principles.push('reazione immediata alla perdita','densità vicino alla palla','coperture preventive')}
-        if(!objectiveBits.length) objectiveBits.push(pillars.length ? pillars.join(', ').toLowerCase() : 'sviluppare i comportamenti collettivi previsti dalla seduta')
-        form.elements.objective.value=objectiveBits.join('; ').replace(/^./,c=>c.toUpperCase())+'.'
-        form.elements.principles.value=[...new Set(principles)].join(', ') || 'Distanze funzionali, comunicazione, orientamento del corpo e velocità di esecuzione.'
-        const note=manualEditor.querySelector('[data-ai-note]'); if(note) note.textContent='Proposta inserita: controlla e modifica liberamente i due campi.'
-        updatePreview();scheduleSave()
-      })
       const determineNextProgressive = () => {
         const fromPaths = appState.calendarEvents
           .map((event) => event.trainingSheetPath || '')
