@@ -1829,75 +1829,7 @@
    Scope locked: roster row, phase structural action, header utility menu.
    ================================================================ */
 
-/* Header: destructive reset is an exceptional utility, never a primary peer. */
-
-.ts-manual-editor .ts-more-menu {
-  position: relative;
-  align-self: end;
-}
-
-.ts-manual-editor .ts-more-button {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  min-width: 48px;
-  height: 42px;
-  min-height: 42px;
-  padding: 0;
-  list-style: none;
-  cursor: pointer;
-  letter-spacing: .12em;
-  color: #b7c8d3;
-}
-
-.ts-manual-editor .ts-more-button::-webkit-details-marker { display: none; }
-
-.ts-manual-editor .ts-more-menu-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 30;
-  width: 188px;
-  padding: 6px;
-  border: 1px solid var(--staff-color-border);
-  border-radius: var(--staff-radius-control);
-  background: var(--staff-color-bg-panel-raised);
-  box-shadow: 0 16px 36px rgba(0,0,0,.32);
-}
-
-.ts-manual-editor .ts-more-menu-popover button {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: .82rem;
-  font-weight: 750;
-  line-height: 1.2;
-  text-align: left;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.ts-manual-editor .ts-menu-item:hover,
-.ts-manual-editor .ts-menu-item:focus-visible {
-  background: var(--staff-color-surface);
-}
-
-.ts-manual-editor .ts-menu-danger {
-  margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--staff-color-border-subtle);
-  border-radius: 0 0 7px 7px;
-  color: #ff9cab;
-}
-
-.ts-manual-editor .ts-menu-danger:hover { background: rgba(255,101,119,.08); }
+/* Header utility menu presentation migrated to trainingCommandBar.css by R1 owner convergence. */
 
 /* Roster: all four controls now occupy the same visual row and height. */
 .ts-manual-editor .ts-roster-grid--four {
