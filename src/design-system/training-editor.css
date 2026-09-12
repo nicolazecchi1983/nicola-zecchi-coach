@@ -959,8 +959,7 @@
 .ts-step-footer{position:static!important;display:flex!important;width:100%;box-sizing:border-box;margin:24px 0 0!important;padding:16px!important;justify-content:space-between!important;align-items:center!important;background:#071827;border:1px solid #1c435b;border-radius:16px}
 .ts-step-footer>[data-ts-step-status]{margin:0 auto;min-width:120px;text-align:center}
 .ts-step-footer .portal-action-button{min-width:170px}
-.ts-md-selector{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important}
-.ts-md-selector button{min-width:0!important;white-space:nowrap}
+/* Training Match Day legacy hard-lock retired; canonical owner: modules/training/trainingPolish.css */
 .ts-load-grid{align-items:start!important;padding-top:8px}
 .ts-choice-block.ts-match-day-block{padding:16px;border:1px solid #1c435b;border-radius:14px;background:#081c2b}
 .ts-paper-pillars{margin:10px 0!important}
