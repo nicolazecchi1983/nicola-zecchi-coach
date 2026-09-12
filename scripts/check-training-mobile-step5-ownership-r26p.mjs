@@ -18,10 +18,13 @@ add('global responsive no longer owns pillars collapse',!responsive.includes('.t
 add('global responsive no longer owns pillar touch target',!responsive.includes('.ts-manual-editor .ts-pillar span'));
 add('retired AI selectors stay absent from global responsive',!responsive.includes('.ts-ai-button')&&!responsive.includes('.ts-ai-note'));
 add('retired AI selectors stay absent from base Training owner',!base.includes('.ts-ai-button')&&!base.includes('.ts-ai-note'));
+add('legacy Training base no longer owns mobile pillars collapse',!base.includes('.ts-fields-grid,.ts-roster-grid,.ts-pillars,.ts-load-grid')&&!base.includes('  .ts-pillars {'+String.fromCharCode(10)+'    grid-template-columns: 1fr;'));
+add('legacy Training base no longer forces pillars through important geometry',!/\.ts-pillars[^{}]*\{[^}]*grid-template-columns\s*:[^;]*!important/s.test(base));
 add('Training domain preserves Step 5 full width',owner.includes('width: 100%;')&&owner.includes('max-width: none;'));
 add('Training domain preserves Step 5 inline padding',owner.includes('padding-inline: var(--staff-space-3);'));
 add('Training domain preserves manual fields one-column collapse',owner.includes('.ts-analysis-fields')&&owner.includes('grid-template-columns: 1fr;'));
 add('Training domain keeps pillars compact at two mobile columns',owner.includes('.ts-pillars')&&owner.includes('grid-template-columns: repeat(2, minmax(0, 1fr));'));
+add('Training domain exact mobile pillars rule is two columns with Step 5 specificity',/\.ts-manual-editor \.ts-step\[data-ts-step="5"\] \.ts-pillars\s*\{[^}]*grid-template-columns\s*:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/s.test(owner));
 add('Training domain preserves pillar touch target',owner.includes('.ts-pillar span')&&owner.includes('min-height: var(--staff-touch-target);'));
 add('Training domain contains no AI button owner',!owner.includes('.ts-ai-button'));
 add('Training domain contains no AI note owner',!owner.includes('.ts-ai-note'));

@@ -81,6 +81,48 @@
   line-height: var(--staff-line-height-secondary);
 }
 
+/* R2.2 - STEP CONTENT PREMIUM CONVERGENCE
+   Functional iconography stays inside content; stepper/header/command/footer remain frozen. */
+.ts-manual-editor .ts-step-content-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--staff-space-1);
+}
+
+.ts-manual-editor .ts-step-content-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--staff-color-primary);
+  font-style: normal;
+}
+
+.ts-manual-editor .ts-step-content-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ts-manual-editor .ts-step-content-icon--action {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-step-content-icon--action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-present-count > .ts-step-content-label {
+  color: var(--staff-color-text);
+}
+
 /* Step 02 — roster: availability first, exceptions by disclosure. */
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
@@ -366,6 +408,10 @@
 
 .ts-manual-editor .ts-add-phase {
   min-height: var(--staff-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--staff-space-2);
   margin-top: var(--staff-space-3);
 }
 
@@ -433,9 +479,10 @@
   grid-template-columns:1fr;
   gap:var(--staff-space-3);
   margin-top:var(--staff-space-3);
-  padding:0;
-  border:0;
-  background:transparent;
+  padding:var(--staff-space-4);
+  border:1px solid var(--staff-color-border-subtle);
+  border-radius:var(--staff-radius-large);
+  background:var(--staff-color-bg-panel);
 }
 
 .ts-manual-editor .ts-analysis-fields .ts-field-full {
@@ -453,6 +500,16 @@
   font-size:.92rem;
   font-style:normal;
   line-height:1;
+}
+
+.ts-manual-editor .ts-objective-field-title .ts-step-content-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-objective-field-title .ts-step-content-icon svg {
+  width: 17px;
+  height: 17px;
 }
 
 /* Step 06 — preview: document is the focal object, chrome stays quiet. */
@@ -539,6 +596,7 @@
   .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
     width: 100%;
     max-width: none;
+    min-width: 0;
     padding-inline: var(--staff-space-3);
   }
 
@@ -546,7 +604,7 @@
     grid-template-columns: 1fr;
   }
 
-  .ts-manual-editor .ts-pillars {
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

@@ -88,7 +88,7 @@ export function renderTrainingSheetEditorPage({
           <section class="ts-form-card ts-step" data-ts-step="2">
             
             <div class="ts-roster-summary">
-              <label class="ts-field ts-present-count"><span>Presenti</span><input name="present" type="number" min="0" value="28" readonly aria-readonly="true"><small class="ts-field-help">Calcolati automaticamente dalla Rosa</small></label>
+              <label class="ts-field ts-present-count"><span class="ts-step-content-label"><i class="ts-step-content-icon" aria-hidden="true">${icon('squad')}</i>Presenti</span><input name="present" type="number" min="0" value="28" readonly aria-readonly="true"><small class="ts-field-help">Calcolati automaticamente dalla Rosa</small></label>
             </div>
             <div class="ts-roster-grid ts-roster-grid--four">
               ${[['absent','Assenti',''],['injured','Infortunati','is-injured'],['differentiated','Differenziato','is-differentiated']].map(([type,label,className]) => `
@@ -134,7 +134,7 @@ export function renderTrainingSheetEditorPage({
           <section class="ts-form-card ts-step" data-ts-step="4">
             
             <div class="ts-phases-editor" data-ts-phases></div>
-            <button class="staff-button staff-button--secondary ts-add-phase" type="button" data-add-phase>＋ Aggiungi fase</button>
+            <button class="staff-button staff-button--secondary ts-add-phase" type="button" data-add-phase><span class="ts-step-content-icon ts-step-content-icon--action" aria-hidden="true">${icon('plus')}</span><span>Aggiungi fase</span></button>
           </section>
           <section class="ts-form-card ts-step" data-ts-step="5">
             
@@ -147,8 +147,8 @@ export function renderTrainingSheetEditorPage({
               ].map(([key,value,label,symbol])=>`<label class="ts-pillar ts-pillar--${key}" title="${value}"><input type="checkbox" name="pillars" value="${value}"><span><i class="ts-pillar-symbol" aria-hidden="true">${symbol}</i><b class="ts-pillar-label">${label}</b></span></label>`).join('')}
             </div>
             <div class="ts-analysis-fields ts-analysis-fields--manual">
-              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i aria-hidden="true">&#9678;</i>Obiettivo</span><textarea name="objective" rows="3" placeholder="Scrivi l'obiettivo della seduta"></textarea></label>
-              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i aria-hidden="true">&#8801;</i>Principi</span><textarea name="principles" rows="4" placeholder="Scrivi i principi da allenare"></textarea></label>
+              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i class="ts-step-content-icon" aria-hidden="true">${icon('analysis')}</i>Obiettivo</span><textarea name="objective" rows="3" placeholder="Scrivi l'obiettivo della seduta"></textarea></label>
+              <label class="ts-field ts-field-full"><span class="ts-objective-field-title"><i class="ts-step-content-icon" aria-hidden="true">${icon('sheet')}</i>Principi</span><textarea name="principles" rows="4" placeholder="Scrivi i principi da allenare"></textarea></label>
             </div>
           </section>
 
