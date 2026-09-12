@@ -7,11 +7,12 @@
   --staff-mobile-page-title-size: clamp(1.52rem, 6.4vw, 1.86rem);
 }
 
+/* R2.1 â€” Premium hierarchy: compact context header, content-first workspace. */
 .ts-manual-editor .ts-editor-titlebar {
   grid-template-columns: minmax(0, 1fr) minmax(400px, 500px);
   align-items: start;
-  gap: var(--staff-space-4);
-  margin-bottom: var(--staff-space-4);
+  gap: var(--staff-space-3);
+  margin-bottom: var(--staff-space-3);
 }
 
 .ts-manual-editor .ts-editor-titlebar > div:first-child {
@@ -53,6 +54,7 @@
 /* Step 01 — session essentials: one compact operational surface. */
 .ts-manual-editor .ts-session-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   grid-template-columns: minmax(150px, .75fr) minmax(140px, .65fr) minmax(260px, 1.2fr) minmax(150px, .65fr);
   gap: var(--staff-space-3);
   padding: var(--staff-space-4);
@@ -83,6 +85,7 @@
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   box-sizing: border-box;
 }
 
@@ -195,14 +198,16 @@
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   box-sizing: border-box;
 }
 
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block {
-  margin: 0 0 var(--staff-space-2);
+  margin: 0 auto;
   padding: var(--staff-space-3) var(--staff-space-4);
   border: 1px solid var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
+  border-bottom: 0;
+  border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
   background: var(--staff-color-bg-panel);
 }
 
@@ -254,7 +259,7 @@
   gap: var(--staff-space-3);
   padding: var(--staff-space-4);
   border: 1px solid var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
+  border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);
   background: var(--staff-color-bg-panel);
 }
 
@@ -295,6 +300,7 @@
 /* Step 04 — phases: cards are justified here because each phase is an editable object. */
 .ts-manual-editor .ts-phases-editor {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   gap: var(--staff-space-3);
 }
 
@@ -367,6 +373,7 @@
 .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
 .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
   width:min(100%,var(--training-section-max));
+  margin-inline:auto;
   box-sizing:border-box;
 }
 
@@ -461,6 +468,7 @@
 
 .ts-manual-editor .ts-preview-stage {
   width: min(100%, var(--staff-content-readable));
+  margin-inline: auto;
 }
 
 /* Training Summary toolbar/actions are owned exclusively by training-editor.css (R1.4F). */
@@ -473,9 +481,11 @@
   position: sticky;
   bottom: var(--staff-space-2);
   z-index: 12;
+  width: min(100%, var(--training-section-max));
+  box-sizing: border-box;
   grid-template-columns: minmax(144px, 200px) 1fr minmax(144px, 200px);
   gap: var(--staff-space-2);
-  margin-top: var(--staff-space-4);
+  margin: var(--staff-space-4) auto 0;
   padding: var(--staff-space-2);
   border: 1px solid var(--staff-color-border-subtle);
   border-radius: var(--staff-radius-large);
