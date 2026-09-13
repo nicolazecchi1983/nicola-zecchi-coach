@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 
 const css = fs.readFileSync('src/modules/training/trainingPolish.css', 'utf8')
+const editor = fs.readFileSync('src/design-system/training-editor.css', 'utf8')
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
 const main = fs.readFileSync('src/main.js', 'utf8')
 const view = fs.readFileSync('src/modules/training/ui/trainingSheetEditorPageView.js', 'utf8')
@@ -21,6 +22,10 @@ const checks = [
   ['step content premium icon grammar is Training-domain owned', css.includes('R2.2 - STEP CONTENT PREMIUM CONVERGENCE') && css.includes('.ts-step-content-icon svg')],
   ['Step 5 manual decisions use one quiet premium surface', css.includes('.ts-step[data-ts-step="5"] .ts-analysis-fields') && css.includes('border-radius:var(--staff-radius-large);') && css.includes('background:var(--staff-color-bg-panel);')],
   ['step content premium introduces no custom inline SVG markup', !view.includes('<svg class="ts-step-content-icon')],
+  ['Step 6 keeps one premium compound summary surface', editor.includes('R2.3 - Training Summary premium refinement') && editor.includes('border-radius:var(--staff-radius-large) var(--staff-radius-large) 0 0;') && editor.includes('border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);')],
+  ['Step 6 summary actions remain compact and balanced', editor.includes('width:min(440px,42vw);') && editor.includes('grid-template-columns:minmax(0,1fr) minmax(0,1fr);')],
+  ['Step 6 helper copy is visually subordinate', editor.includes('padding-top:var(--staff-space-2);') && editor.includes('border-top:1px solid var(--staff-color-border-subtle);')],
+  ['Step 6 premium refinement adds no new important escalation', !editor.slice(editor.indexOf('R2.3 - Training Summary premium refinement'), editor.indexOf('/* R1.3J')).includes('!important')],
   ['preview remains the focal document surface', view.includes('data-ts-preview') && css.includes('var(--staff-content-readable)')],
   ['workflow footer stays reachable without changing step hooks', css.includes('position: sticky') && view.includes('data-ts-step-prev') && view.includes('data-ts-step-next')],
   ['Training domain owns remaining shared mobile adaptation', css.includes('R2.6Z — TRAINING MOBILE SESSION + PREVIEW OWNERSHIP · CLUSTER 10') && css.includes('.ts-manual-editor .ts-session-grid') && !responsive.includes('.ts-manual-editor .ts-session-grid')],
