@@ -107,14 +107,18 @@
   color:var(--staff-color-danger,#b42318);
 }
 
-.match-center-operational-grid{
-  display:grid;
-  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
-  gap:var(--staff-space-3);
+.match-center-timeline--primary{
+  border-color:var(--staff-color-primary)!important;
+  box-shadow:inset 3px 0 0 var(--staff-color-primary),0 12px 28px rgba(31,147,229,.10)!important;
+}
+
+.match-center-lineup--secondary{
+  background:var(--staff-color-bg-panel);
 }
 
 .match-center-player-list{
   display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:7px;
 }
 
@@ -156,13 +160,25 @@
 
 .match-center-timeline__event{
   display:grid;
-  grid-template-columns:52px minmax(0,1fr) auto;
+  grid-template-columns:52px 38px minmax(0,1fr) auto;
   align-items:center;
   gap:10px;
   min-height:48px;
   padding:8px 10px;
   border-bottom:1px solid var(--staff-color-border-subtle);
 }
+
+.match-center-event-icon{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--staff-color-border);
+  border-radius:10px;
+  background:var(--staff-color-bg-panel-raised);
+  color:var(--staff-color-primary);
+}
+.match-center-event-icon svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 
 .match-center-timeline__event time{
   font-weight:800;
@@ -213,9 +229,18 @@
 }
 
 .match-center-event-grid h3{
+  display:flex;
+  align-items:center;
+  gap:8px;
   margin:0 0 2px;
   font-size:.98rem;
 }
+.match-center-event-grid h3 .match-center-event-icon{
+  width:30px;
+  height:30px;
+  border-radius:8px;
+}
+.match-center-event-grid h3 .match-center-event-icon svg{ width:17px; height:17px; }
 
 .match-center-minute-row{
   display:grid;
@@ -259,8 +284,12 @@
   }
 
   .match-center-timeline__event{
-    grid-template-columns:44px minmax(0,1fr) auto;
+    grid-template-columns:44px 34px minmax(0,1fr) auto;
   }
+
+  .match-center-player-list{ grid-template-columns:minmax(0,1fr); }
+
+  .match-center-event-icon{ width:34px; height:34px; }
 
   .match-center-event-grid form{
     padding:12px;

@@ -32,7 +32,7 @@ const checks=[
  ['compact resource is shared and content-driven',resourceCss.includes('.staff-resource-section')&&resourceCss.includes('.staff-resource-row')&&!studyCss.includes('min-height:190px')],
  ['materials outer wrapper is visually neutral',studyCss.includes('.match-study-materials{')&&studyCss.includes('padding:0')&&studyCss.includes('border:0')&&studyCss.includes('background:transparent')],
  ['resources use shared icon-content-actions anatomy',resourceCss.includes('grid-template-columns:36px minmax(0,1fr) auto')&&resourceCss.includes('.staff-resource-row__icon')&&resourceCss.includes('.staff-resource-row__actions')],
- ['desktop stepper uses equal columns with no label-specific width',matchCss.includes('--product-nav-columns:7')&&productCss.includes('repeat(var(--product-nav-columns, 6),minmax(0,1fr))')&&!sharedCss.includes('minmax(176px,1.16fr)')],
+ ['desktop stepper uses equal columns with no label-specific width',matchCss.includes('.match-workspace-shell--pre-match{ --product-nav-columns:4; }')&&matchCss.includes('.match-workspace-shell--post-match{ --product-nav-columns:3; }')&&productCss.includes('repeat(var(--product-nav-columns, 6),minmax(0,1fr))')&&!sharedCss.includes('minmax(176px,1.16fr)')],
  ['stepper text remains inside buttons with controlled wrapping',productCss.includes('.product-section-nav button span')&&productCss.includes('white-space:normal!important')&&productCss.includes('overflow:hidden!important')],
  ['stepper buttons clip their own box instead of bleeding into neighbors',productCss.includes('overflow:hidden!important')],
  ['mobile two-column navigation comes from shared Product UI contract',matchCss.includes('--product-nav-mobile-columns:2')&&productCss.includes('var(--product-nav-mobile-columns,2)')],

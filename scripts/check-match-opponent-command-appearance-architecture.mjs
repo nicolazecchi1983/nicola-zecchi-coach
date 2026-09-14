@@ -1,9 +1,11 @@
 import fs from 'node:fs'
 
-const view = fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8')
-const css = fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8')
-const events = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
-const architecture = fs.readFileSync('docs/MATCH_OPPONENT_V2_ARCHITECTURE.md', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8'))
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8'))
+const events = normalizeEol(fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8'))
+const architecture = normalizeEol(fs.readFileSync('docs/MATCH_OPPONENT_V2_ARCHITECTURE.md', 'utf8'))
 
 const checks = [
   ['command surface has explicit 50/50 grid', view.includes('opponent-command-grid') && css.includes('.opponent-command-grid') && css.includes('grid-template-columns: repeat(2, minmax(0, 1fr))')],

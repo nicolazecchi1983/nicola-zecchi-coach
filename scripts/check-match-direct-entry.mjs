@@ -4,6 +4,7 @@ import { resolveWorkspaceRestore } from '../src/app/appSessionRestore.js'
 const library = fs.readFileSync('src/modules/match/events/matchLibraryEvents.js', 'utf8')
 const legacyLibrary = fs.readFileSync('src/modules/match/ui/matchLibraryController.js', 'utf8')
 const analysis = fs.readFileSync('src/modules/match/events/matchAnalysisEvents.js', 'utf8')
+const workspaceEvents = fs.readFileSync('src/modules/match/events/matchWorkspaceEvents.js', 'utf8')
 const components = fs.readFileSync('src/design-system/uiComponents.js', 'utf8')
 
 const available = ['dashboard', 'match-library', 'match-workspace', 'opponent-study']
@@ -21,8 +22,9 @@ const checks = [
   ['card click opens Studio avversario directly', library.includes("await setView('opponent-study', 'Studio avversario')")],
   ['create/open flow also enters Studio avversario', (library.match(/setView\('opponent-study', 'Studio avversario'\)/g) || []).length >= 2],
   ['legacy library binder cannot reintroduce landing page', legacyLibrary.includes("setView('opponent-study', 'Studio avversario')") && !legacyLibrary.includes("setView('match-workspace', 'Match Workspace')")],
-  ['section back action is contextual', analysis.includes("staff-match-entry-origin") && analysis.includes("['dashboard', 'Dashboard']") && analysis.includes("['match-library', 'Match Library']") && analysis.includes('await setView(destination[0], destination[1])')],
+  ['section back action is contextual', workspaceEvents.includes("staff-match-entry-origin") && workspaceEvents.includes("['dashboard', 'Dashboard']") && workspaceEvents.includes("['match-library', 'Match Library']") && workspaceEvents.includes('await setView(destination[0], destination[1])')],
   ['back control exposes contextual copy hook', components.includes('data-match-context-back-label') && components.includes('Torna alla Match Library')],
+  ['Analysis no longer duplicates contextual return', !analysis.includes('staff-match-entry-origin') && !analysis.includes('data-return-to-match-workspace')],
   ['legacy match-workspace restore redirects to step 1', restore.key === 'opponent-study' && restore.navigationKey === 'match-library'],
   ['compatibility route remains available', available.includes('match-workspace')],
 ]

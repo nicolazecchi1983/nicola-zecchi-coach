@@ -31,7 +31,9 @@ export function renderMatchReportWorkspaceView({
   return matchWorkspaceShellHtml({
     activeSection: 'report',
     teamName,
+    opponentName: activeMatch?.opponent || '',
     titleHtml: `Report · ${escapeHtml(opponent)}`,
+    workspaceTitleHtml: 'Report finale',
     descriptionHtml: 'Documento tecnico ufficiale collegato alla partita.',
     className: 'match-report-workspace',
     attributes: { 'data-match-report-workspace': true },

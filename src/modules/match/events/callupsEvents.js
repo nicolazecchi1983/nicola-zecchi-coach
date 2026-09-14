@@ -1,3 +1,4 @@
+import { MATCH_CALLUPS_MAX_PLAYERS } from '../matchCallupsModel.js'
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 
 export function createCallupsDirtyState(initialSelectionKey = '') {
@@ -99,15 +100,18 @@ export function wireCallupsEvents({
     checks.filter((check) => !check.checked).forEach((check) => {
       check.closest('.callup-player').querySelector('[data-callup-order]').textContent = '—'
     })
+    const overLimit = selected.length > MATCH_CALLUPS_MAX_PLAYERS
     countEl.textContent = String(selected.length)
-    pdfButton.disabled = selected.length === 0
-    saveButton.disabled = !activeMatch?.id
+    pdfButton.disabled = selected.length === 0 || overLimit
+    saveButton.disabled = !activeMatch?.id || overLimit
     if (selectAllButton) selectAllButton.disabled = checks.length === 0 || selected.length === checks.length
     if (clearAllButton) clearAllButton.disabled = selected.length === 0
     if (alertEl) {
       const dirty = dirtyState.isDirty()
-      alertEl.hidden = !dirty
-      alertEl.textContent = dirty ? 'Modifiche non salvate.' : ''
+      alertEl.hidden = !overLimit && !dirty
+      alertEl.textContent = overLimit
+        ? `Massimo ${MATCH_CALLUPS_MAX_PLAYERS} convocati. Deseleziona ${selected.length - MATCH_CALLUPS_MAX_PLAYERS} giocator${selected.length - MATCH_CALLUPS_MAX_PLAYERS === 1 ? 'e' : 'i'}.`
+        : (dirty ? 'Modifiche non salvate.' : '')
     }
   }
 
@@ -148,6 +152,7 @@ export function wireCallupsEvents({
     if (!activeMatch?.id || !service) return
     saveButton.disabled = true
     const playersToSave = selectedPlayers()
+    if (playersToSave.length > MATCH_CALLUPS_MAX_PLAYERS) return
     const selectionKeyToSave = selectionKey()
     try {
       await service.save(activeMatch.id, playersToSave)
@@ -160,13 +165,15 @@ export function wireCallupsEvents({
     } catch (error) {
       alertUser?.(getDataAccessUserMessage(error, undefined, { stage: 'callups-save' }))
     } finally {
-      saveButton.disabled = !activeMatch?.id
+      const selectedCount = selectedPlayers().length
+      saveButton.disabled = !activeMatch?.id || selectedCount > MATCH_CALLUPS_MAX_PLAYERS
     }
   })
 
   pdfButton?.addEventListener('click', async () => {
     const team = getTeamProfile()
     const selected = selectedPlayers()
+    if (!selected.length || selected.length > MATCH_CALLUPS_MAX_PLAYERS) return
     const match = callupsPanel.querySelector('[data-callups-match]').value || 'Partita da definire'
     const date = callupsPanel.querySelector('[data-callups-date]').value || ''
     const roleOrder = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante', 'Altro']

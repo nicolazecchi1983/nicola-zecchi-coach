@@ -1,7 +1,9 @@
 import fs from 'node:fs'
 
-const runtime = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
-const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const runtime = normalizeEol(fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8'))
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
 
 const resetBlockMatch = runtime.match(/const resetFormationPositions = \(\) => \{[\s\S]*?return true\n      \}/)
 const resetBlock = resetBlockMatch?.[0] || ''

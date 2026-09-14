@@ -1,3 +1,4 @@
+import { MATCH_CALLUPS_MAX_PLAYERS } from '../matchCallupsModel.js'
 import { matchWorkspaceShellHtml } from '../workspace/matchWorkspaceShell.js'
 
 const ROLE_ORDER = ['Portiere', 'Difensore', 'Centrocampista', 'Attaccante']
@@ -49,7 +50,7 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
             <button class="staff-button staff-button--secondary callups-bulk-button" type="button" data-callups-select-all>Seleziona tutti</button>
             <button class="staff-button staff-button--secondary callups-bulk-button" type="button" data-callups-clear-all>Deseleziona tutti</button>
           </div>
-          <div class="callups-counter"><strong data-callups-count>${activePlayers.filter(isSelected).length}</strong><span> selezionati</span></div>
+          <div class="callups-counter"><strong data-callups-count>${activePlayers.filter(isSelected).length}</strong><span>/ ${MATCH_CALLUPS_MAX_PLAYERS} selezionati</span></div>
         </div>
         <div class="callups-toolbar callups-toolbar--actions">
           <div class="callups-toolbar-actions"><button class="staff-button staff-button--secondary" type="button" data-callups-save>Salva convocati</button><button class="primary-action" type="button" data-callups-pdf>Crea PDF convocazioni</button></div>
@@ -63,7 +64,9 @@ export function renderCallupsView({ players, activeMatch, escapeHtml, teamName =
   return matchWorkspaceShellHtml({
     activeSection: 'callups',
     teamName,
+    opponentName: activeMatch?.opponent || '',
     titleHtml: `Convocazioni · ${escapeHtml(opponent)}`,
+    workspaceTitleHtml: 'Convocazioni',
     descriptionHtml: 'Seleziona i giocatori disponibili per questa gara',
     className: 'match-callups-view',
     contentHtml,

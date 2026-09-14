@@ -1,8 +1,10 @@
 import fs from 'node:fs'
 
-const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
-const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
-const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const responsive = normalizeEol(fs.readFileSync('src/design-system/responsive.css', 'utf8'))
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
 
 const checks = [
   ['single R3.4C canonical marker exists', (css.match(/R3\.4C Match Squad Cross-Viewport Alignment/g) || []).length === 1],

@@ -199,7 +199,9 @@ export function renderMatchOpponentStudyView({ activeMatch, study, escapeHtml, t
   return matchWorkspaceShellHtml({
     activeSection: 'opponent-study',
     teamName,
+    opponentName: activeMatch?.opponent || '',
     titleHtml: `Studio avversario · ${escapeHtml(opponent)}`,
+    workspaceTitleHtml: 'Studio avversario',
     descriptionHtml: 'Materiali e lettura tecnica pre-partita.',
     className: 'match-opponent-study',
     attributes: {

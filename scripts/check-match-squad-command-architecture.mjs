@@ -8,7 +8,7 @@ const commandStart = view.indexOf('data-squad-command-strip')
 const pitchStart = view.indexOf('<div class="pitch-panel">')
 const resetStart = view.indexOf('data-reset-formation')
 const lineupStart = view.indexOf('lineup-list lineup-list--selection')
-const benchStart = view.indexOf('bench-block bench-block--automatic bench-block--full-width')
+const benchStart = view.indexOf('bench-block bench-block--editable bench-block--full-width')
 
 const checks = [
   ['command strip has one explicit structural owner', commandStart >= 0 && view.includes('squad-command-strip')],

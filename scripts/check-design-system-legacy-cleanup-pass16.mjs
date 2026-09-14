@@ -1,10 +1,12 @@
 import fs from 'node:fs'
 
-const main = fs.readFileSync('src/main.js', 'utf8')
-const appShell = fs.readFileSync('src/design-system/appShell.css', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const main = normalizeEol(fs.readFileSync('src/main.js', 'utf8'))
+const appShell = normalizeEol(fs.readFileSync('src/design-system/appShell.css', 'utf8'))
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8').replace(/\r\n/g, '\n')
-const legacy = fs.readFileSync('src/style.css', 'utf8')
-const polish = fs.readFileSync('src/design-system/polish.css', 'utf8')
+const legacy = normalizeEol(fs.readFileSync('src/style.css', 'utf8'))
+const polish = normalizeEol(fs.readFileSync('src/design-system/polish.css', 'utf8'))
 
 const legacyShellOwner = /^\s*\.(?:app-shell|sidebar(?:-brand|-nav)?|nav-item|nav-icon|logout-button|nav-group(?:-[\w-]+)?|workspace)\b/m
 

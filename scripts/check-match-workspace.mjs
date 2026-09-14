@@ -12,6 +12,7 @@ const shell = fs.readFileSync(new URL('../src/modules/match/workspace/matchWorks
 const adapters = fs.readFileSync('src/app/appViewAdapters.js', 'utf8')
 const matchLibraryEvents = fs.readFileSync(new URL('../src/modules/match/events/matchLibraryEvents.js', import.meta.url), 'utf8')
 const matchAnalysisEvents = fs.readFileSync(new URL('../src/modules/match/events/matchAnalysisEvents.js', import.meta.url), 'utf8')
+const matchWorkspaceEvents = fs.readFileSync(new URL('../src/modules/match/events/matchWorkspaceEvents.js', import.meta.url), 'utf8')
 
 const checks = [
   ['Match Library apre direttamente Studio avversario', matchLibraryEvents.includes('data-open-match-workspace') && matchLibraryEvents.includes("setView('opponent-study', 'Studio avversario')")],
@@ -27,7 +28,8 @@ const checks = [
   ['Sidebar Match mostra solo Match Library', navigation.includes("label: 'Match'") && navigation.includes("['match-library', 'Match Library', 'match-library']") && !navigation.includes("['match-sheet', 'Match Sheet', 'match-sheet']")],
   ['Convocazioni e Analisi non sono nella sidebar', !navigation.includes("['callups', 'Convocazioni', 'squad']") && !navigation.includes("['analysis', 'Analisi gara', 'analysis']")],
   ['Ritorno alla Match Library presente nelle sezioni partita', callupsView.includes('matchWorkspaceShellHtml') && analysisView.includes('matchWorkspaceShellHtml') && shell.includes('matchContextBackButtonHtml()') && uiComponents.includes('data-return-to-match-workspace')],
-  ['Ritorno contestuale usa un solo handler condiviso', matchAnalysisEvents.includes("data-return-to-match-workspace") && matchAnalysisEvents.includes("staff-match-entry-origin") && matchAnalysisEvents.includes('destination[0]') && matchAnalysisEvents.includes('destination[1]')],
+  ['Ritorno contestuale usa un solo handler condiviso', matchWorkspaceEvents.includes("data-return-to-match-workspace") && matchWorkspaceEvents.includes("staff-match-entry-origin") && matchWorkspaceEvents.includes('destination[0]') && matchWorkspaceEvents.includes('destination[1]') && !matchAnalysisEvents.includes("staff-match-entry-origin")],
+  ['Navigazione interna usa il solo owner Match Workspace', matchWorkspaceEvents.includes("data-workspace-action") && !matchAnalysisEvents.includes('data-match-context-section')],
 ]
 
 let failed = 0

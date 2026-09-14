@@ -53,26 +53,6 @@ export function colorPickerHtml({
   </fieldset>`
 }
 
-const MATCH_CONTEXT_NAV_ITEMS = Object.freeze([
-  ['opponent-study', 'Studio avversario'],
-  ['callups', 'Convocazioni'],
-  ['our-team', 'Nostra squadra'],
-  ['opponent', 'Avversario'],
-  ['analysis', 'Analisi gara'],
-  ['report', 'Report'],
-  ['post-match', 'Post gara'],
-])
-
-export function matchContextNavigationHtml(activeSection = '', { teamName = '' } = {}) {
-  const resolvedTeamName = String(teamName || '').trim()
-  return `<nav class="match-context-navigation product-section-nav" aria-label="Sezioni della partita">
-    ${MATCH_CONTEXT_NAV_ITEMS.map(([key, label], index) => {
-      const resolvedLabel = key === 'our-team' && resolvedTeamName ? resolvedTeamName : label
-      return `<button type="button" class="${key === activeSection ? 'is-active' : ''}" data-match-context-section="${key}"><b>${String(index + 1).padStart(2, '0')}</b><span>${resolvedLabel}</span></button>`
-    }).join('')}
-  </nav>`
-}
-
 export function matchContextBackButtonHtml() {
   return buttonHtml({
     label: '<span data-match-context-back-label>Torna alla Match Library</span>',

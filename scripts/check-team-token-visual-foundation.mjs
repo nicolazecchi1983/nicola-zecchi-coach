@@ -1,15 +1,17 @@
 import fs from 'node:fs'
 
-const shared = fs.readFileSync('src/shared/ui/teamToken.css', 'utf8')
-const squad = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
-const opponent = fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8')
-const settings = fs.readFileSync('src/modules/settings/teamSettingsView.js', 'utf8')
-const tokenMarkup = fs.readFileSync('src/modules/match/ui/matchTokenMarkup.js', 'utf8')
-const squadCss = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
-const opponentCss = fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8')
-const globalCss = fs.readFileSync('src/style.css', 'utf8')
-const main = fs.readFileSync('src/main.js', 'utf8')
-const doc = fs.readFileSync('docs/TEAM_TOKEN_AND_SETTINGS_ARCHITECTURE.md', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const shared = normalizeEol(fs.readFileSync('src/shared/ui/teamToken.css', 'utf8'))
+const squad = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
+const opponent = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8'))
+const settings = normalizeEol(fs.readFileSync('src/modules/settings/teamSettingsView.js', 'utf8'))
+const tokenMarkup = normalizeEol(fs.readFileSync('src/modules/match/ui/matchTokenMarkup.js', 'utf8'))
+const squadCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const opponentCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8'))
+const globalCss = normalizeEol(fs.readFileSync('src/style.css', 'utf8'))
+const main = normalizeEol(fs.readFileSync('src/main.js', 'utf8'))
+const doc = normalizeEol(fs.readFileSync('docs/TEAM_TOKEN_AND_SETTINGS_ARCHITECTURE.md', 'utf8'))
 
 const checks = [
   ['shared premium token shell exists', shared.includes('.staff-team-token') && shared.includes('outline:') && shared.includes('inset 0 -7px 12px')],

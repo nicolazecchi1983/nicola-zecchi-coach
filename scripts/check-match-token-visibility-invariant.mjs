@@ -3,9 +3,10 @@ import fs from 'node:fs'
 const events = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
 const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
 const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
+const lineup = fs.readFileSync('src/modules/match/matchLineupSelectionModel.js', 'utf8')
 
 const checks = [
-  ['eleven token shells remain in canonical pitch markup', (view.match(/data-player-token=/g) || []).length === 1 && view.includes('Array.from({ length: 11 }')],
+  ['eleven token shells derive from canonical starter count', (view.match(/data-player-token=/g) || []).length === 1 && view.includes('Array.from({ length: MATCH_LINEUP_STARTER_COUNT }') && lineup.includes('MATCH_LINEUP_STARTER_COUNT = 11')],
   ['runtime never hides token shell from display toggles', events.includes('badge.hidden = false') && !events.includes('badge.hidden = !showPhoto && !showNumber')],
   ['number/photo affect canonical token content only', events.includes("querySelector('.staff-match-token__number')") && events.includes('tokenNumber.textContent = showPhoto')],
   ['surname visibility remains independent', events.includes('label.hidden = !showSurname')],

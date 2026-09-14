@@ -1,8 +1,10 @@
 import fs from 'node:fs'
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 import path from 'node:path'
 
 const root = process.cwd()
-const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8')
+const read = (rel) => normalizeEol(fs.readFileSync(path.join(root, rel), 'utf8'))
 const squad = read('src/modules/match/ui/matchSquad.css')
 const responsive = read('src/design-system/responsive.css')
 const opponent = read('src/modules/match/ui/matchOpponent.css')

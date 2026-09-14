@@ -3,8 +3,6 @@ import {
   requireMatchStudyBucket,
 } from './matchOpponentStudyStoragePolicy.js'
 
-// Bucket privato già operativo nel progetto. Gli asset Match sono isolati dal path "match-study/".
-// Il contratto del dominio non dipende dal nome fisico del bucket e potrà essere migrato in futuro.
 export {
   MATCH_STUDY_BUCKET,
   MATCH_STUDY_LEGACY_BUCKET,

@@ -72,7 +72,9 @@ export function renderMatchAnalysisView({
   return matchWorkspaceShellHtml({
     activeSection: 'analysis',
     teamName,
+    opponentName: activeMatch?.opponent || '',
     titleHtml: `Analisi gara · ${escapeHtml(opponent)}`,
+    workspaceTitleHtml: 'Analisi gara',
     descriptionHtml: 'Analisi tecnica collegata alla partita',
     className: 'analysis-view',
     attributes: {

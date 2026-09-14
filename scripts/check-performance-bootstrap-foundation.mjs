@@ -1,9 +1,11 @@
 import fs from 'node:fs'
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 import path from 'node:path'
 
 const root = process.cwd()
-const controller = fs.readFileSync(path.join(root, 'src/app/appController.js'), 'utf8')
-const kernel = fs.readFileSync(path.join(root, 'src/app/appKernel.js'), 'utf8')
+const controller = normalizeEol(fs.readFileSync(path.join(root, 'src/app/appController.js'), 'utf8'))
+const kernel = normalizeEol(fs.readFileSync(path.join(root, 'src/app/appKernel.js'), 'utf8'))
 const failures = []
 
 const attachMatch = controller.match(/export async function attachAppEvents\(user\) \{([\s\S]*?)\n  const root = document\.querySelector\('#viewRoot'\)/)

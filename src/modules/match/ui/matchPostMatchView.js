@@ -75,7 +75,9 @@ export function renderMatchPostMatchView({
   return matchWorkspaceShellHtml({
     activeSection: 'post-match',
     teamName,
+    opponentName: activeMatch?.opponent || '',
     titleHtml: `Post gara · ${escapeHtml(opponent)}`,
+    workspaceTitleHtml: 'Post gara',
     descriptionHtml: '',
     className: 'match-post-match-view',
     attributes: { 'data-match-post-match': true },

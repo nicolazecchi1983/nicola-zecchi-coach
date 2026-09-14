@@ -1,12 +1,14 @@
 import fs from 'node:fs'
 
-const shared = fs.readFileSync('src/shared/ui/teamToken.css','utf8')
-const markup = fs.readFileSync('src/modules/match/ui/matchTokenMarkup.js','utf8')
-const squadView = fs.readFileSync('src/modules/match/ui/matchSquadView.js','utf8')
-const opponentView = fs.readFileSync('src/modules/match/ui/matchOpponentView.js','utf8')
-const squadCss = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
-const opponentCss = fs.readFileSync('src/modules/match/ui/matchOpponent.css','utf8')
-const events = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js','utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const shared = normalizeEol(fs.readFileSync('src/shared/ui/teamToken.css', 'utf8'))
+const markup = normalizeEol(fs.readFileSync('src/modules/match/ui/matchTokenMarkup.js', 'utf8'))
+const squadView = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
+const opponentView = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8'))
+const squadCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const opponentCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8'))
+const events = normalizeEol(fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8'))
 
 const checks = [
   ['canonical token markup helper owns shell anatomy', markup.includes('matchTokenShellHtml') && markup.includes('staff-match-token__shell') && markup.includes('staff-match-token__number')],

@@ -21,7 +21,7 @@ export function createAppViewAdapters(deps) {
     getTrainingSheetRosterPlayers,
     teamLocationSelectOptions,
     renderCallupsView,
-    readMatchCallupsFromEventNotes,
+    readMatchCallupsFromEvent,
     renderRosterView,
     rosterPlayerIdentity,
     renderMatchAnalysisView,
@@ -109,7 +109,7 @@ export function createAppViewAdapters(deps) {
       teamName: teamName(),
       players: activePlayers(),
       activeMatch,
-      savedCallups: readMatchCallupsFromEventNotes(eventModel?.notes || ''),
+      savedCallups: readMatchCallupsFromEvent(eventModel),
       escapeHtml,
     })
   }
@@ -257,10 +257,16 @@ export function createAppViewAdapters(deps) {
     })
   }
 
+  function nativeMatchContext() {
+    const activeMatch = getActiveMatchContext()
+    const eventModel = appState.calendarEvents.find((item) => String(item.id) === String(activeMatch?.id || '')) || null
+    return { ...(eventModel || {}), ...(activeMatch || {}) }
+  }
+
   function nativeOurTeamView() {
     return renderNativeMatchSectionView({
       section: 'our-team',
-      activeMatch: getActiveMatchContext(),
+      activeMatch: nativeMatchContext(),
       team: getTeamProfile(),
       escapeHtml,
       legacyEditorHtml: legacyMatchCompatibilityView(),
@@ -270,7 +276,7 @@ export function createAppViewAdapters(deps) {
   function nativeOpponentView() {
     return renderNativeMatchSectionView({
       section: 'opponent',
-      activeMatch: getActiveMatchContext(),
+      activeMatch: nativeMatchContext(),
       team: getTeamProfile(),
       escapeHtml,
       legacyEditorHtml: legacyMatchCompatibilityView(),

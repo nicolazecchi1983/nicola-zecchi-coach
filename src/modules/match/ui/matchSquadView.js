@@ -3,28 +3,27 @@ import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import { tokenDisplayControlHtml } from './matchTokenDisplayControl.js'
 import { matchPitchMarkingsHtml } from './matchPitchMarkup.js'
 import { matchTokenShellHtml } from './matchTokenMarkup.js'
-import { sortMatchLineupPlayers } from '../matchLineupSelectionModel.js'
+import { MATCH_LINEUP_MAX_BENCH, MATCH_LINEUP_STARTER_COUNT, sortMatchLineupPlayers } from '../matchLineupSelectionModel.js'
 
-const STARTER_FALLBACK_NUMBERS = Array.from({ length: 11 }, (_, index) => index + 1)
+const STARTER_FALLBACK_NUMBERS = Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => index + 1)
 
 function normalizedShirtNumber(value) {
   const number = Number(value)
   return Number.isInteger(number) && number >= 1 && number <= 99 ? number : null
 }
 
-function playerOptions(rosterPlayers = [], rosterOptions = '') {
-  if (!rosterPlayers.length) return rosterOptions
+function playerOptions(rosterPlayers = []) {
   const orderedPlayers = sortMatchLineupPlayers(rosterPlayers)
   return orderedPlayers.map((player) => {
     const name = player.canonicalName || player.name || ''
     const number = normalizedShirtNumber(player.number)
     const numberAttribute = number == null ? '' : ` data-shirt-number="${number}"`
-    return `<option value="${escapeHtml(name)}"${numberAttribute}>${escapeHtml(player.displayName || name)}</option>`
+    return `<option value="${escapeHtml(name)}"${numberAttribute} data-player-label="${escapeHtml(player.displayName || name)}">${escapeHtml(player.displayName || name)}</option>`
   }).join('')
 }
 
-function starterRows(rosterPlayers, rosterOptions) {
-  const options = playerOptions(rosterPlayers, rosterOptions)
+function starterRows(rosterPlayers) {
+  const options = playerOptions(rosterPlayers)
   return STARTER_FALLBACK_NUMBERS.map((shirtNumber, index) => `
     <div class="lineup-row" data-starter-row="${index}">
       <input class="starter-number-input" name="starter_number_${index}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="${shirtNumber}" aria-label="Numero di maglia titolare ${index + 1}">
@@ -35,7 +34,7 @@ function starterRows(rosterPlayers, rosterOptions) {
 }
 
 function pitchTokens() {
-  return Array.from({ length: 11 }, (_, index) => `
+  return Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => `
     <button class="player-token staff-match-token token-${index + 1}" type="button" data-player-token="${index}" style="--x:50;--y:${88 - index * 7}" aria-label="Sposta giocatore ${index + 1}">
       ${matchTokenShellHtml({ number: index + 1, shellClass: 'token-photo' })}<small>Giocatore ${index + 1}</small>
     </button>
@@ -43,7 +42,7 @@ function pitchTokens() {
     <input type="hidden" name="position_y_${index}" value="${88 - index * 7}">`).join('')
 }
 
-export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions, rosterPlayers = [], teamPrimaryColor = '#07194f', teamSecondaryColor = '#1f93e5', teamKitPattern = 'solid' }) {
+export function renderMatchSquadStep({ teamName, formationOptions, rosterPlayers = [], teamPrimaryColor = '#07194f', teamSecondaryColor = '#1f93e5', teamKitPattern = 'solid' }) {
   return `<section class="match-step match-squad-step staff-card" data-match-step="2" data-own-token-pattern="${escapeHtml(teamKitPattern)}" data-staff-token-pattern="${escapeHtml(teamKitPattern)}" style="--own-token-primary:${escapeHtml(teamPrimaryColor)};--own-token-secondary:${escapeHtml(teamSecondaryColor)};--staff-token-primary:${escapeHtml(teamPrimaryColor)};--staff-token-secondary:${escapeHtml(teamSecondaryColor)}">
     <div class="squad-command-strip" data-squad-command-strip>
       <div class="squad-command-primary" data-squad-command-primary>
@@ -82,32 +81,36 @@ export function renderMatchSquadStep({ teamName, formationOptions, rosterOptions
                 <span class="leadership-role-badge" aria-hidden="true">C</span>
                 <span class="leadership-role-label">Capitano</span>
               </span>
-              <select name="captain" data-leadership-select="captain" aria-label="Seleziona capitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
+              <select name="captain" data-leadership-select="captain" aria-label="Seleziona capitano"><option value="">Nessuno</option>${playerOptions(rosterPlayers)}</select>
             </label>
             <label class="leadership-control leadership-control--vice">
               <span class="leadership-role">
                 <span class="leadership-role-badge" aria-hidden="true">VC</span>
                 <span class="leadership-role-label">Vice</span>
               </span>
-              <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vice"><option value="">Nessuno</option>${playerOptions(rosterPlayers, rosterOptions)}</select>
+              <select name="vice_captain" data-leadership-select="vice_captain" aria-label="Seleziona vice"><option value="">Nessuno</option>${playerOptions(rosterPlayers)}</select>
             </label>
           </div>
         </div>
-        <div class="lineup-selection-list">${starterRows(rosterPlayers, rosterOptions)}</div>
-        <p class="form-message lineup-duplicate-warning" data-lineup-duplicate-warning role="alert" hidden></p>
+        <div class="lineup-selection-list">${starterRows(rosterPlayers)}</div>
       </div>
     </div>
 
-    <div class="bench-block bench-block--automatic bench-block--full-width" data-bench-block>
+    <p class="form-message lineup-duplicate-warning" data-lineup-duplicate-warning role="alert" hidden></p>
+
+    <div class="bench-block bench-block--editable bench-block--full-width" data-bench-block>
       <div class="bench-block-head"><h3>A disposizione</h3><div class="bench-count" data-bench-count>Distinta: —/20</div></div>
       <div class="bench-grid bench-grid--slots" data-bench-grid data-bench-slots>
-        ${Array.from({ length: 9 }, (_, index) => `
-          <label class="bench-slot" data-bench-slot="${index}">
-            <span class="bench-slot-number" data-bench-slot-number="${index}"><span class="bench-slot-order">P${index + 1}</span><b data-bench-shirt-number="${index}">${index + 12}</b></span>
-            <select name="bench_${index}" data-bench-select="${index}" aria-label="Panchina P${index + 1}">
-              <option value="">Seleziona giocatore</option>
+        ${Array.from({ length: MATCH_LINEUP_MAX_BENCH }, (_, index) => `
+          <div class="bench-slot" data-bench-slot="${index}">
+            <label class="bench-slot-number" data-bench-slot-number="${index}">
+              <span class="bench-slot-order">P${index + 1}</span>
+              <input class="bench-number-input" name="bench_number_${index}" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="" placeholder="—" aria-label="Numero di maglia panchina ${index + 1}">
+            </label>
+            <select class="bench-slot-player bench-player-select" name="bench_${index}" data-bench-select="${index}" aria-label="Giocatore panchina ${index + 1}">
+              <option value="">Seleziona giocatore</option>${playerOptions(rosterPlayers)}
             </select>
-          </label>`).join('')}
+          </div>`).join('')}
       </div>
     </div>
   </section>`

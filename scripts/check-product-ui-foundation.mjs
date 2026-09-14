@@ -8,7 +8,7 @@ const app=fs.readFileSync('src/app/appController.js','utf8')
 const trainingPage=fs.readFileSync('src/modules/training/ui/trainingSheetEditorPageView.js','utf8')
 const library=fs.readFileSync('src/modules/training/ui/trainingLibraryView.js','utf8')
 const matchShell=fs.readFileSync('src/modules/match/workspace/matchWorkspaceShell.js','utf8')
-const ui=fs.readFileSync('src/design-system/uiComponents.js','utf8')
+const matchCss=fs.readFileSync('src/modules/match/workspace/matchWorkspace.css','utf8')
 const report=fs.readFileSync('src/modules/match/ui/matchReportWorkspaceView.js','utf8')
 const post=fs.readFileSync('src/modules/match/ui/matchPostMatchView.js','utf8')
 const legacyStyle=fs.readFileSync('src/style.css','utf8')
@@ -20,9 +20,9 @@ const checks=[
  ['Product page shell is shared by Training Sheet',trainingPage.includes('product-page-shell training-product-shell ts-manual-editor')],
  ['Product page shell is shared by Training Library',library.includes('product-page-shell training-library-view')],
  ['Product page shell is shared by Match shell',matchShell.includes("'product-page-shell'")],
- ['Training and Match use same product section nav',trainingPage.includes('ts-step-nav product-section-nav')&&ui.includes('match-context-navigation product-section-nav')],
+ ['Training and Match use same product section nav',trainingPage.includes('ts-step-nav product-section-nav')&&matchShell.includes('match-context-navigation product-section-nav')],
  ['Training keeps six-column domain configuration',product.includes('--product-nav-columns:6')],
- ['Match keeps seven-column domain configuration',fs.readFileSync('src/modules/match/workspace/matchWorkspace.css','utf8').includes('--product-nav-columns:7')],
+ ['Match derives PRE 4 / POST 3 contextual columns from temporal state',matchCss.includes('.match-workspace-shell--pre-match{ --product-nav-columns:4; }')&&matchCss.includes('.match-workspace-shell--post-match{ --product-nav-columns:3; }')],
  ['Training active nav has no separate legacy blue ownership',!legacyStyle.includes('.ts-step-nav button.is-active{background:#0f7fca')],
  ['Old polish no longer owns Training stepper',!polish.includes('.ts-step-nav button')],
  ['Training Sheet step wrappers stay structural while inner blocks own surfaces',trainingPage.includes('class="ts-form-card ts-step') && !trainingPage.includes('ts-form-card product-surface ts-step')],

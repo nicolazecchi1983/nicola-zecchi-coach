@@ -1,8 +1,10 @@
 import fs from 'node:fs'
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 import assert from 'node:assert/strict'
 
-const legacy = fs.readFileSync('src/style.css','utf8')
-const calendar = fs.readFileSync('src/modules/calendar/calendarPolish.css','utf8')
+const legacy = normalizeEol(fs.readFileSync('src/style.css', 'utf8'))
+const calendar = normalizeEol(fs.readFileSync('src/modules/calendar/calendarPolish.css', 'utf8'))
 
 const checks = [
   ['legacy base calendar owner removed', !legacy.includes('/* CALENDARIO */')],

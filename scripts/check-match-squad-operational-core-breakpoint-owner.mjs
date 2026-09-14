@@ -1,7 +1,9 @@
 import fs from 'node:fs'
 
-const css = fs.readFileSync('src/modules/match/ui/matchSquad.css','utf8')
-const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const responsive = normalizeEol(fs.readFileSync('src/design-system/responsive.css', 'utf8'))
 
 function mediaBlocks(width){
   const marker = `@media (max-width: ${width}px) {`

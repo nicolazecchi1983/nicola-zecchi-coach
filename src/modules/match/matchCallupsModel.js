@@ -1,4 +1,5 @@
 export const MATCH_CALLUPS_SCHEMA_VERSION = 1
+export const MATCH_CALLUPS_MAX_PLAYERS = 20
 
 function cleanText(value) { return String(value ?? '').trim() }
 function cleanNumber(value) {
@@ -38,10 +39,22 @@ export function normalizeMatchCallups(value = {}, { persisted = false } = {}) {
     _schemaVersion: MATCH_CALLUPS_SCHEMA_VERSION,
   }
 }
+export function assertMatchCallupsLimit(players = []) {
+  const normalized = normalizeMatchCallups({ players }).players
+  if (normalized.length > MATCH_CALLUPS_MAX_PLAYERS) {
+    throw new Error(`Convocazioni: massimo ${MATCH_CALLUPS_MAX_PLAYERS} giocatori.`)
+  }
+  return normalized
+}
+
 export function readMatchCallupsFromEventNotes(rawNotes) {
   const notes = parseNotes(rawNotes)
   const exists = Boolean(notes.match_callups && typeof notes.match_callups === 'object')
   return normalizeMatchCallups(notes.match_callups || {}, { persisted: exists })
+}
+
+export function readMatchCallupsFromEvent(event = {}) {
+  return readMatchCallupsFromEventNotes(event?.rawNotes ?? event?.notes ?? '')
 }
 export function mergeMatchCallupsIntoEventNotes(rawNotes, callups) {
   const notes = parseNotes(rawNotes)
@@ -56,7 +69,7 @@ export function mergeMatchCallupsIntoEventNotes(rawNotes, callups) {
   })
 }
 export function filterRosterBySavedCallups(rosterPlayers = [], callups = {}) {
-  if (!callups?.persisted) return rosterPlayers
+  if (!callups?.persisted) return []
   const ids = new Set((callups.players || []).map((p) => p.playerId).filter(Boolean))
   const names = new Set((callups.players || []).map((p) => p.name.toLocaleLowerCase('it-IT')).filter(Boolean))
   return rosterPlayers.filter((player) => {
@@ -76,6 +89,6 @@ export function createActiveMatchRosterSelector({
     const activeMatch = typeof getActiveMatchContext === 'function' ? getActiveMatchContext() : null
     const events = typeof getCalendarEvents === 'function' ? getCalendarEvents() : []
     const event = events.find((item) => String(item?.id || '') === String(activeMatch?.id || '')) || null
-    return filterRosterBySavedCallups(roster, readMatchCallupsFromEventNotes(event?.notes || ''))
+    return filterRosterBySavedCallups(roster, readMatchCallupsFromEvent(event))
   }
 }

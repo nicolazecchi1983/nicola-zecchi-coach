@@ -12,7 +12,7 @@ const checks = [
   ['stampe HTML autonome escludono il CSS globale', files.printEngine.includes('includeDocumentStyles: false')],
   ['Print Engine supporta esplicitamente includeDocumentStyles', files.printEngine.includes('includeDocumentStyles = true')],
   ['Nostra squadra usa la squadra configurata', files.nativeView.includes("ownTeamName = team?.shortName || team?.name")],
-  ['Avversario usa il nome partita', files.nativeView.includes("pageTitle = section === 'our-team' ? ownTeamName : opponent")],
+  ['Avversario resta nel titolo partita canonico', files.nativeView.includes("const opponent = activeMatch?.opponent || 'Avversario da definire'") && files.nativeView.includes("const homeTeam = homeAway === 'away' ? opponent : ownTeamName") && files.nativeView.includes("const awayTeam = homeAway === 'away' ? ownTeamName : opponent") && files.nativeView.includes('titleHtml: matchTitleHtml')],
   ['controller passa il profilo squadra alla vista nativa', files.controller.includes('team: getTeamProfile()')],
   ['motore compatibilità usa avversario dal match attivo', files.compatibilityView.includes("const opponentName = activeMatch?.opponent")],
   ['configurazione squadra collega la Rosa', files.teamSettings.includes('data-open-team-roster')],

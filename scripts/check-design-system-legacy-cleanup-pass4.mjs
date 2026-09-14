@@ -1,8 +1,10 @@
 import fs from 'node:fs'
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 import path from 'node:path'
 
 const root = process.cwd()
-const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
+const read = (file) => normalizeEol(fs.readFileSync(path.join(root, file), 'utf8'))
 const legacy = read('src/style.css')
 const overlays = read('src/design-system/overlays.css')
 const controls = read('src/design-system/controls.css')

@@ -1,6 +1,8 @@
 import fs from 'node:fs'
-const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
-const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
 const checks = [
   ['legacy duplicate inner team heading removed', !view.includes('<header class="section-title"><span>02</span>')],
   ['workspace begins from canonical command strip', view.includes('squad-command-strip') && view.includes('data-squad-command-strip')],

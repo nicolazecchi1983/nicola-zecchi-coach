@@ -5,10 +5,10 @@ const polish = fs.readFileSync('src/design-system/polish.css', 'utf8')
 const appShell = fs.readFileSync('src/design-system/appShell.css', 'utf8')
 const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
 const training = fs.readFileSync('src/modules/training/ui/trainingSheetEditorPageView.js', 'utf8')
-const ui = fs.readFileSync('src/design-system/uiComponents.js', 'utf8')
+const matchShell = fs.readFileSync('src/modules/match/workspace/matchWorkspaceShell.js', 'utf8')
 
 const checks = [
-  ['Training e Match condividono la stessa navigation', training.includes('ts-step-nav product-section-nav') && ui.includes('match-context-navigation product-section-nav')],
+  ['Training e Match condividono la stessa navigation', training.includes('ts-step-nav product-section-nav') && matchShell.includes('match-context-navigation product-section-nav')],
   ['Stepper desktop compatto a 64px', product.includes('height:64px!important') && product.includes('min-height:64px!important')],
   ['Stepper attivo usa indicatore inferiore STAFF', product.includes('box-shadow:inset 0 -2px 0 var(--product-accent)!important')],
   ['Stepper inattivo resta visivamente quieto', product.includes('background:transparent!important')],

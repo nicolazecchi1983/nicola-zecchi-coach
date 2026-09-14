@@ -6,7 +6,7 @@ const product = fs.readFileSync('src/design-system/productUi.css', 'utf8')
 
 const checks = [
   ['shell exposes one dedicated intro block', shell.includes('match-workspace-shell__intro')],
-  ['shell exposes one Match Workspace eyebrow', shell.includes('match-workspace-shell__eyebrow">MATCH WORKSPACE')],
+  ['technical Match Workspace eyebrow is hidden while operational workspace title owns the header', shell.includes('match-workspace-shell__eyebrow') && shell.includes('hidden aria-hidden="true"') && shell.includes('const currentWorkspaceTitleHtml = workspaceTitleHtml || titleHtml') && shell.includes('<h1>${currentWorkspaceTitleHtml}</h1>')],
   ['shell description is no longer mixed with bullet metadata', !shell.includes('<p><span>MATCH WORKSPACE</span><b>•</b>')],
   ['Match header has domain-scoped surface hierarchy', css.includes('.match-workspace-shell__header{') && css.includes('border:1px solid var(--match-workspace-border)')],
   ['Match header accent uses canonical token', css.includes('background:var(--match-workspace-accent)')],

@@ -26,7 +26,7 @@ const checks = [
   ['soft removal preserves history', rosterRepository.includes("active: false")],
   ['roster management actions', rosterView.includes('data-roster-create') && rosterView.includes('data-roster-edit')],
   ['team and roster settings wording', teamSettings.includes('Squadra e Rosa')],
-  ['opponent study navigation always visible through workspace shell', opponentStudy.includes('matchWorkspaceShellHtml') && workspaceShell.includes('matchContextNavigationHtml(activeSection')],
+  ['opponent study navigation always visible through workspace shell', opponentStudy.includes('matchWorkspaceShellHtml') && workspaceShell.includes('matchContextNavigationHtml(activeSection') && workspaceShell.includes('getMatchWorkflowSectionsForSection')],
   ['database relation team players', sql.includes('references public.teams(id)')],
   ['player identity no longer name-key unique', playerIdentitySql.includes('drop constraint if exists team_players_team_key_unique')],
   ['RLS enabled', sql.includes('enable row level security')],

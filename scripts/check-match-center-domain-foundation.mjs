@@ -15,6 +15,9 @@ import { createMatchCenterService } from '../src/modules/match/matchCenterServic
 
 const modelSource = fs.readFileSync('src/modules/match/matchCenterModel.js', 'utf8')
 const serviceSource = fs.readFileSync('src/modules/match/matchCenterService.js', 'utf8')
+const centerViewSource = fs.readFileSync('src/modules/match/ui/matchCenterView.js', 'utf8')
+const centerCssSource = fs.readFileSync('src/modules/match/ui/matchCenter.css', 'utf8')
+const iconRegistrySource = fs.readFileSync('src/design-system/iconRegistry.js', 'utf8')
 
 const checks = []
 function check(label, fn) {
@@ -34,6 +37,21 @@ check('eventi canonici coprono gol, cambi, sanzioni e cambio sistema', () => {
   assert.deepEqual(MATCH_CENTER_EVENT_TYPES, ['goal', 'substitution', 'sanction', 'formation_change'])
 })
 
+
+check('CENTER timeline is the primary full-width operational surface', () => {
+  assert.ok(centerViewSource.includes('data-match-center-primary-timeline'))
+  assert.ok(centerViewSource.indexOf('data-match-center-primary-timeline') < centerViewSource.indexOf('match-center-lineup--secondary'))
+  assert.ok(centerCssSource.includes('.match-center-timeline--primary'))
+})
+
+check('event icon mapping is singular and reused by console + timeline', () => {
+  assert.ok(centerViewSource.includes('MATCH_CENTER_EVENT_ICON_NAMES'))
+  assert.ok(centerViewSource.includes('matchCenterEventIconHtml(event.type)'))
+  for (const type of ['goal', 'substitution', 'sanction', 'formation_change']) {
+    assert.ok(centerViewSource.includes(`matchCenterEventIconHtml('${type}')`))
+  }
+  for (const iconName of ['goal', 'card', 'formation']) assert.ok(iconRegistrySource.includes(`${iconName}:`))
+})
 check('Match Center non duplica XI o panchina del PRE', () => {
   assert.ok(!/\bstarters\b/.test(modelSource))
   assert.ok(!/\bbench\b/.test(modelSource))

@@ -19,7 +19,7 @@ import {
 } from './appDataGateway.js'
 import { renderCallupsView } from '../modules/match/ui/callupsView.js'
 import { createMatchCallupsService } from '../modules/match/matchCallupsService.js'
-import { createActiveMatchRosterSelector, readMatchCallupsFromEventNotes } from '../modules/match/matchCallupsModel.js'
+import { createActiveMatchRosterSelector, readMatchCallupsFromEvent } from '../modules/match/matchCallupsModel.js'
 import { renderMatchAnalysisView } from '../modules/match/ui/matchAnalysisView.js'
 import { renderRosterView } from '../modules/roster/rosterView.js'
 import { loadTeamRoster, removeRosterPlayer, rosterPlayerIdentity, rosterPlayerKey, saveRosterPlayer } from '../modules/roster/rosterService.js'
@@ -85,7 +85,6 @@ import { parseSeasonCalendarCsv, renderSeasonCalendarImportModal } from '../modu
 import { createMatchLibraryService } from '../modules/match/matchLibraryService.js'
 import { createMatchWorkspaceView } from '../modules/match/ui/matchWorkspaceView.js'
 import { createMatchLibraryView } from '../modules/match/ui/matchLibraryView.js'
-import { renderMatchWorkflowSectionView } from '../modules/match/ui/matchWorkflowSectionView.js'
 import { renderMatchReportWorkspaceView } from '../modules/match/ui/matchReportWorkspaceView.js'
 import { formatSavedReportTime, readSavedMatchReportMeta } from '../modules/match/matchReportWorkspaceModel.js'
 import { renderMatchOpponentStudyView } from '../modules/match/ui/matchOpponentStudyView.js'
@@ -395,7 +394,7 @@ const {
   getTrainingSheetRosterPlayers,
   teamLocationSelectOptions,
   renderCallupsView,
-  readMatchCallupsFromEventNotes,
+  readMatchCallupsFromEvent,
   renderRosterView,
   rosterPlayerIdentity,
   renderMatchAnalysisView,
@@ -810,8 +809,6 @@ export async function attachAppEvents(user) {
       loadCalendarEvents,
       appState,
       printMatchReport,
-      setView,
-      setActiveNavigation,
       parseCsv,
       normalizeCsvHeader,
       parseItalianDate,

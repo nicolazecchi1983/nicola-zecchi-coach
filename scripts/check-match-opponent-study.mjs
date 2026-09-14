@@ -26,13 +26,14 @@ const checks = [
     service.includes('settleStorageRecoveryAfterCommit')
       && service.includes('console.warn(label, error)')
       && service.includes("status: 'cleanup-pending'")
-      && (service.split('await settleStorageRecoveryAfterCommit(matchId').length - 1) === 4],
+      && (service.match(/await settleStorageRecoveryAfterCommit\(matchId/g) || []).length === 4],
   ['Rimozione aggiorna prima i metadati e journalizza il cleanup',
     service.includes("removedBucket = current.opponentLineup?.bucket || MATCH_STUDY_LEGACY_BUCKET")
       && service.includes("removedBucket = target?.bucket || MATCH_STUDY_LEGACY_BUCKET")
       && service.includes("beginRecovery(matchId, [{ bucket: removedBucket, path: removedPath }])")
       && service.includes("settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione distinta rimasta pendente:')")
       && service.includes("settleStorageRecoveryAfterCommit(matchId, 'Pulizia storage rimozione asset rimasta pendente:')")],
+
   ['Video grandi indirizzati verso link esterni', service.includes('MAX_VIDEO_BYTES') && service.includes('Per video più grandi usa un link esterno')],
   ['UI converge report e materiali senza perdere file/link', view.includes("titleHtml: 'Report'") && view.includes("titleHtml: 'Materiali'") && view.includes("'data-study-toggle-form': 'asset'") && view.includes("'data-study-toggle-form': 'link'") && view.includes('Lettura tecnica')],
   ['Premium UI rimuove il subtitle ridondante di Lettura tecnica', !view.includes('Quattro macroaree di partenza. Apri, modifica o salva il tuo template personale.')],

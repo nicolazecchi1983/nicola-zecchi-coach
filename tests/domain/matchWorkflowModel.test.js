@@ -3,6 +3,7 @@ import {
   getMatchWorkflowPhase,
   getMatchWorkflowPhaseLabel,
   getMatchWorkflowSections,
+  getMatchWorkflowSectionsForSection,
 } from '../../src/modules/match/matchWorkflowModel.js'
 
 describe('matchWorkflowModel', () => {
@@ -15,6 +16,19 @@ describe('matchWorkflowModel', () => {
       'analysis',
       'report',
       'post-match',
+    ])
+  })
+
+  it('deriva la navigazione contestuale dal momento senza barra globale a sette', () => {
+    expect(getMatchWorkflowSectionsForSection('callups').map(({ key }) => key)).toEqual([
+      'opponent-study', 'callups', 'our-team', 'opponent',
+    ])
+    expect(getMatchWorkflowSectionsForSection('match-center')).toEqual([])
+    expect(getMatchWorkflowSectionsForSection('analysis').map(({ key }) => key)).toEqual([
+      'analysis', 'report', 'post-match',
+    ])
+    expect(getMatchWorkflowSectionsForSection('match-report-workspace').map(({ key }) => key)).toEqual([
+      'analysis', 'report', 'post-match',
     ])
   })
 

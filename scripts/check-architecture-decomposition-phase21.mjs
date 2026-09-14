@@ -1,9 +1,11 @@
 import fs from 'node:fs'
 
-const app = fs.readFileSync('src/app/appController.js', 'utf8')
-const colorPicker = fs.readFileSync('src/design-system/colorPickerController.js', 'utf8')
-const teamEvents = fs.readFileSync('src/modules/team/events/teamRosterEvents.js', 'utf8')
-const matchEvents = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const app = normalizeEol(fs.readFileSync('src/app/appController.js', 'utf8'))
+const colorPicker = normalizeEol(fs.readFileSync('src/design-system/colorPickerController.js', 'utf8'))
+const teamEvents = normalizeEol(fs.readFileSync('src/modules/team/events/teamRosterEvents.js', 'utf8'))
+const matchEvents = normalizeEol(fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8'))
 
 const checks = [
   ['Shared STAFF color picker controller exists', colorPicker.includes('export function bindStaffColorPickers')],

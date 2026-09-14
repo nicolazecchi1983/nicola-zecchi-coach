@@ -1,11 +1,13 @@
 import fs from 'node:fs'
 
-const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
-const component = fs.readFileSync('src/modules/match/ui/matchTokenDisplayControl.js', 'utf8')
-const css = fs.readFileSync('src/modules/match/ui/matchTokenDisplayControl.css', 'utf8')
-const main = fs.readFileSync('src/main.js', 'utf8')
-const settings = fs.readFileSync('src/modules/settings/teamSettingsView.js', 'utf8')
-const doc = fs.readFileSync('docs/MATCH_TOKEN_APPEARANCE_ARCHITECTURE.md', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
+const component = normalizeEol(fs.readFileSync('src/modules/match/ui/matchTokenDisplayControl.js', 'utf8'))
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchTokenDisplayControl.css', 'utf8'))
+const main = normalizeEol(fs.readFileSync('src/main.js', 'utf8'))
+const settings = normalizeEol(fs.readFileSync('src/modules/settings/teamSettingsView.js', 'utf8'))
+const doc = normalizeEol(fs.readFileSync('docs/MATCH_TOKEN_APPEARANCE_ARCHITECTURE.md', 'utf8'))
 
 const checks = [
   ['Nostra squadra consumes shared token display component', view.includes("tokenDisplayControlHtml") && !view.includes('class="token-display-options"')],

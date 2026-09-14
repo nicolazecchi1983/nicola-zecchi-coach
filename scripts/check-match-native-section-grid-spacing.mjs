@@ -1,8 +1,10 @@
 import fs from 'node:fs'
 
-const workspace = fs.readFileSync('src/modules/match/workspace/matchWorkspace.css', 'utf8')
-const squad = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
-const opponent = fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const workspace = normalizeEol(fs.readFileSync('src/modules/match/workspace/matchWorkspace.css', 'utf8'))
+const squad = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const opponent = normalizeEol(fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8'))
 
 const checks = [
   ['our-team active step remains grid', /match-native-legacy-host--our-team[\s\S]*?data-match-step="2"[\s\S]*?display:grid!important/],

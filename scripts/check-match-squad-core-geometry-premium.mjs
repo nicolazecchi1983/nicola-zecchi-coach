@@ -1,9 +1,11 @@
 import fs from 'node:fs'
 
-const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
-const protocol = fs.readFileSync('docs/UI_COMPONENT_DESIGN_PROTOCOL.md', 'utf8')
-const tokenCss = fs.readFileSync('src/shared/ui/teamToken.css', 'utf8')
-const pitchCss = fs.readFileSync('src/modules/match/ui/matchPitch.css', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const protocol = normalizeEol(fs.readFileSync('docs/UI_COMPONENT_DESIGN_PROTOCOL.md', 'utf8'))
+const tokenCss = normalizeEol(fs.readFileSync('src/shared/ui/teamToken.css', 'utf8'))
+const pitchCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchPitch.css', 'utf8'))
 
 const checks = [
   ['core desktop uses exact equal columns', css.includes('.match-squad-step .match-lineup-layout--master {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}')],

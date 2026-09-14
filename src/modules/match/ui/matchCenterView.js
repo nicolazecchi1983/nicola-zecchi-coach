@@ -1,3 +1,4 @@
+import { icon } from '../../../design-system/iconRegistry.js'
 import { readMatchCenterFromEventNotes } from '../matchCenterModel.js'
 import { readMatchSquadSnapshotFromEventNotes } from '../matchSquadSnapshotModel.js'
 import {
@@ -14,6 +15,18 @@ const STATUS_LABELS = Object.freeze({
   half_time: 'Intervallo',
   finished: 'Terminata',
 })
+
+const MATCH_CENTER_EVENT_ICON_NAMES = Object.freeze({
+  goal: 'goal',
+  substitution: 'replace',
+  sanction: 'card',
+  formation_change: 'formation',
+})
+
+function matchCenterEventIconHtml(type) {
+  const iconName = MATCH_CENTER_EVENT_ICON_NAMES[type] || 'clock'
+  return `<span class="match-center-event-icon" aria-hidden="true">${icon(iconName)}</span>`
+}
 
 const PERIOD_LABELS = Object.freeze({
   pre_match: 'Pre gara',
@@ -95,6 +108,7 @@ export function createMatchCenterView({
       return matchWorkspaceShellHtml({
         activeSection: 'match-center',
         teamName,
+        opponentName: active?.opponent || '',
         titleHtml: 'Match Center',
         className: 'match-center-view',
         attributes: { 'data-match-workspace': true, 'data-match-center': true },
@@ -133,8 +147,9 @@ export function createMatchCenterView({
         </div>`
 
     const timelineHtml = operational.timeline.length
-      ? [...operational.timeline].reverse().map((event) => `<article class="match-center-timeline__event">
+      ? [...operational.timeline].reverse().map((event) => `<article class="match-center-timeline__event" data-match-center-event-type="${escapeHtml(event.type)}">
           <time>${escapeHtml(formatMatchCenterMinute(event))}</time>
+          ${matchCenterEventIconHtml(event.type)}
           <div>
             <strong>${escapeHtml(matchCenterEventLabel(event))}</strong>
             <span>${eventDescription(event, escapeHtml)}</span>
@@ -173,23 +188,21 @@ export function createMatchCenterView({
         </div>
       </form>
 
-      <div class="match-center-operational-grid">
-        <section class="product-surface match-center-lineup">
-          <div class="match-center-section-head">
-            <div><span>XI CORRENTE</span><h2>${escapeHtml(operational.customFormation || operational.formation || 'Sistema')}</h2></div>
-            <small>${operational.currentStarters.length}/11 · derivato da PRE + eventi</small>
-          </div>
-          <div class="match-center-player-list">${currentXiHtml}</div>
-        </section>
+      <section class="product-surface match-center-timeline match-center-timeline--primary" data-match-center-primary-timeline>
+        <div class="match-center-section-head">
+          <div><span>TIMELINE</span><h2>Eventi partita</h2></div>
+          <small>${operational.timeline.length} eventi · centro operativo</small>
+        </div>
+        <div class="match-center-timeline__list">${timelineHtml}</div>
+      </section>
 
-        <section class="product-surface match-center-timeline">
-          <div class="match-center-section-head">
-            <div><span>TIMELINE</span><h2>Eventi partita</h2></div>
-            <small>${operational.timeline.length} eventi</small>
-          </div>
-          <div class="match-center-timeline__list">${timelineHtml}</div>
-        </section>
-      </div>
+      <section class="product-surface match-center-lineup match-center-lineup--secondary">
+        <div class="match-center-section-head">
+          <div><span>XI CORRENTE</span><h2>${escapeHtml(operational.customFormation || operational.formation || 'Sistema')}</h2></div>
+          <small>${operational.currentStarters.length}/11 · derivato da PRE + eventi</small>
+        </div>
+        <div class="match-center-player-list">${currentXiHtml}</div>
+      </section>
 
       ${editable ? `<section class="product-surface match-center-event-console">
         <div class="match-center-section-head">
@@ -198,7 +211,7 @@ export function createMatchCenterView({
         </div>
         <div class="match-center-event-grid">
           <form data-match-center-event-form="goal">
-            <h3>Gol</h3>
+            <h3>${matchCenterEventIconHtml('goal')}<span>Gol</span></h3>
             <div class="match-center-minute-row">
               <label><span>Minuto</span><input type="number" name="minute" min="0" max="130" required></label>
               <label><span>Rec.</span><input type="number" name="added_minute" min="0" max="30" value="0"></label>
@@ -210,7 +223,7 @@ export function createMatchCenterView({
           </form>
 
           <form data-match-center-event-form="substitution">
-            <h3>Sostituzione</h3>
+            <h3>${matchCenterEventIconHtml('substitution')}<span>Sostituzione</span></h3>
             <div class="match-center-minute-row">
               <label><span>Minuto</span><input type="number" name="minute" min="0" max="130" required></label>
               <label><span>Rec.</span><input type="number" name="added_minute" min="0" max="30" value="0"></label>
@@ -222,7 +235,7 @@ export function createMatchCenterView({
           </form>
 
           <form data-match-center-event-form="sanction">
-            <h3>Sanzione</h3>
+            <h3>${matchCenterEventIconHtml('sanction')}<span>Sanzione</span></h3>
             <div class="match-center-minute-row">
               <label><span>Minuto</span><input type="number" name="minute" min="0" max="130" required></label>
               <label><span>Rec.</span><input type="number" name="added_minute" min="0" max="30" value="0"></label>
@@ -234,7 +247,7 @@ export function createMatchCenterView({
           </form>
 
           <form data-match-center-event-form="formation_change">
-            <h3>Cambio sistema</h3>
+            <h3>${matchCenterEventIconHtml('formation_change')}<span>Cambio sistema</span></h3>
             <div class="match-center-minute-row">
               <label><span>Minuto</span><input type="number" name="minute" min="0" max="130" required></label>
               <label><span>Rec.</span><input type="number" name="added_minute" min="0" max="30" value="0"></label>
@@ -251,6 +264,7 @@ export function createMatchCenterView({
     return matchWorkspaceShellHtml({
       activeSection: 'match-center',
       teamName,
+      opponentName: opponent,
       titleHtml: 'Match Center',
       className: 'match-center-view',
       attributes: {

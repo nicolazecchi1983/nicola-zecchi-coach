@@ -62,7 +62,7 @@ export function createMatchWorkspaceView({
         </div>
       </header>
 
-      <nav class="match-workspace-tabs" aria-label="Workflow partita">
+      <nav class="match-workspace-tabs" aria-label="Workflow partita" hidden aria-hidden="true">
         ${sections.map((section, index) => { const label = section.key === 'our-team' ? ourName : section.label; return `<button type="button" data-workspace-action="${escapeHtml(section.key)}"><b>${String(index + 1).padStart(2, '0')}</b><span>${escapeHtml(label)}</span></button>` }).join('')}
       </nav>
 

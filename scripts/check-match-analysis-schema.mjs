@@ -30,7 +30,7 @@ const checks = [
   ['captain and vice visible selects are canonical fields', squad.includes('name="captain" data-leadership-select="captain"') && squad.includes('name="vice_captain" data-leadership-select="vice_captain"')],
   ['captain and vice hidden duplicate fields are gone', !squad.includes('<input type="hidden" name="captain"') && !squad.includes('<input type="hidden" name="vice_captain"')],
   ['workspace no longer exposes Match ID', !workspace.includes('MATCH ID ·')],
-  ['desktop Match navigation is a seven-column grid', workspaceCss.includes('grid-template-columns:repeat(7,minmax(0,1fr))!important')],
+  ['desktop Match navigation is moment-scoped instead of a seven-item global strip', workspaceCss.includes('.match-workspace-shell--pre-match{ --product-nav-columns:4; }') && workspaceCss.includes('.match-workspace-shell--post-match{ --product-nav-columns:3; }') && !workspaceCss.includes('--product-nav-columns:7')],
   ['Match Library uses neutral dark cards', matchLibraryCss.includes('.match-library-card {') && matchLibraryCss.includes('background: #0a1822;')],
   ['analysis page no longer uses white document slab', analysisCss.includes('.match-lifecycle-analysis') && analysisCss.includes('background:transparent!important')],
 ]

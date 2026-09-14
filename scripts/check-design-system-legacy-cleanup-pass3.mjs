@@ -1,10 +1,12 @@
 import fs from 'node:fs'
+
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
 import { releaseGateIncludes } from './release-gate-contract.mjs'
 
-const legacy = fs.readFileSync('src/style.css', 'utf8')
-const pageShell = fs.readFileSync('src/design-system/pageShell.css', 'utf8')
-const controls = fs.readFileSync('src/design-system/controls.css', 'utf8')
-const surfaces = fs.readFileSync('src/design-system/surfaces.css', 'utf8')
+const legacy = normalizeEol(fs.readFileSync('src/style.css', 'utf8'))
+const pageShell = normalizeEol(fs.readFileSync('src/design-system/pageShell.css', 'utf8'))
+const controls = normalizeEol(fs.readFileSync('src/design-system/controls.css', 'utf8'))
+const surfaces = normalizeEol(fs.readFileSync('src/design-system/surfaces.css', 'utf8'))
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 
 const checks = [

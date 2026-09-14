@@ -1,5 +1,5 @@
 import { createMatchSquadSnapshotService } from '../matchSquadSnapshotService.js'
-import { findMatchLineupDuplicatePlayers, sortMatchLineupPlayers } from '../matchLineupSelectionModel.js'
+import { findMatchLineupDuplicatePlayers, MATCH_LINEUP_MAX_BENCH, MATCH_LINEUP_STARTER_COUNT, sanitizeMatchLineupStarters } from '../matchLineupSelectionModel.js'
 import { getDataAccessUserMessage } from '../../../infrastructure/dataAccess/dataAccessUserFeedback.js'
 export function wireLegacyMatchEditorEvents({
   root,
@@ -52,6 +52,7 @@ export function wireLegacyMatchEditorEvents({
       let hasSavedOpponentTokenPositions = false
       let restoredLeadership = null
       let scheduleCanonicalSquadSave = () => {}
+      let duplicateLineupPlayers = () => []
       let canonicalSquadReady = false
       let canonicalSquadSaveTimer
       let lastCanonicalSquadFingerprint = ''
@@ -99,7 +100,7 @@ export function wireLegacyMatchEditorEvents({
         const hasLineupDuplicates = duplicateLineupPlayers().length > 0
         if (!hasLineupDuplicates) scheduleCanonicalSquadSave()
         if (state) state.textContent = hasLineupDuplicates
-          ? 'Correggi i giocatori duplicati prima di sincronizzare la formazione'
+          ? 'Bozza salvata · correggi i giocatori duplicati'
           : (canonicalSquadReady ? 'Formazione sincronizzata' : 'Bozza salvata')
       }
       const scheduleSave = () => {
@@ -198,7 +199,8 @@ export function wireLegacyMatchEditorEvents({
         const playerName = String(form.elements[`starter_${index}`]?.value || '')
         const assignedNumber = playerAssignedShirtNumber(playerName)
         const numberField = form.elements[`starter_number_${index}`]
-        if (assignedNumber != null && numberField) numberField.value = String(assignedNumber)
+        if (!numberField) return
+        if (!String(numberField.value || '').trim() && assignedNumber != null) numberField.value = String(assignedNumber)
       }
       const leadershipField = (role) => role === 'vice_captain' ? form.elements.vice_captain : form.elements.captain
       const leadershipSelect = (role) => matchEditor.querySelector(`[data-leadership-select="${role}"]`)
@@ -288,15 +290,17 @@ export function wireLegacyMatchEditorEvents({
       const collectCanonicalSquadSnapshot = () => ({
         formation: String(form.elements.formation?.value || '4-4-2'),
         customFormation: String(form.elements.custom_formation?.value || '').trim(),
-        starters: Array.from({ length: 11 }, (_, index) => {
-          const name = String(form.elements[`starter_${index}`]?.value || '').trim()
-          const player = resolveRosterEntry(name)
+        starters: Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => {
+          const selectedName = String(form.elements[`starter_${index}`]?.value || '').trim()
+          const player = resolveRosterEntry(selectedName)
+          const name = player ? selectedName : ''
           return {slot:index,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:form.elements[`starter_number_${index}`]?.value||null,x:form.elements[`position_x_${index}`]?.value??null,y:form.elements[`position_y_${index}`]?.value??null}
         }),
-        bench: Array.from({ length: 9 }, (_, index) => {
-          const name = String(form.elements[`bench_${index}`]?.value || '').trim()
-          const player = resolveRosterEntry(name)
-          return {slot:index+12,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:player?.shirtNumber??player?.shirt_number??player?.number??(index+12)}
+        bench: Array.from({ length: MATCH_LINEUP_MAX_BENCH }, (_, index) => {
+          const selectedName = String(form.elements[`bench_${index}`]?.value || '').trim()
+          const player = resolveRosterEntry(selectedName)
+          const name = player ? selectedName : ''
+          return {slot:index+12,playerId:String(player?.id||player?.playerId||''),name,shirtNumber:form.elements[`bench_number_${index}`]?.value||null}
         }),
         captainSlot:String(form.elements.captain?.value||''),viceCaptainSlot:String(form.elements.vice_captain?.value||''),
       })
@@ -312,18 +316,18 @@ export function wireLegacyMatchEditorEvents({
         catch(error){console.error('Sincronizzazione formazione Match non riuscita:',error);if(state)state.textContent=getDataAccessUserMessage(error,undefined,{stage:'match-squad-sync'})}
       }
       scheduleCanonicalSquadSave = () => {
-        if(!canonicalSquadReady||!squadSnapshotService)return
         clearTimeout(canonicalSquadSaveTimer)
+        if(!canonicalSquadReady||!squadSnapshotService||duplicateLineupPlayers().length)return
         canonicalSquadSaveTimer=setTimeout(()=>{void persistCanonicalSquadSnapshot()},450)
       }
       const applyCanonicalSquadSnapshot = (snapshot) => {
         if(!snapshot?.persisted)return false
         const formation=String(snapshot.formation||'4-4-2');if(form.elements.formation)form.elements.formation.value=formation;if(form.elements.custom_formation)form.elements.custom_formation.value=snapshot.customFormation||''
         syncCustomFormation()
-        snapshot.starters.forEach((entry,index)=>{const playerField=form.elements[`starter_${index}`];const numberField=form.elements[`starter_number_${index}`];if(playerField)playerField.value=resolveSnapshotPlayerName(entry);if(numberField)numberField.value=entry.shirtNumber||String(index+1);if(entry.x!==null&&entry.y!==null)setTokenPosition(index,entry.x,entry.y,false)})
-        updateStarterOptions()
-        snapshot.bench.forEach((entry,index)=>{const field=form.elements[`bench_${index}`];if(field)field.value=resolveSnapshotPlayerName(entry)})
-        updateAutomaticBench();refreshLeadershipSelects();if(form.elements.captain)form.elements.captain.value=snapshot.captainSlot||'';if(form.elements.vice_captain)form.elements.vice_captain.value=snapshot.viceCaptainSlot===snapshot.captainSlot?'':(snapshot.viceCaptainSlot||'');refreshLeadershipSelects();updateTokens();renderReport()
+        const sanitizedStarters=sanitizeMatchLineupStarters(snapshot.starters.map(resolveSnapshotPlayerName),getTrainingSheetRosterPlayers())
+        snapshot.starters.forEach((entry,index)=>{const playerField=form.elements[`starter_${index}`];const numberField=form.elements[`starter_number_${index}`];if(playerField)playerField.value=sanitizedStarters[index]||'';if(numberField)numberField.value=entry.shirtNumber||String(index+1);if(entry.x!==null&&entry.y!==null)setTokenPosition(index,entry.x,entry.y,false)})
+        snapshot.bench.forEach((entry,index)=>{const playerField=form.elements[`bench_${index}`];const numberField=form.elements[`bench_number_${index}`];const name=resolveSnapshotPlayerName(entry);if(playerField)playerField.value=resolveRosterEntry(name)?name:'';if(numberField)numberField.value=entry.shirtNumber||''})
+        updateLineupSelectionState();if(form.elements.captain)form.elements.captain.value=snapshot.captainSlot||'';if(form.elements.vice_captain)form.elements.vice_captain.value=snapshot.viceCaptainSlot===snapshot.captainSlot?'':(snapshot.viceCaptainSlot||'');refreshLeadershipSelects();updateTokens();renderReport()
         hasSavedTokenPositions=snapshot.starters.every((entry)=>entry.x!==null&&entry.y!==null);draftService.save(form);return true
       }
       const hydrateCanonicalSquadSnapshot = async () => {
@@ -332,21 +336,24 @@ export function wireLegacyMatchEditorEvents({
           const snapshot=await squadSnapshotService.load(activeMatchForDraft.id)
           if(snapshot.persisted){applyCanonicalSquadSnapshot(snapshot);lastCanonicalSquadFingerprint=fingerprintCanonicalSquad(snapshot);if(state)state.textContent='Formazione sincronizzata'}
           canonicalSquadReady=true
-          if(!snapshot.persisted&&hadLocalSquadDraft){const localSnapshot=collectCanonicalSquadSnapshot();const completeStartingEleven=localSnapshot.starters.filter((entry)=>entry.name||entry.playerId).length===11;if(completeStartingEleven)await persistCanonicalSquadSnapshot({force:true})}
+          if(!snapshot.persisted&&hadLocalSquadDraft){const localSnapshot=collectCanonicalSquadSnapshot();const completeStartingEleven=localSnapshot.starters.filter((entry)=>entry.name||entry.playerId).length===MATCH_LINEUP_STARTER_COUNT;if(completeStartingEleven)await persistCanonicalSquadSnapshot({force:true})}
         }catch(error){canonicalSquadReady=true;console.error('Caricamento formazione canonica Match non riuscito:',error);if(state)state.textContent=getDataAccessUserMessage(error,undefined,{stage:'match-squad-sync'})}
       }
+      const currentStarterSelections = () => Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => String(form.elements[`starter_${index}`]?.value || '').trim())
+      const currentBenchSelections = () => Array.from({ length: MATCH_LINEUP_MAX_BENCH }, (_, index) => String(form.elements[`bench_${index}`]?.value || '').trim())
       const currentLineupSelections = () => ({
-        starters: Array.from({ length: 11 }, (_, index) => String(form.elements[`starter_${index}`]?.value || '').trim()),
-        bench: Array.from({ length: 9 }, (_, index) => String(form.elements[`bench_${index}`]?.value || '').trim()),
+        starters: currentStarterSelections(),
+        bench: currentBenchSelections(),
       })
-      const duplicateLineupPlayers = () => findMatchLineupDuplicatePlayers(currentLineupSelections())
-      const updateStarterOptions = () => {
+      duplicateLineupPlayers = () => findMatchLineupDuplicatePlayers(currentLineupSelections())
+      const updatePlayerUsageState = () => {
         const selections = currentLineupSelections()
         const usage = new Map()
         ;[...selections.starters, ...selections.bench].filter(Boolean)
           .forEach((name) => usage.set(name, (usage.get(name) || 0) + 1))
         const duplicateNames = duplicateLineupPlayers()
         const duplicateSet = new Set(duplicateNames)
+
         matchEditor.querySelectorAll('.starter-player-select, [data-bench-select]').forEach((select) => {
           Array.from(select.options).forEach((option) => {
             if (!option.value) return
@@ -358,6 +365,7 @@ export function wireLegacyMatchEditorEvents({
           })
           select.setAttribute('aria-invalid', String(Boolean(select.value && duplicateSet.has(select.value))))
         })
+
         const warning = matchEditor.querySelector('[data-lineup-duplicate-warning]')
         if (warning) {
           warning.hidden = duplicateNames.length === 0
@@ -368,48 +376,27 @@ export function wireLegacyMatchEditorEvents({
         if (finalSave) finalSave.disabled = duplicateNames.length > 0
         return duplicateNames
       }
-      const updateAutomaticBench = () => {
-        const benchRoot = matchEditor.querySelector('[data-bench-slots]')
+      const updateLineupCount = () => {
         const countNode = matchEditor.querySelector('[data-bench-count]')
-        if (!benchRoot) return
-
-        const roster = sortMatchLineupPlayers(getTrainingSheetRosterPlayers())
-        const benchSelects = Array.from({ length: 9 }, (_, index) => form.elements[`bench_${index}`]).filter(Boolean)
-        const currentBench = benchSelects.map((select) => select.value || '')
-
-        benchSelects.forEach((select, index) => {
-          const ownValue = currentBench[index]
-          select.innerHTML = [
-            '<option value="">Seleziona giocatore</option>',
-            ...roster.map((player) => {
-              const label = player.displayName || player.canonicalName
-              return `<option value="${escapeHtml(player.canonicalName)}" data-player-label="${escapeHtml(label)}">${escapeHtml(label)}</option>`
-            }),
-          ].join('')
-          if (ownValue && roster.some((player) => player.canonicalName === ownValue)) select.value = ownValue
-          else select.value = ''
-          const numberNode = benchRoot.querySelector(`[data-bench-shirt-number="${index}"]`)
-          const selectedPlayer = roster.find((player) => player.canonicalName === select.value)
-          const assignedNumber = normalizedRosterShirtNumber(selectedPlayer?.number)
-          if (numberNode) numberNode.textContent = String(assignedNumber ?? (index + 12))
-          if (!select.dataset.benchBound) {
-            select.dataset.benchBound = 'true'
-            select.addEventListener('change', () => { updateAutomaticBench(); renderReport(); save() })
-          }
-        })
-
-        const selectedBench = benchSelects.filter((select) => select.value).length
-        const total = currentLineupSelections().starters.filter(Boolean).length + selectedBench
-        if (countNode) {
-          countNode.textContent = `Distinta: ${total}/20`
-          countNode.classList.toggle('is-complete', total === 20)
-          countNode.classList.remove('is-over-limit')
-        }
-        updateStarterOptions()
+        const total = [...currentStarterSelections(), ...currentBenchSelections()].filter(Boolean).length
+        if (!countNode) return
+        countNode.textContent = `Distinta: ${total}/20`
+        countNode.classList.toggle('is-complete', total === 20 && duplicateLineupPlayers().length === 0)
+        countNode.classList.toggle('is-over-limit', duplicateLineupPlayers().length > 0)
       }
-
+      const syncBenchNumberFromPlayer = (index) => {
+        const playerName = String(form.elements[`bench_${index}`]?.value || '')
+        const assignedNumber = playerAssignedShirtNumber(playerName)
+        const numberField = form.elements[`bench_number_${index}`]
+        if (!numberField) return
+        if (!String(numberField.value || '').trim() && assignedNumber != null) numberField.value = String(assignedNumber)
+      }
+      const updateLineupSelectionState = () => {
+        updatePlayerUsageState()
+        updateLineupCount()
+      }
       const syncStarterSelectionState = () => {
-        updateAutomaticBench()
+        updateLineupSelectionState()
         refreshLeadershipSelects()
         updateTokens()
         renderReport()
@@ -569,17 +556,20 @@ export function wireLegacyMatchEditorEvents({
       })
       const renderReport = () => matchReportService.render()
       const bindCoreSquadControls = () => {
-        matchEditor.querySelectorAll('.lineup-row select[name^="starter_"], .lineup-row input[name^="starter_number_"]').forEach((control) => {
-          const playerMatch = control.name.match(/^starter_(\d+)$/)
-          const numberMatch = control.name.match(/^starter_number_(\d+)$/)
-          if (playerMatch && control.dataset.starterRuntimeBound !== 'true') {
+        matchEditor.querySelectorAll('.lineup-row select[name^="starter_"], .lineup-row input[name^="starter_number_"], [data-bench-select], .bench-number-input').forEach((control) => {
+          const starterPlayerMatch = control.name.match(/^starter_(\d+)$/)
+          const starterNumberMatch = control.name.match(/^starter_number_(\d+)$/)
+          const benchPlayerMatch = control.name.match(/^bench_(\d+)$/)
+          const benchNumberMatch = control.name.match(/^bench_number_(\d+)$/)
+
+          if (starterPlayerMatch && control.dataset.starterRuntimeBound !== 'true') {
             control.dataset.starterRuntimeBound = 'true'
             control.addEventListener('change', () => {
-              syncStarterNumberFromPlayer(Number(playerMatch[1]))
+              syncStarterNumberFromPlayer(Number(starterPlayerMatch[1]))
               syncStarterSelectionState()
             })
           }
-          if (numberMatch && control.dataset.starterNumberRuntimeBound !== 'true') {
+          if (starterNumberMatch && control.dataset.starterNumberRuntimeBound !== 'true') {
             control.dataset.starterNumberRuntimeBound = 'true'
             const syncNumberControl = () => {
               const normalized = normalizedRosterShirtNumber(control.value)
@@ -589,6 +579,36 @@ export function wireLegacyMatchEditorEvents({
             }
             control.addEventListener('change', syncNumberControl)
             control.addEventListener('blur', syncNumberControl)
+          }
+          if (benchPlayerMatch && control.dataset.benchRuntimeBound !== 'true') {
+            control.dataset.benchRuntimeBound = 'true'
+            control.addEventListener('change', () => {
+              syncBenchNumberFromPlayer(Number(benchPlayerMatch[1]))
+              updateLineupSelectionState()
+              renderReport()
+              save()
+            })
+          }
+          if (benchNumberMatch && control.dataset.benchNumberRuntimeBound !== 'true') {
+            control.dataset.benchNumberRuntimeBound = 'true'
+            const syncBenchNumberControl = () => {
+              const raw = String(control.value || '').trim()
+              if (!raw) {
+                control.value = ''
+                updateLineupSelectionState()
+                renderReport()
+                save()
+                return
+              }
+              const normalized = normalizedRosterShirtNumber(raw)
+              if (normalized == null) return
+              control.value = String(normalized)
+              updateLineupSelectionState()
+              renderReport()
+              save()
+            }
+            control.addEventListener('change', syncBenchNumberControl)
+            control.addEventListener('blur', syncBenchNumberControl)
           }
         })
       }
@@ -674,7 +694,7 @@ export function wireLegacyMatchEditorEvents({
       form.elements.notes_mode.addEventListener('change',()=>{renderNotes();scheduleSave()})
       const handleMatchFormMutation = (event) => {
         const fieldName = event.target?.name || ''
-        const directSquadField = /^starter_(?:number_)?\d+$/.test(fieldName)
+        const directSquadField = /^(?:starter|bench)_(?:number_)?\d+$/.test(fieldName)
         if (directSquadField) return
         updateTokens()
         updateOpponentTokenStyle()
@@ -689,12 +709,12 @@ export function wireLegacyMatchEditorEvents({
       lineupPdfButton?.addEventListener('click', async () => {
         const team = getTeamProfile()
         const activeMatch = getActiveMatchContext()
-        const starters = Array.from({ length: 11 }, (_, index) => ({
+        const starters = Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => ({
           number: form.elements[`starter_number_${index}`]?.value || String(index + 1),
           name: form.elements[`starter_${index}`]?.value || '',
         })).filter((item) => item.name)
-        const bench = Array.from({ length: 9 }, (_, index) => ({
-          slot: index + 12,
+        const bench = Array.from({ length: MATCH_LINEUP_MAX_BENCH }, (_, index) => ({
+          number: form.elements[`bench_number_${index}`]?.value || '',
           name: form.elements[`bench_${index}`]?.value || '',
         })).filter((item) => item.name)
         if (duplicateLineupPlayers().length) {
@@ -711,7 +731,7 @@ export function wireLegacyMatchEditorEvents({
         const opponent = activeMatch?.opponent || form.elements.opponent?.value || 'Avversario'
         const date = activeMatch?.date || form.elements.date?.value || ''
         const logo = team.logo ? `<img src="${escapeHtml(team.logo)}" alt="Logo ${escapeHtml(team.shortName || team.name)}">` : `<span>${escapeHtml((team.shortName || team.name || 'T').slice(0,2).toUpperCase())}</span>`
-        const html = `<main class="lineup-tm-print"><header>${logo}<div><span class="eyebrow">FORMAZIONE UFFICIALE</span><h1>${escapeHtml(team.name || team.shortName)}</h1><p>vs ${escapeHtml(opponent)}</p></div></header><div class="meta"><b>${date ? new Date(date+'T12:00:00').toLocaleDateString('it-IT') : 'Data da definire'}</b></div><section><h2>TITOLARI</h2><div class="list">${starters.map((item)=>`<div class="player"><b>${escapeHtml(item.number)}</b><span>${escapeHtml(item.name)}</span></div>`).join('')}</div></section><section><h2>A DISPOSIZIONE</h2><div class="list bench">${bench.map((item)=>`<div class="player"><b>${item.slot}</b><span>${escapeHtml(item.name)}</span></div>`).join('') || '<p>Nessun giocatore inserito.</p>'}</div></section><div class="leaders"><span><small>CAPITANO</small><b>${escapeHtml(captain)}</b></span><span><small>VICECAPITANO</small><b>${escapeHtml(vice)}</b></span></div></main>`
+        const html = `<main class="lineup-tm-print"><header>${logo}<div><span class="eyebrow">FORMAZIONE UFFICIALE</span><h1>${escapeHtml(team.name || team.shortName)}</h1><p>vs ${escapeHtml(opponent)}</p></div></header><div class="meta"><b>${date ? new Date(date+'T12:00:00').toLocaleDateString('it-IT') : 'Data da definire'}</b></div><section><h2>TITOLARI</h2><div class="list">${starters.map((item)=>`<div class="player"><b>${escapeHtml(item.number)}</b><span>${escapeHtml(item.name)}</span></div>`).join('')}</div></section><section><h2>A DISPOSIZIONE</h2><div class="list bench">${bench.map((item)=>`<div class="player"><b>${escapeHtml(item.number)}</b><span>${escapeHtml(item.name)}</span></div>`).join('') || '<p>Nessun giocatore inserito.</p>'}</div></section><div class="leaders"><span><small>CAPITANO</small><b>${escapeHtml(captain)}</b></span><span><small>VICECAPITANO</small><b>${escapeHtml(vice)}</b></span></div></main>`
         const styles = `@page{size:A4;margin:10mm}*{box-sizing:border-box}html,body{background:#fff!important}.lineup-tm-print{font-family:Arial,sans-serif;color:#07194f;width:100%;max-width:190mm;margin:0 auto}.lineup-tm-print header{display:flex;align-items:center;gap:16px;border-bottom:4px solid ${escapeHtml(team.primaryColor || '#07194f')};padding-bottom:14px}.lineup-tm-print header img,.lineup-tm-print header>span{width:64px;height:64px;object-fit:contain;border-radius:12px;display:grid;place-items:center;background:${escapeHtml(team.primaryColor || '#07194f')};color:#fff;font-weight:800;flex:0 0 64px}.lineup-tm-print .eyebrow{display:block;font-size:11px;letter-spacing:.14em;font-weight:800;color:${escapeHtml(team.secondaryColor || '#1f93e5')};margin-bottom:4px}.lineup-tm-print h1{margin:0;font-size:27px}.lineup-tm-print header p{margin:5px 0 0}.lineup-tm-print .meta{display:flex;justify-content:flex-start;gap:20px;margin:16px 0;padding:11px 13px;background:#f1f5f9;border-left:4px solid ${escapeHtml(team.secondaryColor || '#1f93e5')}}.lineup-tm-print section{margin-top:15px}.lineup-tm-print h2{font-size:12px;letter-spacing:.12em;color:${escapeHtml(team.secondaryColor || '#1f93e5')};border-bottom:1px solid #d7e0e8;padding-bottom:5px}.lineup-tm-print .list{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}.lineup-tm-print .player{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:8px;padding:8px 10px;border:1px solid #d4dde5;border-radius:7px;font-size:13px}.lineup-tm-print .player>b{font-size:15px;color:#07194f;font-weight:800}.lineup-tm-print .leaders{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.lineup-tm-print .leaders span{padding:11px;border:1px solid #d4dde5;border-radius:7px}.lineup-tm-print .leaders small{display:block;font-size:10px;color:#718096;margin-bottom:4px}@media print{.lineup-tm-print{width:190mm;max-width:190mm;margin:0 auto}.lineup-tm-print section,.lineup-tm-print .player{break-inside:avoid}}`
         lineupPdfButton.disabled = true
         try { await printHtmlDocument({ title: `Formazione - ${team.shortName || team.name}`, html, styles }) }
@@ -1002,11 +1022,18 @@ export function wireLegacyMatchEditorEvents({
           }
         })
       }
-      finalSave?.addEventListener('click', () => { save(); if (state) state.textContent = 'Match Sheet salvata' })
+      finalSave?.addEventListener('click', () => {
+        if (duplicateLineupPlayers().length) {
+          if (state) state.textContent = 'Correggi i giocatori duplicati prima di finalizzare la formazione'
+          return
+        }
+        save()
+        if (state) state.textContent = 'Match Sheet salvata'
+      })
       try {
         const saved = draftService.load()
         if(saved){
-          hadLocalSquadDraft = Array.from({ length: 11 }, (_, index) => String(saved[`starter_${index}`] || '').trim()).some(Boolean)
+          hadLocalSquadDraft = Array.from({ length: MATCH_LINEUP_STARTER_COUNT }, (_, index) => String(saved[`starter_${index}`] || '').trim()).some(Boolean)
           const inferIndexes = (pattern) => Object.keys(saved).filter((key) => pattern.test(key)).map((key) => Number(key.match(/\d+/)?.[0])).filter(Number.isFinite).sort((a,b)=>a-b)
           const subIndexes = inferIndexes(/^sub_minute_\d+$/)
           const goalIndexes = inferIndexes(/^goal_minute_\d+$/)
@@ -1049,7 +1076,7 @@ export function wireLegacyMatchEditorEvents({
       bindLeadershipSelectors()
       autoAssignCoreRoles()
       renderNotes()
-      updateStarterOptions()
+      updateLineupSelectionState()
       refreshLeadershipSelects()
       if (restoredLeadership) {
         const starterIndexes = new Set(currentStarterEntries().map((item) => item.index))
@@ -1060,7 +1087,6 @@ export function wireLegacyMatchEditorEvents({
         refreshLeadershipSelects()
       }
       updateTokens()
-      updateAutomaticBench()
       updateOpponentTokenStyle()
       renderReport()
       showStep(1)

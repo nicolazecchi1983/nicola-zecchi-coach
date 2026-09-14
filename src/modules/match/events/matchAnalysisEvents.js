@@ -18,8 +18,6 @@ export function wireMatchAnalysisEvents({
   loadCalendarEvents,
   appState,
   printMatchReport,
-  setView,
-  setActiveNavigation,
   parseCsv,
   normalizeCsvHeader,
   parseItalianDate,
@@ -28,40 +26,6 @@ export function wireMatchAnalysisEvents({
   analysisView,
   bindDynamic,
 }) {
-    // Navigation is a core Match Workspace concern: bind it before optional analysis widgets.
-    root.querySelectorAll('[data-match-context-section]').forEach((button) => {
-      button.addEventListener('click', async () => {
-        const action = button.dataset.matchContextSection
-        const routeByAction = {
-          'opponent-study': ['opponent-study', 'Studio avversario'],
-          callups: ['callups', 'Convocazioni'],
-          'our-team': ['our-team', 'Nostra squadra'],
-          opponent: ['opponent', 'Avversario'],
-          analysis: ['analysis', 'Analisi gara'],
-          report: ['match-report-workspace', 'Report partita'],
-          'post-match': ['post-match', 'Post gara'],
-        }
-        const target = routeByAction[action]
-        if (!target) return
-        storage?.setItem('nz-active-section', target[0])
-        await setView(target[0], target[1])
-      })
-    })
-
-    root.querySelectorAll('[data-return-to-match-workspace]').forEach((button) => {
-      const origin = storage?.getItem('staff-match-entry-origin') === 'dashboard' ? 'dashboard' : 'match-library'
-      const destination = origin === 'dashboard'
-        ? ['dashboard', 'Dashboard']
-        : ['match-library', 'Match Library']
-      const label = button.querySelector('[data-match-context-back-label]')
-      if (label) label.textContent = `Torna alla ${destination[1]}`
-      button.addEventListener('click', async () => {
-        setActiveNavigation(destination[0])
-        storage?.setItem('nz-active-section', destination[0])
-        await setView(destination[0], destination[1])
-      })
-    })
-
     try {
       bindMatchAnalysisSchemaEditors(root, analysisTemplateOptions())
     } catch (error) {

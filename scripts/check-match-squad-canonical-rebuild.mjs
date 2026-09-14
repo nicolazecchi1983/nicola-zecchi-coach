@@ -1,10 +1,12 @@
 import fs from 'node:fs'
 
-const view = fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8')
-const css = fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8')
-const globalCss = fs.readFileSync('src/style.css', 'utf8')
-const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
-const pitchCss = fs.readFileSync('src/modules/match/ui/matchPitch.css', 'utf8')
+const normalizeEol = (value) => String(value).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+
+const view = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquadView.js', 'utf8'))
+const css = normalizeEol(fs.readFileSync('src/modules/match/ui/matchSquad.css', 'utf8'))
+const globalCss = normalizeEol(fs.readFileSync('src/style.css', 'utf8'))
+const responsive = normalizeEol(fs.readFileSync('src/design-system/responsive.css', 'utf8'))
+const pitchCss = normalizeEol(fs.readFileSync('src/modules/match/ui/matchPitch.css', 'utf8'))
 
 const command = view.indexOf('data-squad-command-strip')
 const leadership = view.indexOf('data-lineup-leadership')
@@ -13,7 +15,7 @@ const pitch = view.indexOf('<div class="pitch-panel">')
 const pitchHead = view.indexOf('pitch-panel-head')
 const reset = view.indexOf('data-reset-formation')
 const starters = view.indexOf('lineup-list lineup-list--selection')
-const bench = view.indexOf('bench-block bench-block--automatic bench-block--full-width')
+const bench = view.indexOf('bench-block bench-block--editable bench-block--full-width')
 
 const oldMarkers = ['0.29.4 —', '0.29.5 —', '0.29.6 —', '0.29.7 —', '0.29.8 —', '0.29.9 —']
 

@@ -16,6 +16,18 @@ export function wireMatchWorkspaceEvents({
 }) {
     wireMatchCenterEvents({ root, getActiveMatchContext, getCalendarEvent, updateCalendarEvent, loadCalendarEvents, setView })
     const matchWorkspace = root.querySelector('[data-match-workspace], .match-workspace--empty')
+    const backButton = root.querySelector('[data-return-to-match-workspace]')
+    if (backButton) {
+      const origin = storage?.getItem('staff-match-entry-origin') === 'dashboard' ? 'dashboard' : 'match-library'
+      const destination = origin === 'dashboard' ? ['dashboard', 'Dashboard'] : ['match-library', 'Match Library']
+      const label = backButton.querySelector('[data-match-context-back-label]')
+      if (label) label.textContent = `Torna alla ${destination[1]}`
+      backButton.addEventListener('click', async () => {
+        setActiveNavigation(destination[0])
+        storage?.setItem('nz-active-section', destination[0])
+        await setView(destination[0], destination[1])
+      })
+    }
     matchWorkspace?.addEventListener('click', async (event) => {
       const actionButton = event.target.closest('[data-workspace-action]')
       if (!actionButton || actionButton.disabled) return
