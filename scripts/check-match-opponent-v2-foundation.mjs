@@ -1,14 +1,15 @@
 import fs from 'node:fs'
+const readText = (path) => fs.readFileSync(path, 'utf8').replace(/\r\n?/g, '\n');
 
-const view = fs.readFileSync('src/modules/match/ui/matchOpponentView.js', 'utf8')
-const css = fs.readFileSync('src/modules/match/ui/matchOpponent.css', 'utf8')
-const legacyView = fs.readFileSync('src/modules/match/ui/legacyMatchCompatibilityView.js', 'utf8')
-const events = fs.readFileSync('src/modules/match/events/legacyMatchEditorEvents.js', 'utf8')
-const legacyCss = fs.readFileSync('src/modules/match/ui/matchSheet.css', 'utf8')
-const globalCss = fs.readFileSync('src/style.css', 'utf8')
-const responsive = fs.readFileSync('src/design-system/responsive.css', 'utf8')
-const main = fs.readFileSync('src/main.js', 'utf8')
-const architecture = fs.readFileSync('docs/MATCH_OPPONENT_V2_ARCHITECTURE.md', 'utf8')
+const view = readText('src/modules/match/ui/matchOpponentView.js')
+const css = readText('src/modules/match/ui/matchOpponent.css')
+const legacyView = readText('src/modules/match/ui/legacyMatchCompatibilityView.js')
+const events = readText('src/modules/match/events/legacyMatchEditorEvents.js')
+const legacyCss = readText('src/modules/match/ui/matchSheet.css')
+const globalCss = readText('src/style.css')
+const responsive = readText('src/design-system/responsive.css')
+const main = readText('src/main.js')
+const architecture = readText('docs/MATCH_OPPONENT_V2_ARCHITECTURE.md')
 
 const checks = [
   ['opponent has dedicated native view owner', legacyView.includes("renderMatchOpponentStep") && view.includes('match-opponent-step')],

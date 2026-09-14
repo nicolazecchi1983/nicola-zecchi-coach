@@ -20,6 +20,8 @@ add('global responsive Match Day block retired',!responsive.includes('.ts-match-
 add('global responsive MD selector retired',!responsive.includes('.ts-md-selector'));
 add('legacy max760 four-column important override retired',!editor.includes('repeat(4, minmax(0, 1fr)) !important'));
 add('legacy max900 horizontal MD override retired',!editor.includes('repeat(9,minmax(82px,1fr))!important'));
+add('legacy editor no longer hard-locks MD selector to nine columns with important',!/\.ts-md-selector\s*\{[^}]*grid-template-columns\s*:\s*repeat\(9\s*,\s*minmax\(0\s*,\s*1fr\)\)\s*!important/i.test(editor));
+add('legacy editor no longer forces MD button nowrap through important geometry',!/\.ts-md-selector\s+button\s*\{[^}]*min-width\s*:\s*0\s*!important[^}]*white-space\s*:\s*nowrap/i.test(editor));
 add('R2.6O owner still exists',s>=0);
 add('domain owner preserves Match Day full width',owner.includes('.ts-match-day-block')&&owner.includes('width: 100%;')&&owner.includes('max-width: none;'));
 add('domain owner preserves Match Day 14px mobile block padding',owner.includes('padding-block: 14px;'));

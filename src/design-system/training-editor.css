@@ -174,7 +174,7 @@
 .ts-publish-note { margin:8px 4px 0; color:var(--muted); font-size:.75rem; line-height:1.4; }
 @media (max-width:1250px){.ts-workspace{grid-template-columns:1fr}.ts-live-column{position:static}.ts-paper{min-height:680px}}
 
-@media (max-width:720px){.ts-fields-grid,.ts-roster-grid,.ts-pillars,.ts-load-grid,.ts-phase-compact,.ts-phase-compact.two{grid-template-columns:1fr}.ts-form-card{padding:15px}.ts-paper-frame{padding:8px}.ts-paper{min-width:680px}.ts-preview-toolbar{align-items:flex-start}.ts-preview-toolbar button span{display:none}}
+@media (max-width:720px){.ts-fields-grid,.ts-roster-grid,.ts-load-grid,.ts-phase-compact,.ts-phase-compact.two{grid-template-columns:1fr}.ts-form-card{padding:15px}.ts-paper-frame{padding:8px}.ts-paper{min-width:680px}.ts-preview-toolbar{align-items:flex-start}.ts-preview-toolbar button span{display:none}}
 
 @media print {
   body * { visibility:hidden !important; }
@@ -624,7 +624,7 @@
   letter-spacing: .22em !important;
 }
 @media (max-width: 760px){
-.ts-workspace, .ts-session-grid, .ts-fields-grid, .ts-load-grid, .ts-roster-grid, .ts-pillars, .ts-phase-compact, .ts-phase-compact.two{
+.ts-workspace, .ts-session-grid, .ts-fields-grid, .ts-load-grid, .ts-roster-grid, .ts-phase-compact, .ts-phase-compact.two{
     grid-template-columns: minmax(0, 1fr) !important;
     width: 100% !important;
     min-width: 0 !important;
@@ -959,8 +959,7 @@
 .ts-step-footer{position:static!important;display:flex!important;width:100%;box-sizing:border-box;margin:24px 0 0!important;padding:16px!important;justify-content:space-between!important;align-items:center!important;background:#071827;border:1px solid #1c435b;border-radius:16px}
 .ts-step-footer>[data-ts-step-status]{margin:0 auto;min-width:120px;text-align:center}
 .ts-step-footer .portal-action-button{min-width:170px}
-.ts-md-selector{display:grid!important;grid-template-columns:repeat(9,minmax(0,1fr))!important;gap:8px!important;overflow:visible!important}
-.ts-md-selector button{min-width:0!important;white-space:nowrap}
+/* Training Match Day legacy hard-lock retired; canonical owner: modules/training/trainingPolish.css */
 .ts-load-grid{align-items:start!important;padding-top:8px}
 .ts-choice-block.ts-match-day-block{padding:16px;border:1px solid #1c435b;border-radius:14px;background:#081c2b}
 .ts-paper-pillars{margin:10px 0!important}
@@ -1547,9 +1546,7 @@
     grid-template-columns: repeat(3, minmax(0,1fr));
   }
 
-  .ts-pillars {
-    grid-template-columns: 1fr;
-  }
+
 
   .ts-step-footer {
     grid-template-columns: 1fr 1fr;
@@ -1829,75 +1826,7 @@
    Scope locked: roster row, phase structural action, header utility menu.
    ================================================================ */
 
-/* Header: destructive reset is an exceptional utility, never a primary peer. */
-
-.ts-manual-editor .ts-more-menu {
-  position: relative;
-  align-self: end;
-}
-
-.ts-manual-editor .ts-more-button {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  min-width: 48px;
-  height: 42px;
-  min-height: 42px;
-  padding: 0;
-  list-style: none;
-  cursor: pointer;
-  letter-spacing: .12em;
-  color: #b7c8d3;
-}
-
-.ts-manual-editor .ts-more-button::-webkit-details-marker { display: none; }
-
-.ts-manual-editor .ts-more-menu-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 30;
-  width: 188px;
-  padding: 6px;
-  border: 1px solid var(--staff-color-border);
-  border-radius: var(--staff-radius-control);
-  background: var(--staff-color-bg-panel-raised);
-  box-shadow: 0 16px 36px rgba(0,0,0,.32);
-}
-
-.ts-manual-editor .ts-more-menu-popover button {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: .82rem;
-  font-weight: 750;
-  line-height: 1.2;
-  text-align: left;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.ts-manual-editor .ts-menu-item:hover,
-.ts-manual-editor .ts-menu-item:focus-visible {
-  background: var(--staff-color-surface);
-}
-
-.ts-manual-editor .ts-menu-danger {
-  margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--staff-color-border-subtle);
-  border-radius: 0 0 7px 7px;
-  color: #ff9cab;
-}
-
-.ts-manual-editor .ts-menu-danger:hover { background: rgba(255,101,119,.08); }
+/* Header utility menu presentation migrated to trainingCommandBar.css by R1 owner convergence. */
 
 /* Roster: all four controls now occupy the same visual row and height. */
 .ts-manual-editor .ts-roster-grid--four {
@@ -2621,9 +2550,10 @@
 
 /* STAFF R1.1F1 — canonical owner migration from trainingPolish.css. */
 .ts-manual-editor .ts-paper-frame {
-  padding: var(--staff-space-4);
-  border-color: var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
+  padding: var(--staff-space-3);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-top: 0;
+  border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);
   background: var(--staff-color-bg-panel-raised);
 }
 
@@ -2631,6 +2561,7 @@
 @media (max-width: 760px) {
   .ts-manual-editor .ts-paper-frame {
     padding: var(--staff-space-2);
+    border-radius: 0 0 var(--staff-radius-medium) var(--staff-radius-medium);
   }
 }
 
@@ -2643,6 +2574,7 @@
 
 /* R1.4F — Training Summary actions canonical owner
    One owner, one geometry, one visual hierarchy. */
+/* R2.3 - Training Summary premium refinement inside the existing R1.4F canonical owner. */
 .ts-manual-editor .ts-preview-toolbar{
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
@@ -2650,13 +2582,30 @@
     "heading actions"
     "note note";
   align-items:center;
-  gap:8px 16px;
+  gap:var(--staff-space-2) var(--staff-space-3);
+  margin:0;
+  padding:var(--staff-space-3) var(--staff-space-4);
+  border:1px solid var(--staff-color-border-subtle);
+  border-radius:var(--staff-radius-large) var(--staff-radius-large) 0 0;
+  background:var(--staff-color-bg-panel);
+  box-sizing:border-box;
 }
 .ts-manual-editor .ts-preview-heading{
   grid-area:heading;
   display:grid;
-  gap:2px;
+  gap:3px;
   min-width:0;
+}
+.ts-manual-editor .ts-preview-heading > span{
+  color:var(--staff-color-primary);
+  font-size:var(--staff-font-caption);
+  font-weight:var(--staff-font-weight-bold);
+  letter-spacing:.12em;
+}
+.ts-manual-editor .ts-preview-heading > strong{
+  color:var(--staff-color-text);
+  font-size:.96rem;
+  font-weight:var(--staff-font-weight-bold);
 }
 .ts-manual-editor .ts-preview-actions{
   grid-area:actions;
@@ -2664,7 +2613,7 @@
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   align-items:stretch;
   gap:8px;
-  width:min(520px,46vw);
+  width:min(440px,42vw);
   min-width:0;
 }
 .ts-manual-editor .ts-preview-actions .staff-button{
@@ -2706,9 +2655,11 @@
   grid-area:note;
   width:100%;
   margin:0;
+  padding-top:var(--staff-space-2);
+  border-top:1px solid var(--staff-color-border-subtle);
   color:var(--staff-color-text-muted,#8fa5b6);
-  font-size:.78rem;
-  line-height:1.35;
+  font-size:.76rem;
+  line-height:1.4;
 }
 
 @media(max-width:760px){
@@ -2719,9 +2670,10 @@
       "actions"
       "note";
     align-items:stretch;
-    gap:10px;
+    gap:var(--staff-space-2);
     min-height:0;
-    padding:14px;
+    padding:var(--staff-space-3);
+    border-radius:var(--staff-radius-medium) var(--staff-radius-medium) 0 0;
   }
   .ts-manual-editor .ts-preview-actions{
     grid-template-columns:repeat(2,minmax(0,1fr));

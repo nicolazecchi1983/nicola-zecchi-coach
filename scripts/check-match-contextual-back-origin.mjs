@@ -40,7 +40,7 @@ const checks=[
  ['npm script registration',pkg.scripts?.[gate]==='node scripts/check-match-contextual-back-origin.mjs'],
  ['canonical suite registration',Array.isArray(pkg.staffCheckSuite) && pkg.staffCheckSuite.includes(gate)],
  ['suite registration unique',Array.isArray(pkg.staffCheckSuite) && pkg.staffCheckSuite.filter(x=>x===gate).length===1],
- ['suite grows exactly to 257',Array.isArray(pkg.staffCheckSuite) && pkg.staffCheckSuite.length===257],
+ ['suite grows exactly to 258',Array.isArray(pkg.staffCheckSuite) && pkg.staffCheckSuite.length===258],
 ]
 let failed=0
 for(const [name,ok] of checks){console.log((ok?'PASS ':'FAIL ')+name);if(!ok)failed++}

@@ -7,11 +7,12 @@
   --staff-mobile-page-title-size: clamp(1.52rem, 6.4vw, 1.86rem);
 }
 
+/* R2.1 â€” Premium hierarchy: compact context header, content-first workspace. */
 .ts-manual-editor .ts-editor-titlebar {
   grid-template-columns: minmax(0, 1fr) minmax(400px, 500px);
   align-items: start;
-  gap: var(--staff-space-4);
-  margin-bottom: var(--staff-space-4);
+  gap: var(--staff-space-3);
+  margin-bottom: var(--staff-space-3);
 }
 
 .ts-manual-editor .ts-editor-titlebar > div:first-child {
@@ -53,6 +54,7 @@
 /* Step 01 — session essentials: one compact operational surface. */
 .ts-manual-editor .ts-session-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   grid-template-columns: minmax(150px, .75fr) minmax(140px, .65fr) minmax(260px, 1.2fr) minmax(150px, .65fr);
   gap: var(--staff-space-3);
   padding: var(--staff-space-4);
@@ -79,10 +81,53 @@
   line-height: var(--staff-line-height-secondary);
 }
 
+/* R2.2 - STEP CONTENT PREMIUM CONVERGENCE
+   Functional iconography stays inside content; stepper/header/command/footer remain frozen. */
+.ts-manual-editor .ts-step-content-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--staff-space-1);
+}
+
+.ts-manual-editor .ts-step-content-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--staff-color-primary);
+  font-style: normal;
+}
+
+.ts-manual-editor .ts-step-content-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ts-manual-editor .ts-step-content-icon--action {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-step-content-icon--action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-present-count > .ts-step-content-label {
+  color: var(--staff-color-text);
+}
+
 /* Step 02 — roster: availability first, exceptions by disclosure. */
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   box-sizing: border-box;
 }
 
@@ -195,14 +240,16 @@
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block,
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-load-grid {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   box-sizing: border-box;
 }
 
 .ts-manual-editor .ts-step[data-ts-step="3"] .ts-match-day-block {
-  margin: 0 0 var(--staff-space-2);
+  margin: 0 auto;
   padding: var(--staff-space-3) var(--staff-space-4);
   border: 1px solid var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
+  border-bottom: 0;
+  border-radius: var(--staff-radius-large) var(--staff-radius-large) 0 0;
   background: var(--staff-color-bg-panel);
 }
 
@@ -254,7 +301,7 @@
   gap: var(--staff-space-3);
   padding: var(--staff-space-4);
   border: 1px solid var(--staff-color-border-subtle);
-  border-radius: var(--staff-radius-large);
+  border-radius: 0 0 var(--staff-radius-large) var(--staff-radius-large);
   background: var(--staff-color-bg-panel);
 }
 
@@ -295,6 +342,7 @@
 /* Step 04 — phases: cards are justified here because each phase is an editable object. */
 .ts-manual-editor .ts-phases-editor {
   width: min(100%, var(--training-section-max));
+  margin-inline: auto;
   gap: var(--staff-space-3);
 }
 
@@ -360,6 +408,10 @@
 
 .ts-manual-editor .ts-add-phase {
   min-height: var(--staff-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--staff-space-2);
   margin-top: var(--staff-space-3);
 }
 
@@ -367,6 +419,7 @@
 .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars,
 .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
   width:min(100%,var(--training-section-max));
+  margin-inline:auto;
   box-sizing:border-box;
 }
 
@@ -426,9 +479,10 @@
   grid-template-columns:1fr;
   gap:var(--staff-space-3);
   margin-top:var(--staff-space-3);
-  padding:0;
-  border:0;
-  background:transparent;
+  padding:var(--staff-space-4);
+  border:1px solid var(--staff-color-border-subtle);
+  border-radius:var(--staff-radius-large);
+  background:var(--staff-color-bg-panel);
 }
 
 .ts-manual-editor .ts-analysis-fields .ts-field-full {
@@ -448,6 +502,16 @@
   line-height:1;
 }
 
+.ts-manual-editor .ts-objective-field-title .ts-step-content-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.ts-manual-editor .ts-objective-field-title .ts-step-content-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
 /* Step 06 — preview: document is the focal object, chrome stays quiet. */
 .ts-manual-editor .ts-live-column {
   width: 100%;
@@ -461,6 +525,7 @@
 
 .ts-manual-editor .ts-preview-stage {
   width: min(100%, var(--staff-content-readable));
+  margin-inline: auto;
 }
 
 /* Training Summary toolbar/actions are owned exclusively by training-editor.css (R1.4F). */
@@ -473,9 +538,11 @@
   position: sticky;
   bottom: var(--staff-space-2);
   z-index: 12;
+  width: min(100%, var(--training-section-max));
+  box-sizing: border-box;
   grid-template-columns: minmax(144px, 200px) 1fr minmax(144px, 200px);
   gap: var(--staff-space-2);
-  margin-top: var(--staff-space-4);
+  margin: var(--staff-space-4) auto 0;
   padding: var(--staff-space-2);
   border: 1px solid var(--staff-color-border-subtle);
   border-radius: var(--staff-radius-large);
@@ -529,6 +596,7 @@
   .ts-manual-editor .ts-step[data-ts-step="5"] .ts-analysis-fields {
     width: 100%;
     max-width: none;
+    min-width: 0;
     padding-inline: var(--staff-space-3);
   }
 
@@ -536,7 +604,7 @@
     grid-template-columns: 1fr;
   }
 
-  .ts-manual-editor .ts-pillars {
+  .ts-manual-editor .ts-step[data-ts-step="5"] .ts-pillars {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
