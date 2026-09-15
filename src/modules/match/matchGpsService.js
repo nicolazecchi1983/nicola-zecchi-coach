@@ -19,6 +19,7 @@ function normalizeMetricRow(row = {}) {
     sourceOrdinal: Number(row.source_ordinal) || null,
     sourcePlayerName: String(row.source_player_name || ''),
     sourceBirthDate: row.source_birth_date || null,
+    minutesPlayed: row.minutes_played ?? null,
     metrics: {
       restingHeartRate: row.resting_heart_rate ?? null,
       maxHeartRate: row.max_heart_rate ?? null,
@@ -61,6 +62,7 @@ function persistenceRow(row) {
     source_ordinal: row.sourceOrdinal,
     source_player_name: row.sourcePlayerName,
     source_birth_date: row.sourceBirthDate,
+    minutes_played: row.minutesPlayed ?? null,
     resting_heart_rate: metrics.restingHeartRate ?? null,
     max_heart_rate: metrics.maxHeartRate ?? null,
     max_speed_ms: metrics.maxSpeedMs ?? null,

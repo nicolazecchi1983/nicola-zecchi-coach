@@ -1,24 +1,914 @@
-.match-gps{display:grid;gap:18px;min-width:0}
-.match-gps-import,.match-gps-panel,.match-gps-empty{border:1px solid #dbe3ef;border-radius:20px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.04)}
-.match-gps-import{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.match-gps-import span,.match-gps-panel__head span{font-size:11px;font-weight:850;letter-spacing:.11em;color:#60708a}
-.match-gps-import h2,.match-gps-panel__head h2{margin:4px 0;color:#102a56;font-size:22px}
-.match-gps-import p,.match-gps-panel__head p,.match-gps-empty p{margin:0;color:#6b778c}
-.match-gps-file-button{position:relative;overflow:hidden;flex:none;cursor:pointer}
-.match-gps-file-button input{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}
-.match-gps-panel{padding:22px;min-width:0}
-.match-gps-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
-.match-gps-summary>div{padding:13px 15px;border:1px solid #dbe3ef;border-radius:14px;background:#f8fafc;display:flex;align-items:baseline;gap:8px}
-.match-gps-summary strong{font-size:24px;color:#102a56}.match-gps-summary span{font-size:12px;color:#60708a}.match-gps-summary .is-warning{border-color:#e9bc73;background:#fff9ef}
-.match-gps-notice,.match-gps-validation,.match-gps-error{margin:0;padding:13px 15px;border-radius:13px}
-.match-gps-notice{margin-bottom:16px;background:#eef5ff;color:#36577f}.match-gps-validation,.match-gps-error{background:#fff3f1;border:1px solid #f0c3bd;color:#9b2c22}
-.match-gps-table-wrap{max-width:100%;overflow-x:auto;border:1px solid #e2e8f0;border-radius:14px}
-.match-gps-table{width:100%;min-width:820px;border-collapse:collapse;background:#fff}
-.match-gps-table--metrics{min-width:1500px}
-.match-gps-table th,.match-gps-table td{padding:11px 12px;border-bottom:1px solid #edf1f6;text-align:left;vertical-align:middle;white-space:nowrap}
-.match-gps-table th{background:#f5f8fc;color:#52627a;font-size:11px;letter-spacing:.04em}.match-gps-table td{color:#243b61;font-size:13px}
-.match-gps-table td strong,.match-gps-table td small{display:block}.match-gps-table td small{margin-top:2px;color:#7a879a}
-.match-gps-table tr.needs-review{background:#fffdf7}.match-gps-table select{min-width:220px;max-width:280px;width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#243b61}
-.match-gps-status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}.match-gps-status.is-ready{background:#e8f7ef;color:#17643c}.match-gps-status.is-warning{background:#fff1d9;color:#8a5810}
-.match-gps-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.match-gps-empty{padding:36px;text-align:center}.match-gps-empty strong{display:block;color:#102a56;font-size:19px;margin-bottom:5px}
-@media(max-width:760px){.match-gps-import{align-items:stretch;flex-direction:column}.match-gps-file-button{justify-content:center}.match-gps-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.match-gps-panel{padding:15px}.match-gps-actions{display:grid;grid-template-columns:1fr}.match-gps-actions .button{width:100%}}
+.match-gps{
+  display:grid;
+  gap:18px;
+  min-width:0;
+}
+
+.match-gps-import,
+.match-gps-panel,
+.match-gps-empty,
+.match-gps-analysis{
+  border:1px solid #dbe3ef;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 10px 28px rgba(15,23,42,.04);
+}
+
+.match-gps-import{
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.match-gps-import span,
+.match-gps-panel__head span,
+.match-gps-analysis__head span{
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.11em;
+  color:#60708a;
+}
+
+.match-gps-import h2,
+.match-gps-panel__head h2,
+.match-gps-analysis__head h2{
+  margin:4px 0;
+  color:#102a56;
+  font-size:22px;
+}
+
+.match-gps-import p,
+.match-gps-panel__head p,
+.match-gps-analysis__head p,
+.match-gps-empty p{
+  margin:0;
+  color:#5f6f86;
+}
+
+.match-gps-file-button{
+  position:relative;
+  overflow:hidden;
+  flex:none;
+  cursor:pointer;
+}
+
+.match-gps-file-button input{
+  position:absolute;
+  inline-size:1px;
+  block-size:1px;
+  opacity:0;
+  pointer-events:none;
+}
+
+.match-gps-panel{
+  padding:22px;
+  min-width:0;
+}
+
+.match-gps-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:18px 0;
+}
+
+.match-gps-summary>div{
+  padding:13px 15px;
+  border:1px solid #dbe3ef;
+  border-radius:14px;
+  background:#f8fafc;
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+
+.match-gps-summary strong{
+  font-size:24px;
+  color:#102a56;
+}
+
+.match-gps-summary span{
+  font-size:12px;
+  color:#60708a;
+}
+
+.match-gps-summary .is-warning{
+  border-color:#e9bc73;
+  background:#fff9ef;
+}
+
+.match-gps-notice,
+.match-gps-validation,
+.match-gps-error{
+  margin:0;
+  padding:13px 15px;
+  border-radius:13px;
+}
+
+.match-gps-notice{
+  margin-bottom:16px;
+  background:#eef5ff;
+  color:#36577f;
+}
+
+.match-gps-validation,
+.match-gps-error{
+  background:#fff3f1;
+  border:1px solid #f0c3bd;
+  color:#9b2c22;
+}
+
+.match-gps-table-wrap{
+  max-width:100%;
+  overflow:auto;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  background:#fff;
+}
+
+.match-gps-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+}
+
+.match-gps-table--preview{
+  min-width:720px;
+}
+
+.match-gps-table--metrics{
+  min-width:1180px;
+}
+
+.match-gps-table th,
+.match-gps-table td{
+  padding:11px 12px;
+  border-bottom:1px solid #edf1f6;
+  vertical-align:middle;
+  white-space:nowrap;
+}
+
+.match-gps-table tr:last-child td{
+  border-bottom:0;
+}
+
+.match-gps-table th{
+  background:#f5f8fc;
+  color:#465871;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-align:left;
+}
+
+.match-gps-table td{
+  color:#172b4d;
+  font-size:13px;
+  background:#fff;
+}
+
+.match-gps-table td strong{
+  display:block;
+  color:#102a56;
+  font-weight:800;
+}
+
+.match-gps-table td small{
+  display:block;
+  margin-top:3px;
+  color:#65758c;
+}
+
+.match-gps-player-column{
+  position:sticky;
+  left:0;
+  min-width:210px;
+  max-width:240px;
+  z-index:2;
+  text-align:left;
+}
+
+.match-gps-table th.match-gps-player-column{
+  z-index:4;
+  background:#eef3f9;
+  box-shadow:8px 0 14px -14px rgba(15,23,42,.55);
+}
+
+.match-gps-table td.match-gps-player-column{
+  background:#fff;
+  box-shadow:8px 0 14px -14px rgba(15,23,42,.45);
+}
+
+.match-gps-table tr.needs-review td{
+  background:#fffdf7;
+}
+
+.match-gps-table tr.needs-review td.match-gps-player-column{
+  background:#fffdf7;
+}
+
+.match-gps-table th.match-gps-metric-column,
+.match-gps-table td.match-gps-metric-cell{
+  min-width:92px;
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+.match-gps-table th.match-gps-status-column,
+.match-gps-table td.match-gps-status-cell{
+  min-width:100px;
+  text-align:center;
+}
+
+.match-gps-association{
+  min-width:150px;
+  max-width:220px;
+}
+
+.match-gps-association select{
+  width:100%;
+  min-width:170px;
+  max-width:220px;
+  padding:8px 9px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  background:#fff;
+  color:#172b4d;
+}
+
+.match-gps-association--resolved{
+  border:1px solid #d7e2ef;
+  border-radius:10px;
+  background:#f8fafc;
+}
+
+.match-gps-association--resolved summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  cursor:pointer;
+  list-style:none;
+  color:#36577f;
+  font-size:12px;
+  font-weight:800;
+}
+
+.match-gps-association--resolved summary::-webkit-details-marker{
+  display:none;
+}
+
+.match-gps-association--resolved summary small{
+  margin:0;
+  color:#65758c;
+  font-size:11px;
+  font-weight:700;
+}
+
+.match-gps-association__editor{
+  padding:0 8px 8px;
+}
+
+.match-gps-status{
+  display:inline-flex;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.match-gps-status.is-ready{
+  background:#e8f7ef;
+  color:#17643c;
+}
+
+.match-gps-status.is-warning{
+  background:#fff1d9;
+  color:#8a5810;
+}
+
+.match-gps-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:16px;
+}
+
+.match-gps-empty{
+  padding:36px;
+  text-align:center;
+}
+
+.match-gps-empty strong{
+  display:block;
+  color:#102a56;
+  font-size:19px;
+  margin-bottom:5px;
+}
+
+.match-gps-analysis{
+  padding:22px;
+  min-width:0;
+}
+
+.match-gps-analysis__head{
+  margin-bottom:16px;
+}
+
+.match-gps-analysis__grid{
+  display:grid;
+  gap:10px;
+}
+
+.match-gps-chart-card{
+  border:1px solid #dbe3ef;
+  border-radius:14px;
+  background:#f8fafc;
+  overflow:hidden;
+}
+
+.match-gps-chart-card>summary{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  cursor:pointer;
+  list-style:none;
+  color:#102a56;
+  font-size:13px;
+  font-weight:850;
+}
+
+.match-gps-chart-card>summary::-webkit-details-marker{
+  display:none;
+}
+
+.match-gps-chart-card>summary small{
+  color:#65758c;
+  font-size:11px;
+  font-weight:700;
+}
+
+.match-gps-chart-card>summary::after{
+  content:'+';
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#e7eef8;
+  color:#315b93;
+  font-size:16px;
+  line-height:1;
+}
+
+.match-gps-chart-card[open]>summary::after{
+  content:'−';
+}
+
+.match-gps-chart-card__body{
+  padding:4px 16px 16px;
+  border-top:1px solid #e2e8f0;
+  background:#fff;
+}
+
+.match-gps-chart{
+  display:grid;
+  gap:8px;
+  padding-top:12px;
+}
+
+.match-gps-chart__row{
+  display:grid;
+  grid-template-columns:minmax(120px,190px) minmax(180px,1fr) minmax(76px,auto);
+  align-items:center;
+  gap:12px;
+  min-height:30px;
+}
+
+.match-gps-chart__player{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#243b61;
+  font-size:12px;
+  font-weight:750;
+}
+
+.match-gps-chart__track{
+  height:10px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e8eef6;
+}
+
+.match-gps-chart__bar{
+  display:block;
+  width:var(--match-gps-bar);
+  min-width:2px;
+  height:100%;
+  border-radius:inherit;
+  background:#315f9f;
+}
+
+.match-gps-chart__value{
+  color:#102a56;
+  text-align:right;
+  font-size:12px;
+  font-variant-numeric:tabular-nums;
+}
+
+.match-gps-chart-empty{
+  margin:12px 0 0;
+  color:#65758c;
+  font-size:12px;
+}
+
+@media(max-width:760px){
+  .match-gps-import{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .match-gps-file-button{
+    justify-content:center;
+  }
+
+  .match-gps-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .match-gps-panel,
+  .match-gps-analysis{
+    padding:15px;
+  }
+
+  .match-gps-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .match-gps-actions .button{
+    width:100%;
+  }
+
+  .match-gps-player-column{
+    min-width:170px;
+    max-width:190px;
+  }
+
+  .match-gps-chart-card>summary{
+    grid-template-columns:minmax(0,1fr) auto;
+  }
+
+  .match-gps-chart-card>summary small{
+    display:none;
+  }
+
+  .match-gps-chart__row{
+    grid-template-columns:minmax(90px,120px) minmax(120px,1fr) minmax(68px,auto);
+    gap:8px;
+  }
+}
+/* R31.1 Premium GPS table — domain-owned */
+.match-gps .match-gps-table-wrap--metrics{
+  border-color:#d5dfeb;
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(15,42,86,.06);
+}
+
+.match-gps .match-gps-table--metrics{
+  min-width:1040px;
+
+  /* Domain-local light-table typography tokens */
+  --staff-color-text:#102a56;
+  --staff-color-text-secondary:#51647d;
+  --staff-font-secondary:14px;
+  --staff-font-label:11px;
+}
+
+.match-gps .match-gps-table--metrics thead th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  padding-top:13px;
+  padding-bottom:13px;
+  background:#edf3f9;
+  color:#41536d;
+  font-weight:850;
+  letter-spacing:.045em;
+  border-bottom:1px solid #d5dfeb;
+}
+
+.match-gps .match-gps-table--metrics thead th.match-gps-player-column{
+  z-index:5;
+  background:#e7eef7;
+}
+
+.match-gps .match-gps-table--metrics tbody td{
+  min-height:64px;
+  background:#fff;
+  border-bottom:1px solid #e5ebf2;
+}
+
+.match-gps .match-gps-table--metrics td.match-gps-metric-cell{
+  color:#102a56;
+  font-size:14px;
+  font-weight:750;
+  opacity:1;
+  letter-spacing:.005em;
+}
+
+.match-gps .match-gps-table--metrics td.match-gps-player-column{
+  color:#102a56;
+  background:#fbfdff;
+  border-right:1px solid #e1e8f0;
+}
+
+.match-gps .match-gps-table--metrics td.match-gps-player-column strong{
+  color:#102a56;
+  font-size:14px;
+  font-weight:850;
+}
+
+.match-gps .match-gps-table--metrics td.match-gps-player-column small{
+  color:#64748b;
+  font-size:12px;
+}
+
+.match-gps .match-gps-table--metrics tbody tr:hover td{
+  background:#f7faff;
+}
+
+.match-gps .match-gps-table--metrics tbody tr:hover td.match-gps-player-column{
+  background:#f1f6fc;
+}
+
+.match-gps .match-gps-table--metrics .match-gps-metric-column{
+  min-width:112px;
+}
+
+.match-gps .match-gps-table--metrics th:last-child,
+.match-gps .match-gps-table--metrics td:last-child{
+  padding-right:18px;
+}
+
+.match-gps .match-gps-panel__head{
+  margin-bottom:18px;
+}
+
+.match-gps .match-gps-panel__head h2{
+  color:#0f2f5e;
+  font-weight:850;
+}
+
+.match-gps .match-gps-panel__head p{
+  color:#586b84;
+}
+
+@media(max-width:760px){
+  .match-gps .match-gps-table--metrics{
+    min-width:940px;
+  }
+
+  .match-gps .match-gps-table--metrics td.match-gps-metric-cell{
+    font-size:13px;
+  }
+}
+/* R31.2 GPS minutes + per90 */
+.match-gps .match-gps-minutes-column{
+  width:68px;
+  min-width:68px;
+  text-align:right;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+
+.match-gps .match-gps-table--metrics td.match-gps-minutes-column{
+  color:#102a56;
+  font-size:14px;
+  font-weight:850;
+}
+
+.match-gps .match-gps-metric-cell--stack{
+  vertical-align:middle;
+  font-variant-numeric:tabular-nums;
+}
+
+.match-gps .match-gps-metric-primary{
+  display:block;
+  color:#102a56;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.match-gps .match-gps-metric-normalized{
+  display:block;
+  margin-top:3px;
+  color:#687b93;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+.match-gps .match-gps-chart-mode{
+  display:grid;
+  grid-template-columns:max-content max-content;
+  gap:8px;
+  align-items:center;
+}
+
+.match-gps .match-gps-chart-mode__input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+
+.match-gps .match-gps-chart-mode__label{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:30px;
+  padding:5px 11px;
+  border:1px solid #d5dfeb;
+  border-radius:999px;
+  background:#fff;
+  color:#62738a;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.02em;
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease;
+}
+
+.match-gps .match-gps-chart-mode__input:checked + .match-gps-chart-mode__label{
+  border-color:#173f78;
+  background:#173f78;
+  color:#fff;
+  box-shadow:0 4px 12px rgba(23,63,120,.16);
+}
+
+.match-gps .match-gps-chart-mode__input:focus-visible + .match-gps-chart-mode__label{
+  outline:2px solid currentColor;
+  outline-offset:2px;
+}
+
+.match-gps .match-gps-chart-mode__panel{
+  display:none;
+  grid-column:1 / -1;
+  margin-top:4px;
+}
+
+.match-gps .match-gps-chart-mode__input[data-mode="total"]:checked
+  ~ .match-gps-chart-mode__panel--total{
+  display:block;
+}
+
+.match-gps .match-gps-chart-mode__input[data-mode="normalized"]:checked
+  ~ .match-gps-chart-mode__panel--normalized{
+  display:block;
+}
+
+@media(max-width:760px){
+  .match-gps .match-gps-minutes-column{
+    width:58px;
+    min-width:58px;
+  }
+}
+/* R31.3 Comparative Chart Premium */
+
+.match-gps .match-gps-analysis__grid{
+  gap:12px;
+}
+
+.match-gps .match-gps-chart-card{
+  border:1px solid #d7e0ec;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 5px 16px rgba(15,42,86,.035);
+  transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+
+.match-gps .match-gps-chart-card[open]{
+  border-color:#cbd8e8;
+  box-shadow:0 12px 28px rgba(15,42,86,.065);
+}
+
+.match-gps .match-gps-chart-card>summary{
+  grid-template-columns:minmax(0,1fr) auto;
+  padding:15px 18px;
+  background:linear-gradient(180deg,#fbfcfe 0%,#f7f9fc 100%);
+  color:#17345f;
+  font-size:15px;
+  font-weight:850;
+  letter-spacing:-.01em;
+}
+
+.match-gps .match-gps-chart-card>summary::after{
+  width:28px;
+  height:28px;
+  background:#edf3fa;
+  color:#315b93;
+  font-size:17px;
+  font-weight:700;
+}
+
+.match-gps .match-gps-chart-card[open]>summary{
+  border-bottom:1px solid #e3e9f1;
+}
+
+.match-gps .match-gps-chart-card__body{
+  padding:14px 18px 18px;
+  border-top:0;
+  background:#fff;
+}
+
+/* segmented control compatto */
+.match-gps .match-gps-chart-mode{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 88px 88px;
+  gap:5px;
+  align-items:center;
+}
+
+.match-gps .match-gps-chart-mode::before{
+  content:'VISTA';
+  grid-column:1;
+  grid-row:1;
+  color:#8795a9;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.12em;
+}
+
+.match-gps .match-gps-chart-mode__label{
+  min-height:30px;
+  padding:4px 10px;
+  border:1px solid transparent;
+  border-radius:8px;
+  background:#f1f5f9;
+  color:#66778e;
+  box-shadow:none;
+  font-size:11px;
+  font-weight:850;
+}
+
+.match-gps .match-gps-chart-mode__label:first-of-type{
+  grid-column:2;
+  grid-row:1;
+}
+
+.match-gps .match-gps-chart-mode__label:nth-of-type(2){
+  grid-column:3;
+  grid-row:1;
+}
+
+.match-gps .match-gps-chart-mode__input:checked + .match-gps-chart-mode__label{
+  border-color:#173f78;
+  background:#173f78;
+  color:#fff;
+  box-shadow:0 4px 10px rgba(23,63,120,.14);
+}
+
+.match-gps .match-gps-chart-mode__panel{
+  grid-column:1 / -1;
+  margin-top:9px;
+}
+
+/* ranking */
+.match-gps .match-gps-chart{
+  gap:4px;
+  padding-top:0;
+}
+
+.match-gps .match-gps-chart__row{
+  grid-template-columns:30px minmax(150px,220px) minmax(220px,1fr) minmax(104px,auto);
+  gap:12px;
+  min-height:42px;
+  padding:5px 7px;
+  border-radius:10px;
+  transition:background .14s ease;
+}
+
+.match-gps .match-gps-chart__row:hover{
+  background:#f7f9fc;
+}
+
+.match-gps .match-gps-chart__row.is-top-1{
+  background:#f7faff;
+}
+
+.match-gps .match-gps-chart__rank{
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:8px;
+  background:#eef2f7;
+  color:#6a7c93;
+  font-size:11px;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+}
+
+.match-gps .match-gps-chart__row.is-top-1 .match-gps-chart__rank{
+  background:#173f78;
+  color:#fff;
+}
+
+.match-gps .match-gps-chart__row.is-top-2 .match-gps-chart__rank{
+  background:#dce7f4;
+  color:#244e82;
+}
+
+.match-gps .match-gps-chart__row.is-top-3 .match-gps-chart__rank{
+  background:#e9eef5;
+  color:#435b78;
+}
+
+.match-gps .match-gps-chart__player{
+  color:#203a61;
+  font-size:13px;
+  font-weight:800;
+}
+
+.match-gps .match-gps-chart__track{
+  height:8px;
+  background:#e7edf5;
+  box-shadow:inset 0 1px 2px rgba(16,42,86,.04);
+}
+
+.match-gps .match-gps-chart__bar{
+  background:linear-gradient(90deg,#3569aa 0%,#244f88 100%);
+  box-shadow:0 1px 3px rgba(36,79,136,.16);
+}
+
+.match-gps .match-gps-chart__value{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-end;
+  justify-self:end;
+  min-width:98px;
+  padding:5px 9px;
+  border:1px solid #dce4ee;
+  border-radius:999px;
+  background:#f8fafc;
+  color:#17345f;
+  font-size:12px;
+  font-weight:850;
+  white-space:nowrap;
+}
+
+/* mobile */
+@media(max-width:760px){
+  .match-gps .match-gps-chart-card__body{
+    padding:12px;
+  }
+
+  .match-gps .match-gps-chart-mode{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .match-gps .match-gps-chart-mode::before{
+    display:none;
+  }
+
+  .match-gps .match-gps-chart-mode__label:first-of-type{
+    grid-column:1;
+  }
+
+  .match-gps .match-gps-chart-mode__label:nth-of-type(2){
+    grid-column:2;
+  }
+
+  .match-gps .match-gps-chart__row{
+    grid-template-columns:26px minmax(90px,120px) minmax(100px,1fr) minmax(76px,auto);
+    gap:7px;
+    padding:5px 2px;
+  }
+
+  .match-gps .match-gps-chart__rank{
+    width:22px;
+    height:22px;
+  }
+
+  .match-gps .match-gps-chart__player{
+    font-size:11px;
+  }
+
+  .match-gps .match-gps-chart__value{
+    min-width:0;
+    padding:4px 7px;
+    font-size:11px;
+  }
+}

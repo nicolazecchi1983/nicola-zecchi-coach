@@ -21,7 +21,7 @@ export async function loadMatchGpsImportRow(teamId, eventId) {
 
     const metricsResult = await client
       .from('match_gps_player_metrics')
-      .select('id,import_id,team_id,player_id,source_row,source_ordinal,source_player_name,source_birth_date,resting_heart_rate,max_heart_rate,max_speed_ms,distance_max_speed_km,average_speed,acceleration_ms2,acceleration_count,deceleration_count,distance_km,source_values,created_at')
+      .select('id,import_id,team_id,player_id,source_row,source_ordinal,source_player_name,source_birth_date,minutes_played,resting_heart_rate,max_heart_rate,max_speed_ms,distance_max_speed_km,average_speed,acceleration_ms2,acceleration_count,deceleration_count,distance_km,source_values,created_at')
       .eq('team_id', teamId)
       .eq('import_id', importResult.data.id)
       .order('source_ordinal', { ascending: true })

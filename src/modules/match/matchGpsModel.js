@@ -1,7 +1,7 @@
 import { AppError } from '../../core/appError.js'
 import { normalizeSearchText } from '../../shared/text/textNormalization.js'
 
-export const MATCH_GPS_SCHEMA_VERSION = 1
+export const MATCH_GPS_SCHEMA_VERSION = 2
 
 export const MATCH_GPS_SOURCE_COLUMNS = Object.freeze([
   Object.freeze({ key: 'sourcePlayerName', label: 'Cognome/ nome', kind: 'text', aliases: ['cognome nome'] }),
@@ -20,6 +20,10 @@ export const MATCH_GPS_SOURCE_COLUMNS = Object.freeze([
 export const MATCH_GPS_METRIC_COLUMNS = Object.freeze(
   MATCH_GPS_SOURCE_COLUMNS.filter(({ kind }) => kind === 'number' || kind === 'integer'),
 )
+
+const MATCH_GPS_CONTEXT_COLUMNS = Object.freeze([
+  Object.freeze({ key: 'minutesPlayed', label: 'minuti giocati', kind: 'integer', aliases: ['minuti giocati', 'minuti', 'min giocati'] }),
+])
 
 const MATCH_ACTIVITY_KEYS = new Set(MATCH_GPS_METRIC_COLUMNS
   .map(({ key }) => key)
@@ -46,6 +50,10 @@ export function findMatchGpsHeader(matrix = []) {
     const normalized = row.map(normalizeMatchGpsHeader)
     const indexes = {}
     for (const column of MATCH_GPS_SOURCE_COLUMNS) {
+      const aliases = headerAliases(column)
+      indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
+    }
+    for (const column of MATCH_GPS_CONTEXT_COLUMNS) {
       const aliases = headerAliases(column)
       indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
     }
@@ -134,6 +142,12 @@ export function parseMatchGpsWorksheetRows(matrix = []) {
       metrics[column.key] = parsed.value
       if (parsed.invalid) invalidFields.push(column.key)
     }
+    const minutesIndex = header.indexes.minutesPlayed
+    const parsedMinutes = minutesIndex == null || minutesIndex < 0
+      ? { value: null, invalid: false }
+      : parseNumericCell(row[minutesIndex], { integer: true })
+    if (parsedMinutes.invalid) invalidFields.push('minutesPlayed')
+
     const hasActivityData = [...MATCH_ACTIVITY_KEYS].some((key) => metrics[key] != null)
     rows.push({
       sourceRow: rowIndex + 1,
@@ -141,6 +155,7 @@ export function parseMatchGpsWorksheetRows(matrix = []) {
       sourcePlayerName,
       sourceBirthDate,
       sourceBirthYear: sourceBirthDate ? Number(sourceBirthDate.slice(0, 4)) : null,
+      minutesPlayed: parsedMinutes.value,
       metrics,
       sourceValues: sourceValueMap(row, header),
       invalidFields,
@@ -258,6 +273,7 @@ export function buildMatchGpsSaveRows(rows = [], roster = []) {
     sourceOrdinal: row.sourceOrdinal,
     sourcePlayerName: row.sourcePlayerName,
     sourceBirthDate: row.sourceBirthDate,
+    minutesPlayed: row.minutesPlayed ?? null,
     metrics: { ...row.metrics },
     sourceValues: { ...row.sourceValues },
   }))
