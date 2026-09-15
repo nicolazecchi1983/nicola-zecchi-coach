@@ -1,5 +1,5 @@
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
-import { getMatchWorkflowSectionsForMoment } from '../matchWorkflowModel.js'
+import { getMatchPostUtilities, getMatchWorkflowSectionsForMoment } from '../matchWorkflowModel.js'
 
 const ICONS = Object.freeze({
   study:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
@@ -7,6 +7,7 @@ const ICONS = Object.freeze({
   formation:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.4"/><circle cx="15" cy="9" r="1.4"/><circle cx="9" cy="15" r="1.4"/><circle cx="15" cy="15" r="1.4"/></svg>',
   analysis:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9M10 19V5M15 19v-7M20 19V8"/></svg>',
   statistics:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16v-5M11 16V7M16 16v-8M21 16V4"/></svg>',
+  gps:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4v16M19 4v16M5 12h14"/><circle cx="12" cy="8" r="2"/><circle cx="12" cy="16" r="2"/></svg>',
   post:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
   report:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 13h5M10 17h5"/></svg>',
 })
@@ -15,7 +16,8 @@ const byKey = (items, key) => items.find((item) => item.key === key) || null
 
 function activeFor(activeSection, route) {
   if (route === 'report') return activeSection === 'report' || activeSection === 'match-report-workspace'
-  if (route === 'statistics') return activeSection === 'match-statistics'
+  const utility = getMatchPostUtilities().find((item) => item.key === route)
+  if (utility) return activeSection === utility.route
   return activeSection === route
 }
 
@@ -63,11 +65,12 @@ function postBoard(activeSection) {
   const analysis = byKey(sections, 'analysis')
   const report = byKey(sections, 'report')
   const post = byKey(sections, 'post-match')
+  const utilities = getMatchPostUtilities()
   if (!analysis || !report || !post) return ''
   return `<section class="match-phase-board match-phase-board--post" aria-label="Workspace POST" data-phase-workspace-board="post-match">
     <div class="match-phase-board__grid match-phase-board__grid--post">
       ${card({ route:'analysis', section:analysis, title:'Analisi', icon:'analysis', activeSection })}
-      ${card({ route:'statistics', title:'Statistiche', icon:'statistics', activeSection })}
+      ${utilities.map((utility) => card({ route:utility.key, title:utility.label, icon:utility.icon, activeSection })).join('')}
       ${card({ route:'post-match', section:post, title:'Post gara', icon:'post', activeSection })}
       ${card({ route:'report', section:report, title:'Report finale', icon:'report', activeSection })}
     </div>
@@ -76,6 +79,6 @@ function postBoard(activeSection) {
 
 export function renderPhaseWorkspaceNavigator({ activeSection = '', teamName = '' } = {}) {
   if (['opponent-study', 'callups', 'our-team', 'opponent'].includes(activeSection)) return preBoard(activeSection, teamName)
-  if (['analysis', 'match-statistics', 'post-match', 'report', 'match-report-workspace'].includes(activeSection)) return postBoard(activeSection)
+  if (['analysis', 'match-statistics', 'match-gps', 'post-match', 'report', 'match-report-workspace'].includes(activeSection)) return postBoard(activeSection)
   return ''
 }

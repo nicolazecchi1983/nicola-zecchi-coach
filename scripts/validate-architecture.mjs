@@ -23,6 +23,7 @@ const allowedSupabaseImports = new Set([
   'src/core/storage/teamStorage.js',
   'src/infrastructure/repositories/fileStorageRepository.js',
   'src/infrastructure/repositories/matchAnalysisRepository.js',
+  'src/infrastructure/repositories/matchGpsRepository.js',
   'src/infrastructure/repositories/profileRepository.js',
   'src/infrastructure/repositories/playerProfileRepository.js',
   'src/infrastructure/repositories/rosterRepository.js',

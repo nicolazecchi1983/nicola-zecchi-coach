@@ -90,6 +90,12 @@ export function wireMatchWorkspaceEvents({
         setActiveNavigation('match-library')
         storage?.setItem('nz-active-section', 'match-statistics')
         await setView('match-statistics', 'Statistiche partita')
+        return
+      }
+      if (action === 'gps') {
+        setActiveNavigation('match-library')
+        storage?.setItem('nz-active-section', 'match-gps')
+        await setView('match-gps', 'GPS partita')
       }
     })
 

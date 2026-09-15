@@ -996,7 +996,7 @@
   align-items:stretch;
 }
 .match-phase-board__grid--pre{grid-template-columns:repeat(3,minmax(0,1fr))}
-.match-phase-board__grid--post{grid-template-columns:repeat(4,minmax(0,1fr))}
+.match-phase-board__grid--post{grid-template-columns:repeat(5,minmax(0,1fr))}
 .match-phase-card{
   min-width:0;
   min-height:72px;

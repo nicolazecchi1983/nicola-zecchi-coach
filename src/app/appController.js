@@ -93,6 +93,7 @@ import { createMatchOpponentStudyService } from '../modules/match/matchOpponentS
 import { createMatchPostMatchService } from '../modules/match/matchPostMatchService.js'
 import { renderMatchPostMatchView } from '../modules/match/ui/matchPostMatchView.js'
 import { createMatchStatisticsView } from '../modules/match/ui/matchStatisticsView.js'
+import { createMatchGpsWorkspace } from '../modules/match/matchGpsWorkspace.js'
 import { createMatchCenterView } from '../modules/match/ui/matchCenterView.js'
 import { bindMatchAnalysisSchemaEditors } from '../modules/match/ui/matchAnalysisSchemaView.js'
 import { createAnalysisTemplateService } from '../modules/match/analysisTemplateService.js'
@@ -139,6 +140,7 @@ import { wireTeamAndRosterEvents } from '../modules/team/events/teamRosterEvents
 import { wireOpponentStudyEvents } from '../modules/match/events/opponentStudyEvents.js'
 import { wirePlayerProfileEvents } from '../modules/roster/events/playerProfileEvents.js'
 import { wireMatchWorkspaceEvents } from '../modules/match/events/matchWorkspaceEvents.js'
+import { wireMatchGpsEvents } from '../modules/match/events/matchGpsEvents.js'
 import { wireMatchLibraryEvents } from '../modules/match/events/matchLibraryEvents.js'
 import { wireStaffEvents } from '../modules/staff/events/staffEvents.js'
 import { wireMatchAnalysisEvents } from '../modules/match/events/matchAnalysisEvents.js'
@@ -437,12 +439,8 @@ const matchWorkspaceView = createMatchWorkspaceView({
 
 const matchCenterView = createMatchCenterView({ storage: localStorage, getCalendarEvents: () => appState.calendarEvents, getTeamProfile, canEdit: () => can(ACCESS_CAPABILITIES.MATCH_SHEET_EDIT), escapeHtml })
 
-const matchStatisticsView = createMatchStatisticsView({
-  storage: localStorage,
-  createMatchLibraryService,
-  getCalendarEvents: () => appState.calendarEvents,
-  getTeamProfile,
-})
+const matchStatisticsView = createMatchStatisticsView({ storage: localStorage, createMatchLibraryService, getCalendarEvents: () => appState.calendarEvents, getTeamProfile })
+const matchGpsWorkspace = createMatchGpsWorkspace({ storage: localStorage, getCalendarEvents: () => appState.calendarEvents, getTeamProfile, getRoster: activePlayers, canImport: () => can(ACCESS_CAPABILITIES.MATCH_GPS_IMPORT) })
 
 const matchLibraryView = createMatchLibraryView({
   createMatchLibraryService,
@@ -564,6 +562,7 @@ export async function attachAppEvents(user) {
     opponent: nativeOpponentView,
     'match-center': matchCenterView,
     'match-statistics': matchStatisticsView,
+    'match-gps': () => matchGpsWorkspace.render(),
     'opponent-study': opponentStudyView,
     'match-report-workspace': matchReportWorkspaceView,
     'post-match': postMatchView,
@@ -588,6 +587,7 @@ export async function attachAppEvents(user) {
     opponent: ensureCalendarEvents,
     'match-center': ensureCalendarEvents,
     'match-statistics': ensureCalendarEvents,
+    'match-gps': async () => { await Promise.all([ensureCalendarEvents(), loadRosterPlayers()]); await matchGpsWorkspace.prepare() },
     'opponent-study': ensureCalendarEvents,
     'match-report-workspace': ensureCalendarEvents,
     'post-match': ensureCalendarEvents,
@@ -742,6 +742,7 @@ export async function attachAppEvents(user) {
       updateCalendarEvent,
       loadCalendarEvents,
     })
+    wireMatchGpsEvents({ root, workspace: matchGpsWorkspace, setView })
     wireTeamAndRosterEvents({
       root,
       setView,

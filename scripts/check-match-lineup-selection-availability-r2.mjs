@@ -22,7 +22,7 @@ const checks=[
  ['bench is manually assigned, not derived from remaining names',!runtime.includes('deriveMatchLineupBench')&&!runtime.includes('updateDerivedBench')&&view.includes('name="bench_${index}"')],
  ['npm gate registered',pkg.scripts?.[gate]==='node scripts/check-match-lineup-selection-availability-r2.mjs'],
  ['suite registration unique',pkg.staffCheckSuite?.filter((item)=>item===gate).length===1],
- ['suite size is 258',pkg.staffCheckSuite?.length===258],
+ ['suite size is 259',pkg.staffCheckSuite?.length===259],
 ]
 let passed=0;for(const[label,ok]of checks){console.log(`${ok?'PASS':'FAIL'} ${label}`);if(ok)passed++}
 console.log(`R2.0 Lineup Selection Availability: ${passed}/${checks.length}`)

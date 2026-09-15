@@ -38,6 +38,7 @@
     "check:training-product": "node scripts/check-training-product-review.mjs",
     "check:match-document": "node scripts/check-match-document-model.mjs",
     "check:match-workflow": "node scripts/check-match-workflow.mjs",
+    "check:match-gps": "node scripts/check-match-gps-foundation.mjs",
     "check:match-opponent-study": "node scripts/check-match-opponent-study.mjs",
     "check:match-native": "node scripts/check-match-native-consolidation.mjs",
     "check:match-team-print": "node scripts/check-match-team-print-integrity.mjs",
@@ -277,7 +278,8 @@
     "vitest": "^4.1.0"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.110.8"
+    "@supabase/supabase-js": "^2.110.8",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "staffCheckSuite": [
     "check:check-suite-integrity",
@@ -364,6 +366,7 @@
     "check:training-steps",
     "check:match-document",
     "check:match-workflow",
+    "check:match-gps",
     "check:match-library-months",
     "check:match-library-statistics-entry",
     "check:match-opponent-study",

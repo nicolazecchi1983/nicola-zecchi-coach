@@ -29,6 +29,8 @@ describe('data access user feedback', () => {
       .toBe('Creazione partita non riuscita.')
     expect(getDataAccessUserMessage(null, undefined, { stage: 'training-publish' }))
       .toBe('Pubblicazione non riuscita. Il documento precedente è rimasto invariato.')
+    expect(getDataAccessUserMessage(null, undefined, { stage: 'match-gps-save' }))
+      .toBe('Salvataggio dati GPS non riuscito.')
   })
 
   it('mantiene il fallback esplicito per compatibilità legacy', () => {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getMatchWorkflowPhase,
   getMatchWorkflowPhaseLabel,
+  getMatchPostUtilities,
   getMatchWorkflowSections,
   getMatchWorkflowSectionsForSection,
 } from '../../src/modules/match/matchWorkflowModel.js'
@@ -17,6 +18,15 @@ describe('matchWorkflowModel', () => {
       'report',
       'post-match',
     ])
+  })
+
+  it('espone Statistiche e GPS come utility POST senza creare sezioni aggiuntive', () => {
+    expect(getMatchPostUtilities()).toEqual([
+      expect.objectContaining({ key: 'statistics', route: 'match-statistics' }),
+      expect.objectContaining({ key: 'gps', route: 'match-gps' }),
+    ])
+    expect(getMatchWorkflowSections()).toHaveLength(7)
+    expect(getMatchWorkflowSectionsForSection('match-gps').map(({ key }) => key)).toEqual(['analysis', 'report', 'post-match'])
   })
 
   it('deriva la navigazione contestuale dal momento senza barra globale a sette', () => {

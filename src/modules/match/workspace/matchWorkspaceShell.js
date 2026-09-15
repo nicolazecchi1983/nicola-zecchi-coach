@@ -2,6 +2,7 @@ import { matchContextBackButtonHtml } from '../../../design-system/uiComponents.
 import { escapeHtml } from '../../../shared/html/escapeHtml.js'
 import {
   MATCH_TEMPORAL_MOMENTS,
+  getMatchPostUtilities,
   getMatchTemporalMomentForSection,
   getMatchWorkflowSectionsForSection,
 } from '../matchWorkflowModel.js'
@@ -59,10 +60,12 @@ function matchTemporalNavigationHtml(activeSection = '') {
  */
 function matchPostUtilityNavigationHtml(activeSection = '') {
   if (getMatchTemporalMomentForSection(activeSection) !== 'post-match') return ''
-  const active = activeSection === 'match-statistics'
   return `<aside class="match-post-utility-bar" aria-label="Strumenti post-partita" data-match-post-utility-bar hidden aria-hidden="true">
     <span class="match-post-utility-bar__label">STRUMENTI POST-PARTITA</span>
-    <button type="button" class="button button--secondary match-post-utility-bar__action ${active ? 'is-active' : ''}" data-workspace-action="statistics" ${active ? 'aria-current="page"' : ''}>Statistiche</button>
+    ${getMatchPostUtilities().map((utility) => {
+      const active = activeSection === utility.route
+      return `<button type="button" class="button button--secondary match-post-utility-bar__action ${active ? 'is-active' : ''}" data-workspace-action="${utility.key}" ${active ? 'aria-current="page"' : ''}>${utility.label}</button>`
+    }).join('')}
   </aside>`
 }
 

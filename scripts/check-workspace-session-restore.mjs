@@ -8,7 +8,7 @@ const controller = fs.readFileSync('src/app/appController.js', 'utf8')
 const available = [
   'dashboard', 'calendar', 'match-library', 'match-workspace', 'callups',
   'our-team', 'opponent', 'analysis', 'match-statistics',
-  'opponent-study', 'match-report-workspace', 'post-match', 'profile',
+  'match-gps', 'opponent-study', 'match-report-workspace', 'post-match', 'profile',
 ]
 const allow = () => true
 const match = { id: 'match-1', opponent: 'Comacchiese' }
@@ -32,9 +32,15 @@ const missingContext = resolveWorkspaceRestore({
   firstAccessibleSection: 'dashboard',
 })
 
+const gpsRestore = resolveWorkspaceRestore({
+  savedSection: 'match-gps', activeMatch: match, calendarEvents: events,
+  canAccessSection: allow, availableSections: available, firstAccessibleSection: 'dashboard',
+})
+
 const checks = [
   ['Report viene ripristinato con match valido', reportRestore.key === 'match-report-workspace'],
   ['Restore contestuale mantiene Match Library attiva in sidebar', reportRestore.navigationKey === 'match-library'],
+  ['GPS viene ripristinato dentro il contesto della partita', gpsRestore.key === 'match-gps' && gpsRestore.navigationKey === 'match-library'],
   ['Contesto Match mancante fa fallback sicuro', missingContext.key === 'match-library'],
   ['Controller usa resolver centrale', controller.includes('resolveWorkspaceRestore({')],
   ['Restore considera tutte le route registrate, non solo APP_MENU', controller.includes('availableSections: moduleRegistry.keys()')],

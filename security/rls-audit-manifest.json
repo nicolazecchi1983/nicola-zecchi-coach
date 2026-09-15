@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "generatedFor": "STAFF 0.26.4-R1",
+  "version": 3,
+  "generatedFor": "STAFF R3.1 Match GPS",
   "browserDataApiTables": {
     "analysis_templates": {
       "scope": "team+owner",
@@ -15,6 +15,16 @@
       "scope": "team/legacy",
       "repoRlsEvidence": "live-finding-hardening-prepared",
       "hardeningMigration": "supabase/20260812_security_rls_hardening_r2.sql"
+    },
+    "match_gps_imports": {
+      "scope": "team+match",
+      "repoRlsEvidence": "verified-migration",
+      "migration": "supabase/migrations/20260915073404_match_gps_foundation.sql"
+    },
+    "match_gps_player_metrics": {
+      "scope": "team+match+player",
+      "repoRlsEvidence": "verified-migration",
+      "migration": "supabase/migrations/20260915073404_match_gps_foundation.sql"
     },
     "player_profiles": {
       "scope": "player->team",

@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import {
   MATCH_TEMPORAL_MOMENTS,
   MATCH_WORKFLOW_SECTIONS,
+  MATCH_POST_UTILITIES,
   getMatchTemporalMomentForSection,
   getMatchWorkflowPhase,
   getMatchWorkflowSectionsForMoment,
@@ -39,8 +40,10 @@ const checks = [
   ['Le sole route ausiliarie mantengono alias temporali senza nuova identità Match',
     getMatchTemporalMomentForSection('match-center') === 'match-day'
     && getMatchTemporalMomentForSection('match-statistics') === 'post-match'
+    && getMatchTemporalMomentForSection('match-gps') === 'post-match'
     && getMatchTemporalMomentForSection('match-report-workspace') === 'post-match'
-    && !MATCH_WORKFLOW_SECTIONS.some((item) => ['match-center', 'match-statistics', 'match-report-workspace'].includes(item.key))],
+    && !MATCH_WORKFLOW_SECTIONS.some((item) => ['match-center', 'match-statistics', 'match-gps', 'match-report-workspace'].includes(item.key))],
+  ['Le utility POST canoniche sono Statistiche e GPS', MATCH_POST_UTILITIES.map((item) => item.key).join('|') === 'statistics|gps'],
   ['Fase Match derivata automaticamente dal tempo',
     getMatchWorkflowPhase({ date: '2026-09-07', time: '15:30' }, new Date('2026-09-06T12:00:00')) === 'pre-match'
     && getMatchWorkflowPhase({ date: '2026-09-06', time: '15:30' }, new Date('2026-09-06T12:00:00')) === 'match-day'
@@ -54,6 +57,7 @@ const checks = [
   ['Nostra squadra e Avversario sono sezioni native', app.includes("'our-team': nativeOurTeamView") && app.includes("opponent: nativeOpponentView") && !app.includes("setView('match-sheet', 'Match Sheet Editor')")],
   ['Sezioni future hanno route controllate', app.includes("'opponent-study': opponentStudyView") && app.includes("'match-report-workspace': matchReportWorkspaceView") && app.includes("'post-match': postMatchView")],
   ['Nuove route rispettano access control', ['opponent-study', 'match-report-workspace', 'post-match'].every((key) => access.includes(`'${key}': ACCESS_CAPABILITIES.MATCH_LIBRARY_VIEW`))],
+  ['GPS usa una capability dedicata', access.includes("'match-gps': ACCESS_CAPABILITIES.MATCH_GPS_VIEW")],
 ]
 
 let failed = 0

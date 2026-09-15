@@ -7,6 +7,7 @@ export const MATCH_CONTEXT_SECTIONS = Object.freeze([
   'match-center',
   'analysis',
   'match-statistics',
+  'match-gps',
   'match-report-workspace',
   'post-match',
 ])
@@ -27,6 +28,7 @@ export const WORKSPACE_LABELS = Object.freeze({
   'match-center': 'Match Center',
   analysis: 'Analisi gara',
   'match-statistics': 'Statistiche partita',
+  'match-gps': 'GPS partita',
   'match-report-workspace': 'Report partita',
   'post-match': 'Post gara',
   board: 'Board',

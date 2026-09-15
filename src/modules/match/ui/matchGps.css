@@ -1,0 +1,24 @@
+.match-gps{display:grid;gap:18px;min-width:0}
+.match-gps-import,.match-gps-panel,.match-gps-empty{border:1px solid #dbe3ef;border-radius:20px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.04)}
+.match-gps-import{padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.match-gps-import span,.match-gps-panel__head span{font-size:11px;font-weight:850;letter-spacing:.11em;color:#60708a}
+.match-gps-import h2,.match-gps-panel__head h2{margin:4px 0;color:#102a56;font-size:22px}
+.match-gps-import p,.match-gps-panel__head p,.match-gps-empty p{margin:0;color:#6b778c}
+.match-gps-file-button{position:relative;overflow:hidden;flex:none;cursor:pointer}
+.match-gps-file-button input{position:absolute;inline-size:1px;block-size:1px;opacity:0;pointer-events:none}
+.match-gps-panel{padding:22px;min-width:0}
+.match-gps-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+.match-gps-summary>div{padding:13px 15px;border:1px solid #dbe3ef;border-radius:14px;background:#f8fafc;display:flex;align-items:baseline;gap:8px}
+.match-gps-summary strong{font-size:24px;color:#102a56}.match-gps-summary span{font-size:12px;color:#60708a}.match-gps-summary .is-warning{border-color:#e9bc73;background:#fff9ef}
+.match-gps-notice,.match-gps-validation,.match-gps-error{margin:0;padding:13px 15px;border-radius:13px}
+.match-gps-notice{margin-bottom:16px;background:#eef5ff;color:#36577f}.match-gps-validation,.match-gps-error{background:#fff3f1;border:1px solid #f0c3bd;color:#9b2c22}
+.match-gps-table-wrap{max-width:100%;overflow-x:auto;border:1px solid #e2e8f0;border-radius:14px}
+.match-gps-table{width:100%;min-width:820px;border-collapse:collapse;background:#fff}
+.match-gps-table--metrics{min-width:1500px}
+.match-gps-table th,.match-gps-table td{padding:11px 12px;border-bottom:1px solid #edf1f6;text-align:left;vertical-align:middle;white-space:nowrap}
+.match-gps-table th{background:#f5f8fc;color:#52627a;font-size:11px;letter-spacing:.04em}.match-gps-table td{color:#243b61;font-size:13px}
+.match-gps-table td strong,.match-gps-table td small{display:block}.match-gps-table td small{margin-top:2px;color:#7a879a}
+.match-gps-table tr.needs-review{background:#fffdf7}.match-gps-table select{min-width:220px;max-width:280px;width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#243b61}
+.match-gps-status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}.match-gps-status.is-ready{background:#e8f7ef;color:#17643c}.match-gps-status.is-warning{background:#fff1d9;color:#8a5810}
+.match-gps-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.match-gps-empty{padding:36px;text-align:center}.match-gps-empty strong{display:block;color:#102a56;font-size:19px;margin-bottom:5px}
+@media(max-width:760px){.match-gps-import{align-items:stretch;flex-direction:column}.match-gps-file-button{justify-content:center}.match-gps-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.match-gps-panel{padding:15px}.match-gps-actions{display:grid;grid-template-columns:1fr}.match-gps-actions .button{width:100%}}

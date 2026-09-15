@@ -75,10 +75,17 @@ export const MATCH_WORKFLOW_SECTIONS = Object.freeze([
   }),
 ])
 
+// POST tools enrich a match without becoming additional workflow sections.
+export const MATCH_POST_UTILITIES = Object.freeze([
+  Object.freeze({ key: 'statistics', route: 'match-statistics', label: 'Statistiche', icon: 'statistics' }),
+  Object.freeze({ key: 'gps', route: 'match-gps', label: 'GPS', icon: 'gps' }),
+])
+
 const MATCH_TEMPORAL_SECTION_ALIASES = Object.freeze({
   'match-center': 'match-day',
   'match-report-workspace': 'post-match',
   'match-statistics': 'post-match',
+  'match-gps': 'post-match',
 })
 
 export function getMatchTemporalMomentForSection(sectionKey = '') {
@@ -129,4 +136,8 @@ export function getMatchWorkflowPhaseLabel(phase) {
 
 export function getMatchWorkflowSections() {
   return MATCH_WORKFLOW_SECTIONS
+}
+
+export function getMatchPostUtilities() {
+  return MATCH_POST_UTILITIES
 }
