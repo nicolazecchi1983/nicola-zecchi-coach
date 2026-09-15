@@ -83,6 +83,13 @@ describe('matchGpsModel', () => {
     expect(matched[1]).toMatchObject({ playerId: 'player-2', matchStatus: 'matched' })
   })
 
+  it('associa automaticamente un nome univoco quando l’anno Rosa è vuoto', () => {
+    const rows = parseMatchGpsWorksheetRows(sourceMatrix()).rows
+    const matched = matchGpsRowsToRoster(rows, [
+      { id: 'player-2', name: 'Manuel Musiani', year: '' },
+    ])
+    expect(matched[1]).toMatchObject({ playerId: 'player-2', matchStatus: 'matched' })
+  })
   it('richiede revisione quando il nome coincide ma l’anno è incompatibile', () => {
     const rows = parseMatchGpsWorksheetRows(sourceMatrix()).rows
     const matched = matchGpsRowsToRoster(rows, [{ id: 'player-2', name: 'Manuel Musiani', year: '2001' }])

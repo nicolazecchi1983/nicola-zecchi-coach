@@ -179,7 +179,9 @@ function nameTokens(value) {
 }
 
 function rosterBirthYear(player) {
-  const value = Number(player?.year ?? player?.birthYear ?? player?.birth_year)
+  const raw = player?.year ?? player?.birthYear ?? player?.birth_year
+  if (raw == null || String(raw).trim() === '') return null
+  const value = Number(raw)
   return Number.isInteger(value) ? value : null
 }
 
