@@ -56,7 +56,7 @@ function legacyMetricsFromRow(row = {}) {
   return metrics
 }
 
-function normalizeMetricRow(row = {}) {
+export function normalizeMatchGpsMetricRow(row = {}) {
   const metrics = {
     ...legacyMetricsFromRow(row),
     ...normalizeMetricValues(row.metric_values, 'match-gps-load'),
@@ -75,7 +75,7 @@ function normalizeMetricRow(row = {}) {
   }
 }
 
-function normalizeImport(row) {
+export function normalizeMatchGpsImportRow(row) {
   if (!row) return null
   return {
     id: row.id,
@@ -90,7 +90,7 @@ function normalizeImport(row) {
     importedBy: row.imported_by || null,
     importedAt: row.imported_at || null,
     updatedAt: row.updated_at || null,
-    rows: Array.isArray(row.metrics) ? row.metrics.map(normalizeMetricRow) : [],
+    rows: Array.isArray(row.metrics) ? row.metrics.map(normalizeMatchGpsMetricRow) : [],
   }
 }
 
@@ -126,7 +126,7 @@ export function createMatchGpsService({
       const resolvedEventId = requireIdentity(eventId, 'Partita')
       const { data, error } = await loadImportRow(resolvedTeamId, resolvedEventId)
       if (error) throw error
-      return normalizeImport(data)
+      return normalizeMatchGpsImportRow(data)
     },
 
     async replace({ teamId, eventId, source, rows } = {}) {
