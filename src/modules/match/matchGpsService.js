@@ -4,6 +4,7 @@ import {
   replaceMatchGpsImportRow,
 } from '../../infrastructure/repositories/matchGpsRepository.js'
 import { MATCH_GPS_SCHEMA_VERSION } from './matchGpsModel.js'
+import { MATCH_GPS_METRIC_REGISTRY } from './matchGpsMetricRegistry.js'
 
 function requireIdentity(value, label) {
   const id = String(value || '').trim()
@@ -11,7 +12,56 @@ function requireIdentity(value, label) {
   return id
 }
 
+function normalizeMetricValues(value, stage) {
+  if (value == null) return {}
+
+  if (typeof value !== 'object' || Array.isArray(value)) {
+    throw new AppError('Payload metriche GPS non valido.', {
+      code: 'MATCH_GPS_METRIC_VALUES_INVALID',
+      stage,
+      userMessage: 'Le metriche GPS contengono un formato non valido.',
+    })
+  }
+
+  const normalized = {}
+
+  for (const [key, metricValue] of Object.entries(value)) {
+    if (metricValue == null) {
+      normalized[key] = null
+      continue
+    }
+
+    if (typeof metricValue !== 'number' || !Number.isFinite(metricValue)) {
+      throw new AppError(`Metrica GPS non numerica: ${key}.`, {
+        code: 'MATCH_GPS_METRIC_VALUES_INVALID',
+        stage,
+        userMessage: 'Le metriche GPS contengono un valore non numerico.',
+      })
+    }
+
+    normalized[key] = metricValue
+  }
+
+  return normalized
+}
+
+function legacyMetricsFromRow(row = {}) {
+  const metrics = {}
+
+  for (const definition of MATCH_GPS_METRIC_REGISTRY) {
+    if (!definition.legacyColumn) continue
+    metrics[definition.key] = row[definition.legacyColumn] ?? null
+  }
+
+  return metrics
+}
+
 function normalizeMetricRow(row = {}) {
+  const metrics = {
+    ...legacyMetricsFromRow(row),
+    ...normalizeMetricValues(row.metric_values, 'match-gps-load'),
+  }
+
   return {
     id: row.id || null,
     playerId: row.player_id || null,
@@ -20,17 +70,7 @@ function normalizeMetricRow(row = {}) {
     sourcePlayerName: String(row.source_player_name || ''),
     sourceBirthDate: row.source_birth_date || null,
     minutesPlayed: row.minutes_played ?? null,
-    metrics: {
-      restingHeartRate: row.resting_heart_rate ?? null,
-      maxHeartRate: row.max_heart_rate ?? null,
-      maxSpeedMs: row.max_speed_ms ?? null,
-      distanceMaxSpeedKm: row.distance_max_speed_km ?? null,
-      averageSpeed: row.average_speed ?? null,
-      accelerationMs2: row.acceleration_ms2 ?? null,
-      accelerationCount: row.acceleration_count ?? null,
-      decelerationCount: row.deceleration_count ?? null,
-      distanceKm: row.distance_km ?? null,
-    },
+    metrics,
     sourceValues: row.source_values || {},
   }
 }
@@ -55,25 +95,25 @@ function normalizeImport(row) {
 }
 
 function persistenceRow(row) {
-  const metrics = row.metrics || {}
-  return {
+  const metricValues = normalizeMetricValues(row.metrics || {}, 'match-gps-save')
+
+  const payload = {
     player_id: row.playerId,
     source_row: row.sourceRow,
     source_ordinal: row.sourceOrdinal,
     source_player_name: row.sourcePlayerName,
     source_birth_date: row.sourceBirthDate,
     minutes_played: row.minutesPlayed ?? null,
-    resting_heart_rate: metrics.restingHeartRate ?? null,
-    max_heart_rate: metrics.maxHeartRate ?? null,
-    max_speed_ms: metrics.maxSpeedMs ?? null,
-    distance_max_speed_km: metrics.distanceMaxSpeedKm ?? null,
-    average_speed: metrics.averageSpeed ?? null,
-    acceleration_ms2: metrics.accelerationMs2 ?? null,
-    acceleration_count: metrics.accelerationCount ?? null,
-    deceleration_count: metrics.decelerationCount ?? null,
-    distance_km: metrics.distanceKm ?? null,
+    metric_values: metricValues,
     source_values: row.sourceValues || {},
   }
+
+  for (const definition of MATCH_GPS_METRIC_REGISTRY) {
+    if (!definition.legacyColumn) continue
+    payload[definition.legacyColumn] = metricValues[definition.key] ?? null
+  }
+
+  return payload
 }
 
 export function createMatchGpsService({

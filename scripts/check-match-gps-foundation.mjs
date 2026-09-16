@@ -21,7 +21,7 @@ const checks = [
   ['GPS remains a POST utility, not an eighth workflow section', MATCH_WORKFLOW_SECTIONS.length === 7 && MATCH_POST_UTILITIES.map(({ key }) => key).join('|') === 'statistics|gps'],
   ['Excel parser is lazy and accepts only xlsx', workbook.includes("return import('xlsx')") && workbook.includes('/\\.xlsx$/i')],
   ['SheetJS is pinned to the official distribution', packageJson.dependencies?.xlsx === 'https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz'],
-  ['Parser preserves source values and excludes resting-only rows', model.includes('sourceValues: sourceValueMap') && model.includes("key !== 'restingHeartRate'")],
+  ['Parser preserves source values and excludes resting-only rows', model.includes('sourceValues: sourceValueMap') && model.includes('getMatchGpsMetrics({ activitySignal: true })')],
   ['Player mapping uses canonical roster IDs', model.includes('playerId: String(compatible[0].id)') && model.includes('lo stesso giocatore è associato a più righe')],
   ['Persistence uses the atomic replace RPC', repository.includes("rpc('replace_match_gps_import'") && service.includes('p_rows: rows.map(persistenceRow)')],
   ['Supabase access stays inside the approved repository boundary', architecture.includes("'src/infrastructure/repositories/matchGpsRepository.js'")],
