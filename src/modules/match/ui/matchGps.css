@@ -891,24 +891,48 @@
     grid-column:2;
   }
 
+  /* R31.3M — mobile comparative chart anatomy */
   .match-gps .match-gps-chart__row{
-    grid-template-columns:26px minmax(90px,120px) minmax(100px,1fr) minmax(76px,auto);
-    gap:7px;
-    padding:5px 2px;
+    grid-template-columns:26px minmax(0,1fr) auto;
+    grid-template-areas:
+      "rank player value"
+      ". track track";
+    column-gap:8px;
+    row-gap:7px;
+    min-height:54px;
+    padding:8px 2px 9px;
   }
 
   .match-gps .match-gps-chart__rank{
+    grid-area:rank;
     width:22px;
     height:22px;
   }
 
   .match-gps .match-gps-chart__player{
-    font-size:11px;
+    grid-area:player;
+    min-width:0;
+    overflow:visible;
+    text-overflow:clip;
+    white-space:normal;
+    font-size:12px;
+    line-height:1.2;
+  }
+
+  .match-gps .match-gps-chart__track{
+    grid-area:track;
+    width:100%;
+    height:7px;
   }
 
   .match-gps .match-gps-chart__value{
+    grid-area:value;
+    justify-self:end;
     min-width:0;
-    padding:4px 7px;
+    padding:0;
+    border:0;
+    background:transparent;
     font-size:11px;
+    white-space:nowrap;
   }
 }
