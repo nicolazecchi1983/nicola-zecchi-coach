@@ -52,31 +52,37 @@ export function normalizeMatchGpsHistoryEntry(input = {}) {
     startAt: startAt || null,
     matchDate: startAt ? startAt.slice(0, 10) : null,
     opponent: text(
-      event.opponent
+      input.opponent
+      ?? event.opponent
       ?? metadata.opponent
       ?? metadata.opponent_name
       ?? opponentFromTitle(event.title),
     ) || 'Avversario',
     competition: text(
-      event.competition
+      input.competition
+      ?? event.competition
       ?? metadata.competition
       ?? metadata.competition_name,
     ) || null,
     competitionRound: text(
-      event.competitionRound
+      input.competitionRound
+      ?? input.competition_round
+      ?? event.competitionRound
       ?? event.competition_round
       ?? metadata.competitionRound
       ?? metadata.competition_round
       ?? metadata.round,
     ) || null,
     homeAway: text(
-      event.homeAway
+      input.homeAway
+      ?? input.home_away
+      ?? event.homeAway
       ?? event.home_away
       ?? metadata.homeAway
       ?? metadata.home_away
       ?? metadata.match_type,
     ) || null,
-    location: text(event.location) || null,
+    location: text(input.location ?? event.location) || null,
     importedAt: text(input.importedAt ?? input.imported_at) || null,
     updatedAt: text(input.updatedAt ?? input.updated_at) || null,
     sourceFileName: text(input.sourceFileName ?? input.source_file_name),

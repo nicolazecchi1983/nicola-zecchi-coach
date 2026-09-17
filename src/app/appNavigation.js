@@ -7,6 +7,7 @@ export const APP_MENU = [
   ['training-sheet', 'Training Sheet Editor'],
   ['library', 'Training Library'],
   ['match-library', 'Match Library'],
+  ['match-gps-analysis', 'Analisi GPS'],
   ['callups', 'Convocazioni'],
   ['our-team', 'Nostra squadra'],
   ['opponent', 'Avversario'],
@@ -18,7 +19,7 @@ export const APP_MENU = [
 const SIDEBAR_GROUPS = [
   { key: 'primary', items: [['dashboard', 'Dashboard', 'dashboard'], ['calendar', 'Calendario', 'calendar']] },
   { key: 'training', label: 'Training', items: [['training-sheet', 'Training Sheet', 'training-sheet'], ['library', 'Training Library', 'library']] },
-  { key: 'match', label: 'Match', items: [['match-library', 'Match Library', 'match-library']] },
+  { key: 'match', label: 'Match', items: [['match-library', 'Match Library', 'match-library'], ['match-gps-analysis', 'Analisi GPS', 'gps']] },
   { key: 'management', items: [['squad', 'Rosa', 'squad'], ['settings', 'Impostazioni', 'settings']] },
 ]
 
@@ -45,6 +46,7 @@ const MOBILE_DRAWER_GROUPS = [
     label: 'Match',
     items: [
       ['match-library', 'Match Library', 'match-library'],
+    ['match-gps-analysis', 'Analisi GPS', 'gps'],
     ],
   },
   {

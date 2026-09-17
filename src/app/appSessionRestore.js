@@ -29,6 +29,7 @@ export const WORKSPACE_LABELS = Object.freeze({
   analysis: 'Analisi gara',
   'match-statistics': 'Statistiche partita',
   'match-gps': 'GPS partita',
+  'match-gps-analysis': 'Analisi GPS',
   'match-report-workspace': 'Report partita',
   'post-match': 'Post gara',
   board: 'Board',

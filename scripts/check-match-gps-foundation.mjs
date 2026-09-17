@@ -4,6 +4,8 @@ import { MATCH_POST_UTILITIES, MATCH_WORKFLOW_SECTIONS } from '../src/modules/ma
 
 const read = (path) => fs.readFileSync(path, 'utf8').replaceAll('\r\n', '\n')
 const controller = read('src/app/appController.js')
+const appGpsModules = read('src/app/appMatchGpsModules.js')
+const workspace = read('src/modules/match/matchGpsWorkspace.js')
 const model = read('src/modules/match/matchGpsModel.js')
 const workbook = read('src/modules/match/matchGpsWorkbook.js')
 const service = read('src/modules/match/matchGpsService.js')
@@ -25,8 +27,8 @@ const checks = [
   ['Player mapping uses canonical roster IDs', model.includes('playerId: String(compatible[0].id)') && model.includes('lo stesso giocatore è associato a più righe')],
   ['Persistence uses the atomic replace RPC', repository.includes("rpc('replace_match_gps_import'") && service.includes('p_rows: rows.map(persistenceRow)')],
   ['Supabase access stays inside the approved repository boundary', architecture.includes("'src/infrastructure/repositories/matchGpsRepository.js'")],
-  ['Workspace uses module-local state and registered lifecycle prepare', controller.includes('createMatchGpsWorkspace') && controller.includes("'match-gps': async () =>")],
-  ['Dedicated binder owns GPS interactions', controller.includes('wireMatchGpsEvents') && events.includes('data-match-gps-player-map')],
+  ['Workspace uses module-local state and registered lifecycle prepare', workspace.includes('const state = { eventId: null') && workspace.includes('async function prepare()') && appGpsModules.includes("const matchGpsWorkspace = createMatchGpsWorkspace({") && appGpsModules.includes("'match-gps': async () =>") && appGpsModules.includes('await matchGpsWorkspace.prepare()') && controller.includes('...matchGpsModules.prepare')],
+  ['Dedicated binder owns GPS interactions', events.includes('export function wireMatchGpsEvents') && events.includes('data-match-gps-player-map') && appGpsModules.includes("import { wireMatchGpsEvents } from '../modules/match/events/matchGpsEvents.js'") && appGpsModules.includes('wireMatchGpsEvents({') && controller.includes('matchGpsModules.bind({ root, setView })')],
   ['GPS has separate read and import capabilities', access.includes("MATCH_GPS_VIEW: 'matchGps.view'") && access.includes("MATCH_GPS_IMPORT: 'matchGps.import'")],
   ['Session restore recognizes GPS match context', session.includes("'match-gps'") && session.includes("'match-gps': 'GPS partita'")],
   ['GPS view is responsive and loaded before canonical responsive CSS', view.includes('data-match-gps-workspace') && main.indexOf('matchGps.css') < main.indexOf('responsive.css')],
