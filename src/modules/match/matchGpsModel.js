@@ -1,33 +1,46 @@
 import { AppError } from '../../core/appError.js'
 import { normalizeSearchText } from '../../shared/text/textNormalization.js'
+import {
+  MATCH_GPS_METRIC_REGISTRY,
+  getMatchGpsMetrics,
+} from './matchGpsMetricRegistry.js'
 
-export const MATCH_GPS_SCHEMA_VERSION = 2
+export const MATCH_GPS_SCHEMA_VERSION = 3
+
+const MATCH_GPS_IDENTITY_COLUMNS = Object.freeze([
+  Object.freeze({
+    key: 'sourcePlayerName',
+    label: 'Cognome/ nome',
+    kind: 'text',
+    aliases: ['cognome nome'],
+  }),
+  Object.freeze({
+    key: 'sourceBirthDate',
+    label: 'Data di nascita',
+    kind: 'date',
+    aliases: ['data di nascita'],
+  }),
+])
+
+export const MATCH_GPS_METRIC_COLUMNS = MATCH_GPS_METRIC_REGISTRY
 
 export const MATCH_GPS_SOURCE_COLUMNS = Object.freeze([
-  Object.freeze({ key: 'sourcePlayerName', label: 'Cognome/ nome', kind: 'text', aliases: ['cognome nome'] }),
-  Object.freeze({ key: 'sourceBirthDate', label: 'Data di nascita', kind: 'date', aliases: ['data di nascita'] }),
-  Object.freeze({ key: 'restingHeartRate', label: 'CARDIO RIP.', kind: 'number', unit: 'bpm', aliases: ['cardio rip'] }),
-  Object.freeze({ key: 'maxHeartRate', label: 'CARDIO MAX.', kind: 'number', unit: 'bpm', aliases: ['cardio max'] }),
-  Object.freeze({ key: 'maxSpeedMs', label: 'VEL MAX m/s', kind: 'number', unit: 'm/s', aliases: ['vel max m s', 'vel max ms'] }),
-  Object.freeze({ key: 'distanceMaxSpeedKm', label: 'Dist. Max vel. KM', kind: 'number', unit: 'km', aliases: ['dist max vel km'] }),
-  Object.freeze({ key: 'averageSpeed', label: 'VEL media', kind: 'number', unit: null, aliases: ['vel media'] }),
-  Object.freeze({ key: 'accelerationMs2', label: 'ACC m/s2', kind: 'number', unit: 'm/s²', aliases: ['acc m s2', 'acc ms2'] }),
-  Object.freeze({ key: 'accelerationCount', label: 'n. ACC', kind: 'integer', unit: null, aliases: ['n acc'] }),
-  Object.freeze({ key: 'decelerationCount', label: 'n. DECELL', kind: 'integer', unit: null, aliases: ['n decell'] }),
-  Object.freeze({ key: 'distanceKm', label: 'KM', kind: 'number', unit: 'km', aliases: ['km'] }),
+  ...MATCH_GPS_IDENTITY_COLUMNS,
+  ...MATCH_GPS_METRIC_COLUMNS,
 ])
-
-export const MATCH_GPS_METRIC_COLUMNS = Object.freeze(
-  MATCH_GPS_SOURCE_COLUMNS.filter(({ kind }) => kind === 'number' || kind === 'integer'),
-)
 
 const MATCH_GPS_CONTEXT_COLUMNS = Object.freeze([
-  Object.freeze({ key: 'minutesPlayed', label: 'minuti giocati', kind: 'integer', aliases: ['minuti giocati', 'minuti', 'min giocati'] }),
+  Object.freeze({
+    key: 'minutesPlayed',
+    label: 'minuti giocati',
+    kind: 'integer',
+    aliases: ['minuti giocati', 'minuti', 'min giocati'],
+  }),
 ])
 
-const MATCH_ACTIVITY_KEYS = new Set(MATCH_GPS_METRIC_COLUMNS
-  .map(({ key }) => key)
-  .filter((key) => key !== 'restingHeartRate'))
+const MATCH_ACTIVITY_KEYS = new Set(
+  getMatchGpsMetrics({ activitySignal: true }).map(({ key }) => key),
+)
 
 function cleanText(value, max = 180) {
   return String(value ?? '').trim().slice(0, max)
@@ -41,33 +54,67 @@ export function normalizeMatchGpsHeader(value = '') {
 }
 
 function headerAliases(column) {
-  return new Set([column.label, ...(column.aliases || [])].map(normalizeMatchGpsHeader))
+  return new Set(
+    [column.label, ...(column.aliases || [])].map(normalizeMatchGpsHeader),
+  )
+}
+
+function resolveHeaderIndexes(normalized) {
+  const indexes = {}
+
+  for (const column of MATCH_GPS_IDENTITY_COLUMNS) {
+    const aliases = headerAliases(column)
+    indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
+  }
+
+  for (const column of MATCH_GPS_METRIC_COLUMNS) {
+    const aliases = headerAliases(column)
+    indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
+  }
+
+  for (const column of MATCH_GPS_CONTEXT_COLUMNS) {
+    const aliases = headerAliases(column)
+    indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
+  }
+
+  return indexes
 }
 
 export function findMatchGpsHeader(matrix = []) {
+  let identityHeaderFound = false
+
   for (let rowIndex = 0; rowIndex < matrix.length; rowIndex += 1) {
     const row = Array.isArray(matrix[rowIndex]) ? matrix[rowIndex] : []
     const normalized = row.map(normalizeMatchGpsHeader)
-    const indexes = {}
-    for (const column of MATCH_GPS_SOURCE_COLUMNS) {
-      const aliases = headerAliases(column)
-      indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
-    }
-    for (const column of MATCH_GPS_CONTEXT_COLUMNS) {
-      const aliases = headerAliases(column)
-      indexes[column.key] = normalized.findIndex((value) => aliases.has(value))
-    }
+    const indexes = resolveHeaderIndexes(normalized)
+
     if (indexes.sourcePlayerName < 0) continue
-    const missing = MATCH_GPS_SOURCE_COLUMNS.filter(({ key }) => indexes[key] < 0)
-    if (missing.length) {
-      throw new AppError(`Colonne GPS mancanti: ${missing.map(({ label }) => label).join(', ')}`, {
-        code: 'MATCH_GPS_COLUMNS_MISSING',
-        stage: 'match-gps-parse',
-        userMessage: `Il foglio non rispetta il formato GPS previsto. Colonne mancanti: ${missing.map(({ label }) => label).join(', ')}.`,
-      })
+
+    identityHeaderFound = true
+
+    const metricColumns = MATCH_GPS_METRIC_COLUMNS.filter(
+      ({ key }) => indexes[key] >= 0,
+    )
+
+    if (!metricColumns.length) continue
+
+    return {
+      rowIndex,
+      indexes,
+      metricColumns,
+      headers: row.map((value) => cleanText(value, 120)),
     }
-    return { rowIndex, indexes, headers: row.map((value) => cleanText(value, 120)) }
   }
+
+  if (identityHeaderFound) {
+    throw new AppError('Nessuna metrica GPS riconosciuta.', {
+      code: 'MATCH_GPS_METRICS_NOT_FOUND',
+      stage: 'match-gps-parse',
+      userMessage:
+        'Trovo la colonna giocatore, ma nessuna metrica GPS riconosciuta da STAFF.',
+    })
+  }
+
   throw new AppError('Intestazione GPS non trovata.', {
     code: 'MATCH_GPS_HEADER_NOT_FOUND',
     stage: 'match-gps-parse',
@@ -83,78 +130,215 @@ function twoDigitYear(value) {
 function datePartsToIso(day, month, year) {
   const yyyy = String(year).length === 2 ? twoDigitYear(year) : Number(year)
   const date = new Date(Date.UTC(yyyy, Number(month) - 1, Number(day)))
-  if (date.getUTCFullYear() !== yyyy || date.getUTCMonth() !== Number(month) - 1 || date.getUTCDate() !== Number(day)) return null
+
+  if (
+    date.getUTCFullYear() !== yyyy ||
+    date.getUTCMonth() !== Number(month) - 1 ||
+    date.getUTCDate() !== Number(day)
+  ) {
+    return null
+  }
+
   return `${String(yyyy).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
 export function normalizeMatchGpsDate(value) {
   if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    return datePartsToIso(value.getDate(), value.getMonth() + 1, value.getFullYear())
+    return datePartsToIso(
+      value.getDate(),
+      value.getMonth() + 1,
+      value.getFullYear(),
+    )
   }
+
   const text = cleanText(value, 32)
   if (!text) return null
-  const italian = text.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2}|\d{4})$/)
-  if (italian) return datePartsToIso(italian[1], italian[2], italian[3])
+
+  const italian = text.match(
+    /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2}|\d{4})$/,
+  )
+
+  if (italian) {
+    return datePartsToIso(italian[1], italian[2], italian[3])
+  }
+
   const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})$/)
-  if (iso) return datePartsToIso(iso[3], iso[2], iso[1])
+
+  if (iso) {
+    return datePartsToIso(iso[3], iso[2], iso[1])
+  }
+
   return null
 }
 
 function parseNumericCell(value, { integer = false } = {}) {
-  if (value == null || String(value).trim() === '') return { value: null, invalid: false }
-  if (typeof value === 'number') {
-    const valid = Number.isFinite(value) && value >= 0 && (!integer || Number.isInteger(value))
-    return { value: valid ? value : null, invalid: !valid }
+  if (value == null || String(value).trim() === '') {
+    return { value: null, invalid: false }
   }
+
+  if (typeof value === 'number') {
+    const valid =
+      Number.isFinite(value) &&
+      value >= 0 &&
+      (!integer || Number.isInteger(value))
+
+    return {
+      value: valid ? value : null,
+      invalid: !valid,
+    }
+  }
+
   const text = String(value).trim().replace(/\s+/g, '')
-  if (!/^[+-]?\d+(?:[.,]\d+)?$/.test(text)) return { value: null, invalid: true }
+
+  if (!/^[+-]?\d+(?:[.,]\d+)?$/.test(text)) {
+    return { value: null, invalid: true }
+  }
+
   const parsed = Number(text.replace(',', '.'))
-  const valid = Number.isFinite(parsed) && parsed >= 0 && (!integer || Number.isInteger(parsed))
-  return { value: valid ? parsed : null, invalid: !valid }
+  const valid =
+    Number.isFinite(parsed) &&
+    parsed >= 0 &&
+    (!integer || Number.isInteger(parsed))
+
+  return {
+    value: valid ? parsed : null,
+    invalid: !valid,
+  }
 }
 
 function sourceValueMap(row, header) {
   const values = {}
-  for (const column of MATCH_GPS_SOURCE_COLUMNS) {
-    const sourceLabel = header.headers[header.indexes[column.key]] || column.label
-    values[sourceLabel] = row[header.indexes[column.key]] ?? null
+  const occurrences = new Map()
+
+  for (let index = 0; index < header.headers.length; index += 1) {
+    const rawLabel = cleanText(header.headers[index], 120)
+    const baseLabel = rawLabel || `Colonna ${index + 1}`
+
+    const occurrence = (occurrences.get(baseLabel) || 0) + 1
+    occurrences.set(baseLabel, occurrence)
+
+    const sourceLabel =
+      occurrence === 1
+        ? baseLabel
+        : `${baseLabel} (${occurrence})`
+
+    values[sourceLabel] = row[index] ?? null
   }
+
   return values
+}
+
+function resolveOrdinalIndex(header) {
+  const candidate = header.indexes.sourcePlayerName - 1
+
+  if (candidate < 0) return -1
+
+  const normalized = normalizeMatchGpsHeader(header.headers[candidate])
+
+  if (
+    !normalized ||
+    ['n', 'nr', 'num', 'numero', 'progressivo'].includes(normalized)
+  ) {
+    return candidate
+  }
+
+  return -1
+}
+
+function hasRawValue(value) {
+  return value != null && String(value).trim() !== ''
 }
 
 export function parseMatchGpsWorksheetRows(matrix = []) {
   const header = findMatchGpsHeader(matrix)
   const rows = []
-  const ordinalIndex = header.indexes.sourcePlayerName - 1
+  const ordinalIndex = resolveOrdinalIndex(header)
 
-  for (let rowIndex = header.rowIndex + 1; rowIndex < matrix.length; rowIndex += 1) {
+  for (
+    let rowIndex = header.rowIndex + 1;
+    rowIndex < matrix.length;
+    rowIndex += 1
+  ) {
     const row = Array.isArray(matrix[rowIndex]) ? matrix[rowIndex] : []
-    const ordinal = Number(row[ordinalIndex])
-    if (!Number.isInteger(ordinal) || ordinal < 1) continue
 
-    const sourcePlayerName = cleanText(row[header.indexes.sourcePlayerName])
+    let sourceOrdinal = null
+
+    if (ordinalIndex >= 0) {
+      const ordinal = Number(row[ordinalIndex])
+
+      if (!Number.isInteger(ordinal) || ordinal < 1) continue
+
+      sourceOrdinal = ordinal
+    }
+
+    const sourcePlayerName = cleanText(
+      row[header.indexes.sourcePlayerName],
+    )
+
     if (!sourcePlayerName) continue
-    const sourceBirthDate = normalizeMatchGpsDate(row[header.indexes.sourceBirthDate])
+
+    const birthDateIndex = header.indexes.sourceBirthDate
+    const sourceBirthDate =
+      birthDateIndex == null || birthDateIndex < 0
+        ? null
+        : normalizeMatchGpsDate(row[birthDateIndex])
+
     const metrics = {}
     const invalidFields = []
-    for (const column of MATCH_GPS_METRIC_COLUMNS) {
-      const parsed = parseNumericCell(row[header.indexes[column.key]], { integer: column.kind === 'integer' })
-      metrics[column.key] = parsed.value
-      if (parsed.invalid) invalidFields.push(column.key)
-    }
-    const minutesIndex = header.indexes.minutesPlayed
-    const parsedMinutes = minutesIndex == null || minutesIndex < 0
-      ? { value: null, invalid: false }
-      : parseNumericCell(row[minutesIndex], { integer: true })
-    if (parsedMinutes.invalid) invalidFields.push('minutesPlayed')
 
-    const hasActivityData = [...MATCH_ACTIVITY_KEYS].some((key) => metrics[key] != null)
+    let hasRecognizedRawMetric = false
+
+    for (const column of header.metricColumns) {
+      const metricIndex = header.indexes[column.key]
+      const rawValue = row[metricIndex]
+
+      if (hasRawValue(rawValue)) {
+        hasRecognizedRawMetric = true
+      }
+
+      const parsed = parseNumericCell(rawValue, {
+        integer: column.kind === 'integer',
+      })
+
+      metrics[column.key] = parsed.value
+
+      if (parsed.invalid) {
+        invalidFields.push(column.key)
+      }
+    }
+
+    const minutesIndex = header.indexes.minutesPlayed
+
+    const parsedMinutes =
+      minutesIndex == null || minutesIndex < 0
+        ? { value: null, invalid: false }
+        : parseNumericCell(row[minutesIndex], { integer: true })
+
+    if (parsedMinutes.invalid) {
+      invalidFields.push('minutesPlayed')
+    }
+
+    if (
+      ordinalIndex < 0 &&
+      !hasRecognizedRawMetric &&
+      !hasRawValue(minutesIndex >= 0 ? row[minutesIndex] : null) &&
+      sourceBirthDate == null
+    ) {
+      continue
+    }
+
+    const hasActivityData = [...MATCH_ACTIVITY_KEYS].some(
+      (key) => metrics[key] != null,
+    )
+
     rows.push({
       sourceRow: rowIndex + 1,
-      sourceOrdinal: ordinal,
+      sourceOrdinal,
       sourcePlayerName,
       sourceBirthDate,
-      sourceBirthYear: sourceBirthDate ? Number(sourceBirthDate.slice(0, 4)) : null,
+      sourceBirthYear: sourceBirthDate
+        ? Number(sourceBirthDate.slice(0, 4))
+        : null,
       minutesPlayed: parsedMinutes.value,
       metrics,
       sourceValues: sourceValueMap(row, header),
@@ -171,7 +355,8 @@ export function parseMatchGpsWorksheetRows(matrix = []) {
     throw new AppError('Nessuna riga giocatore trovata.', {
       code: 'MATCH_GPS_ROWS_NOT_FOUND',
       stage: 'match-gps-parse',
-      userMessage: 'Il foglio contiene le intestazioni, ma non trovo righe giocatore numerate.',
+      userMessage:
+        'Il foglio contiene le intestazioni, ma non trovo righe giocatore utilizzabili.',
     })
   }
 
@@ -182,7 +367,6 @@ export function parseMatchGpsWorksheetRows(matrix = []) {
     rows,
   }
 }
-
 function nameTokens(value) {
   return normalizeSearchText(value)
     .replace(/[^a-z0-9]+/g, ' ')

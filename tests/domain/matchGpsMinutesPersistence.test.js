@@ -34,7 +34,7 @@ describe('match GPS minutes persistence', () => {
     expect(result.rows[0].minutesPlayed).toBe(58)
   })
 
-  it('salva minutesPlayed come minutes_played e usa schema v2', async () => {
+  it('salva minutesPlayed come minutes_played e usa lo schema GPS corrente', async () => {
     let captured = null
 
     const service = createMatchGpsService({
@@ -66,7 +66,7 @@ describe('match GPS minutes persistence', () => {
       }],
     })
 
-    expect(captured.p_schema_version).toBe(2)
+    expect(captured.p_schema_version).toBe(3)
     expect(captured.p_rows[0].minutes_played).toBe(58)
   })
 })
