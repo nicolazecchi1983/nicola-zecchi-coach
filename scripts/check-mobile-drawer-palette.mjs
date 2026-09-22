@@ -7,10 +7,13 @@ const globalShellEvents = fs.readFileSync('src/app/events/globalShellEvents.js',
 const responsive = fs.readFileSync('src/design-system/responsive.css','utf8')
 const tokens = fs.readFileSync('src/design-system/tokens.css','utf8')
 const contract = fs.readFileSync('docs/STAFF_MOBILE_RESPONSIVE_CONTRACT.md','utf8')
+const icons = fs.readFileSync('src/design-system/iconRegistry.js','utf8')
 
 const checks = [
   ['drawer grouped labels exist', ['Principale','Training','Match','Squadra','Sistema'].every(x => nav.includes(x))],
   ['all core mobile destinations have text', ['Dashboard','Calendario','Training Sheet','Training Library','Match Library','Rosa','Impostazioni'].every(x => nav.includes(x))],
+  ['Analisi GPS resta presente in sidebar e drawer con key canonico', (nav.match(/\['match-gps-analysis', 'Analisi GPS', 'gps'\]/g) || []).length === 2],
+  ['GPS possiede icona nel registry canonico', /^\s*gps\s*:\s*['"]/m.test(icons)],
   ['drawer header has STAFF product identity', nav.includes('<strong>STAFF</strong>')],
   ['drawer footer has user identity', nav.includes('mobile-drawer-profile__copy')],
   ['hamburger exists in global topbar', shell.includes('mobile-menu-trigger')],
