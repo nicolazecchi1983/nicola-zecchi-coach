@@ -11,7 +11,7 @@ const checks = [
   ['scope operational possiede il conteggio visibile', view.includes('data-match-library-scope="operational"') && view.includes('data-match-library-visible-count')],
   ['scope history possiede il conteggio storico', view.includes('data-match-library-scope="history"') && view.includes('data-match-library-history-count')],
   ['una sola ricerca nella Library', (view.match(/data-match-library-search/g) || []).length === 1],
-  ['placeholder dichiara ricerca globale', view.includes('Cerca in tutta la Library: avversario, competizione o impianto')],
+  ['ricerca dichiara scope globale in semantica accessibile', view.includes('aria-label="Cerca in tutta la Match Library per avversario, competizione o impianto"')],
   ['global search riusa lo scope ALL', events.includes("setMatchLibraryScope('all')") && events.includes("matchLibrary.dataset.matchLibrarySearchMode = 'global'")],
   ['global search conserva scope di ritorno', events.includes('matchLibrary.dataset.matchLibrarySearchReturnScope = matchLibrary.dataset.matchLibraryScope') && events.includes('const returnScope = matchLibrary.dataset.matchLibrarySearchReturnScope')],
   ['clear search ripristina scope precedente', events.includes('delete matchLibrary.dataset.matchLibrarySearchReturnScope') && events.includes('setMatchLibraryScope(returnScope)')],

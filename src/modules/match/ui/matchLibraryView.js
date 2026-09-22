@@ -276,7 +276,7 @@ export function createMatchLibraryView({
       </form>
 
       <div class="match-library-toolbar">
-        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca in tutta la Library: avversario, competizione o impianto" data-match-library-search></label>
+        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca nella Library" aria-label="Cerca in tutta la Match Library per avversario, competizione o impianto" data-match-library-search></label>
         <select name="match_library_competition" data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
         <select name="match_library_location" data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select>
         <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>

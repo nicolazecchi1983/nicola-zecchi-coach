@@ -558,3 +558,53 @@
     min-height: 40px;
   }
 }
+
+/* STAFF R35.3 Match Library mobile density
+   One mobile owner: scope row fits the viewport; search keeps one canonical input surface. */
+@media (max-width: 760px) {
+  .match-library-scopes {
+    display: grid;
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, 1fr) minmax(0, .82fr);
+    gap: 4px;
+    padding: 4px;
+    overflow: visible;
+  }
+
+  .match-library-scope {
+    min-width: 0;
+    width: 100%;
+    justify-content: center;
+    gap: 5px;
+    padding-inline: 6px;
+    font-size: .66rem;
+    letter-spacing: .035em;
+    white-space: nowrap;
+  }
+
+  .match-library-scope strong {
+    font-size: .68rem;
+  }
+
+  .match-library-search input {
+    min-height: 44px;
+    font-size: .84rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .match-library-scopes {
+    grid-template-columns: minmax(0, 1.34fr) minmax(0, .96fr) minmax(0, .70fr);
+    gap: 3px;
+  }
+
+  .match-library-scope {
+    gap: 4px;
+    padding-inline: 4px;
+    font-size: .62rem;
+    letter-spacing: .025em;
+  }
+
+  .match-library-scope strong {
+    font-size: .64rem;
+  }
+}
