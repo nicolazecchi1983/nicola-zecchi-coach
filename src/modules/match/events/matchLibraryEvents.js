@@ -100,19 +100,24 @@ export function wireMatchLibraryEvents({
           createSubmit.disabled = false
         }
       })
+      const searchInput = matchLibrary.querySelector('[data-match-library-search]')
+      const readSearchQuery = () => searchInput?.value.trim().toLocaleLowerCase('it-IT') || ''
+
       const applyMatchFilters = () => {
-        const query = matchLibrary.querySelector('[data-match-library-search]')?.value.trim().toLocaleLowerCase('it-IT') || ''
+        const scope = matchLibrary.dataset.matchLibraryScope || 'operational'
+        const activePanel = matchLibrary.querySelector(`[data-match-library-scope-panel="${scope}"]`)
+        if (!activePanel) return
+
+        const query = readSearchQuery()
         const competition = matchLibrary.querySelector('[data-match-library-competition]')?.value || ''
         const location = matchLibrary.querySelector('[data-match-library-location]')?.value || ''
         const outcome = matchLibrary.querySelector('[data-match-library-outcome]')?.value || ''
         const canonicalCompetitionQuery = ['campionato', 'coppa', 'amichevole'].includes(query) ? query : ''
         let visible = 0
-        matchLibrary.querySelectorAll('[data-match-library-card]').forEach((card) => {
+
+        activePanel.querySelectorAll('[data-match-library-card]').forEach((card) => {
           const cardCompetition = String(card.dataset.competition || '').toLocaleLowerCase('it-IT')
-          const matchesQuery = !query
-            || (canonicalCompetitionQuery
-              ? cardCompetition === canonicalCompetitionQuery
-              : card.dataset.searchText.includes(query))
+          const matchesQuery = !query || (canonicalCompetitionQuery ? cardCompetition === canonicalCompetitionQuery : card.dataset.searchText.includes(query))
           const show = matchesQuery
             && (!competition || card.dataset.competition === competition)
             && (!location || card.dataset.location === location)
@@ -121,23 +126,69 @@ export function wireMatchLibraryEvents({
           if (show) visible += 1
         })
 
-        matchLibrary.querySelectorAll('[data-match-library-month]').forEach((month) => {
-          const visibleCards = [...month.querySelectorAll('[data-match-library-card]')]
-            .filter((card) => !card.hidden)
+        activePanel.querySelectorAll('[data-match-library-month]').forEach((month) => {
+          const visibleCards = [...month.querySelectorAll('[data-match-library-card]')].filter((card) => !card.hidden)
           month.hidden = visibleCards.length === 0
           const count = month.querySelector('[data-match-month-visible-count]')
           if (count) count.textContent = String(visibleCards.length)
           if (visibleCards.length && (query || competition || location || outcome)) month.open = true
         })
 
-        const totalVisible = matchLibrary.querySelector('[data-match-library-visible-count]')
-        if (totalVisible) totalVisible.textContent = String(visible)
-        const empty = matchLibrary.querySelector('[data-match-library-empty]')
+        if (scope === 'operational') {
+          const totalVisible = matchLibrary.querySelector('[data-match-library-visible-count]')
+          if (totalVisible) totalVisible.textContent = String(visible)
+        }
+        const empty = activePanel.querySelector('[data-match-library-empty]')
         if (empty) empty.hidden = visible > 0
       }
-      matchLibrary.querySelectorAll('[data-match-library-search], [data-match-library-competition], [data-match-library-location], [data-match-library-outcome]').forEach((control) => {
-        control.addEventListener(control.matches('input') ? 'input' : 'change', applyMatchFilters)
+
+      const setMatchLibraryScope = (requestedScope) => {
+        const nextScope = ['operational', 'history', 'all'].includes(requestedScope) ? requestedScope : 'operational'
+        matchLibrary.dataset.matchLibraryScope = nextScope
+        matchLibrary.querySelectorAll('[data-match-library-scope]').forEach((button) => {
+          button.setAttribute('aria-pressed', button.dataset.matchLibraryScope === nextScope ? 'true' : 'false')
+        })
+        matchLibrary.querySelectorAll('[data-match-library-scope-panel]').forEach((panel) => {
+          panel.hidden = panel.dataset.matchLibraryScopePanel !== nextScope
+        })
+        if (nextScope !== 'operational') {
+          const base = matchLibrary.querySelector('[data-match-library-scope="operational"] strong')?.textContent
+          const totalVisible = matchLibrary.querySelector('[data-match-library-visible-count]')
+          if (base != null && totalVisible) totalVisible.textContent = base
+        }
+        applyMatchFilters()
+      }
+
+      const handleGlobalSearch = () => {
+        const query = readSearchQuery()
+        if (query) {
+          if (matchLibrary.dataset.matchLibrarySearchMode !== 'global') {
+            matchLibrary.dataset.matchLibrarySearchMode = 'global'
+            matchLibrary.dataset.matchLibrarySearchReturnScope = matchLibrary.dataset.matchLibraryScope || 'operational'
+          }
+          setMatchLibraryScope('all')
+          return
+        }
+
+        const returnScope = matchLibrary.dataset.matchLibrarySearchReturnScope || matchLibrary.dataset.matchLibraryScope || 'operational'
+        delete matchLibrary.dataset.matchLibrarySearchMode
+        delete matchLibrary.dataset.matchLibrarySearchReturnScope
+        setMatchLibraryScope(returnScope)
+      }
+
+      searchInput?.addEventListener('input', handleGlobalSearch)
+      matchLibrary.querySelectorAll('[data-match-library-competition], [data-match-library-location], [data-match-library-outcome]').forEach((control) => {
+        control.addEventListener('change', applyMatchFilters)
       })
+      matchLibrary.querySelectorAll('[data-match-library-scope]').forEach((button) => {
+        button.addEventListener('click', () => {
+          if (searchInput && readSearchQuery()) searchInput.value = ''
+          delete matchLibrary.dataset.matchLibrarySearchMode
+          delete matchLibrary.dataset.matchLibrarySearchReturnScope
+          setMatchLibraryScope(button.dataset.matchLibraryScope)
+        })
+      })
+      setMatchLibraryScope('operational')
       matchLibrary.addEventListener('click', async (event) => {
         const openButton = event.target.closest('[data-open-match-workspace]')
         if (openButton) {

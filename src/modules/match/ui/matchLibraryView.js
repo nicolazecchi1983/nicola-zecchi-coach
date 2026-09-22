@@ -95,6 +95,41 @@ export function getMatchLibraryUpcomingAgenda(matches = [], referenceDate = new 
     .map(({ match }) => match)
 }
 
+
+function compareLibraryMatchesNewestFirst(left, right) {
+  const leftDay = dateDayNumber(left?.date)
+  const rightDay = dateDayNumber(right?.date)
+  if (leftDay == null && rightDay == null) return String(left?.id || '').localeCompare(String(right?.id || ''))
+  if (leftDay == null) return 1
+  if (rightDay == null) return -1
+  if (leftDay !== rightDay) return rightDay - leftDay
+  return String(left?.id || '').localeCompare(String(right?.id || ''))
+}
+
+export function getMatchLibraryHistoricalMatches(matches = [], referenceDate = new Date()) {
+  const referenceDay = referenceDayNumber(referenceDate)
+  return matches
+    .filter((match) => {
+      const day = dateDayNumber(match?.date)
+      return day != null && day < referenceDay
+    })
+    .slice()
+    .sort(compareLibraryMatchesNewestFirst)
+}
+
+export function groupLibraryMatchesForArchive(matches = []) {
+  const groups = new Map()
+  matches
+    .slice()
+    .sort(compareLibraryMatchesNewestFirst)
+    .forEach((match) => {
+      const key = matchMonthKey(match)
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(match)
+    })
+  return [...groups.entries()].map(([key, items]) => ({ key, label: matchMonthLabel(key), items }))
+}
+
 function agendaDateParts(value) {
   const raw = String(value || '').slice(0, 10)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return { day: '--', month: '' }
@@ -128,6 +163,9 @@ export function createMatchLibraryView({
     const matches = service.list(calendarEvents, season)
     const monthGroups = groupMatchesByMonth(matches)
     const operationalMatches = monthGroups.flatMap((group) => group.items)
+    const historicalMatches = getMatchLibraryHistoricalMatches(matches)
+    const historicalGroups = groupLibraryMatchesForArchive(historicalMatches)
+    const allGroups = groupLibraryMatchesForArchive(matches)
     const upcomingAgendaMatches = getMatchLibraryUpcomingAgenda(matches)
     const upcomingAgendaPreview = upcomingAgendaMatches.slice(0, 4)
     const upcomingAgendaMore = upcomingAgendaMatches.slice(4)
@@ -171,15 +209,18 @@ export function createMatchLibraryView({
       </button>`
     }
 
-    const defaultOpenKey = monthGroups[0]?.key
-
-    const rows = monthGroups.map((group) => `<details class="match-library-month" data-match-library-month="${escapeHtml(group.key)}" ${group.key === defaultOpenKey ? 'open' : ''}>
+    const renderMonthGroups = (groups, defaultOpenKey = groups[0]?.key) => groups.map((group) => `<details class="match-library-month" data-match-library-month="${escapeHtml(group.key)}" ${group.key === defaultOpenKey ? 'open' : ''}>
       <summary>
         <span><strong>${escapeHtml(group.label)}</strong><small><b data-match-month-visible-count>${group.items.length}</b> ${group.items.length === 1 ? 'partita' : 'partite'}</small></span>
         <span class="match-library-month-chevron" aria-hidden="true">\u2304</span>
       </summary>
       <div class="match-library-month-content">${group.items.map(renderMatchCard).join('')}</div>
     </details>`).join('')
+
+    const defaultOpenKey = monthGroups[0]?.key
+    const rows = renderMonthGroups(monthGroups, defaultOpenKey)
+    const historicalRows = renderMonthGroups(historicalGroups)
+    const allRows = renderMonthGroups(allGroups)
 
     const agenda = upcomingAgendaMatches.length ? `<section class="match-library-agenda" data-match-library-agenda>
       <header class="match-library-agenda-header">
@@ -201,10 +242,6 @@ export function createMatchLibraryView({
         <div class="match-library-heading-copy">
           <span class="eyebrow">MATCH ENGINE</span>
           <h1>Match Library</h1>
-          <div class="match-library-heading-meta" aria-label="Riepilogo partite">
-            <span class="match-library-heading-stat"><span>IN PROGRAMMA</span><strong data-match-library-visible-count>${operationalMatches.length}</strong></span>
-            <span class="match-library-heading-stat"><span>A SEGUIRE</span><strong>${upcomingAgendaMatches.length}</strong></span>
-          </div>
         </div>
         <button type="button" class="button button--primary" data-toggle-match-create>+ Crea partita</button>
       </header>
@@ -239,15 +276,33 @@ export function createMatchLibraryView({
       </form>
 
       <div class="match-library-toolbar">
-        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca avversario, competizione o impianto" data-match-library-search></label>
+        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca in tutta la Library: avversario, competizione o impianto" data-match-library-search></label>
         <select name="match_library_competition" data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
         <select name="match_library_location" data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select>
         <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
       </div>
 
-      <div class="match-library-list" data-match-library-list>${rows || '<div class="empty-state">Nessuna partita futura programmata.</div>'}</div>
-      <div class="empty-state" data-match-library-empty hidden>Nessuna gara corrisponde ai filtri selezionati.</div>
-      ${agenda}
+      <div class="match-library-scopes" role="group" aria-label="Ambito Match Library">
+        <button type="button" class="match-library-scope" data-match-library-scope="operational" aria-pressed="true"><span>In programma</span><strong data-match-library-visible-count>${operationalMatches.length}</strong></button>
+        <button type="button" class="match-library-scope" data-match-library-scope="history" aria-pressed="false"><span>Storico</span><strong data-match-library-history-count>${historicalMatches.length}</strong></button>
+        <button type="button" class="match-library-scope" data-match-library-scope="all" aria-pressed="false"><span>Tutte</span><strong>${matches.length}</strong></button>
+      </div>
+
+      <section class="match-library-scope-panel" data-match-library-scope-panel="operational">
+        <div class="match-library-list" data-match-library-list>${rows || '<div class="empty-state">Nessuna partita futura programmata.</div>'}</div>
+        <div class="empty-state" data-match-library-empty hidden>Nessuna gara corrisponde ai filtri selezionati.</div>
+        ${agenda}
+      </section>
+
+      <section class="match-library-scope-panel" data-match-library-scope-panel="history" hidden>
+        <div class="match-library-list" data-match-library-list>${historicalRows || '<div class="empty-state">Nessuna partita nello storico.</div>'}</div>
+        <div class="empty-state" data-match-library-empty hidden>Nessuna gara storica corrisponde ai filtri selezionati.</div>
+      </section>
+
+      <section class="match-library-scope-panel" data-match-library-scope-panel="all" hidden>
+        <div class="match-library-list" data-match-library-list>${allRows || '<div class="empty-state">Nessuna partita disponibile.</div>'}</div>
+        <div class="empty-state" data-match-library-empty hidden>Nessuna gara corrisponde ai filtri selezionati.</div>
+      </section>
     </section>`
   }
 }

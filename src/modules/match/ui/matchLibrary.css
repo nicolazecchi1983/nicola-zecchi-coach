@@ -441,50 +441,120 @@
   }
 }
 
-/* STAFF R34.1 Match Library premium header metrics */
-.match-library-heading-copy {
-  min-width: 0;
-}
-
-.match-library-heading-meta {
+/* STAFF R35.1 Match Library Historical Workspace foundation
+   One canonical dataset, three read projections. */
+.match-library-scopes {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 4px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 14px;
+  background: var(--staff-color-bg-panel);
+  scrollbar-width: none;
 }
-
-.match-library-heading-stat {
+.match-library-scopes::-webkit-scrollbar { display: none; }
+.match-library-scope {
+  flex: 0 0 auto;
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
   color: var(--staff-color-text-muted);
-  font-size: .68rem;
+  font: inherit;
+  font-size: .76rem;
   font-weight: 800;
-  letter-spacing: .07em;
-  line-height: 1;
+  letter-spacing: .045em;
   text-transform: uppercase;
-  white-space: nowrap;
+  cursor: pointer;
+  transition: background .16s ease, border-color .16s ease, color .16s ease;
 }
-
-.match-library-heading-stat strong {
-  color: var(--staff-color-text);
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
+.match-library-scope strong { min-width: 1.8em; color: inherit; font-size: .78rem; font-variant-numeric: tabular-nums; text-align: center; }
+.match-library-scope:hover { color: var(--staff-color-text); background: var(--staff-color-bg-control); }
+.match-library-scope[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--staff-color-primary) 38%, var(--staff-color-border));
+  background: color-mix(in srgb, var(--staff-color-bg-panel-raised) 86%, var(--staff-color-primary) 14%);
+  color: var(--staff-color-primary);
 }
-
-.match-library-heading-stat + .match-library-heading-stat::before {
-  content: "\00B7";
-  margin-right: 2px;
-  color: var(--staff-color-text-muted);
-  font-weight: 700;
-}
-
+.match-library-scope:focus-visible { outline: 2px solid var(--staff-color-primary); outline-offset: 2px; }
+.match-library-scope-panel { display: grid; gap: 18px; min-width: 0; }
+.match-library-scope-panel[hidden] { display: none; }
 @media (max-width: 760px) {
-  .match-library-heading-meta {
-    margin-top: 8px;
-    gap: 6px;
+  .match-library-scopes { margin-inline: -2px; }
+  .match-library-scope { min-height: 44px; padding-inline: 12px; }
+}
+
+/* STAFF R35.2 Global Search + Compact Historical Workspace
+   Search reuses the ALL projection; history density stays scoped to history only. */
+.match-library-card[hidden] {
+  display: none;
+}
+
+[data-match-library-scope-panel="history"] .match-library-month > summary {
+  padding: 11px 14px;
+}
+[data-match-library-scope-panel="history"] .match-library-card {
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  gap: 14px;
+  min-height: 76px;
+  padding: 11px 14px;
+}
+[data-match-library-scope-panel="history"] .match-library-date {
+  padding-right: 14px;
+}
+[data-match-library-scope-panel="history"] .match-library-date strong {
+  font-size: .9rem;
+}
+[data-match-library-scope-panel="history"] .match-library-date span {
+  font-size: .78rem;
+}
+[data-match-library-scope-panel="history"] .match-library-kicker {
+  font-size: .68rem;
+}
+[data-match-library-scope-panel="history"] .match-library-main h3 {
+  margin-block: 3px;
+  font-size: .98rem;
+}
+[data-match-library-scope-panel="history"] .match-library-main p {
+  font-size: .8rem;
+}
+[data-match-library-scope-panel="history"] .match-library-status {
+  display: none;
+}
+[data-match-library-scope-panel="history"] .match-library-actions .button {
+  min-height: 36px;
+  padding-inline: 12px;
+}
+@media (max-width: 1000px) {
+  [data-match-library-scope-panel="history"] .match-library-card {
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+  }
+}
+@media (max-width: 760px) {
+  [data-match-library-scope-panel="history"] .match-library-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    min-height: 0;
+    padding: 14px;
+  }
+  [data-match-library-scope-panel="history"] .match-library-date {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 9px;
+    border-right: 0;
+    border-bottom: 1px solid var(--staff-color-border);
+  }
+  [data-match-library-scope-panel="history"] .match-library-actions {
+    justify-content: stretch;
+  }
+  [data-match-library-scope-panel="history"] .match-library-actions .button {
+    flex: 1;
+    min-height: 40px;
   }
 }
