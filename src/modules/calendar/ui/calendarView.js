@@ -1,3 +1,4 @@
+import { renderMatchLocationBadge } from '../../../shared/match/matchLocationPresentation.js'
 export function matchTypeLabel(value) {
   return ({ friendly: 'Amichevole', cup: 'Coppa', league: 'Campionato' })[value] || 'Partita'
 }
@@ -96,7 +97,7 @@ export function renderCalendarView({
           <strong><span class="calendar-event__icon">${eventTypeIcon(event.type, icon)}</span>${event.title}</strong>
           ${event.type === 'rest' ? '' : `<span>${event.time}${eventPlaceLabel(event)}</span>`}
           ${event.type === 'training' ? `<small class="calendar-event-details">${event.matchDay || 'MD —'}${event.editorData?.focus ? ` · ${escapeHtml(event.editorData.focus)}` : ''}${event.trainingSheetPath ? ' · TS pubblicata' : ' · Crea TS'}${renderTrainingEvaluationDot(event)}</small>` : ''}
-          ${event.type === 'match' && event.matchType ? `<small class="calendar-event-details">${escapeHtml(matchTypeLabel(event.matchType))}${event.matchReportStatus === 'completed' ? ' · REPORT' : ''}</small>` : ''}
+          ${event.type === 'match' ? `<small class="calendar-event-details calendar-event-details--match"><span>${escapeHtml(matchTypeLabel(event.matchType))}</span>${renderMatchLocationBadge(event.homeAway, { icon, compact: true })}${event.matchReportStatus === 'completed' ? '<span>REPORT</span>' : ''}</small>` : ''}
         </button>`).join('')}
       </div>
     </div>`

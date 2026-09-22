@@ -1,3 +1,4 @@
+import { renderMatchLocationBadge } from '../../../shared/match/matchLocationPresentation.js'
 function safeDateLabel(value) {
   if (!value) return 'Data da definire'
   try {
@@ -141,13 +142,13 @@ export function createMatchLibraryView({
       const dateLabel = safeDateLabel(match.date)
       const result = match.goalsFor == null || match.goalsAgainst == null ? '\u2013' : `${match.goalsFor}\u2013${match.goalsAgainst}`
       const searchText = [match.opponent, match.competition, match.venue, match.season, match.date].join(' ').toLocaleLowerCase('it-IT')
-      const locationLabel = match.homeAway === 'away' ? 'Trasferta' : match.homeAway === 'neutral' ? 'Campo neutro' : 'Casa'
+      const locationBadge = renderMatchLocationBadge(match.homeAway, { icon })
       return `<article class="match-library-card" data-match-library-card data-search-text="${escapeHtml(searchText)}" data-competition="${escapeHtml(match.competition)}" data-location="${escapeHtml(match.homeAway)}" data-outcome="${outcome}">
         <div class="match-library-date"><strong>${escapeHtml(dateLabel)}</strong><span>${escapeHtml(match.time || '')}</span></div>
         <div class="match-library-main">
           <span class="match-library-kicker">${escapeHtml(match.competition)}${match.matchDay ? ` \u00B7 Giornata ${match.matchDay}` : ''}</span>
           <h3>${match.homeAway === 'away' ? escapeHtml(match.opponent) : escapeHtml(getTeamProfile().shortName || 'Noi')} <b>${result}</b> ${match.homeAway === 'away' ? escapeHtml(getTeamProfile().shortName || 'Noi') : escapeHtml(match.opponent)}</h3>
-          <p>${escapeHtml(match.venue || 'Impianto da definire')} \u00B7 ${locationLabel}</p>
+          <p class="match-library-venue-line">${locationBadge}<span>${escapeHtml(match.venue || 'Impianto da definire')}</span></p>
         </div>
         <div class="match-library-status"><span>${escapeHtml(match.documentStatus)}</span><small>${match.source === 'calendar' ? 'Calendario' : 'Legacy Library'}</small></div>
         <div class="match-library-actions">
@@ -160,12 +161,12 @@ export function createMatchLibraryView({
 
     const renderAgendaRow = (match) => {
       const date = agendaDateParts(match.date)
-      const locationLabel = match.homeAway === 'away' ? 'Trasferta' : match.homeAway === 'neutral' ? 'Campo neutro' : 'Casa'
+      const locationBadge = renderMatchLocationBadge(match.homeAway, { icon, compact: true })
       const meta = [match.competition, match.matchDay ? `Giornata ${match.matchDay}` : ''].filter(Boolean).join(' \u00B7 ')
       return `<button type="button" class="match-library-agenda-row" data-open-match-workspace="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}" aria-label="Apri ${escapeHtml(match.opponent)} del ${escapeHtml(safeDateLabel(match.date))}">
         <span class="match-library-agenda-date"><strong>${escapeHtml(date.day)}</strong><small>${escapeHtml(date.month)}</small></span>
         <span class="match-library-agenda-main"><strong>${escapeHtml(match.opponent)}</strong><small>${escapeHtml(meta)}</small></span>
-        <span class="match-library-agenda-location">${escapeHtml(locationLabel)}</span>
+        <span class="match-library-agenda-location">${locationBadge}</span>
         <span class="match-library-agenda-arrow" aria-hidden="true">\u203A</span>
       </button>`
     }
@@ -185,7 +186,6 @@ export function createMatchLibraryView({
         <div>
           <span class="match-library-agenda-eyebrow">A SEGUIRE</span>
           <h2>Prossime gare</h2>
-          <p>Una vista rapida delle partite dopo il mese operativo.</p>
         </div>
         <span class="match-library-agenda-count">${upcomingAgendaMatches.length} ${upcomingAgendaMatches.length === 1 ? 'gara' : 'gare'}</span>
       </header>
@@ -198,7 +198,14 @@ export function createMatchLibraryView({
 
     return `<section class="content-section match-library" data-match-library>
       <header class="page-heading match-library-heading">
-        <div><span class="eyebrow">MATCH ENGINE</span><h1>Match Library</h1><p>Ogni partita nasce una volta e raccoglie tutto il lavoro pre-gara, gara e post-gara.</p></div>
+        <div class="match-library-heading-copy">
+          <span class="eyebrow">MATCH ENGINE</span>
+          <h1>Match Library</h1>
+          <div class="match-library-heading-meta" aria-label="Riepilogo partite">
+            <span class="match-library-heading-stat"><span>IN PROGRAMMA</span><strong data-match-library-visible-count>${operationalMatches.length}</strong></span>
+            <span class="match-library-heading-stat"><span>A SEGUIRE</span><strong>${upcomingAgendaMatches.length}</strong></span>
+          </div>
+        </div>
         <button type="button" class="button button--primary" data-toggle-match-create>+ Crea partita</button>
       </header>
 
@@ -238,7 +245,6 @@ export function createMatchLibraryView({
         <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
       </div>
 
-      <div class="match-library-summary"><strong data-match-library-visible-count>${operationalMatches.length}</strong><span>partite</span></div>
       <div class="match-library-list" data-match-library-list>${rows || '<div class="empty-state">Nessuna partita futura programmata.</div>'}</div>
       <div class="empty-state" data-match-library-empty hidden>Nessuna gara corrisponde ai filtri selezionati.</div>
       ${agenda}

@@ -1,0 +1,81 @@
+/* STAFF R34 — Match Location Badge
+   One semantic visual language for Casa / Trasferta / Neutro.
+   Meaning is never encoded by color alone: icon + visible label always remain. */
+
+.match-location-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--staff-color-border);
+  border-radius: 999px;
+  background: var(--staff-color-bg-control);
+  color: var(--staff-color-text-secondary);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .055em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.match-location-badge__icon {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  place-items: center;
+}
+
+.match-location-badge__icon svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.match-location-badge[data-match-location="home"] {
+  border-color: rgba(25, 174, 240, .28);
+  background: rgba(25, 174, 240, .08);
+  color: var(--staff-color-primary-hover);
+}
+
+.match-location-badge[data-match-location="away"] {
+  border-color: var(--staff-color-border-strong);
+  background: var(--staff-color-bg-panel-raised);
+  color: var(--staff-color-text-secondary);
+}
+
+.match-location-badge[data-match-location="neutral"] {
+  border-color: var(--staff-color-border-subtle);
+  background: var(--staff-color-bg-panel);
+  color: var(--staff-color-text-muted);
+}
+
+.match-location-badge--compact {
+  min-height: 20px;
+  gap: 4px;
+  padding-inline: 6px;
+  font-size: .61rem;
+  letter-spacing: .045em;
+}
+
+.match-location-badge--compact .match-location-badge__icon,
+.match-location-badge--compact .match-location-badge__icon svg {
+  width: 12px;
+  height: 12px;
+  flex-basis: 12px;
+}
+
+@media (max-width: 760px) {
+  .match-location-badge {
+    min-height: 22px;
+    padding-inline: 7px;
+  }
+}

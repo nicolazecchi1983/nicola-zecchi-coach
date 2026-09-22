@@ -269,7 +269,8 @@
     "check:dashboard-match-day-quick-access": "node scripts/check-dashboard-match-day-quick-access.mjs",
     "check:match-contextual-back-origin": "node scripts/check-match-contextual-back-origin.mjs",
     "check:match-lineup-selection-availability-r2": "node scripts/check-match-lineup-selection-availability-r2.mjs",
-    "check:match-formation-release-blockers-r2-1": "node scripts/check-match-formation-release-blockers-r2-1.mjs"
+    "check:match-formation-release-blockers-r2-1": "node scripts/check-match-formation-release-blockers-r2-1.mjs",
+    "check:match-location-cues": "node scripts/check-match-location-cues.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",

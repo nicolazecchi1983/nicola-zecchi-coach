@@ -1,6 +1,7 @@
 import './design-system/tokens.css'
 import './design-system/primitives.css'
 import './style.css'
+import './shared/match/matchLocationBadge.css'
 import './modules/settings/settingsHub.css'
 import './modules/calendar/calendarBulkManagement.css'
 import './shared/documentViewer/documentViewer.css'

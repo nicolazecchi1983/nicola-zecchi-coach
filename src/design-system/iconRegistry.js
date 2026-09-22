@@ -26,7 +26,9 @@ export function icon(name) {
     formation: '<circle cx="12" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="M12 7v4M8 12h8M12 13v4"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
-    location: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+    home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/>',
+  away: '<path d="M4 5v14"/><path d="M5 12h13"/><path d="m13 7 5 5-5 5"/>',
+  location: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
   }

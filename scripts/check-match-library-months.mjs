@@ -65,7 +65,7 @@ const checks = [
   ['agenda e montata dopo lista operativa', view.indexOf('data-match-library-list') < view.indexOf('${agenda}')],
 
   ['operationalMatches derivati dal mese operativo', view.includes('const operationalMatches = monthGroups.flatMap((group) => group.items)')],
-  ['contatore globale operativo', view.includes('${operationalMatches.length}</strong><span>partite</span>')],
+  ['contatore globale operativo', view.includes('data-match-library-visible-count>${operationalMatches.length}</strong>')],
   ['filtri competizione su gare operative', view.includes('new Set(operationalMatches.map((match) => match.competition)')],
   ['empty state future', view.includes('Nessuna partita futura programmata.')],
   ['vecchia proximity logic rimossa', !view.includes('matchProximity(') && !view.includes('compareMatchesByProximity(')],

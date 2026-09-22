@@ -482,3 +482,43 @@
     grid-column: 1 / -1;
   }
 }
+
+
+/* STAFF R34 — Match location cues */
+.dashboard-match-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dashboard-match-venue {
+  margin-top: 6px;
+  color: var(--staff-color-text-secondary);
+}
+
+.dashboard-week-match-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dashboard-week-match-venue {
+  overflow: hidden;
+  color: var(--staff-color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .dashboard-match-context {
+    gap: 6px;
+  }
+
+  .dashboard-week-match-meta {
+    align-items: flex-start;
+  }
+}

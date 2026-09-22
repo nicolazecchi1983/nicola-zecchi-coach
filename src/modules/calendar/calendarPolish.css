@@ -493,3 +493,22 @@
     white-space: normal;
   }
 }
+
+
+/* STAFF R34 — Match location cues */
+.calendar-event-details--match {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.calendar-event-details--match > span:not(.match-location-badge) {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .calendar-event-details--match {
+    gap: 5px;
+  }
+}
