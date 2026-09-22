@@ -57,62 +57,58 @@ function referenceDayNumber(referenceDate = new Date()) {
   return referenceDayNumber(new Date())
 }
 
-function matchProximity(match, referenceDay) {
-  const day = dateDayNumber(match?.date)
-  if (day == null) return { distance: Number.POSITIVE_INFINITY, futureRank: 2, day: Number.POSITIVE_INFINITY }
-  const delta = day - referenceDay
-  return {
-    distance: Math.abs(delta),
-    futureRank: delta >= 0 ? 0 : 1,
-    day,
-  }
-}
-
-function compareMatchesByProximity(a, b, referenceDay) {
-  const left = matchProximity(a, referenceDay)
-  const right = matchProximity(b, referenceDay)
-  if (left.distance !== right.distance) return left.distance - right.distance
-  if (left.futureRank !== right.futureRank) return left.futureRank - right.futureRank
-  if (left.day !== right.day) return left.day - right.day
-  return String(a?.id || '').localeCompare(String(b?.id || ''))
-}
-
 export function groupMatchesByMonth(matches = [], referenceDate = new Date()) {
-  const groups = new Map()
   const referenceDay = referenceDayNumber(referenceDate)
-
-  matches.forEach((match) => {
-    const key = matchMonthKey(match)
-    if (!groups.has(key)) groups.set(key, [])
-    groups.get(key).push(match)
-  })
-
-  return [...groups.entries()]
-    .map(([key, items]) => {
-      const sortedItems = items.slice().sort((a, b) => compareMatchesByProximity(a, b, referenceDay))
-      const nearest = sortedItems[0]
-      return {
-        key,
-        label: matchMonthLabel(key),
-        items: sortedItems,
-        proximity: nearest ? matchProximity(nearest, referenceDay) : { distance: Number.POSITIVE_INFINITY, futureRank: 2, day: Number.POSITIVE_INFINITY },
-      }
+  const upcoming = matches
+    .map((match) => ({ match, day: dateDayNumber(match?.date) }))
+    .filter(({ day }) => day != null && day >= referenceDay)
+    .sort((left, right) => {
+      if (left.day !== right.day) return left.day - right.day
+      return String(left.match?.id || '').localeCompare(String(right.match?.id || ''))
     })
-    .sort((a, b) => {
-      if (a.key === 'undated') return 1
-      if (b.key === 'undated') return -1
-      if (a.proximity.distance !== b.proximity.distance) return a.proximity.distance - b.proximity.distance
-      if (a.proximity.futureRank !== b.proximity.futureRank) return a.proximity.futureRank - b.proximity.futureRank
-      if (a.proximity.day !== b.proximity.day) return a.proximity.day - b.proximity.day
-      return a.key.localeCompare(b.key)
+
+  const firstUpcoming = upcoming[0]
+  if (!firstUpcoming) return []
+
+  const key = matchMonthKey(firstUpcoming.match)
+  const items = upcoming
+    .filter(({ match }) => matchMonthKey(match) === key)
+    .map(({ match }) => match)
+
+  return [{ key, label: matchMonthLabel(key), items }]
+}
+
+export function getMatchLibraryUpcomingAgenda(matches = [], referenceDate = new Date()) {
+  const referenceDay = referenceDayNumber(referenceDate)
+  const operationalMonthKey = groupMatchesByMonth(matches, referenceDate)[0]?.key || null
+
+  if (!operationalMonthKey) return []
+
+  return matches
+    .map((match) => ({ match, day: dateDayNumber(match?.date) }))
+    .filter(({ match, day }) => day != null && day >= referenceDay && matchMonthKey(match) !== operationalMonthKey)
+    .sort((left, right) => {
+      if (left.day !== right.day) return left.day - right.day
+      return String(left.match?.id || '').localeCompare(String(right.match?.id || ''))
     })
-    .map(({ proximity, ...group }) => group)
+    .map(({ match }) => match)
+}
+
+function agendaDateParts(value) {
+  const raw = String(value || '').slice(0, 10)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return { day: '--', month: '' }
+  const date = new Date(`${raw}T12:00:00`)
+  if (Number.isNaN(date.getTime())) return { day: '--', month: '' }
+  return {
+    day: new Intl.DateTimeFormat('it-IT', { day: '2-digit' }).format(date),
+    month: new Intl.DateTimeFormat('it-IT', { month: 'short' }).format(date).replace('.', '').toLocaleUpperCase('it-IT'),
+  }
 }
 
 function calendarMatchOption(event, escapeHtml) {
   const competition = event.matchType === 'friendly' ? 'Amichevole' : event.matchType === 'cup' ? 'Coppa' : 'Campionato'
   const opponent = event.opponent || 'Avversario da definire'
-  return `<option value="${escapeHtml(String(event.id))}">${escapeHtml(`${safeDateLabel(String(event.startAt || '').slice(0, 10))} · ${event.time || '--:--'} · ${competition} vs ${opponent}`)}</option>`
+  return `<option value="${escapeHtml(String(event.id))}">${escapeHtml(`${safeDateLabel(String(event.startAt || '').slice(0, 10))} \u00B7 ${event.time || '--:--'} \u00B7 ${competition} vs ${opponent}`)}</option>`
 }
 
 export function createMatchLibraryView({
@@ -129,44 +125,76 @@ export function createMatchLibraryView({
     const season = getTeamProfile().season || ''
     const calendarEvents = getCalendarEvents()
     const matches = service.list(calendarEvents, season)
+    const monthGroups = groupMatchesByMonth(matches)
+    const operationalMatches = monthGroups.flatMap((group) => group.items)
+    const upcomingAgendaMatches = getMatchLibraryUpcomingAgenda(matches)
+    const upcomingAgendaPreview = upcomingAgendaMatches.slice(0, 4)
+    const upcomingAgendaMore = upcomingAgendaMatches.slice(4)
     const calendarMatches = calendarEvents
       .filter((event) => event.type === 'match')
       .slice()
       .sort((a, b) => String(a.startAt || '').localeCompare(String(b.startAt || '')))
-    const competitionOptions = [...new Set(matches.map((match) => match.competition).filter(Boolean))]
+    const competitionOptions = [...new Set(operationalMatches.map((match) => match.competition).filter(Boolean))]
 
     const renderMatchCard = (match) => {
       const outcome = getMatchOutcome(match)
       const dateLabel = safeDateLabel(match.date)
-      const result = match.goalsFor == null || match.goalsAgainst == null ? '–' : `${match.goalsFor}–${match.goalsAgainst}`
+      const result = match.goalsFor == null || match.goalsAgainst == null ? '\u2013' : `${match.goalsFor}\u2013${match.goalsAgainst}`
       const searchText = [match.opponent, match.competition, match.venue, match.season, match.date].join(' ').toLocaleLowerCase('it-IT')
       const locationLabel = match.homeAway === 'away' ? 'Trasferta' : match.homeAway === 'neutral' ? 'Campo neutro' : 'Casa'
       return `<article class="match-library-card" data-match-library-card data-search-text="${escapeHtml(searchText)}" data-competition="${escapeHtml(match.competition)}" data-location="${escapeHtml(match.homeAway)}" data-outcome="${outcome}">
         <div class="match-library-date"><strong>${escapeHtml(dateLabel)}</strong><span>${escapeHtml(match.time || '')}</span></div>
         <div class="match-library-main">
-          <span class="match-library-kicker">${escapeHtml(match.competition)}${match.matchDay ? ` · Giornata ${match.matchDay}` : ''}</span>
+          <span class="match-library-kicker">${escapeHtml(match.competition)}${match.matchDay ? ` \u00B7 Giornata ${match.matchDay}` : ''}</span>
           <h3>${match.homeAway === 'away' ? escapeHtml(match.opponent) : escapeHtml(getTeamProfile().shortName || 'Noi')} <b>${result}</b> ${match.homeAway === 'away' ? escapeHtml(getTeamProfile().shortName || 'Noi') : escapeHtml(match.opponent)}</h3>
-          <p>${escapeHtml(match.venue || 'Impianto da definire')} · ${locationLabel}</p>
+          <p>${escapeHtml(match.venue || 'Impianto da definire')} \u00B7 ${locationLabel}</p>
         </div>
         <div class="match-library-status"><span>${escapeHtml(match.documentStatus)}</span><small>${match.source === 'calendar' ? 'Calendario' : 'Legacy Library'}</small></div>
         <div class="match-library-actions">
           <button type="button" class="button button--primary" data-open-match-workspace="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}">Apri partita</button>
           <button type="button" class="button button--secondary match-library-statistics-button" data-open-match-statistics="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}">Statistiche</button>
-          ${match.source === 'library' ? `<button type="button" class="icon-button" data-delete-library-match="${escapeHtml(match.id)}" aria-label="Elimina gara legacy">×</button>` : ''}
+          ${match.source === 'library' ? `<button type="button" class="icon-button" data-delete-library-match="${escapeHtml(match.id)}" aria-label="Elimina gara legacy">\u00D7</button>` : ''}
         </div>
       </article>`
     }
 
-    const monthGroups = groupMatchesByMonth(matches)
+    const renderAgendaRow = (match) => {
+      const date = agendaDateParts(match.date)
+      const locationLabel = match.homeAway === 'away' ? 'Trasferta' : match.homeAway === 'neutral' ? 'Campo neutro' : 'Casa'
+      const meta = [match.competition, match.matchDay ? `Giornata ${match.matchDay}` : ''].filter(Boolean).join(' \u00B7 ')
+      return `<button type="button" class="match-library-agenda-row" data-open-match-workspace="${escapeHtml(match.id)}" data-match-opponent="${escapeHtml(match.opponent)}" data-match-date="${escapeHtml(match.date)}" aria-label="Apri ${escapeHtml(match.opponent)} del ${escapeHtml(safeDateLabel(match.date))}">
+        <span class="match-library-agenda-date"><strong>${escapeHtml(date.day)}</strong><small>${escapeHtml(date.month)}</small></span>
+        <span class="match-library-agenda-main"><strong>${escapeHtml(match.opponent)}</strong><small>${escapeHtml(meta)}</small></span>
+        <span class="match-library-agenda-location">${escapeHtml(locationLabel)}</span>
+        <span class="match-library-agenda-arrow" aria-hidden="true">\u203A</span>
+      </button>`
+    }
+
     const defaultOpenKey = monthGroups[0]?.key
 
     const rows = monthGroups.map((group) => `<details class="match-library-month" data-match-library-month="${escapeHtml(group.key)}" ${group.key === defaultOpenKey ? 'open' : ''}>
       <summary>
         <span><strong>${escapeHtml(group.label)}</strong><small><b data-match-month-visible-count>${group.items.length}</b> ${group.items.length === 1 ? 'partita' : 'partite'}</small></span>
-        <span class="match-library-month-chevron" aria-hidden="true">⌄</span>
+        <span class="match-library-month-chevron" aria-hidden="true">\u2304</span>
       </summary>
       <div class="match-library-month-content">${group.items.map(renderMatchCard).join('')}</div>
     </details>`).join('')
+
+    const agenda = upcomingAgendaMatches.length ? `<section class="match-library-agenda" data-match-library-agenda>
+      <header class="match-library-agenda-header">
+        <div>
+          <span class="match-library-agenda-eyebrow">A SEGUIRE</span>
+          <h2>Prossime gare</h2>
+          <p>Una vista rapida delle partite dopo il mese operativo.</p>
+        </div>
+        <span class="match-library-agenda-count">${upcomingAgendaMatches.length} ${upcomingAgendaMatches.length === 1 ? 'gara' : 'gare'}</span>
+      </header>
+      <div class="match-library-agenda-list">${upcomingAgendaPreview.map(renderAgendaRow).join('')}</div>
+      ${upcomingAgendaMore.length ? `<details class="match-library-agenda-more">
+        <summary><span>Mostra altre ${upcomingAgendaMore.length} ${upcomingAgendaMore.length === 1 ? 'gara' : 'gare'}</span><span class="match-library-agenda-more-chevron" aria-hidden="true">\u2304</span></summary>
+        <div class="match-library-agenda-list match-library-agenda-list--more">${upcomingAgendaMore.map(renderAgendaRow).join('')}</div>
+      </details>` : ''}
+    </section>` : ''
 
     return `<section class="content-section match-library" data-match-library>
       <header class="page-heading match-library-heading">
@@ -180,7 +208,7 @@ export function createMatchLibraryView({
             <option value="calendar">Dal Calendario</option>
             <option value="new">Nuova partita</option>
           </select></label>
-          <label data-match-calendar-source><span>Partita già nel Calendario</span><select name="calendarEventId" data-match-calendar-event>
+          <label data-match-calendar-source><span>Partita gi\u00E0 nel Calendario</span><select name="calendarEventId" data-match-calendar-event>
             <option value="">Seleziona una partita</option>
             ${calendarMatches.map((event) => calendarMatchOption(event, escapeHtml)).join('')}
           </select></label>
@@ -210,9 +238,10 @@ export function createMatchLibraryView({
         <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
       </div>
 
-      <div class="match-library-summary"><strong data-match-library-visible-count>${matches.length}</strong><span>partite</span></div>
-      <div class="match-library-list" data-match-library-list>${rows || '<div class="empty-state">Nessuna partita presente. Creala dal Calendario oppure da qui.</div>'}</div>
+      <div class="match-library-summary"><strong data-match-library-visible-count>${operationalMatches.length}</strong><span>partite</span></div>
+      <div class="match-library-list" data-match-library-list>${rows || '<div class="empty-state">Nessuna partita futura programmata.</div>'}</div>
       <div class="empty-state" data-match-library-empty hidden>Nessuna gara corrisponde ai filtri selezionati.</div>
+      ${agenda}
     </section>`
   }
 }

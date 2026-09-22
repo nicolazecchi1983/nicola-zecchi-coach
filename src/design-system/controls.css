@@ -320,7 +320,6 @@
 }
 
 /* Search controls should read as one control rather than a nested card. */
-.match-library-search,
 .ts-player-search,
 .analysis-toolbar {
   border-radius: var(--staff-radius-control);
@@ -371,4 +370,9 @@
   .match-workspace select {
     min-height: var(--staff-touch-target);
   }
+}
+/* R33.1E MATCH LIBRARY SEARCH SINGLE INPUT SURFACE
+   The canonical input owns the only visual surface; the wrapper is structural. */
+#viewRoot .match-library-search > input[type="search"] {
+  padding-inline-start: calc(var(--staff-control-inline-compact) + 28px);
 }
