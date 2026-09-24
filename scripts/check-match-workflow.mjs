@@ -48,10 +48,10 @@ const checks = [
     getMatchWorkflowPhase({ date: '2026-09-07', time: '15:30' }, new Date('2026-09-06T12:00:00')) === 'pre-match'
     && getMatchWorkflowPhase({ date: '2026-09-06', time: '15:30' }, new Date('2026-09-06T12:00:00')) === 'match-day'
     && getMatchWorkflowPhase({ date: '2026-09-05', time: '15:30' }, new Date('2026-09-06T12:00:00')) === 'post-match'],
-  ['Crea partita supporta origine Calendario', libraryView.includes('Dal Calendario') && libraryView.includes('data-match-calendar-event')],
-  ['Crea partita supporta nuova gara', libraryView.includes('Nuova partita') && libraryView.includes('data-match-new-fields')],
-  ['Nuova gara crea evento Calendario', calendarService.includes('async createMatch') && matchLibraryEvents.includes('calendarService.createMatch(data)')],
-  ['Partita Calendario mantiene lo stesso event ID', matchLibraryEvents.includes("id: calendarMatch.id") && matchLibraryEvents.includes("staff-active-match")],
+    ['Match Library non espone selezione sorgente Calendario', !libraryView.includes('data-match-calendar-event') && !libraryView.includes('Dal Calendario')],
+    ['Match Library non espone form Nuova partita', !libraryView.includes('data-match-new-fields') && !libraryView.includes('Nuova partita')],
+    ['Servizio creazione partita resta disponibile al Calendario ma non alla Library', calendarService.includes('async createMatch') && !matchLibraryEvents.includes('calendarService.createMatch(data)')],
+    ["Match Library apre l'evento canonico senza ricrearlo", matchLibraryEvents.includes("storage?.setItem('staff-active-match'") && matchLibraryEvents.includes('data-open-match-workspace') && !matchLibraryEvents.includes('calendarEventId')],
   ['Casa/trasferta persiste dal payload Calendario', calendarService.includes('home_away: homeAway') && gateway.includes('homeAway: parsedNotes')],
   ['Workspace usa il modello workflow condiviso', workspace.includes('getMatchWorkflowSections') && workspace.includes('getMatchWorkflowPhase')],
   ['Nostra squadra e Avversario sono sezioni native', app.includes("'our-team': nativeOurTeamView") && app.includes("opponent: nativeOpponentView") && !app.includes("setView('match-sheet', 'Match Sheet Editor')")],

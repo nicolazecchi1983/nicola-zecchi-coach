@@ -10,12 +10,12 @@ const checks = [
   ['canonical mobile command owner exists', start >= 0],
   ['Training domain owns mobile titlebar spacing', headerStart >= 0 && header.includes('.ts-manual-editor .ts-editor-titlebar') && header.includes('margin-bottom: var(--staff-space-3)')],
   ['command layer does not re-own Training titlebar', !layer.includes('.ts-editor-titlebar')],
-  ['mobile command group uses elastic select + indivisible action cluster', layer.includes('grid-template-columns: minmax(0, 1fr) auto') && layer.includes('.ts-command-actions')],
-  ['published TS selector owns first command cell', layer.includes('.ts-open-sheet') && layer.includes('grid-column: 1;') && layer.includes('grid-row: 1;')],
-  ['action cluster owns second command cell', layer.includes('.ts-command-actions') && layer.includes('grid-column: 2;') && layer.includes('grid-row: 1;')],
-  ['Open TS and More are inseparable inside action cluster', layer.includes('.ts-command-actions') && layer.includes('display: flex;') && layer.includes('gap: 6px') && layer.includes('.ts-more-menu')],
-  ['primary controls preserve accessible 44px touch height', layer.includes('grid-template-rows: 44px 24px') && layer.includes('height: 44px')],
-  ['draft badge is status-only below command row', layer.includes('.ts-draft-state--compact') && layer.includes('grid-column: 1 / -1;') && layer.includes('grid-row: 2;')],
+  ['mobile command group uses compact action/status stack', layer.includes('grid-template-columns: auto') && layer.includes('.ts-command-actions')],
+  ['published TS selector is retired from the command owner', !layer.includes('.ts-open-sheet')],
+  ['action cluster owns the single command cell', layer.includes('.ts-command-actions') && layer.includes('grid-column: 1;') && layer.includes('grid-row: 1;')],
+  ['More is the sole header command action', layer.includes('.ts-command-actions') && layer.includes('display: flex;') && layer.includes('.ts-more-menu') && !layer.includes('.ts-open-button')],
+  ['More preserves accessible 44px touch height', layer.includes('grid-template-rows: 44px;') && layer.includes('.ts-more-button') && layer.includes('height: 44px')],
+  ['draft badge is retired from command layer', !layer.includes('.ts-draft-state--compact') && !layer.includes('grid-row: 2;')],
   ['phase layout is not owned by command-bar layer', !layer.includes('.ts-phase-editor') && !layer.includes('[data-phase]')],
 ]
 let passed=0

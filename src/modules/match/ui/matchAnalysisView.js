@@ -47,7 +47,7 @@ export function renderMatchAnalysisView({
           name: 'analysis_schema',
           schema: analysisSchema,
           title: 'Analisi della gara',
-          description: 'Quattro macroaree di partenza, completamente adattabili al tuo metodo e salvabili come template.',
+          description: '',
         })}
         <div class="analysis-lifecycle-actions">
           <span class="form-message" data-match-analysis-state>${savedAnalysis.updatedAt ? 'Analisi salvata' : 'Analisi non ancora salvata'}</span>

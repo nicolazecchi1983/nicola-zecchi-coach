@@ -15,7 +15,7 @@ const checks = [
   ['Existing AppError userMessage wins', feedback.includes('getUserErrorMessage')],
   ['Composition root imports feedback helper', controller.includes("dataAccessUserFeedback.js")],
   ['Training publish receives centralized feedback', training.includes("stage: 'training-publish'")],
-  ['Match create receives centralized feedback', matchLibrary.includes("stage: 'match-create'")],
+  ['Match Library no longer owns Match creation feedback', !matchLibrary.includes("stage: 'match-create'") && !matchLibrary.includes('getDataAccessUserMessage')],
   ['Team settings uses centralized feedback', roster.includes("stage: 'team-settings-save'")],
   ['Roster save uses centralized feedback', roster.includes("stage: 'roster-player-save'")],
   ['Roster remove uses centralized feedback', roster.includes("stage: 'roster-player-remove'")],

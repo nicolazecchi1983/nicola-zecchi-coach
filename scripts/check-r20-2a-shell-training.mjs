@@ -23,7 +23,7 @@ const checks = [
   ['Fasi hanno azioni orizzontali dedicate', css.includes('.ts-phase-editor-actions') && css.includes('.ts-split-phase-button')],
   ['Pilastri usano quattro colonne desktop', css.includes('.ts-pillars') && css.includes('repeat(4')],
   ['Footer usa button system condiviso', trainingPage.includes('staff-button staff-button--secondary') && trainingPage.includes('data-ts-step-prev')],
-  ['Apri TS usa primary condiviso', trainingPage.includes('staff-button staff-button--primary ts-open-button')],
+  ['Editor header no longer browses published Training Sheets', !trainingPage.includes('ts-open-button') && !trainingPage.includes('data-open-training-sheet')],
   ['Reset editor resta danger ma fuori dalla gerarchia primaria', trainingPage.includes('ts-more-menu') && trainingPage.includes('ts-menu-danger') && trainingPage.includes('data-reset-training-sheet')],
   ['Nessun nuovo !important nel CSS R20.2A', !canonicalCss.includes('!important')],
 ]

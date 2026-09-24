@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+const sharedControls = fs.readFileSync('src/design-system/controls.css', 'utf8')
 
 const read = p => fs.readFileSync(p, 'utf8')
 const legacy = read('src/style.css')
@@ -8,10 +9,10 @@ const main = read('src/main.js')
 const checks = [
   ['match library owner exists', owner.length > 5000],
   ['match library owner imported', main.includes("./modules/match/ui/matchLibrary.css")],
-  ['toolbar geometry owned canonically', owner.includes('.match-library-toolbar {') && owner.includes('grid-template-columns: minmax(340px, 1.2fr)')],
+  ['Library toolbar geometry is now shared canonically', sharedControls.includes('.product-library-toolbar {') && sharedControls.includes('grid-template-columns: minmax(0, 1fr) auto;')],
   ['card geometry owned canonically', owner.includes('.match-library-card {') && owner.includes('grid-template-columns: 150px minmax(0, 1fr) 150px auto;')],
   ['monthly grouping owned canonically', owner.includes('.match-library-month > summary') && owner.includes('.match-library-month-content')],
-  ['mobile geometry owned canonically', owner.includes('@media (max-width: 760px)') && owner.includes('.match-library-toolbar { grid-template-columns: 1fr; }')],
+  ['Library mobile toolbar geometry is shared canonically', sharedControls.includes('@media (max-width: 760px)') && sharedControls.includes('.product-library-toolbar {') && sharedControls.includes('min-height: 44px;')],
   ['canonical owner has no important escalation', !owner.includes('!important')],
   ['legacy has no match library selectors', !/^\s*\.match-library/m.test(legacy)],
   ['legacy records migration boundary', legacy.includes('MATCH LIBRARY — ownership migrated to src/modules/match/ui/matchLibrary.css in 0.27.26.')],

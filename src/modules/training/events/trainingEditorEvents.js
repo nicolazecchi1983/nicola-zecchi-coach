@@ -144,7 +144,10 @@ export function wireTrainingEditorEvents({
         const parts = normalized.split(' ')
         return parts.at(-1) || normalized
       }
-      const selectedPlayers = (type) => [...manualEditor.querySelectorAll(`[data-player-select="${type}"] input:checked`)].map(input => input.value)
+      const selectedPlayers = (type) => [...manualEditor.querySelectorAll('[data-player-status]')]
+        .filter((select) => select.value === type)
+        .map((select) => select.dataset.canonicalName || '')
+        .filter(Boolean)
       const selectedPillars = () => [...form.querySelectorAll('[name="pillars"]:checked')].map(input => input.value)
       const squadTotal = activePlayers().length
       const updatePresentCount = () => {
@@ -164,6 +167,8 @@ export function wireTrainingEditorEvents({
         }
         const present = Math.max(0, squadTotal - unavailable.size + aggregatedCount)
         if (form.elements.present) form.elements.present.value = String(present)
+        const presentDisplay = manualEditor.querySelector('[data-present-count-display]')
+        if (presentDisplay) presentDisplay.textContent = String(present)
         return present
       }
 
@@ -293,27 +298,44 @@ export function wireTrainingEditorEvents({
         if (draftState) draftState.textContent = 'Salvataggio…'
         clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 450)
       }
+      const updateLoadScore = () => {
+        const root = manualEditor.querySelector('[data-load-score]')
+        const valueNode = manualEditor.querySelector('[data-load-score-value]')
+        if (!root || !valueNode) return
+        const intensity = Number(form.elements.intensity?.value || 0)
+        const volume = Number(form.elements.volume?.value || 0)
+        const ready = intensity >= 1 && intensity <= 5 && volume >= 1 && volume <= 5
+        valueNode.textContent = ready ? String(intensity * volume) : '—'
+        root.dataset.ready = ready ? 'true' : 'false'
+      }
+
       const updateCounts = () => {
-        manualEditor.querySelectorAll('[data-player-select]').forEach((box) => {
-          const count = box.querySelectorAll('input:checked').length
-          const counter = box.querySelector('[data-count]')
-          if (counter) counter.textContent = `${count} selezionati`
+        const counts = { present: 0, absent: 0, injured: 0, differentiated: 0 }
+        manualEditor.querySelectorAll('[data-player-status]').forEach((select) => {
+          const status = Object.hasOwn(counts, select.value) ? select.value : 'present'
+          counts[status] += 1
+        })
+        manualEditor.querySelectorAll('[data-roster-status-count]').forEach((node) => {
+          node.textContent = String(counts[node.dataset.rosterStatusCount] || 0)
         })
         updatePresentCount()
+        updateLoadScore()
       }
 
       const syncAggregatedUi = ({ keepOpen = false } = {}) => {
         const menu = manualEditor.querySelector('[data-aggregated-menu]')
         const summary = manualEditor.querySelector('[data-aggregated-summary]')
+        const totalNode = manualEditor.querySelector('[data-aggregated-total]')
         const provaCount = Math.max(0, Number(form.elements.aggregated_prova_count?.value || 0))
         const youthCount = Math.max(0, Number(form.elements.aggregated_youth_count?.value || 0))
         const total = provaCount + youthCount
+        if (totalNode) totalNode.textContent = String(total)
         if (summary) {
           summary.textContent = total
-            ? `${provaCount ? `Prova ${provaCount}` : ''}${provaCount && youthCount ? ' · ' : ''}${youthCount ? `Settore ${youthCount}` : ''}`
-            : 'Gestisci'
+            ? `${provaCount ? `Prova ${provaCount}` : ''}${provaCount && youthCount ? ' · ' : ''}${youthCount ? `Settore giovanile ${youthCount}` : ''}`
+            : 'Nessun aggregato'
         }
-        if (menu) menu.open = keepOpen || total > 0
+        if (menu && !keepOpen) menu.open = false
       }
 
       const normalizePlayerValue = (value = '') => String(value)
@@ -331,55 +353,42 @@ export function wireTrainingEditorEvents({
         .sort()
         .join('|')
 
-      const filterTrainingRosterSelector = (selector) => {
-        if (!selector) return
-        const searchInput = selector.querySelector('[data-player-search]')
+      const filterTrainingRoster = () => {
+        const searchInput = manualEditor.querySelector('[data-player-search]')
         const query = normalizePlayerValue(searchInput?.value || '')
-        selector.querySelectorAll('.ts-player-option').forEach((option) => {
-          const input = option.querySelector('input')
-          const canonicalName = String(input?.dataset.canonicalName || '')
-          const surname = String(input?.dataset.surname || '')
+        manualEditor.querySelectorAll('[data-player-row]').forEach((row) => {
+          const canonicalName = String(row.dataset.canonicalName || '')
+          const surname = String(row.dataset.surname || '')
           const surnameKey = normalizePlayerValue(surname)
           const wordKeys = canonicalName.split(/\s+/).map(normalizePlayerValue).filter(Boolean)
-          const prefixMatch = surnameKey.startsWith(query) || wordKeys.some((word) => word.startsWith(query))
-          const match = !query || prefixMatch
-          option.classList.toggle('is-filtered-out', !match)
-          if (match) option.style.removeProperty('display')
-          else option.style.setProperty('display', 'none', 'important')
+          const match = !query || surnameKey.startsWith(query) || wordKeys.some((word) => word.startsWith(query))
+          row.hidden = !match
         })
-        selector.querySelectorAll('.ts-roster-department').forEach((department) => {
-          const hasVisiblePlayer = [...department.querySelectorAll('.ts-player-option')]
-            .some((option) => !option.classList.contains('is-filtered-out'))
-          department.classList.toggle('is-filtered-out', !hasVisiblePlayer)
-          if (hasVisiblePlayer) department.style.removeProperty('display')
-          else department.style.setProperty('display', 'none', 'important')
+        manualEditor.querySelectorAll('[data-roster-department]').forEach((department) => {
+          department.hidden = ![...department.querySelectorAll('[data-player-row]')].some((row) => !row.hidden)
         })
       }
 
       manualEditor.addEventListener('input', (event) => {
         const searchInput = event.target.closest?.('[data-player-search]')
         if (!searchInput) return
-        filterTrainingRosterSelector(searchInput.closest('[data-player-select]'))
+        filterTrainingRoster()
       })
 
       manualEditor.addEventListener('click', (event) => {
         const clearButton = event.target.closest?.('[data-clear-player-search]')
         if (!clearButton) return
         event.preventDefault()
-        event.stopPropagation()
-        const selector = clearButton.closest('[data-player-select]')
-        const searchInput = selector?.querySelector('[data-player-search]')
+        const searchInput = manualEditor.querySelector('[data-player-search]')
         if (searchInput) searchInput.value = ''
-        filterTrainingRosterSelector(selector)
-        if (selector) selector.open = false
+        filterTrainingRoster()
+        searchInput?.focus()
       })
 
       manualEditor.addEventListener('search', (event) => {
         const searchInput = event.target.closest?.('[data-player-search]')
         if (!searchInput || searchInput.value) return
-        const selector = searchInput.closest('[data-player-select]')
-        filterTrainingRosterSelector(selector)
-        if (selector) selector.open = false
+        filterTrainingRoster()
       })
 
       const applyTrainingSheetData = (data = {}, options = {}) => {
@@ -389,14 +398,9 @@ export function wireTrainingEditorEvents({
         phaseCount = 0
         form.reset()
         form.querySelectorAll('[name="pillars"]').forEach((input) => { input.checked = false })
-        manualEditor.querySelectorAll('[data-player-select]').forEach((selector) => {
-        const searchInput = selector.querySelector('[data-player-search]')
-        if (searchInput) searchInput.value = ''
-        filterTrainingRosterSelector(selector)
-      })
-
-      manualEditor.querySelectorAll('[data-player-select] input').forEach((input) => { input.checked = false })
+        manualEditor.querySelectorAll('[data-player-status]').forEach((select) => { select.value = 'present' })
         manualEditor.querySelectorAll('[data-player-search]').forEach((input) => { input.value = '' })
+        filterTrainingRoster()
         if (form.elements.aggregated) form.elements.aggregated.value = ''
         if (form.elements.aggregated_count) form.elements.aggregated_count.value = '0'
         if (form.elements.aggregated_prova_count) form.elements.aggregated_prova_count.value = '0'
@@ -441,12 +445,11 @@ export function wireTrainingEditorEvents({
           values.forEach((value) => {
             const normalizedValue = normalizePlayerValue(value)
             const tokenizedValue = normalizePlayerTokens(value)
-            const input = [...manualEditor.querySelectorAll(`[data-player-select="${type}"] input`)].find((candidate) =>
-              normalizePlayerValue(candidate.value) === normalizedValue ||
+            const select = [...manualEditor.querySelectorAll('[data-player-status]')].find((candidate) =>
               normalizePlayerValue(candidate.dataset.canonicalName) === normalizedValue ||
               normalizePlayerTokens(candidate.dataset.canonicalName) === tokenizedValue
             )
-            if (input) input.checked = true
+            if (select) select.value = type
           })
         })
 
@@ -501,31 +504,7 @@ export function wireTrainingEditorEvents({
 
       manualEditor.querySelector('[data-add-phase]')?.addEventListener('click',()=>{addPhase();updatePreview();scheduleSave()})
       manualEditor.querySelectorAll('[data-md]').forEach(button=>button.addEventListener('click',()=>{ manualEditor.querySelectorAll('[data-md]').forEach(b=>b.classList.remove('is-active')); button.classList.add('is-active'); form.elements.match_day.value=button.dataset.md; updatePreview(); scheduleSave() }))
-      manualEditor.querySelectorAll('[data-rating]').forEach(group=>group.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{ const value=Number(button.dataset.value); group.querySelector('input').value=value; group.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active',Number(b.dataset.value)<=value)); updatePreview(); scheduleSave() })))
-      manualEditor.querySelectorAll('[data-player-select] input').forEach((input) => {
-        input.addEventListener('change', () => {
-          if (input.checked) {
-            const currentType = input.closest('[data-player-select]')?.dataset.playerSelect
-            const otherType = currentType === 'absent' ? 'injured' : 'absent'
-            const twin = [...manualEditor.querySelectorAll(`[data-player-select="${otherType}"] input`)]
-              .find((candidate) => candidate.value === input.value)
-            if (twin) twin.checked = false
-          }
-        })
-      })
-      const rosterDisclosures = [...manualEditor.querySelectorAll('[data-player-select]')]
-      const aggregatedDisclosure = manualEditor.querySelector('[data-aggregated-menu]')
-      rosterDisclosures.forEach((details) => {
-        details.addEventListener('toggle', () => {
-          if (!details.open) return
-          rosterDisclosures.forEach((other) => { if (other !== details) other.open = false })
-          if (aggregatedDisclosure) aggregatedDisclosure.open = false
-        })
-      })
-      aggregatedDisclosure?.addEventListener('toggle', () => {
-        if (!aggregatedDisclosure.open) return
-        rosterDisclosures.forEach((details) => { details.open = false })
-      })
+      manualEditor.querySelectorAll('[data-rating]').forEach(group=>group.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{ const value=Number(button.dataset.value); group.querySelector('input').value=value; group.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active',Number(b.dataset.value)<=value)); updateLoadScore(); updatePreview(); scheduleSave() })))
       manualEditor.querySelectorAll('[name="aggregated_prova_count"], [name="aggregated_youth_count"]').forEach((input) => {
         input.addEventListener('input', () => syncAggregatedUi({ keepOpen: true }))
       })
@@ -819,10 +798,6 @@ export function wireTrainingEditorEvents({
         localStorage.removeItem('nz-training-sheet-open-event-id')
         currentEditingEventId = ''
         setTrainingDocument({ status: TRAINING_SHEET_STATUS.DRAFT }, { dirty: false })
-        const openSheetSelect = manualEditor.querySelector('[data-open-training-sheet]')
-        const openSheetButton = manualEditor.querySelector('[data-open-training-sheet-button]')
-        if (openSheetSelect) openSheetSelect.value = ''
-        if (openSheetButton) openSheetButton.disabled = true
         form.reset()
         form.elements.time.value = '17:30'
         form.elements.location.value = ''
@@ -831,7 +806,7 @@ export function wireTrainingEditorEvents({
         manualEditor.querySelectorAll('[data-md] button, [data-md]').forEach?.(() => {})
         manualEditor.querySelectorAll('[data-md]').forEach((button) => button.classList.remove('is-active'))
         manualEditor.querySelectorAll('[data-rating] button').forEach((button) => button.classList.remove('is-active'))
-        manualEditor.querySelectorAll('[data-player-select] input').forEach((input) => { input.checked = false })
+        manualEditor.querySelectorAll('[data-player-status]').forEach((select) => { select.value = 'present' })
         manualEditor.querySelectorAll('[name="pillars"]')?.forEach?.((input) => { input.checked = false })
         phasesRoot.innerHTML = ''
         addPhase()
@@ -843,14 +818,9 @@ export function wireTrainingEditorEvents({
         showTsStep(1)
       }
       manualEditor.querySelector('[data-reset-training-sheet]')?.addEventListener('click', resetEditor)
-
-      const openSheetSelect = manualEditor.querySelector('[data-open-training-sheet]')
-      const openSheetButton = manualEditor.querySelector('[data-open-training-sheet-button]')
-
       const loadTrainingSheetByEventId = async (eventId) => {
         if (!eventId) return false
         if (draftState) draftState.textContent = 'Apertura Training Sheet…'
-        if (openSheetButton) openSheetButton.disabled = true
 
         try {
           let selected = appState.calendarEvents.find((item) => String(item.id) === String(eventId))
@@ -926,7 +896,6 @@ export function wireTrainingEditorEvents({
             applyTrainingSheetData(draftData)
             persistDraftSnapshot(draftData, { dirty: false, eventId: currentEditingEventId, baseUpdatedAt: null })
             localStorage.setItem('nz-training-sheet-open-event-id', currentEditingEventId)
-            if (openSheetSelect) openSheetSelect.value = ''
             updateTrainingWorkflowUi({ dirty: false })
             if (draftState) draftState.textContent = 'Bozza collegata al Calendario'
             return true
@@ -1001,22 +970,13 @@ export function wireTrainingEditorEvents({
 
           currentEditingEventId = String(selected.id)
           localStorage.setItem('nz-training-sheet-open-event-id', currentEditingEventId)
-          if (openSheetSelect) openSheetSelect.value = String(selected.id)
           return true
         } catch (error) {
           console.error('Errore apertura Training Sheet:', error)
           if (draftState) draftState.textContent = getDataAccessUserMessage(error, undefined, { stage: 'training-sheet-open' })
           return false
-        } finally {
-          if (openSheetButton) openSheetButton.disabled = !openSheetSelect?.value
         }
       }
-
-      openSheetSelect?.addEventListener('change', () => {
-        if (openSheetButton) openSheetButton.disabled = !openSheetSelect.value
-      })
-      openSheetButton?.addEventListener('click', () => loadTrainingSheetByEventId(openSheetSelect?.value))
-
       manualEditor.querySelector('[data-preview-pdf]')?.addEventListener('click', openPdfPreview)
       manualEditor.querySelector('[data-download-pdf]')?.addEventListener('click', downloadPdf)
       manualEditor.querySelector('[data-download-pdf-menu]')?.addEventListener('click', downloadPdf)

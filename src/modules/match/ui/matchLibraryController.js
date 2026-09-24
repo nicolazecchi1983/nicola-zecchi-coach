@@ -2,27 +2,12 @@ export function bindMatchLibrary({
   root,
   storage,
   createMatchLibraryService,
-  getTeamProfile,
-  formatDateInputValue,
   setView,
   setActiveNavigation,
 }) {
   const matchLibrary = root.querySelector('[data-match-library]')
 if (matchLibrary) {
   const service = createMatchLibraryService({ storage })
-  const createForm = matchLibrary.querySelector('[data-match-create-form]')
-  const toggleCreate = (show) => {
-    createForm.hidden = !show
-    if (show) createForm.elements.date.value ||= formatDateInputValue(new Date())
-  }
-  matchLibrary.querySelector('[data-toggle-match-create]')?.addEventListener('click', () => toggleCreate(createForm.hidden))
-  matchLibrary.querySelector('[data-cancel-match-create]')?.addEventListener('click', () => toggleCreate(false))
-  createForm?.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const data = Object.fromEntries(new FormData(createForm).entries())
-    service.create({ ...data, season: getTeamProfile().season || '' })
-    await setView('match-library', 'Match Library')
-  })
   const applyMatchFilters = () => {
     const query = matchLibrary.querySelector('[data-match-library-search]')?.value.trim().toLocaleLowerCase('it-IT') || ''
     const competition = matchLibrary.querySelector('[data-match-library-competition]')?.value || ''

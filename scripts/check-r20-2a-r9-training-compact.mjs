@@ -10,18 +10,18 @@ const commandBar = fs.readFileSync('src/modules/training/trainingCommandBar.css'
 const r9 = css
 
 const checks = [
-  ['Ricerca nasconde davvero i non match', runtime.includes("style.setProperty('display', 'none', 'important')") && runtime.includes("style.removeProperty('display')")],
+  ['Ricerca nasconde davvero i non match nella lista unica', runtime.includes('row.hidden = !match')],
   ['Ricerca sa/sal usa prefisso su cognome/parole', runtime.includes('surnameKey.startsWith(query)') && runtime.includes('word.startsWith(query)')],
-  ['Disclosure Rosa funzionano ad accordion', runtime.includes('rosterDisclosures.forEach') && runtime.includes('other.open = false')],
-  ['Aggregati chiude gli altri disclosure', runtime.includes('aggregatedDisclosure?.addEventListener') && runtime.includes('details.open = false')],
+  ['Rosa non usa più accordion duplicati', !runtime.includes('rosterDisclosures.forEach') && runtime.includes("querySelectorAll('[data-player-status]')")],
+  ['Aggregati resta separato dalla lista Rosa senza coupling a disclosure', trainingPage.includes('data-aggregated-menu') && !runtime.includes('details.open = false')],
   ['Aggregati ha quantità Prova', trainingPage.includes('name="aggregated_prova_count"')],
   ['Aggregati ha quantità Settore', trainingPage.includes('name="aggregated_youth_count"')],
   ['Presenti somma Prova + Settore', runtime.includes('const aggregatedCount = provaCount + youthCount')],
   ['Legacy Aggregati resta compatibile', runtime.includes("legacyAggregatedType === 'PROVA'") && runtime.includes("legacyAggregatedType === 'SETTORE GIOVANILE'")],
   ['Preview distingue Prova e Settore', trainingPage.includes('aggregated_prova_count') && trainingPage.includes('aggregated_youth_count') && runtime.includes('<span>PROVA') && runtime.includes('<span>SETTORE')],
   ['Sidebar brand e topbar condividono 64px', appShell.includes('.sidebar-brand') && appShell.includes('height: 64px') && appShell.includes('.topbar {')],
-  ['Toolbar Training mantiene un limite compatto canonico', commandBar.includes('max-width: 500px')],
-  ['Apri TS resta compatto nel nuovo owner', commandBar.includes('width: 84px')],
+  ['Toolbar Training usa larghezza content-driven canonica', commandBar.includes('width: max-content') && commandBar.includes('max-width: 100%')],
+  ['Apri TS è ritirato dal nuovo owner', !commandBar.includes('.ts-open-button') && !commandBar.includes('.ts-open-sheet')],
   ['R9 non introduce important', !canonicalCss.includes('!important')],
 ]
 let passed=0

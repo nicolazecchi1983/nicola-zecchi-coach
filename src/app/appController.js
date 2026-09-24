@@ -530,7 +530,7 @@ export async function attachAppEvents(user) {
   ])
   globalThis.performance?.mark?.('staff:initial-data:end')
   globalThis.performance?.measure?.('staff:initial-data', 'staff:initial-data:start', 'staff:initial-data:end')
-  
+
   const root = document.querySelector('#viewRoot')
   const drawerRoot = document.querySelector('#drawerRoot')
   const modalRoot = document.querySelector('#modalRoot')
@@ -705,16 +705,8 @@ export async function attachAppEvents(user) {
       root,
       createMatchLibraryService,
       storage: localStorage,
-      formatDateInputValue,
-      appState,
-      createMatchCalendarService,
-      createCalendarEvent,
-      updateCalendarEvent,
-      loadCalendarEvents,
       setActiveNavigation,
       setView,
-      getUserErrorMessage,
-      getDataAccessUserMessage,
       confirmUser: window.confirm,
     })
     wireOpponentStudyEvents({

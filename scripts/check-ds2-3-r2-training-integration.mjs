@@ -9,9 +9,9 @@ const commandBar = fs.readFileSync('src/modules/training/trainingCommandBar.css'
 const checks = [
   ['Training steps are structural wrappers, not Product UI surfaces', !view.includes('ts-form-card product-surface ts-step') && view.includes('class="ts-form-card ts-step')],
   ['step wrapper has no visual geometry', /\.ts-manual-editor \.ts-workspace--steps > \.ts-manual-form > \.ts-form-card\s*\{[^}]*margin:\s*0;[^}]*padding:\s*0;[^}]*border:\s*0;[^}]*background:\s*transparent;/s.test(polish)],
-  ['draft state belongs to the Training command group', /<div class="ts-editor-actions">[\s\S]*data-ts-draft-state[\s\S]*<\/div>/.test(view)],
-  ['mobile draft state sits below actions and cannot overlap', commandBar.includes('R2.6T — TRAINING COMMAND BAR SINGLE OWNER · CLUSTER 8') && commandBar.includes('grid-row: 2;') && commandBar.includes('transform: none;')],
-  ['mobile Training title has a domain-specific size token', polish.includes('--staff-mobile-page-title-size:') && responsive.includes('var(--staff-mobile-page-title-size')],
+  ['draft state belongs to the canonical Training metadata row', /<p class="ts-editor-meta">[\s\S]*data-ts-draft-state[\s\S]*<\/p>/.test(view) && !/<div class="ts-editor-actions">[\s\S]*data-ts-draft-state[\s\S]*<\/div>/.test(view)],
+  ['mobile draft state is inline metadata and cannot overlap command actions', view.includes('ts-draft-state--inline') && polish.includes('.ts-editor-meta .ts-draft-state--inline') && !commandBar.includes('.ts-draft-state--compact')],
+  ['mobile Training title uses canonical shared responsive title token', !polish.includes('--staff-mobile-page-title-size:') && responsive.includes('var(--staff-mobile-page-title-size, clamp(1.82rem, 8.8vw, 2.35rem))')],
   ['Match Day clear state is explicit, not an ambiguous dash', view.includes("${md || 'Nessuno'}") && !view.includes("${md || '—'}")],
   ['Match Day clear state comes after operational values', view.indexOf("['PREPARAZIONE','MD+1'") >= 0 && view.indexOf("'MD','']") >= 0],
   ['Match Day uses a nine-cell desktop grid', polish.includes('grid-template-columns: repeat(9, minmax(0, 1fr))')],

@@ -18,7 +18,7 @@ const checks=[
  ['Training Sheet keeps one canonical section navigation',page.includes('ts-step-nav product-section-nav')],
  ['No TS step repeats the navigation title in ts-card-head',labels.every(([n,label])=>!combined.includes(`<div class="ts-card-head"><span>${n}</span><div><h2>${label}</h2>`))],
  ['Step 1 operational content remains',page.includes('name="date"')&&page.includes('name="time"')&&page.includes('name="location"')],
- ['Step 2 operational content remains',page.includes("['absent','Assenti'")&&page.includes("['injured','Infortunati'")&&page.includes('data-player-select="${type}"')],
+ ['Step 2 roster usa lista unica con stato individuale',page.includes('data-player-status')&&page.includes('<option value="present">Presente</option>')&&page.includes('<option value="absent">Assente</option>')&&page.includes('<option value="injured">Infortunato</option>')&&page.includes('<option value="differentiated">Differenziato</option>')],
  ['Step 3 operational content remains',page.includes('Match Day')&&page.includes('Focus fisico')],
  ['Step 4 operational content remains',page.includes('data-ts-phases')&&page.includes('data-add-phase')],
  ['Step 5 operational content remains',page.includes('name="objective"')&&page.includes('data-ts-pillars')],

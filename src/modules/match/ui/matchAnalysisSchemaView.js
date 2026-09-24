@@ -117,18 +117,19 @@ function phaseHtml(phase) {
   </details>`
 }
 
-function templateToolbarHtml() {
-  return `<section class="analysis-template-toolbar analysis-template-toolbar--apply-only" data-analysis-template-toolbar>
-    <div class="analysis-template-apply">
-      <label><span>Template di partenza</span><select name="analysis_template_select" data-analysis-template-select>
+function templateActionsHtml() {
+  return `<details class="analysis-template-menu" data-analysis-template-menu>
+    <summary aria-label="Azioni template" title="Azioni template">•••</summary>
+    <div class="analysis-template-menu__popover">
+      <strong class="analysis-template-menu__title">Cambia template</strong>
+      <label class="analysis-template-menu__field"><span>Template</span><select name="analysis_template_select" data-analysis-template-select>
         <option value="__staff__">Template STAFF</option>
       </select></label>
       <button type="button" class="secondary-button" data-apply-analysis-template>Applica alla partita</button>
       <button type="button" class="ghost-button" data-open-analysis-template-manager>Gestisci template</button>
+      <p class="analysis-template-message" data-analysis-template-message></p>
     </div>
-    <p class="analysis-template-scope">Questa pagina modifica solo la partita corrente. Per modificare un template personale usa “Gestisci template”.</p>
-    <p class="analysis-template-message" data-analysis-template-message></p>
-  </section>`
+  </details>`
 }
 
 export function renderMatchAnalysisSchemaEditor({
@@ -145,18 +146,18 @@ export function renderMatchAnalysisSchemaEditor({
       ? sectionHeadingHtml({
           titleHtml: escapeHtml(title),
           iconName: headingIconName,
-          metaHtml: '<span class="staff-section-heading__badge">PERSONALIZZABILE</span>',
+          metaHtml: templateActionsHtml(),
           className: 'analysis-schema-section-heading',
         })
       : `<div class="analysis-schema-intro">
         <div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(description)}</p></div>
-        <span>PERSONALIZZABILE</span>
+        ${templateActionsHtml()}
       </div>`)
     : ''
 
   return `<section class="analysis-schema-editor" data-analysis-schema-editor>
     ${introHtml}
-    ${templateToolbarHtml()}
+    ${showIntro ? '' : `<div class="analysis-template-menu-row analysis-template-menu-row--standalone">${templateActionsHtml()}</div>`}
     <input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(serializeMatchAnalysisSchema(normalized))}" data-analysis-schema-value>
     <div class="analysis-schema-phases" data-analysis-schema-phases>${normalized.phases.map(phaseHtml).join('')}</div>
     <button type="button" class="secondary-button analysis-schema-add-phase" data-add-analysis-phase>＋ Aggiungi macroarea</button>
@@ -726,12 +727,14 @@ export async function bindMatchAnalysisSchemaEditors(root, options = {}) {
         if (analysisSchemaHasNotes(collectEditor(editor)) && !window.confirm('Applicare il template sostituirà la struttura e cancellerà le note attuali di questa partita. Continuare?')) return
         replaceEditorSchema(editor, nextSchema)
         syncEditor(editor, { structural: true, reason: 'apply-template' })
-        setTemplateMessage(editor, 'Template copiato nella partita. Da ora questa struttura è indipendente dal master.', 'success')
+        setTemplateMessage(editor, 'Template applicato alla partita.', 'success')
+        apply.closest('[data-analysis-template-menu]')?.removeAttribute('open')
         return
       }
 
       const manage = event.target.closest('[data-open-analysis-template-manager]')
       if (manage) {
+        manage.closest('[data-analysis-template-menu]')?.removeAttribute('open')
         try {
           await openTemplateManager(editor, options, templates, (nextTemplates) => { templates = nextTemplates })
         } catch (error) {

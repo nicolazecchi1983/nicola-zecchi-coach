@@ -4,7 +4,7 @@
 
 .ts-manual-editor {
   --training-section-max: 1180px;
-  --staff-mobile-page-title-size: clamp(1.52rem, 6.4vw, 1.86rem);
+
 }
 
 /* R2.1 â€” Premium hierarchy: compact context header, content-first workspace. */
@@ -23,10 +23,15 @@
   white-space: nowrap;
 }
 
-/* Published-sheet command geometry is owned by trainingCommandBar.css. */
+/* Header overflow command geometry is owned by trainingCommandBar.css. */
 
 .ts-manual-editor .ts-workspace--steps {
   max-width: none;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 /* Step containers are structural wrappers. Visual grouping belongs to the content blocks inside each step. */
@@ -44,6 +49,11 @@
 
 .ts-manual-editor .ts-step.is-active {
   animation: training-step-in var(--staff-motion-normal) var(--staff-ease-standard);
+  width: min(100%, var(--training-section-max));
+  max-width: var(--training-section-max);
+  min-width: 0;
+  margin-inline: auto;
+  box-sizing: border-box;
 }
 
 @keyframes training-step-in {
@@ -119,9 +129,7 @@
   height: 17px;
 }
 
-.ts-manual-editor .ts-present-count > .ts-step-content-label {
-  color: var(--staff-color-text);
-}
+
 
 /* Step 02 — roster: availability first, exceptions by disclosure. */
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-summary,
@@ -139,39 +147,13 @@
   background: var(--staff-color-bg-panel);
 }
 
-.ts-manual-editor .ts-present-count {
-  display: grid;
-  grid-template-columns: auto 88px;
-  align-items: center;
-  gap: var(--staff-space-3);
-  width: auto;
-  max-width: 300px;
-}
 
-.ts-manual-editor .ts-present-count > span {
-  grid-column: 1;
-  grid-row: 1;
-}
 
-.ts-manual-editor .ts-present-count input {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  height: 48px;
-  min-height: 48px;
-  padding-inline: var(--staff-space-2);
-  color: var(--staff-color-text);
-  background: var(--staff-color-bg-panel-raised);
-  font-size: var(--staff-font-subsection-title);
-  font-weight: var(--staff-font-weight-bold);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
 
-.ts-manual-editor .ts-present-count .ts-field-help {
-  grid-column: 1;
-  grid-row: 2;
-  margin: 0;
-}
+
+
+
+
 
 .ts-manual-editor .ts-step[data-ts-step="2"] .ts-roster-grid {
   gap: var(--staff-space-2);
@@ -548,6 +530,9 @@
   border-radius: var(--staff-radius-large);
   background: color-mix(in srgb, var(--staff-color-bg-app) 92%, transparent);
   box-shadow: var(--staff-shadow-panel);
+  max-width: var(--training-section-max);
+  min-width: 0;
+  margin-inline: auto;
 }
 
 .ts-manual-editor .ts-step-footer > span {
@@ -678,11 +663,7 @@
     padding-inline: var(--staff-space-3);
   }
 
-  .ts-manual-editor .ts-present-count {
-    grid-template-columns: minmax(0, 1fr) 76px;
-    max-width: none;
-    width: 100%;
-  }
+
 
   .ts-manual-editor .ts-roster-grid--four {
     grid-template-columns: 1fr;
@@ -916,5 +897,560 @@
 
   .ts-manual-editor .ts-phase-meta-fields {
     grid-template-columns: 1fr;
+  }
+}
+
+
+/* R36.2A — CANONICAL TRAINING HEADER METADATA */
+.ts-manual-editor .ts-editor-titlebar > div:first-child > .ts-editor-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  white-space: normal;
+}
+
+.ts-manual-editor .ts-editor-meta .ts-draft-state--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--staff-color-text-muted);
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.ts-manual-editor .ts-editor-meta .ts-draft-state--inline > span {
+  color: var(--staff-color-text-muted);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+
+/* R36.2B — MOBILE HEADER ROW ALIGNMENT */
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-editor-titlebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: var(--staff-space-2);
+  }
+
+  .ts-manual-editor .ts-editor-titlebar > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+  }
+}
+
+
+/* R36.3 — ROSTER STATUS LIST + LOAD INDEX */
+/* R36.3A — STEP 02 ROSTER WORKSPACE SINGLE OWNER */
+.ts-manual-editor .ts-roster-workspace {
+  display: grid;
+  gap: 12px;
+  width: min(100%, var(--training-section-max));
+  min-width: 0;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-roster-workspace__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--staff-space-3);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: var(--staff-space-3) var(--staff-space-4);
+  border: 1px solid var(--staff-color-border-subtle);
+  border-radius: var(--staff-radius-large);
+  background: var(--staff-color-bg-panel);
+}
+
+.ts-manual-editor .ts-roster-status-totals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  align-self: center;
+}
+
+.ts-manual-editor .ts-roster-status-totals span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--staff-control-border);
+  border-radius: 10px;
+  background: var(--staff-control-bg);
+  color: var(--staff-color-text);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.ts-manual-editor .ts-roster-list-shell {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* R36.3D — ROSTER UTILITY ROW ALIGNMENT */
+.ts-manual-editor .ts-roster-list-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+  align-items: stretch;
+  gap: var(--staff-space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+/* R36.3G — SEARCH SINGLE INPUT SURFACE
+   Wrapper is structural only. The canonical input owns the one visible surface. */
+.ts-manual-editor .ts-player-search--roster {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--staff-control-height);
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-player-search--roster [data-player-search] {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--staff-control-height);
+  padding-right: 48px;
+  box-sizing: border-box;
+  color: var(--staff-color-text);
+}
+
+.ts-manual-editor .ts-player-search--roster [data-player-search]::-webkit-search-decoration,
+.ts-manual-editor .ts-player-search--roster [data-player-search]::-webkit-search-cancel-button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.ts-manual-editor .ts-player-search--roster [data-clear-player-search] {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--staff-radius-control) - 3px);
+  background: transparent;
+  color: var(--staff-color-text);
+  font-size: .95rem;
+  line-height: 1;
+}
+
+.ts-manual-editor .ts-roster-list {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-roster-player[hidden],
+.ts-manual-editor .ts-roster-department[hidden] {
+  display: none;
+}
+
+.ts-manual-editor .ts-roster-department {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--staff-control-border);
+  border-radius: 14px;
+  background: var(--staff-control-bg);
+}
+
+.ts-manual-editor .ts-roster-department > strong {
+  position: static;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--staff-control-border);
+  background: transparent;
+  font-size: .76rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.ts-manual-editor .ts-roster-player {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 210px);
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 7px 10px 7px 12px;
+  border-bottom: 1px solid var(--staff-control-border);
+}
+
+.ts-manual-editor .ts-roster-player:last-child {
+  border-bottom: 0;
+}
+
+.ts-manual-editor .ts-roster-player__identity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ts-manual-editor .ts-roster-player__identity strong,
+.ts-manual-editor .ts-roster-player__identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ts-manual-editor .ts-roster-player__identity small {
+  opacity: .68;
+  font-size: .72rem;
+}
+
+.ts-manual-editor .ts-roster-player select {
+  width: 100%;
+  min-height: 40px;
+}
+
+/* R36.3C — AGGREGATI UTILITY ROW */
+.ts-manual-editor .ts-roster-aggregated {
+  display: flex;
+  align-self: stretch;
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-selection-card.ts-aggregated-select {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--staff-control-border);
+  border-radius: 12px;
+  background: var(--staff-control-bg);
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu:not([open]) > summary {
+  flex: 1 1 auto;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu > summary {
+  position: static;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+  padding: 7px 10px 7px 12px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--staff-color-text);
+  box-sizing: border-box;
+  cursor: pointer;
+  list-style: none;
+  white-space: normal;
+  overflow: visible;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu > summary::after {
+  content: none;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu[open] > summary {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.ts-manual-editor .ts-roster-aggregated__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+.ts-manual-editor .ts-roster-aggregated__title b {
+  min-width: 22px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.ts-manual-editor .ts-roster-aggregated__summary {
+  min-width: 0;
+  color: var(--staff-color-text-secondary);
+  font-size: .74rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.ts-manual-editor .ts-roster-aggregated__action {
+  white-space: nowrap;
+  color: var(--staff-color-primary);
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.ts-manual-editor .ts-roster-aggregated__action-open {
+  display: none;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu[open] .ts-roster-aggregated__action-closed {
+  display: none;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu[open] .ts-roster-aggregated__action-open {
+  display: inline;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-panel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 9px 12px 10px;
+  border: 0;
+  border-top: 1px solid var(--staff-control-border);
+  border-radius: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-source-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-source-row > span {
+  min-width: 0;
+  color: var(--staff-color-text);
+  font-size: .74rem;
+  font-weight: 750;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.ts-manual-editor .ts-roster-aggregated .ts-aggregated-source-row input {
+  width: 64px;
+  min-width: 64px;
+  min-height: 40px;
+  padding-inline: 6px;
+  text-align: center;
+}
+
+.ts-manual-editor .ts-load-scale-hint {
+  display: block;
+  margin-top: 7px;
+  opacity: .68;
+  font-size: .72rem;
+}
+
+.ts-manual-editor .ts-load-score {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 16px;
+  min-height: 66px;
+  padding: 12px 14px;
+  border: 1px solid var(--staff-control-border);
+  border-radius: 14px;
+  background: var(--staff-control-bg);
+}
+
+.ts-manual-editor .ts-load-score > span {
+  font-weight: 800;
+}
+
+.ts-manual-editor .ts-load-score > strong {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 52px;
+  text-align: right;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ts-manual-editor .ts-load-score > small {
+  opacity: .7;
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-roster-workspace {
+    gap: 10px;
+  }
+
+  .ts-manual-editor .ts-roster-list-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-roster-aggregated .ts-aggregated-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-manual-editor .ts-roster-aggregated .ts-aggregated-menu > summary {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .ts-manual-editor .ts-roster-workspace__summary {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    padding-inline: var(--staff-space-3);
+  }
+
+  .ts-manual-editor .ts-roster-status-totals {
+    justify-content: flex-start;
+  }
+
+  .ts-manual-editor .ts-roster-player {
+    grid-template-columns: minmax(0, 1fr) 138px;
+    gap: 8px;
+  }
+
+  .ts-manual-editor .ts-roster-player select {
+    min-height: 44px;
+  }
+}
+
+
+/* R36.3H1 — STEP 02 PRESENT SUMMARY + CANONICAL CLOSE */
+.ts-manual-editor .ts-present-count.ts-present-count--stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--staff-space-2);
+  width: auto;
+  max-width: none;
+  min-width: 0;
+  margin: 0;
+  align-self: center;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-present-count__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--staff-space-2);
+  min-width: 0;
+  color: var(--staff-color-text);
+  font-size: var(--staff-font-body);
+  font-weight: var(--staff-font-weight-bold);
+  line-height: 1.2;
+}
+
+.ts-manual-editor .ts-present-count__value {
+  display: inline-block;
+  min-width: 2ch;
+  color: var(--staff-color-text);
+  font-size: 1.45rem;
+  font-weight: var(--staff-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: left;
+}
+
+.ts-manual-editor .ts-player-search--roster [data-clear-player-search] {
+  line-height: 0;
+}
+
+.ts-manual-editor .ts-player-search--roster [data-clear-player-search] svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-present-count.ts-present-count--stat {
+    width: auto;
+    max-width: 100%;
+  }
+}
+
+
+/* R36.3J — STEP 04 PHASE WORKSPACE CONVERGENCE */
+.ts-manual-editor .ts-step[data-ts-step="4"] .ts-phases-workspace {
+  width: min(100%, var(--training-section-max));
+  min-width: 0;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="4"] .ts-phases-workspace > .ts-phases-editor {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+}
+
+.ts-manual-editor .ts-step[data-ts-step="4"] .ts-phases-workspace > .ts-add-phase {
+  display: inline-flex;
+  width: auto;
+  margin-top: var(--staff-space-3);
+  margin-left: 0;
+}
+
+@media (max-width: 760px) {
+  .ts-manual-editor .ts-step[data-ts-step="4"] .ts-phases-workspace {
+    width: 100%;
+    max-width: none;
   }
 }

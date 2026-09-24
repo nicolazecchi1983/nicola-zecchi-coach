@@ -5,10 +5,10 @@ const polish = fs.readFileSync('src/modules/training/trainingPolish.css', 'utf8'
 
 const checks = [
   ['published Training Sheet label is removed from editor header', !view.includes('<span>Training Sheet pubblicate</span>')],
-  ['selector explains published-sheet context directly', view.includes('<option value="">Seleziona TS pubblicata</option>')],
-  ['selector keeps an explicit accessible label', view.includes('aria-label="Seleziona Training Sheet pubblicata"')],
+  ['embedded published-sheet selector is retired', !view.includes('Seleziona TS pubblicata') && !view.includes('data-open-training-sheet')],
+  ['embedded Apri TS action is retired', !view.includes('data-open-training-sheet-button') && !view.includes('ts-open-button')],
   ['Training polish no longer owns a redundant selector label rule', !polish.includes('.ts-manual-editor .ts-open-sheet > span')],
-  ['mobile Training title is deliberately lighter than R2', polish.includes('--staff-mobile-page-title-size: clamp(1.52rem, 6.4vw, 1.86rem)')],
+  ['mobile Training title no longer overrides the shared page-title scale', !polish.includes('--staff-mobile-page-title-size:')],
   ['R3 remains presentation-only', !view.includes('supabase') && !polish.includes('!important')],
 ]
 

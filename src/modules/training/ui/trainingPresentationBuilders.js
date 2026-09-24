@@ -14,12 +14,11 @@ export function createTrainingPresentationBuilders({ activePlayers }) {
       .map((player) => {
         const canonicalName = toItalianTitleCase(player.name)
         const parts = canonicalName.trim().split(/\s+/)
-        const surname = parts.pop() || ''
-        const firstName = parts.join(' ')
+        const surname = parts[parts.length - 1] || ''
         return {
           ...player,
           canonicalName,
-          displayName: `${surname} ${firstName}`.trim(),
+          displayName: canonicalName,
           surname,
           department: TS_DEPARTMENT_ORDER.includes(player.role) ? player.role : 'Difensore',
         }

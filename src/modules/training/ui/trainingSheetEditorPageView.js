@@ -5,7 +5,6 @@
 export function renderTrainingSheetEditorPage({
   canEdit = false,
   rosterPlayers = [],
-  calendarEvents = [],
   icon,
   locationOptionsHtml = '',
   escapeHtml,
@@ -25,36 +24,33 @@ export function renderTrainingSheetEditorPage({
       </section>
     `
   }
-  const playerOptions = departmentOrder.map((department) => {
-    const rows = rosterPlayers.filter((player) => player.department === department).map((player) => `
-      <label class="ts-player-option">
-        <input type="checkbox" value="${escapeHtml(player.canonicalName)}" data-canonical-name="${escapeHtml(player.canonicalName)}" data-surname="${escapeHtml(player.surname)}">
-        <span>${escapeHtml(player.displayName)}</span>
-      </label>`).join('')
-    return `<div class="ts-roster-department"><strong>${departmentLabels[department]}</strong>${rows}</div>`
-  }).join('')
-
-  const editableSheets = calendarEvents
-    .filter((event) => event.trainingSheetPath)
-    .sort((a, b) => new Date(b.startAt) - new Date(a.startAt))
-    .map((event) => {
-      const date = new Date(event.startAt).toLocaleDateString('it-IT')
-      const code = event.trainingSheetPath.match(/(?:ALL|AL)[_-]?(\d{1,3})/i)?.[1] || ''
-      return `<option value="${escapeHtml(event.id)}">${code ? `ALL_${String(code).padStart(3, '0')} · ` : ''}${date} · ${escapeHtml(event.place || 'Campo da definire')}</option>`
+  const rosterRows = departmentOrder.map((department) => {
+    const rows = rosterPlayers.filter((player) => player.department === department).map((player) => {
+      const searchText = [player.displayName, player.canonicalName, player.surname].filter(Boolean).join(' ').toLocaleLowerCase('it-IT')
+      return `
+        <div class="ts-roster-player" data-player-row data-canonical-name="${escapeHtml(player.canonicalName)}" data-surname="${escapeHtml(player.surname)}" data-search-text="${escapeHtml(searchText)}">
+          <span class="ts-roster-player__identity"><strong>${escapeHtml(player.displayName)}</strong><small>${departmentLabels[department]}</small></span>
+          <select name="player_status" data-player-status data-canonical-name="${escapeHtml(player.canonicalName)}" data-surname="${escapeHtml(player.surname)}" aria-label="Stato di ${escapeHtml(player.displayName)}">
+            <option value="present">Presente</option>
+            <option value="absent">Assente</option>
+            <option value="injured">Infortunato</option>
+            <option value="differentiated">Differenziato</option>
+          </select>
+        </div>`
     }).join('')
+    return `<section class="ts-roster-department" data-roster-department><strong>${departmentLabels[department]}</strong>${rows}</section>`
+  }).join('')
 
   return `
     <section class="view page-view product-page-shell training-product-shell ts-manual-editor" data-ts-manual-editor>
       <div class="page-head product-page-header ts-editor-titlebar">
         <div>
           <h1>Training Sheet Editor</h1>
-          <p><span>CREAZIONE SEDUTA</span><b>•</b>Compila e genera il PDF</p>
+          <p class="ts-editor-meta"><span>CREAZIONE SEDUTA</span><b>•</b><span class="ts-draft-state ts-draft-state--inline" data-ts-draft-state data-status="draft"><i></i><span>Bozza</span></span></p>
         </div>
         <div class="ts-editor-actions-wrap">
           <div class="ts-editor-actions">
-            <label class="ts-open-sheet"><select name="open_training_sheet" data-open-training-sheet aria-label="Seleziona Training Sheet pubblicata"><option value="">Seleziona TS pubblicata</option>${editableSheets}</select></label>
             <div class="ts-command-actions" data-ts-command-actions>
-              <button class="staff-button staff-button--primary ts-open-button" type="button" data-open-training-sheet-button aria-label="Apri Training Sheet pubblicata" disabled><span class="ts-open-button-icon" aria-hidden="true">${icon?.('sheet') || ''}</span><span class="ts-open-button-label">Apri TS</span></button>
               <details class="ts-more-menu">
                 <summary class="staff-button staff-button--secondary ts-more-button" aria-label="Altre azioni">•••</summary>
                 <div class="ts-more-menu-popover">
@@ -63,7 +59,6 @@ export function renderTrainingSheetEditorPage({
                 </div>
               </details>
             </div>
-            <div class="ts-draft-state ts-draft-state--compact" data-ts-draft-state data-status="draft"><i></i><span>Bozza</span></div>
           </div>
         </div>
       </div>
@@ -75,69 +70,92 @@ export function renderTrainingSheetEditorPage({
       <div class="ts-workspace ts-workspace--steps">
         <form class="ts-manual-form" data-ts-manual-form>
           <section class="ts-form-card ts-step is-active" data-ts-step="1">
-            
+
             <div class="ts-fields-grid ts-session-grid">
               <label class="ts-field"><span>Data</span><div class="ts-input-icon"><i>${icon('calendar')}</i><input name="date" type="date" required></div></label>
               <label class="ts-field"><span>Orario</span><div class="ts-input-icon"><i>${icon('clock')}</i><input name="time" type="time" value="17:30" required></div></label>
               <label class="ts-field ts-field--location"><span>Campo</span><select name="location">${locationOptionsHtml}</select></label>
               <label class="ts-field ts-custom-location" data-ts-custom-location hidden><span>Nome campo / impianto</span><input name="custom_location" type="text" maxlength="100" autocomplete="off" placeholder="Scrivi il nome del campo"></label>
-              <label class="ts-field"><span>Allenamento n°</span><input name="progressive" type="number" min="1" value="1"><small class="ts-field-help">Proposto automaticamente, modificabile</small></label>
+              <label class="ts-field"><span>Allenamento n°</span><input name="progressive" type="number" min="1" value="1"></label>
             </div>
           </section>
 
           <section class="ts-form-card ts-step" data-ts-step="2">
-            
-            <div class="ts-roster-summary">
-              <label class="ts-field ts-present-count"><span class="ts-step-content-label"><i class="ts-step-content-icon" aria-hidden="true">${icon('squad')}</i>Presenti</span><input name="present" type="number" min="0" value="28" readonly aria-readonly="true"><small class="ts-field-help">Calcolati automaticamente dalla Rosa</small></label>
-            </div>
-            <div class="ts-roster-grid ts-roster-grid--four">
-              ${[['absent','Assenti',''],['injured','Infortunati','is-injured'],['differentiated','Differenziato','is-differentiated']].map(([type,label,className]) => `
-                <details class="ts-multiselect ${className}" data-player-select="${type}">
-                  <summary><span>${label}</span><b data-count>0 selezionati</b></summary>
-                  <div class="ts-player-search"><input name="player_search" type="search" data-player-search placeholder="Cerca per nome o cognome" autocomplete="off"><button type="button" data-clear-player-search aria-label="Pulisci ricerca">×</button></div>
-                  <div class="ts-player-options">${playerOptions}</div>
-                </details>`).join('')}
-              <div class="ts-selection-card ts-aggregated-select">
-                <span class="ts-selection-card__label">Aggregati</span>
-                <details class="ts-aggregated-menu" data-aggregated-menu>
-                  <summary><span data-aggregated-summary>Gestisci</span></summary>
-                  <div class="ts-aggregated-panel">
-                    <label class="ts-aggregated-source-row">
-                      <span>Prova</span>
-                      <input name="aggregated_prova_count" type="number" min="0" max="99" step="1" value="0" inputmode="numeric" aria-label="Numero giocatori in prova">
-                    </label>
-                    <label class="ts-aggregated-source-row">
-                      <span>Settore giovanile</span>
-                      <input name="aggregated_youth_count" type="number" min="0" max="99" step="1" value="0" inputmode="numeric" aria-label="Numero giocatori dal settore giovanile">
-                    </label>
+            <div class="ts-roster-workspace" data-roster-workspace>
+              <div class="ts-roster-workspace__summary">
+                <div class="ts-present-count ts-present-count--stat" aria-label="Presenti">
+                  <span class="ts-present-count__label"><i class="ts-step-content-icon" aria-hidden="true">${icon('squad')}</i><span>Presenti</span></span>
+                  <strong class="ts-present-count__value" data-present-count-display aria-live="polite">28</strong>
+                  <input name="present" type="hidden" value="28">
+                </div>
+                <div class="ts-roster-status-totals" aria-label="Riepilogo indisponibilità">
+                  <span>Assenti <b data-roster-status-count="absent">0</b></span>
+                  <span>Infortunati <b data-roster-status-count="injured">0</b></span>
+                  <span>Differenziati <b data-roster-status-count="differentiated">0</b></span>
+                </div>
+              </div>
+
+              <div class="ts-roster-list-shell">
+                <div class="ts-roster-list-toolbar">
+                  <div class="ts-player-search ts-player-search--roster"><input name="player_search" type="search" data-player-search placeholder="Cerca giocatore" autocomplete="off"><button type="button" data-clear-player-search aria-label="Pulisci ricerca">${icon('close')}</button></div>
+                  <div class="ts-roster-aggregated">
+                    <div class="ts-selection-card ts-aggregated-select">
+                      <details class="ts-aggregated-menu ts-roster-aggregated__menu" data-aggregated-menu>
+                        <summary>
+                          <span class="ts-roster-aggregated__title">Aggregati <b data-aggregated-total>0</b></span>
+                          <span class="ts-roster-aggregated__summary" data-aggregated-summary>Nessun aggregato</span>
+                          <span class="ts-roster-aggregated__action" aria-hidden="true">
+                            <span class="ts-roster-aggregated__action-closed">Gestisci</span>
+                            <span class="ts-roster-aggregated__action-open">Chiudi</span>
+                          </span>
+                        </summary>
+                        <div class="ts-aggregated-panel">
+                          <label class="ts-aggregated-source-row">
+                            <span>Prova</span>
+                            <input name="aggregated_prova_count" type="number" min="0" max="99" step="1" value="0" inputmode="numeric" aria-label="Numero giocatori in prova">
+                          </label>
+                          <label class="ts-aggregated-source-row">
+                            <span>Settore giovanile</span>
+                            <input name="aggregated_youth_count" type="number" min="0" max="99" step="1" value="0" inputmode="numeric" aria-label="Numero giocatori dal settore giovanile">
+                          </label>
+                        </div>
+                      </details>
+                      <input name="aggregated" type="hidden" value="">
+                      <input name="aggregated_count" type="hidden" value="0">
+                    </div>
                   </div>
-                </details>
-                <input name="aggregated" type="hidden" value="">
-                <input name="aggregated_count" type="hidden" value="0">
+                </div>
+                <div class="ts-roster-list" data-roster-list>${rosterRows}</div>
               </div>
             </div>
           </section>
 
           <section class="ts-form-card ts-step" data-ts-step="3">
-            
             <div class="ts-choice-block ts-match-day-block"><span class="ts-choice-label">Match Day</span><div class="ts-md-selector" data-ts-md-selector>
               ${['PREPARAZIONE','MD+1','MD+2','MD+3','MD-3','MD-2','MD-1','MD',''].map((md) => `<button type="button" data-md="${md}">${md || 'Nessuno'}</button>`).join('')}
               <input name="match_day" type="hidden">
             </div></div>
             <div class="ts-load-grid">
-              <label class="ts-field ts-load-focus"><span>Focus fisico</span><select name="focus"><option value="">Seleziona</option><option>Metabolico</option><option>Forza</option><option>Resistenza alla velocità</option><option>Velocità</option></select></label>
-              <div class="ts-choice-block ts-load-metric ts-load-intensity"><span class="ts-choice-label">Intensità</span><div class="ts-rating" data-rating="intensity">${[1,2,3,4,5].map(n=>`<button type="button" data-value="${n}">${n}</button>`).join('')}<input name="intensity" type="hidden"></div></div>
-              <div class="ts-choice-block ts-load-metric ts-load-volume"><span class="ts-choice-label">Volume</span><div class="ts-rating" data-rating="volume">${[1,2,3,4,5].map(n=>`<button type="button" data-value="${n}">${n}</button>`).join('')}<input name="volume" type="hidden"></div></div>
+              <label class="ts-field ts-load-focus"><span>Focus fisico</span><select name="focus"><option value="">Seleziona</option><option>Metabolico</option><option>Forza</option><option>Resistenza alla velocità</option><option>Velocità</option><option>Recupero</option><option>Aerobico</option></select></label>
+              <div class="ts-choice-block ts-load-metric ts-load-intensity"><span class="ts-choice-label">Intensità prevista</span><div class="ts-rating" data-rating="intensity">${[1,2,3,4,5].map(n=>`<button type="button" data-value="${n}">${n}</button>`).join('')}<input name="intensity" type="hidden"></div><small class="ts-load-scale-hint">1 molto bassa · 3 media · 5 molto alta</small></div>
+              <div class="ts-choice-block ts-load-metric ts-load-volume"><span class="ts-choice-label">Volume previsto</span><div class="ts-rating" data-rating="volume">${[1,2,3,4,5].map(n=>`<button type="button" data-value="${n}">${n}</button>`).join('')}<input name="volume" type="hidden"></div><small class="ts-load-scale-hint">1 molto basso · 3 medio · 5 molto alto</small></div>
+              <div class="ts-load-score" data-load-score>
+                <span>Indice carico</span>
+                <strong data-load-score-value>—</strong>
+                <small>Intensità × Volume · indice sintetico 1–25</small>
+              </div>
             </div>
           </section>
 
           <section class="ts-form-card ts-step" data-ts-step="4">
-            
-            <div class="ts-phases-editor" data-ts-phases></div>
-            <button class="staff-button staff-button--secondary ts-add-phase" type="button" data-add-phase><span class="ts-step-content-icon ts-step-content-icon--action" aria-hidden="true">${icon('plus')}</span><span>Aggiungi fase</span></button>
+
+            <div class="ts-phases-workspace">
+              <div class="ts-phases-editor" data-ts-phases></div>
+              <button class="staff-button staff-button--secondary ts-add-phase" type="button" data-add-phase><span class="ts-step-content-icon ts-step-content-icon--action" aria-hidden="true">${icon('plus')}</span><span>Aggiungi fase</span></button>
+            </div>
           </section>
           <section class="ts-form-card ts-step" data-ts-step="5">
-            
+
             <div class="ts-pillars ts-pillars--compact" data-ts-pillars aria-label="Architettura del vantaggio">
               ${[
                 ['create','Creare il vantaggio','Creare','&#9678;'],
@@ -168,13 +186,13 @@ export function renderTrainingSheetEditorPage({
             <div class="ts-paper-frame"><article class="ts-paper" data-ts-preview></article></div>
           </div>
         </aside>
-      </div>
 
-      <footer class="match-form-footer ts-step-footer" data-ts-step-footer>
-        <button type="button" class="staff-button staff-button--secondary" data-ts-step-prev><span aria-hidden="true">←</span> Indietro</button>
-        <span data-ts-step-status>Sezione 1 di 6</span>
-        <button type="button" class="staff-button staff-button--primary" data-ts-step-next>Continua <span aria-hidden="true">→</span></button>
-      </footer>
+        <footer class="ts-step-footer" data-ts-step-footer>
+          <button type="button" class="staff-button staff-button--secondary" data-ts-step-prev><span aria-hidden="true">←</span> Indietro</button>
+          <span data-ts-step-status>Sezione 1 di 6</span>
+          <button type="button" class="staff-button staff-button--primary" data-ts-step-next>Continua <span aria-hidden="true">→</span></button>
+        </footer>
+      </div>
     </section>
   `
 }

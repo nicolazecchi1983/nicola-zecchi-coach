@@ -20,7 +20,7 @@ const restore = resolveWorkspaceRestore({
 const checks = [
   ['card click stores opponent-study as active section', library.includes("activateMatchContext({ id: openButton.dataset.openMatchWorkspace") && library.includes("}, 'opponent-study')")],
   ['card click opens Studio avversario directly', library.includes("await setView('opponent-study', 'Studio avversario')")],
-  ['create/open flow also enters Studio avversario', (library.match(/setView\('opponent-study', 'Studio avversario'\)/g) || []).length >= 2],
+  ['consultation-only Library keeps exactly one Studio avversario entry', (library.split("setView('opponent-study', 'Studio avversario')").length - 1) === 1 && !library.includes('data-match-create-form') && !library.includes('createMatchCalendarService')],
   ['legacy library binder cannot reintroduce landing page', legacyLibrary.includes("setView('opponent-study', 'Studio avversario')") && !legacyLibrary.includes("setView('match-workspace', 'Match Workspace')")],
   ['section back action is contextual', workspaceEvents.includes("staff-match-entry-origin") && workspaceEvents.includes("['dashboard', 'Dashboard']") && workspaceEvents.includes("['match-library', 'Match Library']") && workspaceEvents.includes('await setView(destination[0], destination[1])')],
   ['back control exposes contextual copy hook', components.includes('data-match-context-back-label') && components.includes('Torna alla Match Library')],

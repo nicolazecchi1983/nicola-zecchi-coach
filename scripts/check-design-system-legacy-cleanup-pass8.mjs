@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+const sharedControls = fs.readFileSync('src/design-system/controls.css', 'utf8')
 
 const read = (p) => fs.readFileSync(p, 'utf8')
 const legacy = read('src/style.css')
@@ -14,9 +15,9 @@ const checks = [
   ['legacy no longer owns library feedback editor', !/\.library-feedback-editor\s*\{/.test(legacy)],
   ['legacy no longer owns compact filter menu', !/\.library-filter-menu\s*>\s*summary\s*\{/.test(legacy)],
   ['owner contains library root', /\.training-library\s*\{/.test(owner)],
-  ['owner contains toolbar', /\.library-toolbar\s*\{/.test(owner)],
+  ['shared controls contain canonical Library toolbar', sharedControls.includes('.product-library-toolbar {')],
   ['owner contains feedback editor', /\.library-feedback-editor\s*\{/.test(owner)],
-  ['owner contains compact filter panel', /\.library-filter-panel\s*\{/.test(owner)],
+  ['shared controls contain canonical Library filter panel', sharedControls.includes('.product-library-filter__panel {')],
   ['owner contains mobile contract', /@media\s*\(max-width:\s*760px\)/.test(owner)],
 ]
 let failed = 0

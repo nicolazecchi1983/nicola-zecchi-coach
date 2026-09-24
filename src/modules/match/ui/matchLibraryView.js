@@ -141,11 +141,6 @@ function agendaDateParts(value) {
   }
 }
 
-function calendarMatchOption(event, escapeHtml) {
-  const competition = event.matchType === 'friendly' ? 'Amichevole' : event.matchType === 'cup' ? 'Coppa' : 'Campionato'
-  const opponent = event.opponent || 'Avversario da definire'
-  return `<option value="${escapeHtml(String(event.id))}">${escapeHtml(`${safeDateLabel(String(event.startAt || '').slice(0, 10))} \u00B7 ${event.time || '--:--'} \u00B7 ${competition} vs ${opponent}`)}</option>`
-}
 
 export function createMatchLibraryView({
   createMatchLibraryService,
@@ -169,10 +164,6 @@ export function createMatchLibraryView({
     const upcomingAgendaMatches = getMatchLibraryUpcomingAgenda(matches)
     const upcomingAgendaPreview = upcomingAgendaMatches.slice(0, 4)
     const upcomingAgendaMore = upcomingAgendaMatches.slice(4)
-    const calendarMatches = calendarEvents
-      .filter((event) => event.type === 'match')
-      .slice()
-      .sort((a, b) => String(a.startAt || '').localeCompare(String(b.startAt || '')))
     const competitionOptions = [...new Set(operationalMatches.map((match) => match.competition).filter(Boolean))]
 
     const renderMatchCard = (match) => {
@@ -238,48 +229,21 @@ export function createMatchLibraryView({
     </section>` : ''
 
     return `<section class="content-section match-library" data-match-library>
-      <header class="page-heading match-library-heading">
+      <header class="page-head product-page-header match-library-heading">
         <div class="match-library-heading-copy">
-          <span class="eyebrow">MATCH ENGINE</span>
           <h1>Match Library</h1>
+          <p><span>GESTIONE PARTITE</span></p>
         </div>
-        <button type="button" class="button button--primary" data-toggle-match-create>+ Crea partita</button>
       </header>
 
-      <form class="match-library-create" data-match-create-form hidden>
-        <div class="match-library-form-grid">
-          <label><span>Origine partita</span><select name="sourceMode" data-match-source-mode>
-            <option value="calendar">Dal Calendario</option>
-            <option value="new">Nuova partita</option>
-          </select></label>
-          <label data-match-calendar-source><span>Partita gi\u00E0 nel Calendario</span><select name="calendarEventId" data-match-calendar-event>
-            <option value="">Seleziona una partita</option>
-            ${calendarMatches.map((event) => calendarMatchOption(event, escapeHtml)).join('')}
-          </select></label>
-        </div>
 
-        <div class="match-library-form-grid" data-match-new-fields hidden>
-          <label><span>Data</span><input type="date" name="date"></label>
-          <label><span>Ora</span><input type="time" name="time" value="15:30"></label>
-          <label><span>Avversario</span><input type="text" name="opponent" placeholder="Nome squadra"></label>
-          <label><span>Competizione</span><select name="competition"><option>Campionato</option><option>Coppa</option><option>Amichevole</option></select></label>
-          <label><span>Casa / trasferta</span><select name="homeAway"><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select></label>
-          <label><span>Impianto</span><input type="text" name="location" placeholder="Campo o stadio"></label>
-          <label><span>Giornata / turno</span><input type="number" min="1" name="matchDay" placeholder="Facoltativo"></label>
-        </div>
-
-        <div class="match-library-form-actions">
-          <button type="submit" class="button button--primary" data-match-create-submit>Apri partita</button>
-          <button type="button" class="button" data-cancel-match-create>Annulla</button>
-          <span data-match-create-message></span>
-        </div>
-      </form>
-
-      <div class="match-library-toolbar">
-        <label class="match-library-search"><span class="nav-icon">${icon('search')}</span><input name="match_library_search" type="search" placeholder="Cerca nella Library" aria-label="Cerca in tutta la Match Library per avversario, competizione o impianto" data-match-library-search></label>
-        <select name="match_library_competition" data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select>
-        <select name="match_library_location" data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select>
-        <select name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select>
+      <div class="product-library-toolbar">
+        <label class="product-library-search"><span class="product-library-search__icon">${icon('search')}</span><input class="product-library-search__input" name="match_library_search" type="search" placeholder="Cerca nella Library" aria-label="Cerca in tutta la Match Library per avversario, competizione o impianto" data-match-library-search></label>
+        <details class="product-library-filter"><summary>Filtri</summary><div class="product-library-filter__panel">
+          <label><span>Competizione</span><select class="product-library-filter__select" name="match_library_competition" data-match-library-competition><option value="">Tutte le competizioni</option>${competitionOptions.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}</select></label>
+          <label><span>Sede</span><select class="product-library-filter__select" name="match_library_location" data-match-library-location><option value="">Casa, trasferta e neutro</option><option value="home">Casa</option><option value="away">Trasferta</option><option value="neutral">Campo neutro</option></select></label>
+          <label><span>Risultato</span><select class="product-library-filter__select" name="match_library_outcome" data-match-library-outcome><option value="">Tutti i risultati</option><option value="win">Vittorie</option><option value="draw">Pareggi</option><option value="loss">Sconfitte</option><option value="pending">Da giocare</option></select></label>
+        </div></details>
       </div>
 
       <div class="match-library-scopes" role="group" aria-label="Ambito Match Library">

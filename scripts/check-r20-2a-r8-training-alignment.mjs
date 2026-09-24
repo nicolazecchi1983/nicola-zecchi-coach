@@ -19,7 +19,7 @@ const checks = [
   ['Aggregati non usa select nativo', !trainingPage.includes('<select name="aggregated"')],
   ['Fonti Aggregati leggibili', trainingPage.includes('Prova</span>') && trainingPage.includes('Settore giovanile</span>')],
   ['Quantità separate nel pannello', trainingPage.includes('aggregated_prova_count') && trainingPage.includes('aggregated_youth_count')],
-  ['Menu resta aperto con quantità', runtime.includes('menu.open = keepOpen || total > 0')],
+  ['Aggregati è chiuso di default ma resta aperto durante editing', runtime.includes('if (menu && !keepOpen) menu.open = false') && runtime.includes('syncAggregatedUi({ keepOpen: true })') && !runtime.includes('menu.open = keepOpen || total > 0')],
   ['Quantità collegate ai Presenti', runtime.includes('provaCount + youthCount')],
   ['Anteprima toolbar allineata al foglio', r8.includes('.ts-preview-stage .ts-preview-toolbar') && r8.includes('width: 100%')],
   ['R8 non introduce important', !canonicalCss.includes('!important')],

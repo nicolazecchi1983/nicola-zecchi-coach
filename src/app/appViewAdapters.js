@@ -95,7 +95,6 @@ export function createAppViewAdapters(deps) {
     return renderTrainingSheetEditorPage({
       canEdit: can(capabilities.TRAINING_SHEET_EDIT),
       rosterPlayers: getTrainingSheetRosterPlayers(),
-      calendarEvents: appState.calendarEvents,
       icon,
       locationOptionsHtml: teamLocationSelectOptions(),
       escapeHtml,

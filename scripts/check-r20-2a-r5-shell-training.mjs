@@ -14,7 +14,7 @@ const checks = [
   ['Topbar mostra contesto STAFF', shell.includes('topbar-context-product') && shell.includes('STAFF')],
   ['Topbar può mostrare la stagione configurata', shell.includes('topbar-context-season') && shell.includes('team?.season')],
   ['Page content parte sotto la topbar', pageShell.includes('#viewRoot') && pageShell.includes('var(--staff-page-top)')],
-  ['Apri TS e select condividono altezza canonica', commandBar.includes('.ts-open-sheet select') && commandBar.includes('.ts-open-button') && commandBar.includes('height: 44px')],
+  ['Toolbar TS non riserva più geometria a selector o Apri TS', !commandBar.includes('.ts-open-sheet') && !commandBar.includes('.ts-open-button') && commandBar.includes('grid-template-columns: auto')],
   ['Menu more condivide altezza toolbar', commandBar.includes('.ts-more-button') && commandBar.includes('min-height: 44px')],
   ['Aggregati usa selection card', trainingPage.includes('ts-selection-card ts-aggregated-select')],
   ['Rosa desktop usa quattro controlli equivalenti', training.includes('grid-template-columns: repeat(4, minmax(0, 1fr))')],

@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+const sharedControls = fs.readFileSync('src/design-system/controls.css', 'utf8')
 import assert from 'node:assert/strict'
 
 const view = fs.readFileSync(new URL('../src/modules/match/ui/matchLibraryView.js', import.meta.url), 'utf8').replace(/\\r\\n?/g, '\\n')
@@ -13,7 +14,7 @@ const checks = [
   ['scope mobile puo restringersi', css.includes('.match-library-scope {\n    min-width: 0;\n    width: 100%;')],
   ['scope label resta su una riga', css.includes('white-space: nowrap;')],
   ['compact mobile ha tuning dedicato', css.includes('@media (max-width: 420px)') && css.includes('minmax(0, 1.34fr)')],
-  ['search mobile conserva touch floor', css.includes('.match-library-search input {\n    min-height: 44px;')],
+  ['search mobile conserva touch floor nel shared owner', sharedControls.includes('.product-library-search > input[type="search"]') && sharedControls.includes('min-height: 44px;')],
   ['R35.3 non usa important', !css.split('STAFF R35.3 Match Library mobile density')[1].includes('!important')],
 ]
 

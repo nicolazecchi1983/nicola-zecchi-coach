@@ -14,16 +14,6 @@
   gap: 20px;
 }
 
-.match-library-heading .eyebrow {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--staff-color-primary);
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
 .match-library-create {
   padding: 22px;
   border: 1px solid var(--staff-color-border);

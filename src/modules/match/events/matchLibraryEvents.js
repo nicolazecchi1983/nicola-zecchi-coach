@@ -2,16 +2,8 @@ export function wireMatchLibraryEvents({
   root,
   createMatchLibraryService,
   storage = globalThis.localStorage,
-  formatDateInputValue,
-  appState,
-  createMatchCalendarService,
-  createCalendarEvent,
-  updateCalendarEvent,
-  loadCalendarEvents,
   setActiveNavigation,
   setView,
-  getUserErrorMessage,
-  getDataAccessUserMessage = getUserErrorMessage,
   confirmUser = globalThis.confirm,
 }) {
     const matchLibrary = root.querySelector('[data-match-library]')
@@ -29,77 +21,6 @@ export function wireMatchLibraryEvents({
         storage?.setItem('nz-active-section', sectionKey)
         return true
       }
-      const createForm = matchLibrary.querySelector('[data-match-create-form]')
-      const toggleCreate = (show) => {
-        createForm.hidden = !show
-        if (show) createForm.elements.date.value ||= formatDateInputValue(new Date())
-      }
-      matchLibrary.querySelector('[data-toggle-match-create]')?.addEventListener('click', () => toggleCreate(createForm.hidden))
-      matchLibrary.querySelector('[data-cancel-match-create]')?.addEventListener('click', () => toggleCreate(false))
-      const sourceMode = createForm?.querySelector('[data-match-source-mode]')
-      const calendarSourceField = createForm?.querySelector('[data-match-calendar-source]')
-      const newFields = createForm?.querySelector('[data-match-new-fields]')
-      const createSubmit = createForm?.querySelector('[data-match-create-submit]')
-      const createMessage = createForm?.querySelector('[data-match-create-message]')
-
-      const refreshMatchCreateMode = () => {
-        const useCalendar = sourceMode?.value !== 'new'
-        if (calendarSourceField) calendarSourceField.hidden = !useCalendar
-        if (newFields) newFields.hidden = useCalendar
-        if (createSubmit) createSubmit.textContent = useCalendar ? 'Apri partita' : 'Crea partita'
-        createForm?.querySelectorAll('[data-match-new-fields] input[name="date"], [data-match-new-fields] input[name="opponent"]').forEach((input) => {
-          input.required = !useCalendar
-        })
-      }
-      sourceMode?.addEventListener('change', refreshMatchCreateMode)
-      refreshMatchCreateMode()
-
-      createForm?.addEventListener('submit', async (event) => {
-        event.preventDefault()
-        if (createSubmit?.disabled) return
-
-        const data = Object.fromEntries(new FormData(createForm).entries())
-        const useCalendar = data.sourceMode !== 'new'
-        createSubmit.disabled = true
-        if (createMessage) createMessage.textContent = ''
-
-        try {
-          let activeMatch = null
-
-          if (useCalendar) {
-            const eventId = String(data.calendarEventId || '').trim()
-            const calendarMatch = appState.calendarEvents.find((item) => item.type === 'match' && String(item.id) === eventId)
-            if (!calendarMatch) throw new Error('Seleziona una partita già presente nel Calendario.')
-            activeMatch = {
-              id: calendarMatch.id,
-              opponent: calendarMatch.opponent || 'Da definire',
-              date: String(calendarMatch.startAt || '').slice(0, 10),
-            }
-          } else {
-            const calendarService = createMatchCalendarService({
-              createEvent: createCalendarEvent,
-              updateEvent: updateCalendarEvent,
-              reloadEvents: loadCalendarEvents,
-            })
-            const created = await calendarService.createMatch(data)
-            if (!created.eventId) throw new Error('La partita è stata creata ma non è stato restituito un identificativo valido.')
-            const calendarMatch = appState.calendarEvents.find((item) => String(item.id) === String(created.eventId))
-            activeMatch = {
-              id: created.eventId,
-              opponent: calendarMatch?.opponent || created.match?.opponent || data.opponent || 'Da definire',
-              date: String(calendarMatch?.startAt || created.match?.date || data.date || '').slice(0, 10),
-            }
-          }
-
-          activateMatchContext(activeMatch, 'opponent-study')
-          await setView('opponent-study', 'Studio avversario')
-        } catch (error) {
-          console.error('Creazione partita non riuscita:', error)
-          if (createMessage) createMessage.textContent = getDataAccessUserMessage(error, undefined, { stage: 'match-create' })
-        } finally {
-          createSubmit.disabled = false
-        }
-      })
       const searchInput = matchLibrary.querySelector('[data-match-library-search]')
       const readSearchQuery = () => searchInput?.value.trim().toLocaleLowerCase('it-IT') || ''
 

@@ -132,3 +132,19 @@
 .match-opponent-study .analysis-schema-section-heading{
   min-width:0;
 }
+
+
+/* R36.3H2 — shared template advanced menu adapter */
+.match-opponent-study .match-study-analysis-panel .analysis-template-advanced {
+  align-self: end;
+}
+
+.match-opponent-study .match-study-analysis-panel .analysis-template-advanced > summary {
+  width: var(--staff-control-height);
+  min-width: var(--staff-control-height);
+}
+
+.match-opponent-study .match-study-analysis-panel .analysis-template-advanced-menu [data-open-analysis-template-manager] {
+  width: 100%;
+  min-width: 0;
+}

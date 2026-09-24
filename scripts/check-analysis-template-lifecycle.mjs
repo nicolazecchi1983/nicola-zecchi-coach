@@ -20,7 +20,7 @@ const checks=[
  ['deleted canonical area is not recreated by model',!study.technicalAnalysis.phases.some(p=>p.key==='non-possession')],
  ['model uses nullish presence rather than truthy fallback',model.includes('input.technicalAnalysis != null')],
  ['apply and template management are separate actions',view.includes('data-apply-analysis-template')&&view.includes('data-open-analysis-template-manager')],
- ['UI explains match snapshot scope',view.includes('singola partita')&&view.includes('Gestisci template')],
+ ['UI keeps template management behind title-level progressive disclosure',view.includes('data-analysis-template-menu')&&view.includes('Azioni template')&&view.includes('Gestisci template')&&!view.includes('analysis-template-scope')&&!view.includes('analysis-template-toolbar')],
  ['STAFF master is used only as a starting definition',view.includes('createStaffAnalysisTemplateSchema')],
  ['template master has an isolated manager',view.includes('analysis-template-manager')&&view.includes('data-template-manager-save')],
  ['service exposes owner-checked master update',service.includes('updateDefinition')&&service.includes('Puoi modificare solo i tuoi template')],
