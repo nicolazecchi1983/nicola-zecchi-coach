@@ -270,7 +270,8 @@
     "check:match-contextual-back-origin": "node scripts/check-match-contextual-back-origin.mjs",
     "check:match-lineup-selection-availability-r2": "node scripts/check-match-lineup-selection-availability-r2.mjs",
     "check:match-formation-release-blockers-r2-1": "node scripts/check-match-formation-release-blockers-r2-1.mjs",
-    "check:match-location-cues": "node scripts/check-match-location-cues.mjs"
+    "check:match-location-cues": "node scripts/check-match-location-cues.mjs",
+    "check:workflow-integrity-r37": "node scripts/check-workflow-integrity-r37.mjs"
   },
   "devDependencies": {
     "supabase": "^2.111.0",
@@ -541,6 +542,7 @@
     "check:match-callups-ds-pass18-compat-c1",
     "check:match-callups-mobile-polish-c2",
     "check:match-callups-context-premium-c3",
-    "check:match-formation-release-blockers-r2-1"
+    "check:match-formation-release-blockers-r2-1",
+    "check:workflow-integrity-r37"
   ]
 }
